@@ -5,7 +5,6 @@ author: alex_kernphysiker@privatdemail.net */
 #ifndef FUNCTIONS_H
 #	define FUNCTIONS_H
 #include <math.h>
-namespace Math_{
 template<class numt=double>//cannot use integer types
 numt Gaussian(numt x, numt X_max, numt sigma){
 	numt koef= 1/(sigma*::sqrt(2*3.1415926));
@@ -43,5 +42,4 @@ numt polynom(numt x,indexer  p){	return polynom<numt,indexer>(x,p,P);}
 template<unsigned int P,class numt=double, class indexer=numt*>
 numt Polynom(indexer x, indexer p){return polynom<P,numt,indexer>(x[0],p);}
 
-}
 #endif // FUNCTIONS_H

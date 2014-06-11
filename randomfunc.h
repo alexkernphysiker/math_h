@@ -6,7 +6,6 @@ author: alex_kernphysiker@privatdemail.net */
 #define RANDOMFUNC_H
 #include "templates.h"
 #include <random>
-namespace Math_{
 template<class numt,class func>//Generates random values distributed by given formula
 // func cannot be a lambda-expression
 class RandomValueGenerator{
@@ -61,6 +60,5 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	res*=(sigma/(coeff*precision))*::sqrt(numt(precision));
 	res+=average;
 	return res;
-}
 }
 #endif // RANDOMFUNC_H

@@ -5,7 +5,6 @@ author: alex_kernphysiker@privatdemail.net */
 #ifndef MATH_TEMPLATES_H
 #define MATH_TEMPLATES_H
 #include <utility>
-namespace Math_{
 namespace detail{// implementation details
 	template <
 		typename ret,typename F, typename Tuple,
@@ -161,5 +160,4 @@ public:
 		return Sympson(ConvUInt(x,this),Ksi1,Ksi2,Step);
 	}
 };
-}
 #endif // MATH_TEMPLATES_H
