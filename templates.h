@@ -32,7 +32,7 @@ namespace detail{// implementation details
 }
 //allows to call multi-parameter function as a single-parameter one
 template<typename restype,int parn, typename... Args>
-struct SingleParam{
+class SingleParam{
 private:
 	typedef restype (*F)(Args...);
 	typedef std::tuple<Args...> Tuple;

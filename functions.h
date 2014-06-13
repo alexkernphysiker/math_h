@@ -34,11 +34,11 @@ numt _exp(numt x, indexer p){return KExpLX(p[0],p[1],x);}
 template<class numt=double, class indexer=numt*>
 numt polynom(numt x,indexer  p,unsigned int P){
 	numt res=0;numt c=1;
-	for(unsigned int i=0; i<=P;i++){res+=c*p[i];c*=x;}
+	for(unsigned int i=0; i<=P;i++){res+=c*p[i];if(i<P)c*=x;}
 	return res;
 }
 template<unsigned int P,class numt=double, class indexer=numt*>
-numt polynom(numt x,indexer  p){	return polynom<numt,indexer>(x,p,P);}
+numt polynom(numt x,indexer  p){return polynom<numt,indexer>(x,p,P);}
 template<unsigned int P,class numt=double, class indexer=numt*>
 numt Polynom(indexer x, indexer p){return polynom<P,numt,indexer>(x[0],p);}
 
