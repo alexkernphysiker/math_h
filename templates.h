@@ -146,9 +146,7 @@ private:
 	public:
 		ConvUInt(numt x, Convolution* father){X=x;master=father;}
 		numt operator()(numt ksi){
-			func1 A=master->A;
-			func2 B=master->B;
-			return A(ksi) * B(X-ksi);
+			return master->A(ksi) * master->B(X-ksi);
 		}
 	};
 public:
