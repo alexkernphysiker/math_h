@@ -1,6 +1,7 @@
 #ifndef RANDOMFUNC_H
 #	define RANDOMFUNC_H
 #include "interpolate.h"
+#include "sympson.h"
 #include <random>
 template<class numt,class func>//Generates random values distributed by given formula
 // func cannot be a lambda-expression
