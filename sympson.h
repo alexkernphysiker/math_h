@@ -1,0 +1,69 @@
+/* The newest version of this file can be got by this link
+https://github.com/alexkernphysiker/MathLibs/blob/master/functions
+There are also some examples how to use these templates in this repository
+author: alex_kernphysiker@privatdemail.net */
+#ifndef ___SYMPSON_H
+#define ___SYMPSON_H
+
+// Sympson integral
+template<class numt,class functype>
+numt Sympson(functype y,numt a, numt b, numt step){
+	numt res=0;
+	if(step<=0)return 0;
+	numt A=a;numt B=b;
+	if(A>B){numt C=A;A=B;B=C;}
+	numt lastfunc=y(A);
+	numt halfstep=step/2;
+	for(numt x=A+step;x<B;x+=step){
+		numt midfunc=y(x-halfstep);
+		numt nextfunc=y(x);
+		res+=(lastfunc+4*midfunc+nextfunc)*step/6;
+		lastfunc=nextfunc;
+	}
+	return res;
+}
+// Sympson integral (output table)
+template<class numt,class indexer,class functype>
+numt* SympsonTable(int N,indexer x,functype y){
+	numt res=0;
+	if(N<=0)return nullptr;
+	numt *table=new numt[N];
+	table[0]=0;
+	numt lastx=x[0];numt lastfunc=y(lastx);
+	for(int i=1;i<N;i++){
+		numt thisarg=x[i];
+		numt midfunc=y((thisarg+lastx)/2);
+		numt nextfunc=y(thisarg);
+		res+=(lastfunc+4*midfunc+nextfunc)*(thisarg-lastx)/6;
+		lastfunc=nextfunc;
+		lastx=thisarg;
+		table[i]=res;
+	}
+	return table;
+}
+
+// Convolution integral
+// func1 and func2 cannot be lambda-expressions
+// Use SingleParam template class instead
+template<class numt,class func1, class func2>
+class Convolution{
+private:
+	func1 A;func2 B;numt Ksi1;numt Ksi2;numt Step;
+	class ConvUInt{
+	private:	numt X;Convolution *master;
+	public:
+		ConvUInt(numt x, Convolution* father){X=x;master=father;}
+		numt operator()(numt ksi){
+			return master->A(ksi) * master->B(X-ksi);
+		}
+	};
+public:
+	Convolution(){}
+	Convolution(Convolution &C){A=C.A;B=C.B;Ksi1=C.Ksi1;Ksi2=C.Ksi2;Step=C.Step;}
+	Convolution(func1 a, func2 b){A=a;B=b;}
+	void Init(numt ksi1, numt ksi2, numt step){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
+	virtual numt operator()(numt x){
+		return Sympson(ConvUInt(x,this),Ksi1,Ksi2,Step);
+	}
+};
+#endif // ___SYMPSON_H
