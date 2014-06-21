@@ -1,9 +1,5 @@
-/* The newest version of this file can be got by this link
-https://github.com/alexkernphysiker/MathLibs/blob/master/functions
-There are also some examples how to use these templates in this repository
-author: alex_kernphysiker@privatdemail.net */
 #ifndef ___INTERPOLATE_H
-#define ___INTERPOLATE_H
+#	define ___INTERPOLATE_H
 //X must be sorted (lesser index - lesser value)
 // Looks for a position where next value x should be inserted into X for X stayed sorted
 template<class comparable, class indexer>

@@ -1,5 +1,5 @@
 #ifndef COMPLEX____
-#define COMPLEX____
+#	define COMPLEX____
 template<class numt=double>
 class Complex{
 private:
