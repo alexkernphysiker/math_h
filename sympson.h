@@ -4,16 +4,15 @@
 // Sympson integral
 template<class numt,class functype>
 numt Sympson(functype y,numt a, numt b, numt step){
+	numt stp=step;
+	if((stp*(b-a))<=0) stp=-stp;
+	numt halfstep=stp/2;
+	numt lastfunc=y(a);
 	numt res=0;
-	if(step<=0)return 0;
-	numt A=a;numt B=b;
-	if(A>B){numt C=A;A=B;B=C;}
-	numt lastfunc=y(A);
-	numt halfstep=step/2;
-	for(numt x=A+step;x<B;x+=step){
+	for(numt x=a+stp;(a-b)*(x-b)>0;x+=stp){
 		numt midfunc=y(x-halfstep);
 		numt nextfunc=y(x);
-		res+=(lastfunc+4*midfunc+nextfunc)*step/6;
+		res+=(lastfunc+4*midfunc+nextfunc)*stp/6;
 		lastfunc=nextfunc;
 	}
 	return res;
