@@ -1,6 +1,6 @@
 #ifndef COMPLEX____
 #	define COMPLEX____
-template<class numt=double>
+template<typename numt>
 class Complex{
 private:
 	numt m_re;
@@ -13,8 +13,9 @@ public:
 	virtual ~Complex(){}
 	//properties
 	numt re()const{return m_re;}	numt im()const{return m_im;}
-	numt absSqr()const{return m_re*m_re+m_im*m_im;}	numt abs()const{return sqrt(absSqr());}
-	numt arg()const{numt r=absSqr();
+	numt sqrabs()const{return m_re*m_re+m_im*m_im;}
+	numt abs()const{return sqrt(sqrabs());}
+	numt arg()const{numt r=sqrabs();
 		if(r>0){return atan2(m_im,m_re);}else{return 0;}
 	}
 	Complex conj()const{return Complex(m_re,-m_im);}
@@ -63,32 +64,40 @@ public:
 		return *this;
 	}
 };
-template<class numt=double>
+template<typename numt>
 Complex<numt> I(){return Complex<numt>(0,1);}
+template<typename numt>
+numt re(Complex<numt> c){return c.re();}
+template<typename numt>
+numt im(Complex<numt> c){return c.im();}
+template<typename numt>
+numt abs(const Complex<numt> z){return z.abs();}
+template<typename numt>
+numt arg(const Complex<numt> z){return z.arg();}
+template<typename numt>
+numt conj(const Complex<numt> z){return z.conj();}
 // operators
-template<class A, class B>
+template<typename A, typename B>
 A operator+(A a, B b){A res=a; res+=A(b);return res;}
-template<class A, class B>
+template<typename A, typename B>
 A operator-(A a, B b){A res=a; res-=A(b);return res;}
-template<class A, class B>
+template<typename A, typename B>
 A operator*(A a, B b){A res=a; res*=A(b);return res;}
-template<class A, class B>
+template<typename A, typename B>
 A operator/(A a, B b){A res=a; res/=A(b);return res;}
-template<class numt=double>
+template<typename numt>
 Complex<numt> operator-(const Complex<numt> a){Complex<numt> res=0;return res-=a;}
 
 //functions
-template<class numt=double>
-numt abs(const Complex<numt> z){return z.abs();}
-template<class numt=double>
+template<typename numt>
 Complex<numt> exp(const Complex<numt> z){
 	return Complex<numt>(cos(z.im()),sin(z.im()))*exp(z.re());
 }
-template<class numt=double>
+template<typename numt>
 Complex<numt> log(const Complex<numt> z){
-	return Complex<numt>(log(abs(z)),z.arg());
+	return Complex<numt>(log(z.abs()),z.arg());
 }
-template <class A, class B>  A pow(A a, B b){
+template <typename A, typename B>  A pow(A a, B b){
 	A r=log(a);r*=b;return exp(r);
 }
 #endif // COMPLEX____
