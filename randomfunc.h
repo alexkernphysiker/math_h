@@ -1,3 +1,4 @@
+// https://github.com/alexkernphysiker/math_h
 #ifndef RANDOMFUNC_H
 #	define RANDOMFUNC_H
 #include "interpolate.h"

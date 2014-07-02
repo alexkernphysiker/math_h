@@ -1,3 +1,4 @@
+// https://github.com/alexkernphysiker/math_h
 #ifndef ___SYMPSON_H
 #	define ___SYMPSON_H
 

@@ -1,3 +1,4 @@
+// https://github.com/alexkernphysiker/math_h
 #ifndef ___INTERPOLATE_H
 #	define ___INTERPOLATE_H
 //X must be sorted (lesser index - lesser value)
