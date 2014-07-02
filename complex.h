@@ -50,44 +50,44 @@ public:
 		m_im*=c;
 		return *this;
 	}
+	Complex& operator/=(const numt c){
+		m_re/=c;
+		m_im/=c;
+		return *this;
+	}
 	Complex& operator/=(const Complex z){
 		numt below=z.absSqr();
 		if(below==0) throw;//division by zero
 		numt r=m_re*z.m_re+m_im*z.m_im;
 		numt i=m_im*z.m_re-m_re*z.m_im;
 		m_re=r;m_im=i;
-		operator*=(1/below);
-		return *this;
-	}
-	Complex& operator/=(const numt c){
-		m_re/=c;
-		m_im/=c;
+		operator/=(below);
 		return *this;
 	}
 };
 template<typename numt>
-Complex<numt> I(){return Complex<numt>(0,1);}
+inline Complex<numt> I(){return Complex<numt>(0,1);}
 template<typename numt>
-numt re(Complex<numt> c){return c.re();}
+inline numt re(Complex<numt> c){return c.re();}
 template<typename numt>
-numt im(Complex<numt> c){return c.im();}
+inline numt im(Complex<numt> c){return c.im();}
 template<typename numt>
-numt abs(const Complex<numt> z){return z.abs();}
+inline numt abs(const Complex<numt> z){return z.abs();}
 template<typename numt>
-numt arg(const Complex<numt> z){return z.arg();}
+inline numt arg(const Complex<numt> z){return z.arg();}
 template<typename numt>
-numt conj(const Complex<numt> z){return z.conj();}
+inline numt conj(const Complex<numt> z){return z.conj();}
 // operators
-template<typename A, typename B>
-A operator+(A a, B b){A res=a; res+=A(b);return res;}
-template<typename A, typename B>
-A operator-(A a, B b){A res=a; res-=A(b);return res;}
-template<typename A, typename B>
-A operator*(A a, B b){A res=a; res*=A(b);return res;}
-template<typename A, typename B>
-A operator/(A a, B b){A res=a; res/=A(b);return res;}
+template<typename numt, typename B>
+inline Complex<numt> operator+(Complex<numt> a, B b){Complex<numt> res=a; res+=b;return res;}
+template<typename numt, typename B>
+inline Complex<numt> operator-(Complex<numt> a, B b){Complex<numt> res=a; res-=b;return res;}
+template<typename numt, typename B>
+inline Complex<numt> operator*(Complex<numt> a, B b){Complex<numt> res=a; res*=b;return res;}
+template<typename numt, typename B>
+inline Complex<numt> operator/(Complex<numt> a, B b){Complex<numt> res=a; res/=b;return res;}
 template<typename numt>
-Complex<numt> operator-(const Complex<numt> a){Complex<numt> res=0;return res-=a;}
+inline Complex<numt> operator-(const Complex<numt> a){Complex<numt> res=0;return res-=a;}
 
 //functions
 template<typename numt>
@@ -98,7 +98,7 @@ template<typename numt>
 Complex<numt> log(const Complex<numt> z){
 	return Complex<numt>(log(z.abs()),z.arg());
 }
-template <typename A, typename B>  A pow(A a, B b){
-	A r=log(a);r*=b;return exp(r);
+template <typename numt, typename B>  Complex<numt> pow(Complex<numt> a, B b){
+	Complex<numt> r=log(a);r*=b;return exp(r);
 }
 #endif // COMPLEX____
