@@ -40,8 +40,8 @@ public:
 		return *this;
 	}
 	Complex& operator*=(const Complex z){
-		double r=m_re*z.m_re-m_im*z.m_im;
-		double i=m_im*z.m_re+m_re*z.m_im;
+		numt r=m_re*z.m_re-m_im*z.m_im;
+		numt i=m_im*z.m_re+m_re*z.m_im;
 		m_re=r;m_im=i;
 		return *this;
 	}
