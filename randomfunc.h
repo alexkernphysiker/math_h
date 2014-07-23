@@ -42,7 +42,8 @@ public:
 					distrib_func[N-1]*numt(rand()) / numt(RAND_MAX)
 				);
 	}
-	numt operator ()(numt){return (*this)();}
+	numt operator ()(double){return (*this)();}
+	numt operator |(numt x){return m_distr(x)/distrib_func[N-1];}
 };
 template<class numt>
 double RandomUniformly(numt x1, numt x2){
