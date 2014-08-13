@@ -21,7 +21,6 @@ public:
 		}
 		return m_avr;
 	}
-	numt operator[](int i){return m_list[i];}
 	int count(){return m_list.size();}
 	numt getSigma(){
 		getAverage();
