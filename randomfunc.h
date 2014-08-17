@@ -4,11 +4,24 @@
 #include "interpolate.h"
 #include "sympson.h"
 #include <random>
+template<class numt>
+double RandomUniformly(numt x1, numt x2){
+#ifdef USE_RANDOM_DEVICE
+	std::random_device random;
+	auto val=random()+random.min();
+	auto max=random.max()-random.min();
+#else
+	auto val=rand();
+	auto max=RAND_MAX;
+#endif
+	return ((x2-x1)*numt(val) / numt(max))+x1;
+}
+
 template<class numt,class func>//Generates random values distributed by given formula
 // func cannot be a lambda-expression
 class RandomValueGenerator{
 private:
-	func m_distr;	int N;
+	func m_distr;int N;
 	numt *values;numt *distrib_func;
 public:
 	RandomValueGenerator(){}
@@ -39,23 +52,19 @@ public:
 	numt operator ()(){
 		return Interpolate_Linear(0,N-1,
 					distrib_func,values,
-					distrib_func[N-1]*numt(rand()) / numt(RAND_MAX)
+					RandomUniformly<numt>(0,distrib_func[N-1])
 				);
 	}
 	numt operator ()(double){return (*this)();}
 	numt operator |(numt x){return m_distr(x)/distrib_func[N-1];}
 };
-template<class numt>
-double RandomUniformly(numt x1, numt x2){
-	return ((x2-x1)*numt(rand()) / numt(RAND_MAX))+x1;
-}
 template<class numt>// cannot use integer types
 numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	if(sigma==0)return average;
 	numt res=0.0;
 	numt coeff=1.0/::sqrt(12.0);
 	for(unsigned int i=0;i<precision;i++)
-		res+=RandomUniformly(-0.5,0.5);
+		res+=RandomUniformly<numt>(-0.5,0.5);
 	res*=(sigma/(coeff*precision))*::sqrt(numt(precision));
 	res+=average;
 	return res;
