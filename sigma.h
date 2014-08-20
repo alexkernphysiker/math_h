@@ -10,15 +10,25 @@ private:
 public:
 	Sigma(){m_sum=0;cache=false;m_sigsqr=0;}
 	virtual ~Sigma(){}
-	void AddValue(numt value){m_list.push_back(value);m_sum+=value;cache=false;}
-	numt getAverage(){return m_sum/m_list.size();}
+	void AddValue(numt value){
+		m_list.push_back(value);
+		m_sum+=value;
+		cache=false;
+	}
+	numt getAverage(){
+		int sz=m_list.size();
+		if(sz<=0)throw;
+		return m_sum/sz;
+	}
 	int count(){return m_list.size();}
 	numt getSigmaSqr(){
 		if(!cache){
 			double average=getAverage();
 			m_sigsqr=0;
-			foreach(double value,m_list)
-				m_sigsqr+=pow(value-average,2);
+			foreach(double value,m_list){
+				numt d=value-average;
+				m_sigsqr+=d*d;
+			}
 			m_sigsqr/=m_list.size()-1;
 			cache=true;
 		}
