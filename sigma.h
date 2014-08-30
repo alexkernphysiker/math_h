@@ -23,9 +23,9 @@ public:
 	int count(){return m_list.size();}
 	numt getSigmaSqr(){
 		if(!cache){
-			double average=getAverage();
+			numt average=getAverage();
 			m_sigsqr=0;
-			foreach(double value,m_list){
+			foreach(numt value,m_list){
 				numt d=value-average;
 				m_sigsqr+=d*d;
 			}
