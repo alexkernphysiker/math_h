@@ -25,9 +25,12 @@ public:
 		if(!cache){
 			numt average=getAverage();
 			m_sigsqr=0;
-			foreach(numt value,m_list){
+			auto it=m_list.begin();
+			while(it!=m_list.end()){
+				numt value=*it;
 				numt d=value-average;
 				m_sigsqr+=d*d;
+				it++;
 			}
 			m_sigsqr/=m_list.size()-1;
 			cache=true;
