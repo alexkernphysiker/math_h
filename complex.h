@@ -62,7 +62,7 @@ public:
 		numt r=m_re*z.m_re+m_im*z.m_im;
 		numt i=m_im*z.m_re-m_re*z.m_im;
 		m_re=r;m_im=i;
-		operator/=below;
+		operator/=(below);
 		return *this;
 	}
 };
