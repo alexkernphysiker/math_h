@@ -8,7 +8,7 @@ template<class numt>
 double RandomUniformly(numt x1, numt x2){
 #ifdef USE_RANDOM_DEVICE
 	std::random_device random;
-	auto val=random()+random.min();
+	auto val=random()-random.min();
 	auto max=random.max()-random.min();
 #else
 	auto val=rand();
