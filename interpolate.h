@@ -16,15 +16,6 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 	}
 	return end;//beg+1, new element x should be inserted between beg and end
 }
-template<class comparable, class indexer>
-int  InsertIndex(indexer X, comparable x){
-	return WhereToInsert<comparable,indexer>(0,X.Count()-1,X,x);
-}
-template<class comparable, class indexer>
-int  insertIndex(indexer X, comparable x){
-	return WhereToInsert<comparable,indexer>(0,X.count()-1,X,x);
-}
-
 //Linear interpolation based on previous algorithm
 template<class numt, class indexer, class indexer2>
 numt  Interpolate_Linear(int from, int to, indexer X, indexer2 Y, numt x){
@@ -33,17 +24,6 @@ numt  Interpolate_Linear(int from, int to, indexer X, indexer2 Y, numt x){
 	if(i>to)throw;//x out of border; rightside
 	numt k=(x-X[i-1])/(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
 }
-template<class numt, class indexer, class indexer2>
-numt  InterpolateLinear(indexer X, indexer2 Y, numt x){
-	int i=InsertIndex(X,x);if(i<=0)throw;if(i>=X.Count())throw;
-	numt k=(x-X[i-1])/(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
-}
-template<class numt, class indexer, class indexer2>
-numt  interpolateLinear(indexer X, indexer2 Y, numt x){
-	int i=insertIndex(X,x);if(i<=0)throw;if(i>=X.count())throw;
-	numt k=(x-X[i-1])/(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
-}
-
 template<class numt>
 class FuncTable{
 private:

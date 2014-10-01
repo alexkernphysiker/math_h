@@ -16,7 +16,17 @@ double RandomUniformly(numt x1, numt x2){
 #endif
 	return ((x2-x1)*numt(val) / numt(max))+x1;
 }
-
+template<class numt>// cannot use integer types
+numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
+	if(sigma==0)return average;
+	numt res=0.0;
+	numt coeff=1.0/::sqrt(12.0);
+	for(unsigned int i=0;i<precision;i++)
+		res+=RandomUniformly<numt>(-0.5,0.5);
+	res*=(sigma/(coeff*precision))*::sqrt(numt(precision));
+	res+=average;
+	return res;
+}
 template<class numt,class func>//Generates random values distributed by given formula
 // func cannot be a lambda-expression
 class RandomValueGenerator{
@@ -58,15 +68,4 @@ public:
 	numt operator ()(double){return (*this)();}
 	numt operator |(numt x){return m_distr(x)/distrib_func[N-1];}
 };
-template<class numt>// cannot use integer types
-numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
-	if(sigma==0)return average;
-	numt res=0.0;
-	numt coeff=1.0/::sqrt(12.0);
-	for(unsigned int i=0;i<precision;i++)
-		res+=RandomUniformly<numt>(-0.5,0.5);
-	res*=(sigma/(coeff*precision))*::sqrt(numt(precision));
-	res+=average;
-	return res;
-}
 #endif // RANDOMFUNC_H
