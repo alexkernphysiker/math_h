@@ -22,9 +22,9 @@ int main(int,char**){
 	std::printf("double integral using lambdas:\n");
 	double doubleintvalue=Sympson([](double x){
 		double res= Sympson([x](double y){
-			return ::exp(-y*y);//this may depend on x and y
+			return exp(-y*y);//this may depend on x and y
 		},-20.0,20.0,step2);
-		res*=::exp(-x*x);// this may depend only on x
+		res*=exp(-x*x);// this may depend only on x
 		return res;
 	},-20.0,20.0,step2);
 	std::printf("Integral ~gauss(x)*gauss(y) = %f \n",doubleintvalue);
