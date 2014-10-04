@@ -1,7 +1,6 @@
+// Be carefull with using this header file!!!!!!!!!!
 #ifdef use_num_type
 #ifdef use_indexer_type
-#ifndef WRAP2_H
-#define WRAP2_H
 #include "functions.h"
 namespace FuncWrappers2{
 	template<int x_ind>
@@ -27,6 +26,5 @@ namespace FuncWrappers2{
 	template<int x_ind, int par_ind, int p>
 	use_num_type polynom(use_indexer_type X,use_indexer_type P){return Polynom(X[x_ind],P,p,par_ind);}
 }
-#endif // WRAP2_H
 #endif
 #endif
