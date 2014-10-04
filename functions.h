@@ -20,4 +20,24 @@ numt Polynom(numt x,indexer  p,unsigned int P, int index_offset=0){
 }
 template<unsigned int P,class numt, class indexer, int index_offset=0>
 numt Polynom(numt x,indexer  p){return Polynom<numt,indexer>(x,p,P,index_offset);}
+namespace FuncWrappers{
+template<class numt,class indexer,int i>
+numt par(indexer P){return P[i];}
+template<class numt,class indexer,numt (f)(numt),numt(F)(indexer)>
+numt func(indexer P){return f(F(P));}
+template<class numt,class indexer,numt (f)(numt,numt),numt(F1)(indexer),numt(F2)(indexer)>
+numt func2(indexer P){return f(F1(P),F2(P));}
+template<class numt,class indexer,numt (f)(numt,numt,numt),numt(F1)(indexer),numt(F2)(indexer),numt(F3)(indexer)>
+numt func3(indexer P){return f(F1(P),F2(P),F3(P));}
+template<class numt,class indexer,numt(F1)(indexer),numt(F2)(indexer)>
+numt add(indexer P){return F1(P)+F2(P);}
+template<class numt,class indexer,numt(F1)(indexer),numt(F2)(indexer)>
+numt sub(indexer P){return F1(P)-F2(P);}
+template<class numt,class indexer,numt(F1)(indexer),numt(F2)(indexer)>
+numt mul(indexer P){return F1(P)*F2(P);}
+template<class numt,class indexer,numt(F1)(indexer),numt(F2)(indexer)>
+numt div(indexer P){return F1(P)/F2(P);}
+template<class numt,class indexer,numt(F1)(indexer),numt(F2)(indexer)>
+numt power(indexer P){return pow(F1(P),F2(P));}
+}
 #endif // FUNCTIONS_H
