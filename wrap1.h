@@ -1,7 +1,7 @@
 // Be carefull with using this header file!!!!!!!!!!
 #ifdef use_num_type
 #ifdef use_indexer_type
-namespace FuncWrappers{
+namespace FuncWrappers_P{
 	template<int i>use_num_type par(use_indexer_type P){return P[i];}
 #define ___p_decl___ use_indexer_type
 #define ___p_decl2___ use_indexer_type P
