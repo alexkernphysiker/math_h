@@ -3,6 +3,9 @@
 #ifdef ___p_decl___
 #ifdef ___p_decl2___
 #ifdef ___p_
+//wrap global variable
+template<use_num_type& value>
+inline use_num_type var(___p_decl2___){return value;}
 //wrap functions requiring use_num_type as parameters
 template<use_num_type (f)(use_num_type),use_num_type(F)(___p_decl___)>
 inline use_num_type func(___p_decl2___){return f(F(___p_));}
