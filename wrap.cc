@@ -28,12 +28,13 @@ inline use_num_type div(___p_decl2___){return F1(___p_)/F2(___p_);}
 template<use_num_type(F1)(___p_decl___),use_num_type(F2)(___p_decl___)>
 inline use_num_type power(___p_decl2___){return pow(F1(___p_),F2(___p_));}
 //we also need to provide constants
-template<int c>
-inline use_num_type num(___p_decl2___){return use_num_type(c);}
-//for creating non-inline functions
+namespace details{
+template<unsigned char digits=0> struct movecoef{enum{value=movecoef<digits-1>::value * 10};};
+template<> struct movecoef<0>{enum{value=1};};
+};
+template<int basic,unsigned char move_point=0>inline use_num_type num(___p_decl2___){return use_num_type(basic)/use_num_type(details::movecoef<move_point>::value);}
 template<use_num_type(F)(___p_decl___)>
 use_num_type wrap(___p_decl2___){return F(___p_);}
-
 #endif
 #endif
 #endif
