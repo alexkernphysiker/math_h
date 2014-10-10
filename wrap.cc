@@ -1,5 +1,4 @@
 #ifdef use_num_type
-#ifdef use_indexer_type
 #ifdef ___p_decl___
 #ifdef ___p_decl2___
 #ifdef ___p_
@@ -38,7 +37,6 @@ template<> struct movecoef<0>{enum{value=1};};
 template<int basic,unsigned char move_point=0>inline use_num_type num(___p_decl2___){return use_num_type(basic)/use_num_type(details::movecoef<move_point>::value);}
 template<use_num_type(F)(___p_decl___)>
 use_num_type wrap(___p_decl2___){return F(___p_);}
-#endif
 #endif
 #endif
 #endif
