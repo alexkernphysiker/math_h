@@ -35,6 +35,7 @@ template<unsigned char digits=0> struct movecoef{enum{value=movecoef<digits-1>::
 template<> struct movecoef<0>{enum{value=1};};
 };
 template<int basic,unsigned char move_point=0>inline use_num_type num(___p_decl2___){return use_num_type(basic)/use_num_type(details::movecoef<move_point>::value);}
+//for creating non-inline function if needed
 template<use_num_type(F)(___p_decl___)>
 use_num_type wrap(___p_decl2___){return F(___p_);}
 #endif
