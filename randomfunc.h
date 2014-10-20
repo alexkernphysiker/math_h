@@ -5,7 +5,7 @@
 #include "sympson.h"
 #include <random>
 template<class numt>
-double RandomUniformly(numt x1, numt x2){
+numt RandomUniformly(numt x1, numt x2){
 #ifdef USE_RANDOM_DEVICE
 	std::random_device random;
 	auto val=random()-random.min();
