@@ -65,4 +65,37 @@ void fillFuncTable(FuncTable<numt> &tbl,numt from, numt to,func y){
 		tbl.set(i,x,y(x));
 	}
 }
+template<class numt>
+void fillFuncTableWithZeros(FuncTable<numt> &tbl,numt from, numt to){
+	numt step=(to-from)/(tbl.size()-1);
+	for(int i=0;i<tbl.size();i++){
+		numt x=from+(step*numt(i));
+		tbl.set(i,x,0);
+	}
+}
+template<class numt>
+void add2hist(FuncTable<numt> &tbl, numt value){
+	int index=tbl.size()-1;int beg=0;
+	if(value<tbl.getx(index)){
+		if(value>tbl.getx(beg)){
+			while(1<(index-beg)){
+				int mid=(beg+index)/2;
+				if(value<tbl.getx(mid))index=mid;else
+					if(value>=tbl.getx(mid))beg=mid;
+			}
+		}else index=0;
+	}else index=tbl.size();
+	if((tbl.size()-1)<=index){
+		int i=tbl.size()-1;
+		tbl.sety(i,tbl.gety(i)+1);
+	}
+	else if(0==index){
+		tbl.sety(0,tbl.gety(0)+1);
+	}else {
+	  double x1=tbl.getx(index-1);
+	  double x2=tbl.getx(index);
+	  if((value-x1)<(x2-value))index--;
+	  tbl.sety(index,tbl.gety(index)+1);
+	}
+}
 #endif
