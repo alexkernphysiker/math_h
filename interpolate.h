@@ -49,7 +49,7 @@ public:
 	}
 	virtual ~FuncTable(){delete[] X; delete[] Y;}
 	void set(int i,numt x, numt y){X[i]=(x);Y[i]=(y);}
-	void sety(int i,numt y){X[i]=(x);Y[i]=(y);}
+	void sety(int i,numt y){Y[i]=(y);}
 	numt getx(int i){return X[i];}
 	numt gety(int i){return Y[i];}
 	int size(){return cnt;}
