@@ -49,6 +49,9 @@ public:
 	}
 	virtual ~FuncTable(){delete[] X; delete[] Y;}
 	void set(int i,numt x, numt y){X[i]=(x);Y[i]=(y);}
+	void sety(int i,numt y){X[i]=(x);Y[i]=(y);}
+	void getx(int i){return X[i];}
+	void gety(int i){return Y[i];}
 	int size(){return cnt;}
 	numt operator()(numt x){
 		return Interpolate_Linear(0,cnt-1,X,Y,x);
