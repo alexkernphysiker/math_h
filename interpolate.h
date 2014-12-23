@@ -17,60 +17,60 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 	return end;//beg+1, new element x should be inserted between beg and end
 }
 //Linear interpolation based on previous algorithm
-template<class numt, class indexer, class indexer2>
-numt  Interpolate_Linear(int from, int to, indexer X, indexer2 Y, numt x){
+template<class numX, class indexerX, class numY, class indexerY>
+numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
 	int i=WhereToInsert(from,to,X,x);
 	if(i<=from)throw;//x out of border; leftside
 	if(i>to)throw;//x out of border; rightside
-	numt k=(x-X[i-1])/(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
+	numY k=numY(x-X[i-1])/numY(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
 }
-template<class numt>
+template<class numX, class numY=numX>
 class FuncTable{
 private:
-	numt* X;
-	numt* Y;
+	numX* X;
+	numY* Y;
 	int cnt;
 public:
-	FuncTable(){cnt=2;X=new numt[cnt];Y=new numt[cnt];}
+	FuncTable(){cnt=2;X=new numX[cnt];Y=new numY[cnt];}
 	FuncTable(int sz){
 		if(sz<=1)throw;
 		cnt=sz;
-		X=new numt[cnt];
-		Y=new numt[cnt];
+		X=new numX[cnt];
+		Y=new numY[cnt];
 	}
 	FuncTable(FuncTable &f){
 		cnt=f.cnt;
-		X=new numt[cnt];
-		Y=new numt[cnt];
+		X=new numX[cnt];
+		Y=new numY[cnt];
 		for(int i=0; i<cnt;i++){
 			X[i]=(f.X[i]);
 			Y[i]=(f.Y[i]);
 		}
 	}
 	virtual ~FuncTable(){delete[] X; delete[] Y;}
-	void set(int i,numt x, numt y){X[i]=(x);Y[i]=(y);}
-	void sety(int i,numt y){Y[i]=(y);}
-	numt getx(int i){return X[i];}
-	numt gety(int i){return Y[i];}
+	void set(int i,numX x, numY y){X[i]=(x);Y[i]=(y);}
+	void sety(int i,numY y){Y[i]=(y);}
+	numX getx(int i){return X[i];}
+	numY gety(int i){return Y[i];}
 	int size(){return cnt;}
-	numt operator()(numt x){
+	numY operator()(numX x){
 		return Interpolate_Linear(0,cnt-1,X,Y,x);
 	}
 };
-template<class numt, class func>
-void fillFuncTable(FuncTable<numt> &tbl,numt from, numt to,func y){
-	numt step=(to-from)/(tbl.size()-1);
+template<class numX, class func, class numY=numX>
+void fillFuncTable(FuncTable<numX,numY> &tbl,numX from, numX to,func y){
+	numX step=(to-from)/(tbl.size()-1);
 	for(int i=0;i<tbl.size();i++){
-		numt x=from+(step*numt(i));
+		numX x=from+(step*numt(i));
 		tbl.set(i,x,y(x));
 	}
 }
-template<class numt>
-void fillFuncTableWithZeros(FuncTable<numt> &tbl,numt from, numt to){
-	numt step=(to-from)/(tbl.size()-1);
+template<class numX, class numY=numX>
+void fillFuncTableWithZeros(FuncTable<numX,numY> &tbl,numt from, numt to){
+	numX step=(to-from)/(tbl.size()-1);
 	for(int i=0;i<tbl.size();i++){
-		numt x=from+(step*numt(i));
-		tbl.set(i,x,0);
+		numX x=from+(step*numt(i));
+		tbl.set(i,x,numY(0));
 	}
 }
 template<class numt>
