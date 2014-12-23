@@ -1,3 +1,5 @@
+// https://github.com/alexkernphysiker/math_h
+// Don't include this file directly
 #ifdef use_num_type
 #ifdef ___p_decl___
 #ifdef ___p_decl2___

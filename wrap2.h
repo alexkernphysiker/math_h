@@ -1,4 +1,6 @@
+// https://github.com/alexkernphysiker/math_h
 // Be carefull with using this header file!!!!!!!!!!
+// It requires two defined expressions and can be included more than once!
 #ifdef use_num_type
 #ifdef use_indexer_type
 #include "functions.h"
