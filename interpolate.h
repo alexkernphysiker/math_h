@@ -17,7 +17,7 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 	return end;//beg+1, new element x should be inserted between beg and end
 }
 //Linear interpolation based on previous algorithm
-template<class numX, class indexerX, class numY, class indexerY>
+template<class numX, class indexerX, class numY=numX, class indexerY=indexerX>
 numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
 	int i=WhereToInsert(from,to,X,x);
 	if(i<=from)throw;//x out of border; leftside
@@ -54,22 +54,22 @@ public:
 	numY gety(int i){return Y[i];}
 	int size(){return cnt;}
 	numY operator()(numX x){
-		return Interpolate_Linear(0,cnt-1,X,Y,x);
+		return Interpolate_Linear<numX,numX*,numY,numY*>(0,cnt-1,X,Y,x);
 	}
 };
 template<class numX, class func, class numY=numX>
 void fillFuncTable(FuncTable<numX,numY> &tbl,numX from, numX to,func y){
 	numX step=(to-from)/(tbl.size()-1);
 	for(int i=0;i<tbl.size();i++){
-		numX x=from+(step*numt(i));
+		numX x=from+(step*numX(i));
 		tbl.set(i,x,y(x));
 	}
 }
 template<class numX, class numY=numX>
-void fillFuncTableWithZeros(FuncTable<numX,numY> &tbl,numt from, numt to){
+void fillFuncTableWithZeros(FuncTable<numX,numY> &tbl,numX from, numX to){
 	numX step=(to-from)/(tbl.size()-1);
 	for(int i=0;i<tbl.size();i++){
-		numX x=from+(step*numt(i));
+		numX x=from+(step*numX(i));
 		tbl.set(i,x,numY(0));
 	}
 }

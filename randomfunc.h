@@ -60,7 +60,7 @@ public:
 		distrib_func=SympsonTable<numt,numt*,func>(N,values,m_distr);
 	}
 	numt operator ()(){
-		return Interpolate_Linear(0,N-1,
+		return Interpolate_Linear<numt,numt*>(0,N-1,
 					distrib_func,values,
 					RandomUniformly<numt>(0,distrib_func[N-1])
 				);
