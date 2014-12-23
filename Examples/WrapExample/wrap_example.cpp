@@ -3,22 +3,28 @@
 #include <QProcess>
 #include <stdio.h>
 #include <math.h>
-#include <math_h/sympson.h>
-#include <math_h/functions.h>
-#include <math_h/singleparam.h>
+#include <functions.h>
+#define use_num_type double
+#define use_indexer_type double*
+#include <wrap3.h>
+#undef use_num_type
+#undef use_indexer_type
+double params[]={1,0.5,3};
+using namespace FuncWrappers_xP;
+double a;
 int main(int , char **){
-	SingleParam<double,2,double,double,double>
-			E(&KExpLX<double>,0.5,-2,INFINITY);
-	SingleParam<double,0,double,double,double>
-			G(&Gaussian<double>,INFINITY,0.5,0.2);
-	Convolution<double,decltype(E),decltype(G)> conv(E,G);
-	conv.Init(0,10,0.001);
+	a=1;
 	{QFile file("output.txt");
 		file.open(QFile::WriteOnly);
 		if(file.isOpen()){
 			QTextStream str(&file);
-			for(double x=0; x<=6; x+=0.01)
-				str<<x<<" " << conv(x) <<"\n";
+			for(double x=-2; x<=6; x+=0.01)
+				str<<x<<" " <<
+					 add<
+						func3<Gaussian,arg,par<0>,par<1>>,
+						func3<Gaussian,arg,par<2>,var<a>>
+					>(x,params)
+				<<"\n";
 			file.close();
 		}
 	}
@@ -36,5 +42,5 @@ int main(int , char **){
 		QProcess *gnuplot=new QProcess();
 		gnuplot->startDetached("gnuplot",QStringList()<<script);
 	}
+	return 0;
 }
-

@@ -1,8 +1,8 @@
 #include <QTextStream>
 #include <stdio.h>
 #include <math.h>
-#include <math_h/sympson.h>
-#include <math_h/singleparam.h>
+#include <sympson.h>
+#include <singleparam.h>
 const double step=0.0001;
 const double step2=0.01;
 int main(int,char**){
