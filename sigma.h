@@ -28,7 +28,7 @@ public:
 			auto it=m_list.begin();
 			while(it!=m_list.end()){
 				numt value=*it;
-				numt d=value-average;
+				numt d=abs(value-average);
 				m_sigsqr+=d*d;
 				it++;
 			}
