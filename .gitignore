@@ -2,6 +2,7 @@
 bin
 qt_build_path.pri
 *output.*
+*.example*
 
 # Compiled Object files
 *.slo
