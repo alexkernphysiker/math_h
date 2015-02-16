@@ -18,6 +18,8 @@ template<use_num_type (f)(use_num_type,use_num_type,use_num_type,use_num_type),u
 inline use_num_type func4(___p_decl2___){return f(F1(___p_),F2(___p_),F3(___p_),F4(___p_));}
 template<use_num_type (f)(use_num_type,use_num_type,use_num_type,use_num_type,use_num_type),use_num_type(F1)(___p_decl___),use_num_type(F2)(___p_decl___),use_num_type(F3)(___p_decl___),use_num_type(F4)(___p_decl___),use_num_type(F5)(___p_decl___)>
 inline use_num_type func5(___p_decl2___){return f(F1(___p_),F2(___p_),F3(___p_),F4(___p_),F5(___p_));}
+template<use_num_type (f)(use_num_type,use_num_type,use_num_type,use_num_type,use_num_type,use_num_type),use_num_type(F1)(___p_decl___),use_num_type(F2)(___p_decl___),use_num_type(F3)(___p_decl___),use_num_type(F4)(___p_decl___),use_num_type(F5)(___p_decl___),use_num_type(F6)(___p_decl___)>
+inline use_num_type func6(___p_decl2___){return f(F1(___p_),F2(___p_),F3(___p_),F4(___p_),F5(___p_),F6(___p_));}
 // combine functions
 template<use_num_type(F)(___p_decl___)>
 inline use_num_type minus(___p_decl2___){return -F(___p_);}
