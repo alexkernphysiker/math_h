@@ -8,6 +8,10 @@ numt Gaussian(numt x, numt X_max, numt sigma){
 	numt koef= 1/(sigma*::sqrt(2*3.1415926));
 	return koef*exp(-(pow(X_max-x,2))/(2*sigma*sigma));
 }
+template<class numt=double>
+numt BreitWigner(numt x, numt ampl, numt gamma, numt pos){
+	return (ampl*pow(gamma/2,2))/(pow(x-pos,2)+pow(gamma/2,2));
+}
 template<class numt=double>//cannot use integer types
 numt FermiFunc(numt x, numt X_border, numt diffuse){
 	return 1.0/(1.0+exp((x-X_border)/diffuse));
