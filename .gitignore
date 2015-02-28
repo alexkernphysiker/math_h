@@ -1,8 +1,6 @@
 *~
 bin
-qt_build_path.pri
-*output.*
-*.example*
+*.kdev*
 
 # Compiled Object files
 *.slo
