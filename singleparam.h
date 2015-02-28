@@ -3,6 +3,7 @@
 #	define ___SINGLE_PARAM_H
 
 #include <utility>
+#include <tuple>
 namespace detail{// implementation details
 	template <
 		typename ret,typename F, typename Tuple,

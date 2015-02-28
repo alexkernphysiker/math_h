@@ -1,22 +1,28 @@
 #include <fstream>
 #include <stdio.h>
 #include <math.h>
-#include <sympson.h>
 #include <functions.h>
-#include <singleparam.h>
+#define use_num_type double
+#define use_indexer_type double*
+#include <wrap3.h>
+#undef use_num_type
+#undef use_indexer_type
+double params[]={1,0.5,3};
+using namespace FuncWrappers_xP;
 using namespace std;
+double a;
 int main(int , char **){
-	SingleParam<double,2,double,double,double>
-			E(&KExpLX<double>,0.5,-2,INFINITY);
-	SingleParam<double,0,double,double,double>
-			G(&Gaussian<double>,INFINITY,0.5,0.2);
-	Convolution<double,decltype(E),decltype(G)> conv(E,G);
-	conv.Init(0,10,0.001);
+	a=1;
 	{ofstream file;
 		file.open("output.txt");
 		if(file.is_open()){
-			for(double x=0; x<=6; x+=0.01)
-				file<<x<<" " << conv(x) <<"\n";
+			for(double x=-2; x<=6; x+=0.01)
+				file<<x<<" " <<
+					 add<
+						func3<Gaussian,arg,par<0>,par<1>>,
+						func3<Gaussian,arg,par<2>,var<a>>
+					>(x,params)
+				<<"\n";
 			file.close();
 		}
 	}
@@ -26,10 +32,10 @@ int main(int , char **){
 			file << "plot ";
 			file <<"\"output.txt\" w l title \"func\"";
 			file << "\n";
-			file <<"\npause -1";
+			file<<"\npause -1";
 			file.close();
 		}
 		system("gnuplot .plotscript.gp");
 	}
+	return 0;
 }
-
