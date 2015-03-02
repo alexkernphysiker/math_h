@@ -7,9 +7,9 @@
 using namespace std;
 int main(int , char **){
 	SingleParam<double,2,double,double,double>
-			E(&KExpLX<double>,0.5,-2,INFINITY);
+			E(&KExpLX,0.5,-2,INFINITY);
 	SingleParam<double,0,double,double,double>
-			G(&Gaussian<double>,INFINITY,0.5,0.2);
+			G(&Gaussian,INFINITY,0.5,0.2);
 	Convolution<double,decltype(E),decltype(G)> conv(E,G);
 	conv.Init(0,10,0.001);
 	{ofstream file;

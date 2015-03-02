@@ -4,6 +4,7 @@
 #include "interpolate.h"
 #include "sympson.h"
 #include <random>
+#include <vector>
 template<class numt>
 numt RandomUniformly(numt x1, numt x2){
 #ifdef USE_RANDOM_DEVICE
@@ -31,41 +32,42 @@ template<class numt,class func>//Generates random values distributed by given fo
 // func cannot be a lambda-expression
 class RandomValueGenerator{
 private:
-	func m_distr;int N;
-	numt *values;numt *distrib_func;
+	func m_distr;
+	std::vector<numt> values,distrib_func;
 public:
 	RandomValueGenerator(){}
 	RandomValueGenerator(RandomValueGenerator &R){
-		m_distr=R.m_distr;N=R.N;
-		if(N>0){
-			values=new numt[N];distrib_func=new numt[N];
-			for(int i=0; i<N;i++){
-				values[i]=R.values[i];distrib_func[i]=R.distrib_func[i];
-			}
-		}
+		m_distr=R.m_distr;
+		for(auto v:R.values)
+			values.push_back(v);
+		for(auto v:R.distrib_func)
+			distrib_func.push_back(v);
 	}
 	RandomValueGenerator(func distribution_density){
-		m_distr=distribution_density;N=0;values=nullptr;distrib_func=nullptr;
+		m_distr=distribution_density;
 	}
-	virtual ~RandomValueGenerator(){
-		if(values!=nullptr){delete[] values;delete[] distrib_func;}
-	}
+	virtual ~RandomValueGenerator(){}
 	void Init(numt x1, numt x2, numt step){
-		if(step<=0)throw; //wrong parameter value
-		if(values!=nullptr){delete[] values;delete[] distrib_func;}
-		N=int((x2-x1)/step)+1;
-		if(N<0)N=-N;
-		values=new numt[N];
-		for(int i=0; i<N; i++)values[i]=x1+(step*i);
-		distrib_func=SympsonTable<numt,numt*,func>(N,values,m_distr);
+		values.clear();
+		distrib_func.clear();
+		for(numt x=x1;x<=x2;x+=step)
+			values.push_back(x);
+		auto N=values.size();
+		numt* tbl=SympsonTable<numt,std::vector<numt>,func>(N,values,m_distr);
+		for(int i=0;i<N;i++)
+			distrib_func.push_back(tbl[i]);
 	}
 	numt operator ()(){
-		return Interpolate_Linear<numt,numt*>(0,N-1,
+		auto N=values.size();
+		return Interpolate_Linear<numt,std::vector<numt>>(0,N-1,
 					distrib_func,values,
 					RandomUniformly<numt>(0,distrib_func[N-1])
 				);
 	}
 	numt operator ()(double){return (*this)();}
-	numt operator |(numt x){return m_distr(x)/distrib_func[N-1];}
+	numt operator |(numt x){
+		auto N=values.size();
+		return m_distr(x)/distrib_func[N-1];
+	}
 };
 #endif // RANDOMFUNC_H
