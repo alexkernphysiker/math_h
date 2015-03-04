@@ -18,9 +18,12 @@ int main(int , char **){
 		if(file.is_open()){
 			for(double x=-2; x<=6; x+=0.01)
 				file<<x<<" " <<
-					 add<
-						func3<Gaussian,arg,par<0>,par<1>>,
-						func3<Gaussian,arg,par<2>,var<a>>
+					add<
+						iconst<-1>,
+						add<
+							func3<Gaussian,arg,par<0>,par<1>>,
+							func3<Gaussian,arg,par<2>,var<a>>
+						>
 					>(x,params)
 				<<"\n";
 			file.close();

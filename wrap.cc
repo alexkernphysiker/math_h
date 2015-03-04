@@ -7,6 +7,8 @@
 //wrap global variable
 template<use_num_type& value>
 inline use_num_type var(___p_decl2___){return value;}
+template<int value>
+inline use_num_type iconst(___p_decl2___){return use_num_type(value);}
 //wrap functions requiring use_num_type as parameters
 template<use_num_type (f)(use_num_type),use_num_type(F)(___p_decl___)>
 inline use_num_type func(___p_decl2___){return f(F(___p_));}
