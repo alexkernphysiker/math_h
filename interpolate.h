@@ -16,6 +16,13 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 	}
 	return end;//beg+1, new element x should be inserted between beg and end
 }
+
+//insert new element into vector or list such way that the sorted order is preserved
+#define std_size(vector) [&vector](){return vector.size();}
+#define std_insert(vector,type) [&vector](int pos,type x){vector.insert(vector.begin()+pos,x);}
+template<class comparable,class indexer, class Size, class Insert>
+int InsertSorted(comparable x,indexer X,Size size,Insert insert){insert(WhereToInsert(0,size()-1,X,x),x);}
+
 //Linear interpolation based on previous algorithm
 template<class numX, class indexerX, class numY=numX, class indexerY=indexerX>
 numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
@@ -24,6 +31,8 @@ numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
 	if(i>to)throw;//x out of border; rightside
 	numY k=numY(x-X[i-1])/numY(X[i]-X[i-1]);return Y[i-1]+k*(Y[i]-Y[i-1]);
 }
+
+//class that allows to act with the table of values like with function
 template<class numX, class numY=numX>
 class FuncTable{
 private:
