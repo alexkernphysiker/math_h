@@ -25,13 +25,8 @@ public:
 		if(!cache){
 			numt average=getAverage();
 			m_sigsqr=0;
-			auto it=m_list.begin();
-			while(it!=m_list.end()){
-				numt value=*it;
-				numt d=abs(value-average);
-				m_sigsqr+=d*d;
-				it++;
-			}
+			for(auto value:m_list)
+				m_sigsqr+=pow(value-average,2);
 			m_sigsqr/=m_list.size()-1;
 			cache=true;
 		}

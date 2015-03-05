@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#define USE_RANDOM_DEVICE
 #include <functions.h>
 #include <randomfunc.h>
 #include <sigma.h>
