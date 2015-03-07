@@ -4,7 +4,7 @@
 #ifdef use_num_type
 #ifdef use_indexer_type
 #include "functions.h"
-namespace FuncWrappers_xP{
+namespace wrap_func_number_indexer{
 	inline use_num_type arg(use_num_type x,use_indexer_type){return x;}
 	template<int p_ind>inline use_num_type par(use_num_type,use_indexer_type P){return P[p_ind];}
 #define ___p_decl___ use_num_type,use_indexer_type

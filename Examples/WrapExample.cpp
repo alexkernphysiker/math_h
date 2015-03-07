@@ -4,11 +4,11 @@
 #include <functions.h>
 #define use_num_type double
 #define use_indexer_type double*
-#include <wrap3.h>
+#include <wrap_func_number_indexer.h>
 #undef use_num_type
 #undef use_indexer_type
 double params[]={1,0.5,3};
-using namespace FuncWrappers_xP;
+using namespace wrap_func_number_indexer;
 using namespace std;
 double a;
 int main(int , char **){
