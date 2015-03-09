@@ -19,6 +19,8 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 //insert new element into vector or list such way that the sorted order is preserved
 #define std_size(vector) [&vector](){return vector.size();}
 #define std_insert(vector,type) [&vector](int pos,type x){vector.insert(vector.begin()+pos,x);}
+#define field_size(vector) [this](){return vector.size();}size
+#define field_insert(vector,type) [this](int pos,type x){vector.insertt(vector.begin()+pos,x);}
 template<class comparable,class indexer, class Size, class Insert>
 int InsertSorted(comparable x,indexer X,Size size,Insert insert){insert(WhereToInsert(0,size()-1,X,x),x);}
 //Linear interpolation based on previous algorithm
