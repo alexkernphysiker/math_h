@@ -1,10 +1,10 @@
 // https://github.com/alexkernphysiker/math_h
 #ifndef RANDOMFUNC_H
 #	define RANDOMFUNC_H
-#include "interpolate.h"
-#include "sympson.h"
 #include <random>
 #include <vector>
+#include "interpolate.h"
+#include "sympson.h"
 template<class numt>
 numt RandomUniformly(numt x1, numt x2){
 #ifdef USE_RANDOM_DEVICE
@@ -21,10 +21,12 @@ template<class numt>// cannot use integer types
 numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	if(sigma==0)return average;
 	numt res=0.0;
-	numt coeff=1.0/::sqrt(12.0);
+	numt coeff=1.0/sqrt(12.0);
 	for(unsigned int i=0;i<precision;i++)
 		res+=RandomUniformly<numt>(-0.5,0.5);
-	res*=(sigma/(coeff*precision))*::sqrt(numt(precision));
+	res*=(sigma/(coeff*precision))*sqrt(numt(precision));
+	if(0==average)
+		return res;
 	res+=average;
 	return res;
 }
@@ -66,4 +68,4 @@ public:
 		return m_distr(x)/distrib_func[N-1];
 	}
 };
-#endif // RANDOMFUNC_H
+#endif
