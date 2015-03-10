@@ -43,13 +43,8 @@ public:
 		for(auto v:R.distrib_func)
 			distrib_func.push_back(v);
 	}
-	RandomValueGenerator(func distribution_density){
+	RandomValueGenerator(func distribution_density,numt x1, numt x2, numt step){
 		m_distr=distribution_density;
-	}
-	virtual ~RandomValueGenerator(){}
-	void Init(numt x1, numt x2, numt step){
-		values.clear();
-		distrib_func.clear();
 		for(numt x=x1;x<=x2;x+=step)
 			values.push_back(x);
 		auto N=values.size();
@@ -57,6 +52,7 @@ public:
 		for(int i=0;i<N;i++)
 			distrib_func.push_back(tbl[i]);
 	}
+	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
 		auto N=values.size();
 		return Interpolate_Linear<numt,std::vector<numt>>(0,N-1,

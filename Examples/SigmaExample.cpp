@@ -1,15 +1,16 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#define USE_RANDOM_DEVICE
+
 #include <functions.h>
-#include <randomfunc.h>
 #include <sigma.h>
 #include <singleparam.h>
+//this define turns on using random device instead of pseudorandom number generator
+#define USE_RANDOM_DEVICE
+#include <randomfunc.h>
 int main(int,char**){
 	SingleParam<double,0,double,double,double> G(&Gaussian,0,3,1);
-	RandomValueGenerator<double,decltype(G)> rand(G);
-	rand.Init(0,6,0.01);
+	RandomValueGenerator<double,decltype(G)> rand(G,0,6,0.01);
 	Sigma<double> test;
 	for(int i=0;i<10000;i++)
 		test.AddValue(rand());
