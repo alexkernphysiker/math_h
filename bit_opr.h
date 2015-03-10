@@ -1,5 +1,5 @@
-#ifndef ____BITOPR____
-#define ____BITOPR____
+#ifndef ZRONCKJHLREWTQTI
+#define ZRONCKJHLREWTQTI
 namespace BitOperations{
 	typedef long unsigned int numtype;
 	#include "bit_opr.cc"

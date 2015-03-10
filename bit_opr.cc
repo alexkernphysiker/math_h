@@ -1,6 +1,4 @@
 //NOTE: numtype should be defined before including this file
-// a is always the index of the greatest bit
-// b is always the index of the smallest bit
 template<int b>
 struct bit{enum{set=numtype(1)<<b,unset = !set};};
 template<int a, int b>

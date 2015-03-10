@@ -1,7 +1,5 @@
-// https://github.com/alexkernphysiker/math_h
-#ifndef ___SINGLE_PARAM_H
-#	define ___SINGLE_PARAM_H
-
+#ifndef NEZOWVHXCAGGDHQC
+#	define NEZOWVHXCAGGDHQC
 #include <utility>
 #include <tuple>
 namespace detail{// implementation details
@@ -29,7 +27,6 @@ namespace detail{// implementation details
 		}
 	};
 }
-//allows to call multi-parameter function as a single-parameter one
 template<typename restype,int parn, typename... Args>
 class SingleParam{
 private:
@@ -52,4 +49,4 @@ public:
 		>::call(m_func, std::forward<Tuple>(m_args));
 	}
 };
-#endif //___SINGLE_PARAM_H
+#endif

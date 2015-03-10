@@ -1,15 +1,13 @@
 #include <fstream>
 #include <stdio.h>
-#include <math.h>
-#include <sympson.h>
-#include <functions.h>
+
 #include <singleparam.h>
+#include <functions.h>
+#include <sympson.h>
 using namespace std;
 int main(int , char **){
-	SingleParam<double,2,double,double,double>
-			E(&KExpLX,0.5,-2,INFINITY);
-	SingleParam<double,0,double,double,double>
-			G(&Gaussian,INFINITY,0.5,0.2);
+	SingleParam<double,2,double,double,double> E(&KExpLX,0.5,-2,INFINITY);
+	SingleParam<double,0,double,double,double> G(&Gaussian,INFINITY,0.5,0.2);
 	Convolution<double,decltype(E),decltype(G)> conv(E,G);
 	conv.Init(0,10,0.001);
 	{ofstream file;

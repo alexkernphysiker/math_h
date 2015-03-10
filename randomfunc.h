@@ -1,8 +1,8 @@
-// https://github.com/alexkernphysiker/math_h
-#ifndef RANDOMFUNC_H
-#	define RANDOMFUNC_H
+#ifndef XRYPRAVJWTJCYPQI
+#	define XRYPRAVJWTJCYPQI
 #include <random>
 #include <vector>
+#include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
 template<class numt>
@@ -30,8 +30,7 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	res+=average;
 	return res;
 }
-template<class numt,class func>//Generates random values distributed by given formula
-// func cannot be a lambda-expression
+template<class numt,class func>
 class RandomValueGenerator{
 private:
 	func m_distr;

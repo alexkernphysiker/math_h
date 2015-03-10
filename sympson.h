@@ -1,8 +1,5 @@
-// https://github.com/alexkernphysiker/math_h
-#ifndef ___SYMPSON_H
-#	define ___SYMPSON_H
-
-// Sympson integral
+#ifndef GRIVHOWXKUEHYGQF
+#	define GRIVHOWXKUEHYGQF
 template<class numX,class functype,class numY=numX>
 numY Sympson(functype y,numX a, numX b, numX step){
 	numX stp=step;
@@ -18,7 +15,6 @@ numY Sympson(functype y,numX a, numX b, numX step){
 	}
 	return res;
 }
-// Sympson integral (output table)
 template<class numX,class indexerX,class functype,class numY=numX>
 numY* SympsonTable(int N,indexerX x,functype y){
 	numY res=0;
@@ -37,10 +33,6 @@ numY* SympsonTable(int N,indexerX x,functype y){
 	}
 	return table;
 }
-
-// Convolution integral
-// func1 and func2 cannot be lambda-expressions
-// Use SingleParam template class instead
 template<class numt,class func1, class func2>
 class Convolution{
 private:
@@ -62,4 +54,4 @@ public:
 		return Sympson<numt,ConvUInt>(ConvUInt(x,this),Ksi1,Ksi2,Step);
 	}
 };
-#endif // ___SYMPSON_H
+#endif

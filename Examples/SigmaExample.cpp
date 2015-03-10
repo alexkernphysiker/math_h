@@ -1,12 +1,9 @@
 #include <iostream>
 #include <fstream>
-#include <math.h>
 
 #include <functions.h>
 #include <sigma.h>
 #include <singleparam.h>
-//this define turns on using random device instead of pseudorandom number generator
-#define USE_RANDOM_DEVICE
 #include <randomfunc.h>
 int main(int,char**){
 	SingleParam<double,0,double,double,double> G(&Gaussian,0,3,1);

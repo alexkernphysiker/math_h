@@ -1,7 +1,7 @@
-//https://github.com/alexkernphysiker/math_h
-#ifndef ___SIGMA_H___
-#	define ___SIGMA_H___
+#ifndef YJIOGPKSIIYJVKND
+#	define YJIOGPKSIIYJVKND
 #include <list>
+#include <math.h>
 template<typename numt>
 class Sigma{
 private:
@@ -22,12 +22,14 @@ public:
 	}
 	int count(){return m_list.size();}
 	numt getSigmaSqr(){
+		int sz=m_list.size();
+		if(sz<=1)throw;
 		if(!cache){
 			numt average=getAverage();
 			m_sigsqr=0;
 			for(auto value:m_list)
 				m_sigsqr+=pow(value-average,2);
-			m_sigsqr/=m_list.size()-1;
+			m_sigsqr/=sz-1;
 			cache=true;
 		}
 		return m_sigsqr;

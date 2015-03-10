@@ -1,6 +1,5 @@
-// https://github.com/alexkernphysiker/math_h
-#ifndef FUNCTIONS_H
-#	define FUNCTIONS_H
+#ifndef EMEFWAYNIGJGENCP
+#	define EMEFWAYNIGJGENCP
 #include <math.h>
 template<class numt=double>double KExpLX(double k, double l, double x){return k*exp(l*x);}
 template<class numt=double>//cannot use integer types
@@ -24,4 +23,4 @@ numt Polynom(numt x,indexer  p,unsigned int P, int index_offset=0){
 }
 template<unsigned int P,class numt, class indexer, int index_offset=0>
 numt Polynom(numt x,indexer  p){return Polynom<numt,indexer>(x,p,P,index_offset);}
-#endif // FUNCTIONS_H
+#endif

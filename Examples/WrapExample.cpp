@@ -1,6 +1,6 @@
 #include <fstream>
 #include <stdio.h>
-#include <math.h>
+
 #include <functions.h>
 #define use_num_type double
 #define use_indexer_type double*
