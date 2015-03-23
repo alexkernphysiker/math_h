@@ -3,6 +3,7 @@
 #ifdef ___p_decl___
 #ifdef ___p_decl2___
 #ifdef ___p_
+#include <math.h>
 template<use_num_type& value>
 inline use_num_type var(___p_decl2___){return value;}
 template<int value>
