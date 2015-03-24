@@ -4,6 +4,8 @@
 #ifdef ___p_decl2___
 #ifdef ___p_
 #include <math.h>
+inline use_num_type zero(___p_decl2___){return 0;}
+inline use_num_type one(___p_decl2___){return 0;}
 template<use_num_type& value>
 inline use_num_type var(___p_decl2___){return value;}
 template<int value>
