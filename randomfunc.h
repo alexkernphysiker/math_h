@@ -31,7 +31,7 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	res+=average;
 	return res;
 }
-template<class numt,class func=std::function<numt(numt)>>
+template<class numt>
 class RandomValueGenerator{
 private:
 	LinearInterpolation<numt> distrib;
@@ -42,7 +42,7 @@ public:
 		for(auto p:R.distrib)
 			distrib<<p;
 	}
-	RandomValueGenerator(func distribution_density,numt x1, numt x2, numt step){
+	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, numt step){
 		using namespace std;
 		vector<numt> X;
 		for(numt x=x1;x<=x2;x+=step)
