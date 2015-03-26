@@ -1,7 +1,8 @@
 #ifndef XRYPRAVJWTJCYPQI
-#	define XRYPRAVJWTJCYPQI
+#define XRYPRAVJWTJCYPQI
 #include <random>
 #include <vector>
+#include <functional>
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
@@ -17,7 +18,7 @@ numt RandomUniformly(numt x1, numt x2){
 #endif
 	return ((x2-x1)*numt(val) / numt(max))+x1;
 }
-template<class numt>// cannot use integer types
+template<class numt>
 numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	if(sigma==0)return average;
 	numt res=0.0;
@@ -30,41 +31,34 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	res+=average;
 	return res;
 }
-template<class numt,class func>
+template<class numt,class func=std::function<numt(numt)>>
 class RandomValueGenerator{
 private:
-	func m_distr;
-	std::vector<numt> values,distrib_func;
+	LinearInterpolation<numt> distrib;
+	double C;
 public:
-	RandomValueGenerator(){}
-	RandomValueGenerator(RandomValueGenerator &R){
-		m_distr=R.m_distr;
-		for(auto v:R.values)
-			values.push_back(v);
-		for(auto v:R.distrib_func)
-			distrib_func.push_back(v);
+	RandomValueGenerator():C(0){}
+	RandomValueGenerator(RandomValueGenerator &R):C(R.C){
+		for(auto p:R.distrib)
+			distrib<<p;
 	}
 	RandomValueGenerator(func distribution_density,numt x1, numt x2, numt step){
-		m_distr=distribution_density;
+		using namespace std;
+		vector<numt> X;
 		for(numt x=x1;x<=x2;x+=step)
-			values.push_back(x);
-		auto N=values.size();
-		numt* tbl=SympsonTable<numt,std::vector<numt>,func>(N,values,m_distr);
-		for(int i=0;i<N;i++)
-			distrib_func.push_back(tbl[i]);
+			X.push_back(x);
+		numt* Y=SympsonTable<numt,vector<numt>>(distribution_density,X,X.size());
+		for(int i=0;i<X.size();i++)
+			distrib<<make_pair(Y[i],X[i]);
+		C=Y[X.size()-1];
+		delete[] Y;
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
-		auto N=values.size();
-		return Interpolate_Linear<numt,std::vector<numt>>(0,N-1,
-					distrib_func,values,
-					RandomUniformly<numt>(0,distrib_func[N-1])
-				);
+		return distrib(RandomUniformly<numt>(0,C));
 	}
-	numt operator ()(double){return (*this)();}
-	numt operator |(numt x){
-		auto N=values.size();
-		return m_distr(x)/distrib_func[N-1];
+	numt operator ()(double){
+		return operator()();
 	}
 };
 #endif

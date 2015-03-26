@@ -1,15 +1,12 @@
 #include <fstream>
 #include <stdio.h>
-
-#include <singleparam.h>
 #include <functions.h>
 #include <sympson.h>
 using namespace std;
 int main(int , char **){
-	SingleParam<double,2,double,double,double> E(&KExpLX,0.5,-2,INFINITY);
-	SingleParam<double,0,double,double,double> G(&Gaussian,INFINITY,0.5,0.2);
-	Convolution<double,decltype(E),decltype(G)> conv(E,G);
-	conv.Init(0,10,0.001);
+	auto E=[](double x){return 0.5*exp(-2.0*x);};
+	auto G=[](double x){return Gaussian(x,0.5,0.2);};
+	Convolution<double> conv(E,G,0,10,0.001);
 	{ofstream file;
 		file.open("output.txt");
 		if(file.is_open()){

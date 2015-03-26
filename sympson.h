@@ -1,6 +1,7 @@
 #ifndef GRIVHOWXKUEHYGQF
 #	define GRIVHOWXKUEHYGQF
-template<class numX,class functype,class numY=numX>
+#include <functional>
+template<class numX,class numY=numX,class functype=std::function<numY(numX)>>
 numY Sympson(functype y,numX a, numX b, numX step){
 	numX stp=step;
 	if((stp*(b-a))<=0) stp=-stp;
@@ -15,15 +16,16 @@ numY Sympson(functype y,numX a, numX b, numX step){
 	}
 	return res;
 }
-template<class numX,class indexerX,class functype,class numY=numX>
-numY* SympsonTable(int N,indexerX x,functype y){
+template<class numX,class indexerX,class numY=numX,class functype=std::function<numY(numX)>>
+numY* SympsonTable(functype y,indexerX X,int N){
 	numY res=0;
 	if(N<=0)return nullptr;
 	numY *table=new numY[N];
 	table[0]=0;
-	numX lastx=x[0];numY lastfunc=y(lastx);
+	numX lastx=X[0];
+	numY lastfunc=y(lastx);
 	for(int i=1;i<N;i++){
-		numX thisarg=x[i];
+		numX thisarg=X[i];
 		numY midfunc=y((thisarg+lastx)/2);
 		numY nextfunc=y(thisarg);
 		res+=(lastfunc+4*midfunc+nextfunc)*(thisarg-lastx)/6;
@@ -33,25 +35,20 @@ numY* SympsonTable(int N,indexerX x,functype y){
 	}
 	return table;
 }
-template<class numt,class func1, class func2>
+template<class numX,class numY=numX,class func1=std::function<numY(numX)>,class func2=std::function<numY(numX)>>
 class Convolution{
 private:
-	func1 A;func2 B;numt Ksi1;numt Ksi2;numt Step;
-	class ConvUInt{
-	private:	numt X;Convolution *master;
-	public:
-		ConvUInt(numt x, Convolution* father){X=x;master=father;}
-		numt operator()(numt ksi){
-			return master->A(ksi) * master->B(X-ksi);
-		}
-	};
+	func1 A;
+	func2 B;
+	numX Ksi1;
+	numX Ksi2;
+	numX Step;
 public:
 	Convolution(){}
-	Convolution(Convolution &C){A=C.A;B=C.B;Ksi1=C.Ksi1;Ksi2=C.Ksi2;Step=C.Step;}
-	Convolution(func1 a, func2 b){A=a;B=b;}
-	void Init(numt ksi1, numt ksi2, numt step){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
-	virtual numt operator()(numt x){
-		return Sympson<numt,ConvUInt>(ConvUInt(x,this),Ksi1,Ksi2,Step);
+	Convolution(Convolution &C):A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
+	Convolution(func1 a, func2 b,numX ksi1, numX ksi2, numX step):A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
+	numY operator()(numX x){
+		return Sympson<numX,numY>([this,x](numX ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
 	}
 };
 #endif

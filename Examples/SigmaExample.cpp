@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
-
+#include <functional>
 #include <functions.h>
-#include <sigma.h>
-#include <singleparam.h>
 #include <randomfunc.h>
+#include <sigma.h>
+using namespace std;
 int main(int,char**){
-	SingleParam<double,0,double,double,double> G(&Gaussian,0,3,1);
-	RandomValueGenerator<double,decltype(G)> rand(G,0,6,0.01);
+	RandomValueGenerator<double> 
+		rand([](double x){return Gaussian(x,3.0,1.0);},0,6,0.01);
 	Sigma<double> test;
 	for(int i=0;i<10000;i++)
 		test.AddValue(rand());

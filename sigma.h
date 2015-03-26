@@ -1,5 +1,5 @@
 #ifndef YJIOGPKSIIYJVKND
-#	define YJIOGPKSIIYJVKND
+#define YJIOGPKSIIYJVKND
 #include <list>
 #include <math.h>
 template<typename numt>
