@@ -27,7 +27,7 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 }
 
 template<class comparable,class indexer, class Size, class Insert>
-int InsertSorted(comparable x,indexer X,Size size,Insert insert){
+void InsertSorted(comparable x,indexer X,Size size,Insert insert){
 	insert(WhereToInsert(0,size()-1,X,x),x);
 }
 #define std_size(vector) [&vector](){return vector.size();}
