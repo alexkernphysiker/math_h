@@ -137,6 +137,10 @@ template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<nu
 numY  Interpolate_Linear2(int from, int to, PairIndexer tbl, numX x){
 	using namespace std;
 	using namespace details;
+	if(x==tbl[from].first)
+		return tbl[from].second;
+	if(x==tbl[to].first)
+		return tbl[to].second;
 	pair<numX,numY> p=make_pair(x,numY(0));
 	int i=WhereToInsert<pair<numX,numY>>(from,to,tbl,p);
 	if(i<=from)
