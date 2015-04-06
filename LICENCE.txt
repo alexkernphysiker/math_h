@@ -1,1 +1,0 @@
-You can do what you want with header files from math_h repository
