@@ -7,15 +7,25 @@
 #include "interpolate.h"
 #include "sympson.h"
 template<class numt>
-numt RandomUniformly(numt x1, numt x2){
-#ifdef USE_RANDOM_DEVICE
+numt RandomUniformlyI(numt x1, numt x2){
+	#ifdef USE_RANDOM_DEVICE
+	std::random_device random;
+	auto val=random()-random.min();
+	#else
+	auto val=rand();
+	#endif
+	return (numt(val)%(1+x2-x1))+x1;
+}
+template<class numt>
+numt RandomUniformlyR(numt x1, numt x2){
+	#ifdef USE_RANDOM_DEVICE
 	std::random_device random;
 	auto val=random()-random.min();
 	auto max=random.max()-random.min();
-#else
+	#else
 	auto val=rand();
 	auto max=RAND_MAX;
-#endif
+	#endif
 	return ((x2-x1)*numt(val) / numt(max))+x1;
 }
 template<class numt>
@@ -24,7 +34,7 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 	numt res=0.0;
 	numt coeff=1.0/sqrt(12.0);
 	for(unsigned int i=0;i<precision;i++)
-		res+=RandomUniformly<numt>(-0.5,0.5);
+		res+=RandomUniformlyR<numt>(-0.5,0.5);
 	res*=(sigma/(coeff*precision))*sqrt(numt(precision));
 	if(0==average)
 		return res;
@@ -55,7 +65,7 @@ public:
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
-		return distrib(RandomUniformly<numt>(0,C));
+		return distrib(RandomUniformlyR<numt>(0,C));
 	}
 	numt operator ()(double){
 		return operator()();
