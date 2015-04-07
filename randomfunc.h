@@ -1,20 +1,24 @@
 #ifndef XRYPRAVJWTJCYPQI
 #define XRYPRAVJWTJCYPQI
-#include <random>
+#ifdef USE_RANDOM_DEVICE
+# include <random>
+#endif
 #include <vector>
 #include <functional>
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
-template<class numt>
-numt RandomUniformlyI(numt x1, numt x2){
+template<class inumt>
+inumt RandomUniformlyI(inumt x1,inumt x2){
 	#ifdef USE_RANDOM_DEVICE
 	std::random_device random;
-	auto val=random()-random.min();
+	inumt val=random();
+	if(val<0)
+		val=-val;
 	#else
-	auto val=rand();
+	inumt val=rand();
 	#endif
-	return (numt(val)%(1+x2-x1))+x1;
+	return val%(x2+1-x1)+x1;
 }
 template<class numt>
 numt RandomUniformlyR(numt x1, numt x2){
