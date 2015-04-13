@@ -90,15 +90,25 @@ public:
 		InsertSorted(p,data,field_size(data),field_insert(data,Point));
 		return *this;
 	}
+	int size(){
+		return data.size();
+	}
+	numX min(){
+		if(size()<1)
+			throw;
+		return data[0].first;
+	}
+	numX max(){
+		if(size()<1)
+			throw;
+		return data[size()-1].first;
+	}
 	numY operator()(numX x){
 		using namespace details;
 		return InterpolateLinear2<numX,numY>(x,data,field_size(data));
 	}
 	Point& operator[](int i){
 		return data[i];
-	}
-	int size(){
-		return data.size();
 	}
 	typedef typename std::vector<Point>::iterator iterator;
 	typedef typename std::vector<Point>::const_iterator const_iterator;
