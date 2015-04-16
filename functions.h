@@ -8,8 +8,8 @@ numt Gaussian(numt x, numt X_max, numt sigma){
 	return koef*exp(-(pow(X_max-x,2))/(2*sigma*sigma));
 }
 template<class numt=double>
-numt BreitWigner(numt x, numt ampl, numt pos, numt gamma){
-	return (ampl*pow(gamma/2,2))/(pow(x-pos,2)+pow(gamma/2,2));
+numt BreitWigner(numt x, numt pos, numt gamma){
+	return gamma/(2*3.1415926*(pow(x-pos,2)+pow(gamma/2,2)));
 }
 template<class numt=double>
 numt BukinFunction(numt x,numt ampl,numt pos,numt sigma,numt assymetryparam,numt rho1,numt rho2){
