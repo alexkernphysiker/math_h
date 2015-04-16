@@ -4,8 +4,7 @@
 
 template<class numt=double>
 numt Gaussian(numt x, numt X_max, numt sigma){
-	numt koef= 1/(sigma*sqrt(2*3.1415926));
-	return koef*exp(-(pow(X_max-x,2))/(2*sigma*sigma));
+	return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*3.1415926));
 }
 template<class numt=double>
 numt BreitWigner(numt x, numt pos, numt gamma){
