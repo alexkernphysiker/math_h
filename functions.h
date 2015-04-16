@@ -11,26 +11,16 @@ numt BreitWigner(numt x, numt pos, numt gamma){
 	return gamma/(2*3.1415926*(pow(x-pos,2)+pow(gamma/2,2)));
 }
 template<class numt=double>
-numt BukinFunction(numt x,numt ampl,numt pos,numt sigma,numt assymetryparam,numt rho1,numt rho2){
-	numt sq2ln2=sqrt(2.0*log(2));
-	numt x1=pos+sigma*sq2ln2*(assymetryparam/sqrt(assymetryparam+1) -1);
-	numt x2=pos+sigma*sq2ln2*(assymetryparam/sqrt(assymetryparam+1) +1);
-	numt in_exp=assymetryparam*sqrt(assymetryparam*assymetryparam+1)*(x-x1)*sq2ln2;
-	in_exp/=sigma*pow(sqrt(assymetryparam*assymetryparam+1)-assymetryparam,2)*log(sqrt(assymetryparam*assymetryparam+1)+assymetryparam);
-	in_exp-=log(2);
-	if(x<x1)
-		in_exp+=rho1*pow((x-x1)/(pos-x1),2);
-	if(x>=x2)
-		in_exp+=rho2*pow((x-x2)/(pos-x2),2);
-	return ampl*exp(in_exp);
-}
-template<class numt=double>
 numt Novosibirsk(numt x,numt pos,numt sigma,numt asym){
-	numt sqlog4=sqrt(log(4));
-	numt lambda = sinh(sigma*sqlog4)*pow(asym*sqlog4,-1);
-	if(1+lambda*(x-pos) >0) 
-		return exp(-0.5*pow(log(1+lambda*(x-pos)),2)*pow(sigma,-2)+pow(sigma,2));
-	return 0;
+	if(pow(asym/sigma,2)<=0.000001)
+		return Gaussian<numt>(x,pos,sigma);
+	numt Lsqlog4=asym*sqrt(log(4));
+	numt qb=sinh(Lsqlog4)/Lsqlog4;
+	numt q4=qb*asym*(x-pos)/sigma + 1;
+	if(q4<=0)return 0;
+	numt slq4=pow(log(q4),2);
+	numt k=sigma*sqrt(2*3.1415926*(pow(asym,2)+1.0));
+	return exp(-slq4/(pow(asym,2)*2)+pow(asym,2))/k;
 }
 
 
