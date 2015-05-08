@@ -5,7 +5,7 @@ using namespace std;
 double TestArray[]={-2,-1,0,1,2,3,4,5,6,7};
 TEST(WhereToInsert,BorderConditions){
 	for(int beg=0;beg<10;beg++)
-		for(double V=TestArray[beg]-0.5;V<=TestArray[beg]+0.5;V+=0.5){
+		for(double V=TestArray[beg]-2;V<=TestArray[beg]+2;V+=0.5){
 			int index=WhereToInsert(beg,beg-1,TestArray,V);
 			EXPECT_EQ(beg,index);
 			index=WhereToInsert(beg,beg,TestArray,V);
@@ -23,3 +23,5 @@ TEST(WhereToInsert,NormalConditions){
 			else ASSERT_TRUE((x>=TestArray[index-1])&&(x<=TestArray[index]));
 		}
 }
+
+
