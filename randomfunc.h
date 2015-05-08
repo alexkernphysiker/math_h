@@ -38,6 +38,7 @@ numt RandomUniformlyR(numt x1, numt x2){
 }
 template<class numt>
 numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
+	if(sigma<0)throw std::exception();
 	if(sigma==0)return average;
 	numt res=0.0;
 	numt coeff=1.0/sqrt(12.0);
