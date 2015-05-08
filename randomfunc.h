@@ -10,6 +10,8 @@
 #include "sympson.h"
 template<class inumt>
 inumt RandomUniformlyI(inumt x1,inumt x2){
+	if(x1>x2)throw std::exception();
+	if(x1==x2)return x1;
 	#ifdef USE_RANDOM_DEVICE
 	std::random_device random;
 	inumt val=random();
@@ -22,6 +24,8 @@ inumt RandomUniformlyI(inumt x1,inumt x2){
 }
 template<class numt>
 numt RandomUniformlyR(numt x1, numt x2){
+	if(x1>x2)throw std::exception();
+	if(x1==x2)return x1;
 	#ifdef USE_RANDOM_DEVICE
 	std::random_device random;
 	auto val=random()-random.min();
