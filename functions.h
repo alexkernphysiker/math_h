@@ -35,7 +35,7 @@ numt Polynom(numt x,indexer  p,unsigned int P, int index_offset=0){
 	return res;
 }
 template<unsigned int P,class numt, class indexer, int index_offset=0>
-numt Polynom(numt x,indexer  p){
+inline numt Polynom(numt x,indexer  p){
 	return Polynom<numt,indexer>(x,p,P,index_offset);
 }
 #endif

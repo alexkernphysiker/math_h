@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.6)
+project(math_h_tests)
+include_directories($ENV{GTEST_DIR}/include $ENV{GTEST_DIR}/src ..)
+link_directories($ENV{GTEST_DIR}/lib)
+set(libs gtest gtest_main)
+set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -g -Wall -pthread -std=gnu++11")
+add_executable(fitgentest functions.cpp)
+target_link_libraries(fitgentest ${libs})
