@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <functional>
+#include <vector>
 #include <interpolate.h>
 using namespace std;
 double TestArray[]={-2,-1,0,1,2,3,4,5,6,7};
@@ -23,5 +23,12 @@ TEST(WhereToInsert,NormalConditions){
 			else ASSERT_TRUE((x>=TestArray[index-1])&&(x<=TestArray[index]));
 		}
 }
-
+TEST(InsertSorted,BasicTest){
+	vector<int> X;
+	for(int i=0;i<50;i++){
+		InsertSorted(rand()%10,X,std_size(X),std_insert(X,int));
+		for(int j=0;j<i;j++)
+			ASSERT_TRUE(X[j]<=X[j+1]);
+	}
+}
 
