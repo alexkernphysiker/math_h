@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(math_h_tests)
-add_definitions(-DUSE_RANDOM_DEVICE)
+#add_definitions(-DUSE_RANDOM_DEVICE)
 include_directories($ENV{GTEST_DIR}/include $ENV{GTEST_DIR}/src ..)
 link_directories($ENV{GTEST_DIR}/lib)
 set(libs gtest gtest_main)

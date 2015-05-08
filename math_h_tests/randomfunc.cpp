@@ -38,14 +38,10 @@ TEST(RandomGauss,BasicTest){
 		for(double sigma=0.1;sigma<3;sigma+=0.1){
 			int cg=0,cl=0;
 			for(int i=0;i<100;i++){
-				double V=RandomGauss(sigma,X);
-				if(pow(V-X,2)<pow(sigma,2))
-					cl++;
-				else
-					cg++;
+				if(pow(RandomGauss(sigma,X)-X,2)<pow(2*sigma,2))cl++;
+				else cg++;
 			}
 			EXPECT_TRUE(cg<cl);
-			EXPECT_TRUE(cg*6>cl);
 		}
 	}
 }
