@@ -50,18 +50,26 @@ TEST(Polynom,Base){
 		for(int i=0;i<p;i++)C[i]=0;
 		C[p]=1;
 		for(double x=-2;x<=2;x+=0.01)for(int P=p;P>=0;P--){
-			EXPECT_EQ(true,pow(pow(x,P)-Polynom(x,C,P,p-P),2)<0.01);
+			EXPECT_EQ(true,pow(pow(x,P)-Polynom(x,C,P,p-P),2)<0.0001);
 		}
 	}
 }
-TEST(Polynom,Extended){
+void test_polynom(function<double(int)> f){
 	double C[9+1];
-	for (int i=0;i<=9;i++)C[i]=1;
+	for (int i=0;i<=9;i++)C[i]=f(i);
 	for(double x=-2;x<=2;x+=0.01){
 		double V=0;
 		for(int p=0;p<=9;p++){
-			V+=pow(x,p);
-			EXPECT_EQ(true,pow(V-Polynom(x,C,p),2)<0.01);
+			V+=pow(x,p)*C[p];
+			EXPECT_EQ(true,pow(V-Polynom(x,C,p),2)<0.0001);
 		}
 	}
 }
+TEST(Polynom,Extended0){test_polynom([](int i){return 0;});}
+TEST(Polynom,Extended1){test_polynom([](int i){return 1;});}
+TEST(Polynom,Extended_1){test_polynom([](int i){return -1;});}
+TEST(Polynom,ExtendedI){test_polynom([](int i){return i;});}
+TEST(Polynom,Extended_chs){test_polynom([](int i){return pow(-1,i);});}
+TEST(Polynom,Extended_chs_){test_polynom([](int i){return pow(-1,i+1);});}
+TEST(Polynom,ExtendedI_chs){test_polynom([](int i){return i*pow(-1,i);});}
+TEST(Polynom,ExtendedI_chs_){test_polynom([](int i){return i*pow(-1,i+1);});}
