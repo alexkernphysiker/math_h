@@ -1,3 +1,4 @@
+#include <exception>
 //NOTE: numtype should be defined before including this file
 template<int b>
 struct bit{enum{set=numtype(1)<<b,unset = !set};};
@@ -8,6 +9,6 @@ struct bits_in<b,b>{enum{set=bit<b>::set,unset = !set};};
 template<int a, int b>
 inline numtype occupy_bits(numtype small_value){
 	numtype cut=small_value&bits_in<a-b,0>::set;
-	if(small_value!=cut)throw;
+	if(small_value!=cut)throw std::exception();
 	return cut<<b;
 }

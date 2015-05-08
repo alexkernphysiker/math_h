@@ -2,6 +2,7 @@
 #define YJIOGPKSIIYJVKND
 #include <list>
 #include <math.h>
+#include <exception>
 template<typename numt>
 class Sigma{
 private:
@@ -17,13 +18,13 @@ public:
 	}
 	numt getAverage(){
 		int sz=m_list.size();
-		if(sz<=0)throw;
+		if(sz<=0)throw std::exception();
 		return m_sum/sz;
 	}
 	int count(){return m_list.size();}
 	numt getSigmaSqr(){
 		int sz=m_list.size();
-		if(sz<=1)throw;
+		if(sz<=1)throw std::exception();
 		if(!cache){
 			numt average=getAverage();
 			m_sigsqr=0;

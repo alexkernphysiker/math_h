@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <exception>
 template<class comparable, class indexer=std::vector<comparable>>
 int  WhereToInsert(int from, int to, indexer X, comparable x){
 	int beg=from;
@@ -36,10 +37,8 @@ void InsertSorted(comparable x,indexer X,Size size,Insert insert){
 template<class numX, class indexerX, class numY=numX, class indexerY=indexerX>
 numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
 	int i=WhereToInsert(from,to,X,x);
-	if(i<=from)
-		throw;
-	if(i>to)
-		throw;
+	if((i<=from)||(i>to))
+		throw std::exception();
 	numX k=(x-X[i-1])/(X[i]-X[i-1]);
 	return Y[i-1]+(Y[i]-Y[i-1])*numY(k);
 }
@@ -67,10 +66,8 @@ numY  Interpolate_Linear2(int from, int to, PairIndexer tbl, numX x){
 		return tbl[to].second;
 	pair<numX,numY> p=make_pair(x,numY(0));
 	int i=WhereToInsert<pair<numX,numY>>(from,to,tbl,p);
-	if(i<=from)
-		throw;
-	if(i>to)
-		throw;
+	if((i<=from)||(i>to))
+		throw std::exception();
 	numX k=(x-tbl[i-1].first)/(tbl[i].first-tbl[i-1].first);
 	return tbl[i-1].second+(tbl[i].second-tbl[i-1].second)*numY(k);
 }
@@ -95,12 +92,12 @@ public:
 	}
 	numX min(){
 		if(size()<1)
-			throw;
+			throw std::exception();
 		return data[0].first;
 	}
 	numX max(){
 		if(size()<1)
-			throw;
+			throw std::exception();
 		return data[size()-1].first;
 	}
 	numY operator()(numX x){
