@@ -5,11 +5,11 @@ using namespace std;
 template<class numt>
 void Test_Peak_Shape(function<numt(numt)> f,numt from,numt peak,numt to){
 	for(numt x=from;x<=to;x+=0.05){
-		ASSERT_TRUE(f(x)>=0);
+		EXPECT_TRUE(f(x)>=0);
 		if(x<=peak)
-			ASSERT_TRUE(f(x)>=f(x-0.01));
+			EXPECT_TRUE(f(x)>=f(x-0.01));
 		else
-			ASSERT_TRUE(f(x)>=f(x+0.01));
+			EXPECT_TRUE(f(x)>=f(x+0.01));
 	}
 }
 TEST(Gaussian,Shape){
@@ -32,10 +32,10 @@ void Test_stair_Shape(function<numt(numt)> f,numt from,numt middle,numt to){
 	numt a=f(from);
 	numt b=f(to);
 	numt m=f(middle);
-	ASSERT_TRUE(a!=b);
-	ASSERT_TRUE(pow((m-a)*(b-a)-0.5,2)<0.4);
+	EXPECT_TRUE(a!=b);
+	EXPECT_TRUE(pow((m-a)*(b-a)-0.5,2)<0.4);
 	for(numt x=from;x<=to;x+=0.05){
-		ASSERT_TRUE((f(x)-f(x-0.01))*(a-b)<=0);
+		EXPECT_TRUE((f(x)-f(x-0.01))*(a-b)<=0);
 	}
 }
 TEST(FermiFunc,Shape){
