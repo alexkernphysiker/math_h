@@ -29,5 +29,6 @@ TEST(Sigma,WithRandomValues){
 		S.AddValue(RandomGauss(1.0,1.0));
 	_EQ(1.0,S.getAverage());
 	_EQ(1.0,S.getSigma());
+	_EQ(1.0,S.getSigmaSqr());
 }
 
