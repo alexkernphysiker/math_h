@@ -2,7 +2,7 @@
 #include <sympson.h>
 #include <functions.h>
 using namespace std;
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.000001)
+#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00000001)
 TEST(Sympson,BaseTest){
 	auto F=[](double x){return x;};
 	_EQ(0.5,Sympson(F,0.0,1.0,0.1));
@@ -41,4 +41,12 @@ TEST(SympsonTable,BasicTest){
 	for(int i=1;i<=10;i++)EXPECT_TRUE(ST[i-1]<=ST[i]);
 	EXPECT_NO_THROW(delete ST);
 	EXPECT_NO_THROW(delete X);
+}
+TEST(Convolution,BasicTest){
+	auto F1=[](double x){return x;};
+	auto F2=[](double x){return x*x;};
+	Convolution<double> C(F1,F2,0,1,0.01);
+	double x=0.1;
+	double test_value=Sympson([x,F1,F2](double k){return F1(k)*F2(x-k);},0.0,1.0,0.01);
+	EXPECT_EQ(test_value,C(x));
 }
