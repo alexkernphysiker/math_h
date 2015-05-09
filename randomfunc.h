@@ -63,6 +63,8 @@ public:
 	}
 	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, numt step){
 		using namespace std;
+		if(step<=0)throw exception();
+		if(x2<=x1)throw exception();
 		vector<numt> X;
 		for(numt x=x1;x<=x2;x+=step)
 			X.push_back(x);
@@ -70,6 +72,7 @@ public:
 		for(int i=0;i<X.size();i++)
 			distrib<<make_pair(Y[i],X[i]);
 		C=Y[X.size()-1];
+		if(C<=0)throw exception();
 		delete[] Y;
 	}
 	virtual ~RandomValueGenerator(){}
