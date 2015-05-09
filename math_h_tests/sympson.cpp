@@ -18,3 +18,27 @@ TEST(Sympson,BaseTest2){
 	_EQ(0.25,Sympson([](double x){return x*x*x;},0.0,1.0,0.00001));
 	_EQ(1.0,Sympson([](double x){return Gaussian(x,5.0,1.0);},0.0,10.0,0.0001));
 }
+TEST(SympsonTable,Simplest){
+	double *X=nullptr;
+	double *Y=SympsonTable<double,double*>([](double){return 0.0;},X,0);
+	EXPECT_EQ(nullptr,Y);
+}
+TEST(SympsonTable,BasicTest){
+	double *X=new double[11];
+	for(int i=0;i<=10;i++)X[i]=0.1*i;
+	auto F=[](double x){return x;};
+	double S=Sympson(F,0.0,1.0,0.1);
+	double *ST=SympsonTable<double,double*>(F,X,11);
+	_EQ(0,ST[0]);
+	_EQ(S,ST[10]);
+	for(int i=1;i<=10;i++)EXPECT_TRUE(ST[i-1]<=ST[i]);
+	EXPECT_NO_THROW(delete ST);
+	auto F2=[](double x){return x*x;};
+	S=Sympson(F2,0.0,1.0,0.1);
+	ST=SympsonTable<double,double*>(F2,X,11);
+	_EQ(0,ST[0]);
+	_EQ(S,ST[10]);
+	for(int i=1;i<=10;i++)EXPECT_TRUE(ST[i-1]<=ST[i]);
+	EXPECT_NO_THROW(delete ST);
+	EXPECT_NO_THROW(delete X);
+}
