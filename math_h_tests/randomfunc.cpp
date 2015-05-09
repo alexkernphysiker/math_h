@@ -14,7 +14,7 @@ TEST(RandomUniformlyI,BasicTest){
 TEST(RandomUniformlyI,Throwing){
 	for(int l=-10;l<=10;l++)
 		for(int r=-10;r<l;r++)
-			ASSERT_THROW(RandomUniformlyI(l,r),exception);
+			EXPECT_THROW(RandomUniformlyI(l,r),exception);
 }
 TEST(RandomUniformlyR,BasicTest){
 	for(double l=-10;l<=10;l+=0.5)
@@ -27,7 +27,7 @@ TEST(RandomUniformlyR,BasicTest){
 TEST(RandomUniformlyR,Throwing){
 	for(double l=-10;l<=10;l+=0.5)
 		for(double r=-10;r<l;r+=0.5)
-			ASSERT_THROW(RandomUniformlyR(l,r),exception);
+			EXPECT_THROW(RandomUniformlyR(l,r),exception);
 }
 TEST(RandomGauss,BasicTest){
 	for(double X=-10;X<=10;X+=0.5){
@@ -48,7 +48,7 @@ TEST(RandomGauss,BasicTest){
 TEST(RandomGauss,Throwing){
 	for(double X=-1;X<=1;X+=0.5){
 		auto f=[&X](){return RandomGauss(-1.0,X);};
-		ASSERT_THROW(f(),exception);
+		EXPECT_THROW(f(),exception);
 	}
 }
 TEST(RandomValueGenerator,BaseTest){
@@ -57,4 +57,16 @@ TEST(RandomValueGenerator,BaseTest){
 		double r=R();
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
+}
+TEST(RandomValueGenerator,Throwing){
+	auto f=[](double){return 1;};
+	auto z=[](double){return 0;};
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,0),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,-1),exception);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,1));
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,0.1),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,0.1),exception);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,0.1));
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,0.1),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
 }

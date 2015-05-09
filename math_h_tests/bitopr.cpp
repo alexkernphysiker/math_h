@@ -34,7 +34,7 @@ TEST(bits_in,BasicTest){bits_test<sizeof(numtype)*8-1>();}
 TEST(occupy_bits,BasicTest){o_bits_test<sizeof(numtype)*8-1>();}
 TEST(occupy_bits,Throws){
 	auto must_throw=[](){return occupy_bits<7,4>(255);};
-	ASSERT_THROW(must_throw(),exception);
+	EXPECT_THROW(must_throw(),exception);
 	auto must_not_throw=[](){return occupy_bits<7,4>(15);};
-	ASSERT_NO_THROW(must_not_throw());
+	EXPECT_NO_THROW(must_not_throw());
 }

@@ -12,7 +12,7 @@ TEST(WhereToInsert,BorderConditions){
 			index=WhereToInsert(beg,beg,TestArray,V);
 			if(V<TestArray[beg])EXPECT_EQ(beg,index);
 			if(V>TestArray[beg])EXPECT_EQ(beg+1,index);
-			if(V==TestArray[beg])ASSERT_TRUE((index==beg)||(index==(beg+1)));
+			if(V==TestArray[beg])EXPECT_TRUE((index==beg)||(index==(beg+1)));
 		}
 }
 TEST(WhereToInsert,NormalConditions){
@@ -35,17 +35,17 @@ TEST(InsertSorted,BasicTest){
 TEST(LinearInterpolation,Create){
 	LinearInterpolation<double> F;
 	EXPECT_EQ(0,F.size());
-	ASSERT_THROW(F.min(),exception);
-	ASSERT_THROW(F.max(),exception);
+	EXPECT_THROW(F.min(),exception);
+	EXPECT_THROW(F.max(),exception);
 	EXPECT_EQ(&F,&(F<<make_pair(0,0)));
 	EXPECT_EQ(1,F.size());
-	ASSERT_NO_THROW(F.min());
-	ASSERT_NO_THROW(F.max());
-	ASSERT_THROW(F(0.5),exception);
+	EXPECT_NO_THROW(F.min());
+	EXPECT_NO_THROW(F.max());
+	EXPECT_THROW(F(0.5),exception);
 	EXPECT_EQ(&F,&(F<<make_pair(1,0)));
 	EXPECT_EQ(2,F.size());
-	ASSERT_NO_THROW(F.min());
-	ASSERT_NO_THROW(F.max());
+	EXPECT_NO_THROW(F.min());
+	EXPECT_NO_THROW(F.max());
 	EXPECT_EQ(0,F(0.5));
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.0001)
