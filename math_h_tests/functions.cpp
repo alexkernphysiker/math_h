@@ -25,7 +25,7 @@ TEST(BreitWigner,Shape){
 TEST(Novosibirsk,Shape){
 	for(double sigma=0.5;sigma<10;sigma+=0.5)
 		for(double X=-5;X<=5;X+=1)for(double asym=-1;asym<=1;asym+=0.1)
-			Test_Peak_Shape<double>([sigma,X,asym](double x){return Novosibirsk<>(x,X,sigma,asym);},X-sigma*2,X,X+sigma*2);
+			Test_Peak_Shape<double>([sigma,X,asym](double x){return Novosibirsk(x,X,sigma,asym);},X-sigma*2,X,X+sigma*2);
 }
 template<class numt>
 void Test_stair_Shape(function<numt(numt)> f,numt from,numt middle,numt to){
