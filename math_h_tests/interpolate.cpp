@@ -155,6 +155,8 @@ TEST(LinearInterpolation_fixedsize,Basic){
 	_EQ(0.7,F(1.3));
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
+	F.setX(0,-1);
+	EXPECT_EQ(-1,F.getX(0));
 }
 TEST(LinearInterpolation_fixedsize,Throwing){
 	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),exception);

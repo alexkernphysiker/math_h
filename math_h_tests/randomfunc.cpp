@@ -2,6 +2,8 @@
 #include <vector>
 #include <math.h>
 #include <randomfunc.h>
+#include <interpolate.h>
+#include <functions.h>
 using namespace std;
 TEST(RandomUniformlyI,BasicTest){
 	for(int l=-10;l<=10;l++)
@@ -74,4 +76,18 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,2));
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
+}
+TEST(RandomValueGenerator,RandomGauss){
+	RandomValueGenerator<double> R([](double x){return Gaussian(x,5.0,1.0);},0.0,10.0,200);
+	Distribution<double> D1(0.0,10.0,20),D2(0.0,10.0,20);
+	for(int i=0;i<100000;i++){
+		D1.AddValue(R());
+		D2.AddValue(RandomGauss(1.0,5.0));
+	}
+	for(int i=0,n=D1.size();i<n;i++){
+		double delta=(D1.getY(i)+D2.getY(i));
+		if(delta==0)delta=1;
+		delta*=5.0;
+		EXPECT_TRUE(pow(D1.getY(i)-D2.getY(i),2)<=delta);
+	}
 }

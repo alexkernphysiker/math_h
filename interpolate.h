@@ -175,6 +175,11 @@ public:
 		if(i>=size())throw std::exception();
 		return Y[i];
 	}
+	void setX(int i,numX v){
+		if(i<0)throw std::exception();
+		if(i>=size())throw std::exception();
+		X[i]=v;
+	}
 	void setY(int i,numY v){
 		if(i<0)throw std::exception();
 		if(i>=size())throw std::exception();

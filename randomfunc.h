@@ -53,8 +53,8 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 template<class numt>
 class RandomValueGenerator{
 private:
-	LinearInterpolation_fixedsize<numt,numt> distrib;
 	double C;
+	LinearInterpolation_fixedsize<numt,numt> distrib;
 public:
 	RandomValueGenerator():C(1),distrib(0,1,2){}
 	RandomValueGenerator(RandomValueGenerator &R):C(R.C),distrib(R.distrib.min(),R.distrib.max(),R.distrib.size()){
@@ -69,8 +69,10 @@ public:
 		for(int i=0;i<bins;i++)
 			X[i]=distrib.getX(i);
 		numt* Y=SympsonTable<numt,numt*>(distribution_density,X,bins);
-		for(int i=0;i<bins;i++)
-			distrib.setY(i,Y[i]);
+		for(int i=0;i<bins;i++){
+			distrib.setX(i,Y[i]);
+			distrib.setY(i,X[i]);
+		}
 		C=Y[bins-1];
 		delete[] Y;
 		if(C<=0)throw exception();
