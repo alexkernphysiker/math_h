@@ -112,6 +112,8 @@ TEST(LinearInterpolation,SimpleLine){
 TEST(Distribution,BasicTest){
 	Distribution<double> D(0,2,2);
 	ASSERT_EQ(2,D.size());
+	EXPECT_EQ(0.5,D.min());
+	EXPECT_EQ(1.5,D.max());
 	EXPECT_EQ(0.5,D[0].first);
 	EXPECT_EQ(0,D[0].second);
 	EXPECT_EQ(1.5,D[1].first);
@@ -128,6 +130,7 @@ TEST(Distribution,BasicTest){
 	EXPECT_EQ(1,D[0].second);
 	EXPECT_EQ(1.5,D[1].first);
 	EXPECT_EQ(1,D[1].second);
+	EXPECT_EQ(1,D(1));
 }
 TEST(Distribution,Throwing){
 	EXPECT_THROW(Distribution<double>(1,0,2),exception);

@@ -123,7 +123,7 @@ public:
 		return data.cend();
 	}
 };
-template<class numX, class numY=int>
+template<class numX, class numY=numX>
 class Distribution:public LinearInterpolation<numX,numY>{
 private:
 	numX bindelta;
