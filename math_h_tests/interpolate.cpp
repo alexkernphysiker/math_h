@@ -108,3 +108,33 @@ TEST(LinearInterpolation,SimpleLine){
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
 }
+
+TEST(Distribution,BasicTest){
+	Distribution<double> D(0,2,2);
+	ASSERT_EQ(2,D.size());
+	EXPECT_EQ(0.5,D[0].first);
+	EXPECT_EQ(0,D[0].second);
+	EXPECT_EQ(1.5,D[1].first);
+	EXPECT_EQ(0,D[1].second);
+	EXPECT_EQ(&D,&(D.AddValue(0.1)));
+	ASSERT_EQ(2,D.size());
+	EXPECT_EQ(0.5,D[0].first);
+	EXPECT_EQ(1,D[0].second);
+	EXPECT_EQ(1.5,D[1].first);
+	EXPECT_EQ(0,D[1].second);
+	EXPECT_EQ(&D,&(D.AddValue(1.5)));
+	ASSERT_EQ(2,D.size());
+	EXPECT_EQ(0.5,D[0].first);
+	EXPECT_EQ(1,D[0].second);
+	EXPECT_EQ(1.5,D[1].first);
+	EXPECT_EQ(1,D[1].second);
+}
+TEST(Distribution,Throwing){
+	EXPECT_THROW(Distribution<double>(1,0,2),exception);
+	EXPECT_THROW(Distribution<double>(0,0,2),exception);
+	EXPECT_THROW(Distribution<double>(0,1,0),exception);
+	EXPECT_NO_THROW(Distribution<double>(0,1,1));
+	EXPECT_NO_THROW(Distribution<double>(0,1,2));
+	Distribution<double> D(0,1,2);
+	EXPECT_THROW(D<<make_pair(2,0),exception);
+}

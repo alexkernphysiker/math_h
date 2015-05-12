@@ -83,10 +83,11 @@ private:
 	std::vector<Point> data;
 public:
 	LinearInterpolation(){}
-	LinearInterpolation &operator<<(Point p){
+	virtual LinearInterpolation &operator<<(Point p){
 		InsertSorted(p,data,field_size(data),field_insert(data,Point));
 		return *this;
 	}
+	virtual ~LinearInterpolation(){}
 	int size(){
 		return data.size();
 	}
@@ -120,6 +121,33 @@ public:
 	}
 	const_iterator cend() const{
 		return data.cend();
+	}
+};
+template<class numX, class numY=int>
+class Distribution:public LinearInterpolation<numX,numY>{
+private:
+	numX bindelta;
+public:
+	Distribution(numX from,numX to,int bincount){
+		if(from>=to)throw std::exception();
+		if(bincount<1)throw std::exception();
+		numX binwidth= (to-from)/numX(bincount);
+		bindelta=binwidth/numX(2);
+		for(numX x=from+bindelta;x<to;x+=binwidth){
+			typename LinearInterpolation<numX,numY>::Point P;
+			P.first=x;P.second=0;
+			LinearInterpolation<numX,numY>::operator<<(P);
+		}
+	}
+	virtual ~Distribution(){}
+	Distribution &AddValue(numX v){
+		for(auto &P:*this)
+			if(((P.first-bindelta)<=v)&&(v<(P.first+bindelta)))
+				P.second+=numY(1);
+		return *this;
+	}
+	virtual LinearInterpolation<numX,numY> &operator<<(typename LinearInterpolation<numX,numY>::Point p)override{
+		throw std::exception();
 	}
 };
 #endif
