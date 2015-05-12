@@ -54,7 +54,7 @@ TEST(RandomGauss,Throwing){
 	}
 }
 TEST(RandomValueGenerator,BaseTest){
-	RandomValueGenerator<double> R([](double){return 1;},0,1,100);
+	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
 	for(int i=0;i<100;i++){
 		double r=R();
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -77,17 +77,41 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
 }
-TEST(RandomValueGenerator,RandomGauss){
-	RandomValueGenerator<double> R([](double x){return Gaussian(x,5.0,1.0);},0.0,10.0,200);
-	Distribution<double> D1(0.0,10.0,20),D2(0.0,10.0,20);
-	for(int i=0;i<100000;i++){
-		D1.AddValue(R());
-		D2.AddValue(RandomGauss(1.0,5.0));
+TEST(RandomGauss,Compare){
+	int N=1000000,bins=100;
+	Distribution<double> D(0.0,10.0,bins);
+	for(int i=0;i<N;i++)
+		D.AddValue(RandomGauss(1.0,5.0));
+	auto F=[](double x){return Gaussian(x,5.0,1.0);};
+	double C=Sympson(F,0.0,10.0,0.0001);
+	double S=0;
+	int k=0;
+	for(int i=0,n=D.size();i<n;i++){
+		double d1=D.getY(i);S+=d1;
+		double d2=F(D.getX(i))*double(N)*D.BinWidth()/C;
+		printf("pract: %f\t theor: %f\n",d1,d2);
+		double estim=d1;if(estim<1)estim=1;estim*=2;
+		if(pow(d1-d2,2)>estim)k++;
 	}
-	for(int i=0,n=D1.size();i<n;i++){
-		double delta=(D1.getY(i)+D2.getY(i));
-		if(delta==0)delta=1;
-		delta*=5.0;
-		EXPECT_TRUE(pow(D1.getY(i)-D2.getY(i),2)<=delta);
+	EXPECT_EQ(N,S);
+	EXPECT_TRUE(k<=(bins/10));
+}
+TEST(RandomValueGenerator,Compare){
+	auto F=[](double x){return Gaussian(x,5.0,1.0);};
+	double C=Sympson(F,0.0,10.0,0.0001);
+	int N=1000000,bins=100;
+	RandomValueGenerator<double> R(F,0.0,10.0,1000);
+	Distribution<double> D(0.0,10.0,bins);
+	for(int i=0;i<N;i++)D.AddValue(R());
+	double S=0;
+	int k=0;
+	for(int i=0,n=D.size();i<n;i++){
+		double d1=D.getY(i);S+=d1;
+		double d2=F(D.getX(i))*double(N)*D.BinWidth()/C;
+		printf("pract: %f\t theor: %f\n",d1,d2);
+		double estim=d1;if(estim<1)estim=1;estim*=2;
+		if(pow(d1-d2,2)>estim)k++;
 	}
+	EXPECT_EQ(N,S);
+	EXPECT_TRUE(k<=(bins/10));
 }

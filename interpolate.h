@@ -36,6 +36,8 @@ void InsertSorted(comparable x,indexer X,Size size,Insert insert){
 #define field_insert(vector,type)  [this](int pos,type x){vector.insert(vector.begin()+pos,x);}
 template<class numX, class indexerX, class numY=numX, class indexerY=indexerX>
 numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
+	if(x==X[from])return Y[from];
+	if(x==X[to])return Y[to];
 	int i=WhereToInsert(from,to,X,x);
 	if((i<=from)||(i>to))
 		throw std::exception();
@@ -123,13 +125,24 @@ public:
 		return data.cend();
 	}
 };
+template<class numt>class RandomValueGenerator;
 template<class numX, class numY=numX>
 class LinearInterpolation_fixedsize{
+	friend class RandomValueGenerator<numX>;
 private:
 	numX *X;
 	numY *Y;
 	int n;
 public:
+	LinearInterpolation_fixedsize(const LinearInterpolation_fixedsize &source){
+		n=source.n;
+		X=new numX[n];
+		Y=new numY[n];
+		for(int i=0;i<n;i++){
+			X[i]=source.X[i];
+			Y[i]=source.Y[i];
+		}
+	}
 	LinearInterpolation_fixedsize(std::function<numY(numX)> F, numX from,numX to,int points){
 		if(from>=to)throw std::exception();
 		if(points<2)throw std::exception();
@@ -175,15 +188,16 @@ public:
 		if(i>=size())throw std::exception();
 		return Y[i];
 	}
-	void setX(int i,numX v){
-		if(i<0)throw std::exception();
-		if(i>=size())throw std::exception();
-		X[i]=v;
-	}
 	void setY(int i,numY v){
 		if(i<0)throw std::exception();
 		if(i>=size())throw std::exception();
 		Y[i]=v;
+	}
+protected:
+	void setX(int i,numX v){
+		if(i<0)throw std::exception();
+		if(i>=size())throw std::exception();
+		X[i]=v;
 	}
 };
 template<class numX, class numY=numX>
@@ -208,5 +222,6 @@ public:
 		}
 		return *this;
 	}
+	numX BinWidth(){return bindelta*numX(2);}
 };
 #endif

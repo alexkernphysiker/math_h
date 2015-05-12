@@ -53,14 +53,9 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 template<class numt>
 class RandomValueGenerator{
 private:
-	double C;
 	LinearInterpolation_fixedsize<numt,numt> distrib;
 public:
-	RandomValueGenerator():C(1),distrib(0,1,2){}
-	RandomValueGenerator(RandomValueGenerator &R):C(R.C),distrib(R.distrib.min(),R.distrib.max(),R.distrib.size()){
-		for(int i=0,n=distrib.size();i<n;i++)
-			distrib.setY(i,R.distrib.getY(i));
-	}
+	RandomValueGenerator(const RandomValueGenerator &R):distrib(R.distrib){}
 	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins):distrib(x1,x2,bins){
 		using namespace std;
 		if(bins<=1)throw exception();
@@ -73,13 +68,13 @@ public:
 			distrib.setX(i,Y[i]);
 			distrib.setY(i,X[i]);
 		}
-		C=Y[bins-1];
+		double C=Y[bins-1];
 		delete[] Y;
 		if(C<=0)throw exception();
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
-		return distrib(RandomUniformlyR<numt>(0,C));
+		return distrib(RandomUniformlyR<numt>(distrib.min(),distrib.max()));
 	}
 	numt operator ()(double){
 		return operator()();

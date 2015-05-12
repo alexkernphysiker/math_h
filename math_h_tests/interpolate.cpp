@@ -155,8 +155,6 @@ TEST(LinearInterpolation_fixedsize,Basic){
 	_EQ(0.7,F(1.3));
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
-	F.setX(0,-1);
-	EXPECT_EQ(-1,F.getX(0));
 }
 TEST(LinearInterpolation_fixedsize,Throwing){
 	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),exception);
@@ -174,9 +172,12 @@ TEST(LinearInterpolation_fixedsize,Throwing){
 	EXPECT_EQ(0,F.getY(0));
 	EXPECT_EQ(1,F.getX(1));
 	EXPECT_EQ(0,F.getY(1));
+	EXPECT_EQ(0,F(0));
+	EXPECT_EQ(0,F(1));
 }
 TEST(Distribution,BasicTest){
 	Distribution<double> D(0,2,2);
+	_EQ(1,D.BinWidth());
 	ASSERT_EQ(2,D.size());
 	EXPECT_EQ(0.5,D.min());
 	EXPECT_EQ(1.5,D.max());
