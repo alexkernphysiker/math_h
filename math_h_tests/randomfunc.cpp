@@ -57,6 +57,11 @@ TEST(RandomValueGenerator,BaseTest){
 		double r=R();
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
+	auto R2=R;
+	for(int i=0;i<100;i++){
+		double r=R2();
+		EXPECT_TRUE((r>=0)&&(r<=1));
+	}
 }
 TEST(RandomValueGenerator,Throwing){
 	auto f=[](double){return 1;};

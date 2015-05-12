@@ -56,10 +56,10 @@ private:
 	LinearInterpolation_fixedsize<numt,numt> distrib;
 	double C;
 public:
-	RandomValueGenerator():C(1){}
-	RandomValueGenerator(RandomValueGenerator &R):C(R.C){
-		for(auto p:R.distrib)
-			distrib<<p;
+	RandomValueGenerator():C(1),distrib(0,1,2){}
+	RandomValueGenerator(RandomValueGenerator &R):C(R.C),distrib(R.distrib.min(),R.distrib.max(),R.distrib.size()){
+		for(int i=0,n=distrib.size();i<n;i++)
+			distrib.setY(i,R.distrib.getY(i));
 	}
 	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins):distrib(x1,x2,bins){
 		using namespace std;
