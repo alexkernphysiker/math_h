@@ -52,7 +52,7 @@ TEST(RandomGauss,Throwing){
 	}
 }
 TEST(RandomValueGenerator,BaseTest){
-	RandomValueGenerator<double> R([](double){return 1;},0,1,0.01);
+	RandomValueGenerator<double> R([](double){return 1;},0,1,100);
 	for(int i=0;i<100;i++){
 		double r=R();
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -63,10 +63,10 @@ TEST(RandomValueGenerator,Throwing){
 	auto z=[](double){return 0;};
 	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,0),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,-1),exception);
-	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,1));
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,0.1),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,0.1),exception);
-	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,0.1));
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,0.1),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,1),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,2),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,2),exception);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,2));
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
 }

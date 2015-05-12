@@ -53,27 +53,27 @@ numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
 template<class numt>
 class RandomValueGenerator{
 private:
-	LinearInterpolation<numt> distrib;
+	LinearInterpolation_fixedsize<numt,numt> distrib;
 	double C;
 public:
-	RandomValueGenerator():C(0){}
+	RandomValueGenerator():C(1){}
 	RandomValueGenerator(RandomValueGenerator &R):C(R.C){
 		for(auto p:R.distrib)
 			distrib<<p;
 	}
-	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, numt step){
+	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins):distrib(x1,x2,bins){
 		using namespace std;
-		if(step<=0)throw exception();
+		if(bins<=1)throw exception();
 		if(x2<=x1)throw exception();
-		vector<numt> X;
-		for(numt x=x1;x<=x2;x+=step)
-			X.push_back(x);
-		numt* Y=SympsonTable<numt,vector<numt>>(distribution_density,X,X.size());
-		for(int i=0;i<X.size();i++)
-			distrib<<make_pair(Y[i],X[i]);
-		C=Y[X.size()-1];
-		if(C<=0)throw exception();
+		numt X[bins];
+		for(int i=0;i<bins;i++)
+			X[i]=distrib.getX(i);
+		numt* Y=SympsonTable<numt,numt*>(distribution_density,X,bins);
+		for(int i=0;i<bins;i++)
+			distrib.setY(i,Y[i]);
+		C=Y[bins-1];
 		delete[] Y;
+		if(C<=0)throw exception();
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
