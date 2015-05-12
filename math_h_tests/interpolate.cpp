@@ -108,36 +108,98 @@ TEST(LinearInterpolation,SimpleLine){
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
 }
-
+TEST(LinearInterpolation_fixedsize,Basic){
+	LinearInterpolation_fixedsize<double> F(0,2,5);
+	EXPECT_EQ(0,F(0));
+	EXPECT_EQ(0,F(1));
+	_EQ(0,F(0.1));
+	_EQ(0,F(0.2));
+	_EQ(0,F(0.3));
+	_EQ(0,F(0.4));
+	EXPECT_EQ(0,F(0.5));
+	_EQ(0,F(0.6));
+	_EQ(0,F(0.7));
+	_EQ(0,F(0.8));
+	_EQ(0,F(0.9));
+	EXPECT_EQ(0,F(2));
+	_EQ(0,F(1.9));
+	_EQ(0,F(1.8));
+	_EQ(0,F(1.7));
+	_EQ(0,F(1.6));
+	EXPECT_EQ(0,F(1.5));
+	_EQ(0,F(1.4));
+	_EQ(0,F(1.3));
+	_EQ(0,F(1.2));
+	_EQ(0,F(1.1));
+	double values[]={0,0.5,1,0.5,0};
+	for(int i=0,n=F.size();i<n;i++)
+		F.setY(i,values[i]);
+	EXPECT_EQ(0,F(0));
+	EXPECT_EQ(1,F(1));
+	_EQ(0.1,F(0.1));
+	_EQ(0.2,F(0.2));
+	_EQ(0.3,F(0.3));
+	_EQ(0.4,F(0.4));
+	EXPECT_EQ(0.5,F(0.5));
+	_EQ(0.6,F(0.6));
+	_EQ(0.7,F(0.7));
+	_EQ(0.8,F(0.8));
+	_EQ(0.9,F(0.9));
+	EXPECT_EQ(0,F(2));
+	_EQ(0.1,F(1.9));
+	_EQ(0.2,F(1.8));
+	_EQ(0.3,F(1.7));
+	_EQ(0.4,F(1.6));
+	EXPECT_EQ(0.5,F(1.5));
+	_EQ(0.6,F(1.4));
+	_EQ(0.7,F(1.3));
+	_EQ(0.8,F(1.2));
+	_EQ(0.9,F(1.1));
+}
+TEST(LinearInterpolation_fixedsize,Throwing){
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),exception);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,0,2),exception);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,0),exception);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,1),exception);
+	EXPECT_NO_THROW(LinearInterpolation_fixedsize<double>(0,1,2));
+	LinearInterpolation_fixedsize<double> F(0,1,2);
+	ASSERT_EQ(2,F.size());
+	EXPECT_THROW(F.getX(-1),exception);
+	EXPECT_THROW(F.getY(-1),exception);
+	EXPECT_THROW(F.getX(2),exception);
+	EXPECT_THROW(F.getY(2),exception);
+	EXPECT_EQ(0,F.getX(0));
+	EXPECT_EQ(0,F.getY(0));
+	EXPECT_EQ(1,F.getX(1));
+	EXPECT_EQ(0,F.getY(1));
+}
 TEST(Distribution,BasicTest){
 	Distribution<double> D(0,2,2);
 	ASSERT_EQ(2,D.size());
 	EXPECT_EQ(0.5,D.min());
 	EXPECT_EQ(1.5,D.max());
-	EXPECT_EQ(0.5,D[0].first);
-	EXPECT_EQ(0,D[0].second);
-	EXPECT_EQ(1.5,D[1].first);
-	EXPECT_EQ(0,D[1].second);
+	EXPECT_EQ(0.5,D.getX(0));
+	EXPECT_EQ(0,D.getY(0));
+	EXPECT_EQ(1.5,D.getX(1));
+	EXPECT_EQ(0,D.getY(1));
 	EXPECT_EQ(&D,&(D.AddValue(0.1)));
 	ASSERT_EQ(2,D.size());
-	EXPECT_EQ(0.5,D[0].first);
-	EXPECT_EQ(1,D[0].second);
-	EXPECT_EQ(1.5,D[1].first);
-	EXPECT_EQ(0,D[1].second);
+	EXPECT_EQ(0.5,D.getX(0));
+	EXPECT_EQ(1,D.getY(0));
+	EXPECT_EQ(1.5,D.getX(1));
+	EXPECT_EQ(0,D.getY(1));
 	EXPECT_EQ(&D,&(D.AddValue(1.5)));
 	ASSERT_EQ(2,D.size());
-	EXPECT_EQ(0.5,D[0].first);
-	EXPECT_EQ(1,D[0].second);
-	EXPECT_EQ(1.5,D[1].first);
-	EXPECT_EQ(1,D[1].second);
+	EXPECT_EQ(0.5,D.getX(0));
+	EXPECT_EQ(1,D.getY(0));
+	EXPECT_EQ(1.5,D.getX(1));
+	EXPECT_EQ(1,D.getY(1));
 	EXPECT_EQ(1,D(1));
 }
 TEST(Distribution,Throwing){
 	EXPECT_THROW(Distribution<double>(1,0,2),exception);
 	EXPECT_THROW(Distribution<double>(0,0,2),exception);
 	EXPECT_THROW(Distribution<double>(0,1,0),exception);
-	EXPECT_NO_THROW(Distribution<double>(0,1,1));
+	EXPECT_THROW(Distribution<double>(0,1,1),exception);
 	EXPECT_NO_THROW(Distribution<double>(0,1,2));
-	Distribution<double> D(0,1,2);
-	EXPECT_THROW(D<<make_pair(2,0),exception);
 }

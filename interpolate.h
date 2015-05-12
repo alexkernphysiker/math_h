@@ -124,30 +124,84 @@ public:
 	}
 };
 template<class numX, class numY=numX>
-class Distribution:public LinearInterpolation<numX,numY>{
+class LinearInterpolation_fixedsize{
+private:
+	numX *X;
+	numY *Y;
+	int n;
+public:
+	LinearInterpolation_fixedsize(std::function<numY(numX)> F, numX from,numX to,int points){
+		if(from>=to)throw std::exception();
+		if(points<2)throw std::exception();
+		numX step= (to-from)/numX(points-1);
+		n=points;
+		X=new numX[n];
+		Y=new numY[n];
+		for(int i=0;i<n;i++){
+			numX x=from+step*numX(i);
+			X[i]=x;
+			Y[i]=F(x);
+		}
+	}
+	LinearInterpolation_fixedsize(numX from,numX to,int points):LinearInterpolation_fixedsize([](numX){return numY(0);},from,to,points){}
+	virtual ~LinearInterpolation_fixedsize(){
+		delete[] X;
+		delete[] Y;
+	}
+	int size(){
+		return n;
+	}
+	numX min(){
+		if(size()<1)
+			throw std::exception();
+		return X[0];
+	}
+	numX max(){
+		if(size()<1)
+			throw std::exception();
+		return X[size()-1];
+	}
+	numY operator()(numX x){
+		using namespace details;
+		return Interpolate_Linear(0,n-1,X,Y,x);
+	}
+	numX getX(int i){
+		if(i<0)throw std::exception();
+		if(i>=size())throw std::exception();
+		return X[i];
+	}
+	numY getY(int i){
+		if(i<0)throw std::exception();
+		if(i>=size())throw std::exception();
+		return Y[i];
+	}
+	void setY(int i,numY v){
+		if(i<0)throw std::exception();
+		if(i>=size())throw std::exception();
+		Y[i]=v;
+	}
+};
+template<class numX, class numY=numX>
+class Distribution:public LinearInterpolation_fixedsize<numX,numY>{
 private:
 	numX bindelta;
 public:
-	Distribution(numX from,numX to,int bincount){
+	Distribution(numX from,numX to,int bincount):LinearInterpolation_fixedsize<numX,numY>(
+		from+(to-from)/numX(bincount*2),
+		to-(to-from)/numX(bincount*2),
+		bincount
+	){
 		if(from>=to)throw std::exception();
-		if(bincount<1)throw std::exception();
-		numX binwidth= (to-from)/numX(bincount);
-		bindelta=binwidth/numX(2);
-		for(numX x=from+bindelta;x<to;x+=binwidth){
-			typename LinearInterpolation<numX,numY>::Point P;
-			P.first=x;P.second=0;
-			LinearInterpolation<numX,numY>::operator<<(P);
-		}
+		bindelta=(to-from)/numX(bincount*2);
 	}
 	virtual ~Distribution(){}
 	Distribution &AddValue(numX v){
-		for(auto &P:*this)
-			if(((P.first-bindelta)<=v)&&(v<(P.first+bindelta)))
-				P.second+=numY(1);
+		for(int i=0,n=LinearInterpolation_fixedsize<numX,numY>::size();i<n;i++){
+			numX x=LinearInterpolation_fixedsize<numX,numY>::getX(i);
+			if(((x-bindelta)<=v)&&(v<(x+bindelta)))
+				LinearInterpolation_fixedsize<numX,numY>::setY(i,LinearInterpolation_fixedsize<numX,numY>::getY(i)+1);
+		}
 		return *this;
-	}
-	virtual LinearInterpolation<numX,numY> &operator<<(typename LinearInterpolation<numX,numY>::Point p)override{
-		throw std::exception();
 	}
 };
 #endif
