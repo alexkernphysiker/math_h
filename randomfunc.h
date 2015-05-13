@@ -64,9 +64,11 @@ public:
 			distrib.setX(i,Y[i]);
 			distrib.setY(i,X[i]);
 		}
-		double C=Y[bins-1];
 		delete[] Y;
-		if(C<=0)throw exception();
+		for(int i=1;i<bins;i++){
+			if(distrib.getX(i)<=distrib.getX(i-1))
+				throw exception();
+		}
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
