@@ -80,14 +80,17 @@ TEST(RandomValueGenerator,Throwing){
 }
 double test_eq(Distribution<double> &D,function<double(double)>F){
 	double S=0;
-	int k=0;
+	int k0=0,k1=0,k2=0;
 	for(int i=0,n=D.size();i<n;i++){
 		double d1=D.getY(i);S+=d1;double d2=F(D.getX(i));
-		printf("pract: %f\t theor: %f\n",d1,d2);
-		double estim=d1;if(estim<2)estim=2;estim*=2;
-		if(pow(d1-d2,2)>estim)k++;
+		double estim=d1;if(estim<2)estim=2;
+		if(pow(d1-d2,2)>(estim*2))k0++;
+		if(pow(d1-d2,2)>(estim*2))k1++;
+		if(pow(d1-d2,2)>(estim*3))k2++;
 	}
-	EXPECT_TRUE(k<=(D.size()/7));
+	EXPECT_TRUE(k1<=(D.size()/5));
+	EXPECT_TRUE(k1<=(D.size()/7));
+	EXPECT_TRUE(k2<=(D.size()/10));
 	return S;
 }
 TEST(RandomGauss,Compare){
