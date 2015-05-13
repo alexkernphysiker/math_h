@@ -37,19 +37,14 @@ numt RandomUniformlyR(numt x1, numt x2){
 	return ((x2-x1)*numt(val) / numt(max))+x1;
 }
 template<class numt>
-numt RandomGauss(numt sigma, numt average=0, unsigned int precision=12){
-	if(precision==0)throw std::exception();
+numt RandomGauss(numt sigma, numt average=0){
 	if(sigma<0)throw std::exception();
 	if(sigma==0)return average;
-	numt res=0.0;
-	numt coeff=1.0/sqrt(12.0);
-	for(unsigned int i=0;i<precision;i++)
-		res+=RandomUniformlyR<numt>(-0.5,0.5);
-	res*=(sigma/(coeff*precision))*sqrt(numt(precision));
-	if(0==average)
-		return res;
-	res+=average;
-	return res;
+	numt phi=RandomUniformlyR<numt>(0,2.0*3.1415926);
+	numt r=0;while(r==0)r=RandomUniformlyR<numt>(0,1);
+	numt Z=sigma*cos(phi)*sqrt(-2.0*log(r));
+	if(average==0)return Z;
+	return average+Z;
 }
 template<class numt>
 class RandomValueGenerator{
