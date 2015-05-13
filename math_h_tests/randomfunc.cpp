@@ -77,6 +77,8 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,2));
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
+	auto n=[](double x){return sin(10*x);};
+	EXPECT_THROW(RandomValueGenerator<double>(n,0,1,100),exception);
 }
 double test_eq(Distribution<double> &D,function<double(double)>F){
 	double S=0;
