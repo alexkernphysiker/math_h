@@ -66,7 +66,7 @@ public:
 		}
 		delete[] Y;
 		for(int i=1;i<bins;i++){
-			if(distrib.getX(i)<=distrib.getX(i-1))
+			if(distrib.getX(i)<distrib.getX(i-1))
 				throw exception();
 		}
 	}
