@@ -53,6 +53,9 @@ TEST(RandomGauss,Throwing){
 		auto f=[&X](){return RandomGauss(-1.0,X);};
 		EXPECT_THROW(f(),exception);
 	}
+	EXPECT_THROW(RandomGauss(1.0,5.0,0),exception);
+	EXPECT_NO_THROW(RandomGauss(1.0,5.0,1));
+	EXPECT_NO_THROW(RandomGauss(1.0,5.0,2));
 }
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
