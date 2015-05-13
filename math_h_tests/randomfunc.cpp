@@ -38,9 +38,9 @@ TEST(RandomGauss,BasicTest){
 			double V=RandomGauss(0.0,X);
 			EXPECT_EQ(X,V);
 		}
-		for(double sigma=0.1;sigma<3;sigma+=0.1){
+		for(double sigma=0.5;sigma<3;sigma+=0.5){
 			int cg=0,cl=0;
-			for(int i=0;i<100;i++){
+			for(int i=0;i<200;i++){
 				if(pow(RandomGauss(sigma,X)-X,2)<pow(2*sigma,2))cl++;
 				else cg++;
 			}
@@ -53,9 +53,6 @@ TEST(RandomGauss,Throwing){
 		auto f=[&X](){return RandomGauss(-1.0,X);};
 		EXPECT_THROW(f(),exception);
 	}
-	EXPECT_THROW(RandomGauss(1.0,5.0,0),exception);
-	EXPECT_NO_THROW(RandomGauss(1.0,5.0,1));
-	EXPECT_NO_THROW(RandomGauss(1.0,5.0,2));
 }
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
@@ -81,30 +78,31 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
 	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
 }
-TEST(RandomGauss,Compare){
-	int N=1000000,bins=100;
-	Distribution<double> D(0.0,10.0,bins);
-	for(int i=0;i<N;i++)
-		D.AddValue(RandomGauss(1.0,5.0));
-	auto F=[](double x){return Gaussian(x,5.0,1.0);};
-	double C=Sympson(F,0.0,10.0,0.0001);
+double test_eq(Distribution<double> &D,function<double(double)>F){
 	double S=0;
 	int k=0;
 	for(int i=0,n=D.size();i<n;i++){
-		double d1=D.getY(i);S+=d1;
-		double d2=F(D.getX(i))*double(N)*D.BinWidth()/C;
+		double d1=D.getY(i);S+=d1;double d2=F(D.getX(i));
 		printf("pract: %f\t theor: %f\n",d1,d2);
-		double estim=d1;if(estim<1)estim=1;estim*=2;
+		double estim=d1;if(estim<2)estim=2;estim*=2;
 		if(pow(d1-d2,2)>estim)k++;
 	}
-	EXPECT_EQ(N,S);
-	EXPECT_TRUE(k<=(bins/10));
+	EXPECT_TRUE(k<=(D.size()/7));
+	return S;
+}
+TEST(RandomGauss,Compare){
+	int N=1000000,bins=200;
+	Distribution<double> D(0.0,10.0,bins);
+	for(int i=0;i<N;i++)D.AddValue(RandomGauss(1.0,5.0));
+	double S=test_eq(D,[N,&D](double x){return Gaussian(x,5.0,1.0)*double(N)*D.BinWidth();});
+	EXPECT_TRUE(N>=S);
+	EXPECT_TRUE((N*9)<=(S*10));
 }
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.02)
 TEST(RandomValueGenerator,Compare){
 	auto F=[](double x){return Gaussian(x,5.0,1.0);};
 	double C=Sympson(F,0.0,10.0,0.0001);
-	int N=1000000,bins=100;
+	int N=1000000,bins=200;
 	RandomValueGenerator<double> R(F,0.0,10.0,1000);
 	Distribution<double> D(0.0,10.0,bins);
 	Sigma<double> Sig;
@@ -115,15 +113,6 @@ TEST(RandomValueGenerator,Compare){
 	}
 	_EQ2(5.0,Sig.getAverage());
 	_EQ2(1.0,Sig.getSigma());
-	double S=0;
-	int k=0;
-	for(int i=0,n=D.size();i<n;i++){
-		double d1=D.getY(i);S+=d1;
-		double d2=F(D.getX(i))*double(N)*D.BinWidth()/C;
-		printf("pract: %f\t theor: %f\n",d1,d2);
-		double estim=d1;if(estim<1)estim=1;estim*=2;
-		if(pow(d1-d2,2)>estim)k++;
-	}
+	double S=test_eq(D,[F,N,&D,C](double x){return F(x)*double(N)*D.BinWidth()/C;});
 	EXPECT_EQ(N,S);
-	EXPECT_TRUE(k<=(bins/10));
 }
