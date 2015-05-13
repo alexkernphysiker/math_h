@@ -9,7 +9,7 @@ TEST(Sigma,Throwing){
 	EXPECT_THROW(S.getSigmaSqr(),exception);
 	EXPECT_THROW(S.getSigma(),exception);
 }
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
+#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(Sigma,Base){
 	Sigma<double> S;
 	S.AddValue(0);
@@ -23,12 +23,12 @@ TEST(Sigma,Base){
 	EXPECT_EQ(0.5,S.getSigmaSqr());
 	EXPECT_EQ(S.getSigma(),sqrt(S.getSigmaSqr()));
 }
+#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.02)
 TEST(Sigma,WithRandomValues){
 	Sigma<double> S;
-	for(int i=0;i<1000;i++)
-		S.AddValue(RandomGauss(1.0,1.0));
-	_EQ(1.0,S.getAverage());
-	_EQ(1.0,S.getSigma());
-	EXPECT_EQ(pow(S.getSigma(),2),S.getSigmaSqr());
+	for(int i=0;i<10000;i++)
+		S.AddValue(RandomGauss(3.0,1.0));
+	_EQ2(1.0,S.getAverage());
+	_EQ2(3.0,S.getSigma());
 }
 

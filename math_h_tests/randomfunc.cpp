@@ -3,6 +3,7 @@
 #include <math.h>
 #include <randomfunc.h>
 #include <interpolate.h>
+#include <sigma.h>
 #include <functions.h>
 using namespace std;
 TEST(RandomUniformlyI,BasicTest){
@@ -96,13 +97,21 @@ TEST(RandomGauss,Compare){
 	EXPECT_EQ(N,S);
 	EXPECT_TRUE(k<=(bins/10));
 }
+#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.02)
 TEST(RandomValueGenerator,Compare){
 	auto F=[](double x){return Gaussian(x,5.0,1.0);};
 	double C=Sympson(F,0.0,10.0,0.0001);
 	int N=1000000,bins=100;
 	RandomValueGenerator<double> R(F,0.0,10.0,1000);
 	Distribution<double> D(0.0,10.0,bins);
-	for(int i=0;i<N;i++)D.AddValue(R());
+	Sigma<double> Sig;
+	for(int i=0;i<N;i++){
+		double d=R();
+		D.AddValue(d);
+		Sig.AddValue(d);
+	}
+	_EQ2(5.0,Sig.getAverage());
+	_EQ2(1.0,Sig.getSigma());
 	double S=0;
 	int k=0;
 	for(int i=0,n=D.size();i<n;i++){
