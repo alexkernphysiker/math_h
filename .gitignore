@@ -21,14 +21,13 @@ bin
 *.dll
 *.exe
 
-#qt creator
-moc_*.cpp
-ui_*.h
+#cmake
 Makefile
 Makefile*.*
-*.pro.user
-*.pro.user.*
-object_script*
+*cmake
+CMakeCache*
+CMakeFiles
+
 
 #tex
 *.dvi
