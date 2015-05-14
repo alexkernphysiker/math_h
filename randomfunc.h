@@ -69,6 +69,8 @@ public:
 			if(distrib.getX(i)<distrib.getX(i-1))
 				throw exception();
 		}
+		if(distrib.min()>=distrib.max())
+			throw exception();
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
