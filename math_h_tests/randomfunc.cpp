@@ -10,7 +10,7 @@ using namespace std;
 void Test_Random_Func(function<double()> R,function<double(double)> F,double from,double to,int bins){
 	Distribution<double> D(from,to,bins);
 	double norm=Sympson(F,from,to,0.0001);
-	int N=1000000;
+	int N=5000;
 	for(int i=0;i<N;i++)D.AddValue(R());
 	double S=0;
 	for(int i=0,n=D.size();i<n;i++){
@@ -27,7 +27,7 @@ void Test_Random_Func(function<double()> R,function<double(double)> F,double fro
 TEST(RandomUniformlyI,BasicTest){
 	for(int l=-10;l<=10;l++)
 		for(int r=l;r<=10;r++)
-			for(int c=0;c<100;c++){
+			for(int c=0;c<20;c++){
 				int V=RandomUniformlyI(l,r);
 				EXPECT_TRUE((V>=l)&&(V<=r));
 			}
@@ -40,7 +40,7 @@ TEST(RandomUniformlyI,Throwing){
 TEST(RandomUniformlyR,BasicTest){
 	for(double l=-10;l<=10;l+=0.5)
 		for(double r=l;r<=10;r+=0.5)
-			for(int c=0;c<100;c++){
+			for(int c=0;c<20;c++){
 				double V=RandomUniformlyR(l,r);
 				EXPECT_TRUE((V>=l)&&(V<=r));
 			}
@@ -52,8 +52,8 @@ TEST(RandomUniformlyR,Throwing){
 }
 TEST(RandomUniformlyR,Distr){
 	Test_Random_Func([](){
-		return RandomUniformlyR<double>(0.0,2.0);
-	},[](double){return 1.0;},0.0,2.0,20);
+		return RandomUniformlyR<double>(0.0,10.0);
+	},[](double){return 1.0;},0.0,10.0,20);
 }
 TEST(RandomGauss,Zeros){
 	for(double X=-10;X<=10;X+=0.5)
@@ -68,27 +68,21 @@ TEST(RandomGauss,Throwing){
 		EXPECT_THROW(f(),exception);
 	}
 }
-TEST(RandomGauss,ShapeTest){
-	Test_Random_Func([](){
-		return RandomGauss(1.0,5.0);
-	},[](double x){
-		return Gaussian(x,5.0,1.0);
-	},0.0,10.0,50);
+void TestGauss(double mean,double sigma, double from,double to,int bins){
+	Test_Random_Func([sigma,mean](){
+		return RandomGauss(sigma,mean);
+	},[sigma,mean](double x){
+		return Gaussian(x,mean,sigma);
+	},from,to,bins);
 }
-TEST(RandomGauss,ShapeTest2){
-	Test_Random_Func([](){
-		return RandomGauss(1.5,3.0);
-	},[](double x){
-		return Gaussian(x,3.0,1.5);
-	},-2.0,8.0,50);
-}
-TEST(RandomGauss,ShapeTest3){
-	Test_Random_Func([](){
-		return RandomGauss(2.5,3.0);
-	},[](double x){
-		return Gaussian(x,3.0,2.5);
-	},-5.0,10.0,75);
-}
+TEST(RandomGauss,ShapeTest){TestGauss(5,0.5, 0,10,20);}
+TEST(RandomGauss,ShapeTest2){TestGauss(5,1, 0,10,20);}
+TEST(RandomGauss,ShapeTest3){TestGauss(5,1.5, 0,10,20);}
+TEST(RandomGauss,ShapeTest4){TestGauss(5,2, 0,10,20);}
+TEST(RandomGauss,ShapeTest5){TestGauss(4,1, -3,10,26);}
+TEST(RandomGauss,ShapeTest6){TestGauss(3,1, -3,10,26);}
+TEST(RandomGauss,ShapeTest7){TestGauss(2,1, -3,10,26);}
+
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
 	for(int i=0;i<100;i++){
@@ -119,9 +113,9 @@ void TestRandomDistribution(function<double(double)> F,double from,double to,int
 	RandomValueGenerator<double> R(F,from,to,bins*accu);
 	Test_Random_Func([&R](){return R();},F,from,to,bins);
 }
-TEST(RandomValueGenerator,Uniform){TestRandomDistribution([](double){return 1.0;},0,2,20);}
-TEST(RandomValueGenerator,Linear){TestRandomDistribution([](double x){return x;},0,2,20);}
-TEST(RandomValueGenerator,Parabolic){TestRandomDistribution([](double x){return x*x;},0,2,20);}
+TEST(RandomValueGenerator,Uniform){TestRandomDistribution([](double){return 1.0;},0,10,20);}
+TEST(RandomValueGenerator,Linear){TestRandomDistribution([](double x){return x;},0,10,20);}
+TEST(RandomValueGenerator,Parabolic){TestRandomDistribution([](double x){return x*x;},0,10,20);}
 TEST(RandomValueGenerator,Sin){TestRandomDistribution([](double x){return sin(x);},0,3,30);}
 TEST(RandomValueGenerator,Gauss){TestRandomDistribution([](double x){return Gaussian(x,5.0,1.0);},0,10,50);}
 TEST(RandomValueGenerator,Gauss2){TestRandomDistribution([](double x){return Gaussian(x,5.0,1.5);},0,10,50);}

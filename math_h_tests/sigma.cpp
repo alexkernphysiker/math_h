@@ -33,10 +33,10 @@ TEST(Sigma,Base){
 	EXPECT_EQ(0.5,S.getSigmaSqr());
 	EXPECT_EQ(S.getSigma(),sqrt(S.getSigmaSqr()));
 }
-#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.02)
+#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(Sigma,WithRandomValues){
 	Sigma<double> S;
-	for(int i=0;i<100000;i++)
+	for(int i=0;i<2000;i++)
 		S.AddValue(RandomGauss(3.0,1.0));
 	_EQ2(1.0,S.getAverage());
 	_EQ2(3.0,S.getSigma());

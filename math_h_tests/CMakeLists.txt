@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(math_h_tests)
+add_definitions(-DUSE_RANDOM_DEVICE)
 include_directories(..)
 set(gtestlibs gtest gtest_main)
 set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -g -Wall -pthread -std=gnu++11")
