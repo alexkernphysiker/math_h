@@ -8,12 +8,12 @@ TEST(Sigma,Throwing){
 	EXPECT_THROW(S.getAverage(),exception);
 	EXPECT_THROW(S.getSigmaSqr(),exception);
 	EXPECT_THROW(S.getSigma(),exception);
-	S.AddValue(0);
+	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(1,S.count());
 	EXPECT_EQ(0,S.getAverage());
 	EXPECT_THROW(S.getSigmaSqr(),exception);
 	EXPECT_THROW(S.getSigma(),exception);
-	S.AddValue(0);
+	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0,S.getAverage());
 	EXPECT_EQ(0,S.getSigmaSqr());
@@ -42,3 +42,51 @@ TEST(Sigma,WithRandomValues){
 	_EQ2(3.0,S.getSigma());
 }
 
+TEST(WeightedAverageCalculator,Zeros){
+	WeightedAverageCalculator<double> W;
+	EXPECT_THROW(W.Average(),exception);
+	EXPECT_THROW(W.Sigma(),exception);
+	EXPECT_THROW(W.AddValue(0,0),exception);
+	EXPECT_EQ(&W,&(W.AddValue(0,1)));
+	_EQ(0,W.Average());
+	_EQ(1,W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(0,1)));
+	_EQ(0,W.Average());
+	_EQ(1.0/sqrt(2.0),W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(0,1)));
+	_EQ(0,W.Average());
+	_EQ(1.0/sqrt(3.0),W.Sigma());
+}
+TEST(WeightedAverageCalculator,Ones){
+	WeightedAverageCalculator<double> W;
+	EXPECT_THROW(W.Average(),exception);
+	EXPECT_THROW(W.Sigma(),exception);
+	EXPECT_THROW(W.AddValue(1,0),exception);
+	EXPECT_EQ(&W,&(W.AddValue(1,1)));
+	_EQ(1,W.Average());
+	_EQ(1,W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(1,1)));
+	_EQ(1,W.Average());
+	_EQ(1.0/sqrt(2.0),W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(1,1)));
+	_EQ(1,W.Average());
+	_EQ(1.0/sqrt(3.0),W.Sigma());
+}
+TEST(WeightedAverageCalculator,Zeros_plus_Ones){
+	WeightedAverageCalculator<double> W;
+	EXPECT_THROW(W.Average(),exception);
+	EXPECT_THROW(W.Sigma(),exception);
+	EXPECT_THROW(W.AddValue(0,0),exception);
+	EXPECT_EQ(&W,&(W.AddValue(1,1)));
+	_EQ(1,W.Average());
+	_EQ(1,W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(0,1)));
+	_EQ(0.5,W.Average());
+	_EQ(1.0/sqrt(2.0),W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(1,1)));
+	_EQ(2.0/3.0,W.Average());
+	_EQ(1.0/sqrt(3.0),W.Sigma());
+	EXPECT_EQ(&W,&(W.AddValue(0,1)));
+	_EQ(0.5,W.Average());
+	_EQ(1.0/sqrt(4.0),W.Sigma());
+}
