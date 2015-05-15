@@ -22,7 +22,7 @@ void Test_Random_Func(function<double()> R,function<double(double)> F,double fro
 	}
 	S/=D.size();
 	printf("chi^2=%f\n",S);
-	EXPECT_TRUE(S<=1.5);
+	EXPECT_TRUE(S<=2.0);
 }
 TEST(RandomUniformlyI,BasicTest){
 	for(int l=-10;l<=10;l++)
