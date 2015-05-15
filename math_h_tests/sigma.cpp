@@ -8,6 +8,16 @@ TEST(Sigma,Throwing){
 	EXPECT_THROW(S.getAverage(),exception);
 	EXPECT_THROW(S.getSigmaSqr(),exception);
 	EXPECT_THROW(S.getSigma(),exception);
+	S.AddValue(0);
+	EXPECT_EQ(1,S.count());
+	EXPECT_EQ(0,S.getAverage());
+	EXPECT_THROW(S.getSigmaSqr(),exception);
+	EXPECT_THROW(S.getSigma(),exception);
+	S.AddValue(0);
+	EXPECT_EQ(2,S.count());
+	EXPECT_EQ(0,S.getAverage());
+	EXPECT_EQ(0,S.getSigmaSqr());
+	EXPECT_EQ(0,S.getSigma());
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(Sigma,Base){
