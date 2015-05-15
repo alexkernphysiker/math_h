@@ -6,6 +6,24 @@
 #include <sigma.h>
 #include <functions.h>
 using namespace std;
+
+void Test_Random_Func(function<double()> R,function<double(double)> F,double from,double to,int bins){
+	Distribution<double> D(from,to,bins);
+	double norm=Sympson(F,from,to,0.0001);
+	int N=1000000;
+	for(int i=0;i<N;i++)D.AddValue(R());
+	double S=0;
+	for(int i=0,n=D.size();i<n;i++){
+		double n_exp=D.BinWidth()*double(N);
+		double d=sqrt(D.getY(i));if(d<1)d=1;d/=n_exp;
+		double y=D.getY(i)/n_exp;
+		double f=F(D.getX(i))/norm;
+		S+=pow((y-f)/d,2);
+	}
+	S/=D.size();
+	printf("chi^2=%f\n",S);
+	EXPECT_TRUE(S<=1.5);
+}
 TEST(RandomUniformlyI,BasicTest){
 	for(int l=-10;l<=10;l++)
 		for(int r=l;r<=10;r++)
@@ -32,27 +50,44 @@ TEST(RandomUniformlyR,Throwing){
 		for(double r=-10;r<l;r+=0.5)
 			EXPECT_THROW(RandomUniformlyR(l,r),exception);
 }
-TEST(RandomGauss,BasicTest){
-	for(double X=-10;X<=10;X+=0.5){
+TEST(RandomUniformlyR,Distr){
+	Test_Random_Func([](){
+		return RandomUniformlyR<double>(0.0,2.0);
+	},[](double){return 1.0;},0.0,2.0,20);
+}
+TEST(RandomGauss,Zeros){
+	for(double X=-10;X<=10;X+=0.5)
 		for(int c=0;c<100;c++){
 			double V=RandomGauss(0.0,X);
 			EXPECT_EQ(X,V);
 		}
-		for(double sigma=0.5;sigma<3;sigma+=0.5){
-			int cg=0,cl=0;
-			for(int i=0;i<200;i++){
-				if(pow(RandomGauss(sigma,X)-X,2)<pow(2*sigma,2))cl++;
-				else cg++;
-			}
-			EXPECT_TRUE(cg<cl);
-		}
-	}
 }
 TEST(RandomGauss,Throwing){
 	for(double X=-1;X<=1;X+=0.5){
 		auto f=[&X](){return RandomGauss(-1.0,X);};
 		EXPECT_THROW(f(),exception);
 	}
+}
+TEST(RandomGauss,ShapeTest){
+	Test_Random_Func([](){
+		return RandomGauss(1.0,5.0);
+	},[](double x){
+		return Gaussian(x,5.0,1.0);
+	},0.0,10.0,50);
+}
+TEST(RandomGauss,ShapeTest2){
+	Test_Random_Func([](){
+		return RandomGauss(1.5,3.0);
+	},[](double x){
+		return Gaussian(x,3.0,1.5);
+	},-2.0,8.0,50);
+}
+TEST(RandomGauss,ShapeTest3){
+	Test_Random_Func([](){
+		return RandomGauss(2.5,3.0);
+	},[](double x){
+		return Gaussian(x,3.0,2.5);
+	},-5.0,10.0,75);
 }
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
@@ -80,44 +115,17 @@ TEST(RandomValueGenerator,Throwing){
 	auto n=[](double x){return sin(10*x);};
 	EXPECT_THROW(RandomValueGenerator<double>(n,0,1,100),exception);
 }
-double test_eq(Distribution<double> &D,function<double(double)>F){
-	double S=0;
-	int k0=0,k1=0,k2=0;
-	for(int i=0,n=D.size();i<n;i++){
-		double d1=D.getY(i);S+=d1;double d2=F(D.getX(i));
-		double estim=d1;if(estim<2)estim=2;
-		if(pow(d1-d2,2)>(estim*2))k0++;
-		if(pow(d1-d2,2)>(estim*2))k1++;
-		if(pow(d1-d2,2)>(estim*3))k2++;
-	}
-	EXPECT_TRUE(k1<=(D.size()/5));
-	EXPECT_TRUE(k1<=(D.size()/7));
-	EXPECT_TRUE(k2<=(D.size()/10));
-	return S;
+void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
+	RandomValueGenerator<double> R(F,from,to,bins*accu);
+	Test_Random_Func([&R](){return R();},F,from,to,bins);
 }
-TEST(RandomGauss,Compare){
-	int N=1000000,bins=200;
-	Distribution<double> D(0.0,10.0,bins);
-	for(int i=0;i<N;i++)D.AddValue(RandomGauss(1.0,5.0));
-	double S=test_eq(D,[N,&D](double x){return Gaussian(x,5.0,1.0)*double(N)*D.BinWidth();});
-	EXPECT_TRUE(N>=S);
-	EXPECT_TRUE((N*9)<=(S*10));
-}
-#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.02)
-TEST(RandomValueGenerator,Compare){
-	auto F=[](double x){return Gaussian(x,5.0,1.0);};
-	double C=Sympson(F,0.0,10.0,0.0001);
-	int N=1000000,bins=200;
-	RandomValueGenerator<double> R(F,0.0,10.0,1000);
-	Distribution<double> D(0.0,10.0,bins);
-	Sigma<double> Sig;
-	for(int i=0;i<N;i++){
-		double d=R();
-		D.AddValue(d);
-		Sig.AddValue(d);
-	}
-	_EQ2(5.0,Sig.getAverage());
-	_EQ2(1.0,Sig.getSigma());
-	double S=test_eq(D,[F,N,&D,C](double x){return F(x)*double(N)*D.BinWidth()/C;});
-	EXPECT_EQ(N,S);
-}
+TEST(RandomValueGenerator,Uniform){TestRandomDistribution([](double){return 1.0;},0,2,20);}
+TEST(RandomValueGenerator,Linear){TestRandomDistribution([](double x){return x;},0,2,20);}
+TEST(RandomValueGenerator,Parabolic){TestRandomDistribution([](double x){return x*x;},0,2,20);}
+TEST(RandomValueGenerator,Sin){TestRandomDistribution([](double x){return sin(x);},0,3,30);}
+TEST(RandomValueGenerator,Gauss){TestRandomDistribution([](double x){return Gaussian(x,5.0,1.0);},0,10,50);}
+TEST(RandomValueGenerator,Gauss2){TestRandomDistribution([](double x){return Gaussian(x,5.0,1.5);},0,10,50);}
+TEST(RandomValueGenerator,Gauss3){TestRandomDistribution([](double x){return Gaussian(x,5.0,2.0);},0,10,50);}
+TEST(RandomValueGenerator,Gauss4){TestRandomDistribution([](double x){return Gaussian(x,3.0,1.0);},-2,10,50);}
+TEST(RandomValueGenerator,Gauss5){TestRandomDistribution([](double x){return Gaussian(x,3.0,1.5);},-2,10,50);}
+TEST(RandomValueGenerator,Gauss6){TestRandomDistribution([](double x){return Gaussian(x,3.0,2.0);},-2,10,50);}
