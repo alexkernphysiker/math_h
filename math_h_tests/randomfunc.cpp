@@ -6,7 +6,6 @@
 #include <sigma.h>
 #include <functions.h>
 using namespace std;
-
 void Test_Random_Func(function<double()> R,function<double(double)> F,double from,double to,int bins){
 	Distribution<double> D(from,to,bins);
 	double norm=Sympson(F,from,to,0.0001);
@@ -24,65 +23,6 @@ void Test_Random_Func(function<double()> R,function<double(double)> F,double fro
 	printf("chi^2=%f\n",S);
 	EXPECT_TRUE(S<=2.0);
 }
-TEST(RandomUniformlyI,BasicTest){
-	for(int l=-10;l<=10;l++)
-		for(int r=l;r<=10;r++)
-			for(int c=0;c<20;c++){
-				int V=RandomUniformlyI(l,r);
-				EXPECT_TRUE((V>=l)&&(V<=r));
-			}
-}
-TEST(RandomUniformlyI,Throwing){
-	for(int l=-10;l<=10;l++)
-		for(int r=-10;r<l;r++)
-			EXPECT_THROW(RandomUniformlyI(l,r),exception);
-}
-TEST(RandomUniformlyR,BasicTest){
-	for(double l=-10;l<=10;l+=0.5)
-		for(double r=l;r<=10;r+=0.5)
-			for(int c=0;c<20;c++){
-				double V=RandomUniformlyR(l,r);
-				EXPECT_TRUE((V>=l)&&(V<=r));
-			}
-}
-TEST(RandomUniformlyR,Throwing){
-	for(double l=-10;l<=10;l+=0.5)
-		for(double r=-10;r<l;r+=0.5)
-			EXPECT_THROW(RandomUniformlyR(l,r),exception);
-}
-TEST(RandomUniformlyR,Distr){
-	Test_Random_Func([](){
-		return RandomUniformlyR<double>(0.0,10.0);
-	},[](double){return 1.0;},0.0,10.0,20);
-}
-TEST(RandomGauss,Zeros){
-	for(double X=-10;X<=10;X+=0.5)
-		for(int c=0;c<100;c++){
-			double V=RandomGauss(0.0,X);
-			EXPECT_EQ(X,V);
-		}
-}
-TEST(RandomGauss,Throwing){
-	for(double X=-1;X<=1;X+=0.5){
-		auto f=[&X](){return RandomGauss(-1.0,X);};
-		EXPECT_THROW(f(),exception);
-	}
-}
-void TestGauss(double mean,double sigma, double from,double to,int bins){
-	Test_Random_Func([sigma,mean](){
-		return RandomGauss(sigma,mean);
-	},[sigma,mean](double x){
-		return Gaussian(x,mean,sigma);
-	},from,to,bins);
-}
-TEST(RandomGauss,ShapeTest){TestGauss(5,0.5, 0,10,20);}
-TEST(RandomGauss,ShapeTest2){TestGauss(5,1, 0,10,20);}
-TEST(RandomGauss,ShapeTest3){TestGauss(5,1.5, 0,10,20);}
-TEST(RandomGauss,ShapeTest4){TestGauss(5,2, 0,10,20);}
-TEST(RandomGauss,ShapeTest5){TestGauss(4,1, -3,10,26);}
-TEST(RandomGauss,ShapeTest6){TestGauss(3,1, -3,10,26);}
-TEST(RandomGauss,ShapeTest7){TestGauss(2,1, -3,10,26);}
-
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
 	for(int i=0;i<100;i++){

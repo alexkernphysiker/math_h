@@ -1,6 +1,6 @@
+#include <random>
 #include <gtest/gtest.h>
 #include <sigma.h>
-#include <randomfunc.h>
 using namespace std;
 TEST(Sigma,Throwing){
 	Sigma<double> S;
@@ -36,8 +36,10 @@ TEST(Sigma,Base){
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(Sigma,WithRandomValues){
 	Sigma<double> S;
+	default_random_engine generator;
+	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)
-		S.AddValue(RandomGauss(3.0,1.0));
+		S.AddValue(distribution(generator));
 	_EQ2(1.0,S.getAverage());
 	_EQ2(3.0,S.getSigma());
 }

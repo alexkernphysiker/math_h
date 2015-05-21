@@ -125,10 +125,8 @@ public:
 		return data.cend();
 	}
 };
-template<class numt>class RandomValueGenerator;
 template<class numX, class numY=numX>
 class LinearInterpolation_fixedsize{
-	friend class RandomValueGenerator<numX>;
 private:
 	numX *X;
 	numY *Y;

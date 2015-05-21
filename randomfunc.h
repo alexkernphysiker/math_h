@@ -1,80 +1,43 @@
 #ifndef XRYPRAVJWTJCYPQI
 #define XRYPRAVJWTJCYPQI
-#ifdef USE_RANDOM_DEVICE
-# include <random>
-#endif
-#include <vector>
+#include <random>
 #include <functional>
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
-template<class inumt>
-inumt RandomUniformlyI(inumt x1,inumt x2){
-	if(x1>x2)throw std::exception();
-	if(x1==x2)return x1;
-	#ifdef USE_RANDOM_DEVICE
-	std::random_device random;
-	inumt val=random();
-	if(val<0)
-		val=-val;
-	#else
-	inumt val=rand();
-	#endif
-	return val%(x2+1-x1)+x1;
-}
-template<class numt>
-numt RandomUniformlyR(numt x1, numt x2){
-	if(x1>x2)throw std::exception();
-	if(x1==x2)return x1;
-	#ifdef USE_RANDOM_DEVICE
-	std::random_device random;
-	auto val=random()-random.min();
-	auto max=random.max()-random.min();
-	#else
-	auto val=rand();
-	auto max=RAND_MAX;
-	#endif
-	return ((x2-x1)*numt(val) / numt(max))+x1;
-}
-template<class numt>
-numt RandomGauss(numt sigma, numt average=0){
-	if(sigma<0)throw std::exception();
-	if(sigma==0)return average;
-	numt phi=RandomUniformlyR<numt>(0,2.0*3.1415926);
-	numt r=0;while(r==0)r=RandomUniformlyR<numt>(0,1);
-	numt Z=sigma*cos(phi)*sqrt(-2.0*log(r));
-	if(average==0)return Z;
-	return average+Z;
-}
-template<class numt>
-class RandomValueGenerator{
+template<class numt,class RG=std::default_random_engine,typename... Args>
+class RandomValueGenerator:protected LinearInterpolation_fixedsize<numt,numt>{
 private:
-	LinearInterpolation_fixedsize<numt,numt> distrib;
+	std::uniform_real_distribution<numt> distr;
+	RG generator;
 public:
-	RandomValueGenerator(const RandomValueGenerator &R):distrib(R.distrib){}
-	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins):distrib(x1,x2,bins){
+	RandomValueGenerator(const RandomValueGenerator &R)
+		:LinearInterpolation_fixedsize<numt,numt>(R),distr(R.distr),generator(R.generator){}
+	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins,Args... args)
+		:LinearInterpolation_fixedsize<numt,numt>(x1,x2,bins),generator(args...){
 		using namespace std;
 		if(bins<=1)throw exception();
 		if(x2<=x1)throw exception();
 		numt X[bins];
 		for(int i=0;i<bins;i++)
-			X[i]=distrib.getX(i);
+			X[i]=LinearInterpolation_fixedsize<numt,numt>::getX(i);
 		numt* Y=SympsonTable<numt,numt*>(distribution_density,X,bins);
 		for(int i=0;i<bins;i++){
-			distrib.setX(i,Y[i]);
-			distrib.setY(i,X[i]);
+			LinearInterpolation_fixedsize<numt,numt>::setX(i,Y[i]);
+			LinearInterpolation_fixedsize<numt,numt>::setY(i,X[i]);
 		}
 		delete[] Y;
 		for(int i=1;i<bins;i++){
-			if(distrib.getX(i)<distrib.getX(i-1))
+			if(LinearInterpolation_fixedsize<numt,numt>::getX(i)<LinearInterpolation_fixedsize<numt,numt>::getX(i-1))
 				throw exception();
 		}
-		if(distrib.min()>=distrib.max())
+		if(LinearInterpolation_fixedsize<numt,numt>::min()>=LinearInterpolation_fixedsize<numt,numt>::max())
 			throw exception();
+		distr=uniform_real_distribution<numt>(LinearInterpolation_fixedsize<numt,numt>::min(),LinearInterpolation_fixedsize<numt,numt>::max());
 	}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
-		return distrib(RandomUniformlyR<numt>(distrib.min(),distrib.max()));
+		return LinearInterpolation_fixedsize<numt,numt>::operator()(distr(generator));
 	}
 	numt operator ()(double){
 		return operator()();
