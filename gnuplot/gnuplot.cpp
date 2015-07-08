@@ -88,7 +88,7 @@ Plot::~Plot(){
 	}
 }
 #define FILENAME(name) ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt"
-Plot& Plot::Points(string name, LinearInterpolation<double>& points){
+Plot& Plot::Points(string name, vector< pair< double, double > >&& points){
 	ofstream data;
 	string filename=FILENAME(name);
 	data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
@@ -99,7 +99,18 @@ Plot& Plot::Points(string name, LinearInterpolation<double>& points){
 		plots.push_back("\""+filename+"\" using 1:2 title \""+name+"\"");
 	}
 }
-Plot& Plot::Points(string name, LinearInterpolation<double>& points,function<double(double)> error){
+Plot& Plot::Points(string name, LinearInterpolation<double>&&points){
+	ofstream data;
+	string filename=FILENAME(name);
+	data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
+	if(data.is_open()){
+		for(auto p:points)
+			data<<p.first<<" "<<p.second<<"\n";
+		data.close();
+		plots.push_back("\""+filename+"\" using 1:2 title \""+name+"\"");
+	}
+}
+Plot& Plot::Points(string name, LinearInterpolation<double>&&points,function<double(double)> error){
 	ofstream data;
 	string filename=FILENAME(name);
 	data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());

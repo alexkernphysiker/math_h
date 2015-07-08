@@ -12,11 +12,13 @@ public:
 	Plot();
 	~Plot();
 	Plot &operator<<(std::string line);
-	Plot &Points(std::string name,LinearInterpolation<double> &points);
-	Plot &Points(std::string name,LinearInterpolation<double> &points,std::function<double(double)> error);
+	Plot &Points(std::string name,std::vector<std::pair<double,double>>&&points);
+	Plot &Points(std::string name,LinearInterpolation<double>&&points);
+	Plot &Points(std::string name,LinearInterpolation<double>&&points,std::function<double(double)> error);
 	Plot &Function(std::string name,std::function<double(double)> func,double from,double to,double step);
 	Plot &Function(std::string name,std::function<double(double)> func,std::function<double(double)> error,double from,double to,double step);
 private:
+	
 	std::vector<std::string> lines;
 	std::vector<std::string> plots;
 };
