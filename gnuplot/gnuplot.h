@@ -5,13 +5,14 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include <iostream>
 #include <fstream>
 #include <stdlib.h>
 #include <string>
 #include <sstream>
 #include <memory>
 #include <unistd.h>
+#include <math.h>
+#include <exception>
 #include "../interpolate.h"
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 class Plotter{
@@ -28,99 +29,100 @@ private:
 	unsigned int counter;
 	std::string outpath;
 };
-
-template<class numt=double>class Plot{
-public:
-	typedef std::function<numt(numt)> FUNC;
-	Plot();
-	~Plot();
-	Plot &operator<<(std::string line);
-	Plot &Points(std::string name,std::vector<std::pair<numt,numt>>&&points);
-	Plot &Points(std::string name,LinearInterpolation_fixedsize<numt>&&points);
-	Plot &Points(std::string name,LinearInterpolation<numt>&&points);
-	Plot &Points(std::string name,LinearInterpolation<numt>&&points,FUNC error);
-	Plot &Function(std::string name,FUNC func,numt from,numt to,numt step);
-	Plot &Function(std::string name,FUNC,FUNC error,numt from,numt to,numt step);
+template<class numt>class Plot{
 private:
 	std::vector<std::string> lines;
 	std::vector<std::string> plots;
-};
-template<class numt>
-Plot<numt>::Plot(){
-	operator<<(Plotter::Instance().GetTerminal());
-}
-template<class numt>
-Plot<numt>& Plot<numt>::operator<<(std::string line){
-	lines.push_back(line);
-}
-template<class numt>
-Plot<numt>::~Plot(){
-	for(std::string line:lines)
-		Plotter::Instance()<<line;
-	for(int i=0,n=plots.size();i<n;i++){
-		std::string line=plots[i];
-		if(i==0)
-			line="plot "+line;
-		if(i<(n-1))
-			line+=",\\";
-		Plotter::Instance()<<line;
+public:
+	typedef std::function<numt(numt)> FUNC;
+	typedef std::function<void(std::ofstream&)> PLOTOUTPUT;
+	Plot &operator<<(std::string line){
+		lines.push_back(line);
 	}
-}
-#define WRITE_TO(data) \
-std::ofstream data;\
-std::string filename=ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt";\
-data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());\
-if(data.is_open()){
-#define END(data)\
-	data.close();}
-template<class numt>
-Plot<numt>& Plot<numt>::Points(std::string name,std::vector<std::pair<numt,numt>>&&points){
-	WRITE_TO(data)
-	for(auto p:points)
-		data<<p.first<<" "<<p.second<<"\n";
-	plots.push_back("\""+filename+"\" using 1:2 title \""+name+"\"");
-	END(data)
-}
-template<class numt>
-Plot<numt>& Plot<numt>::Points(std::string name, LinearInterpolation_fixedsize<numt>&& points){
-	WRITE_TO(data)
-	for(int i=0,n=points.size();i<n;i++)
-			data<<points.getX(i)<<" "<<points.getY(i)<<"\n";
-	plots.push_back("\""+filename+"\" using 1:2 title \""+name+"\"");
-	END(data)
-}
-template<class numt>
-Plot<numt>& Plot<numt>::Points(std::string name, LinearInterpolation<numt>&&points){
-	WRITE_TO(data)
-	for(auto p:points)
-		data<<p.first<<" "<<p.second<<"\n";
-	plots.push_back("\""+filename+"\" using 1:2 title \""+name+"\"");
-	END(data)
-}
-template<class numt>
-Plot<numt>& Plot<numt>::Points(std::string name, LinearInterpolation<numt>&&points,FUNC error){
-	WRITE_TO(data)
-	for(auto p:points)
-		data<<p.first<<" "<<p.second<<" "<<error(p.first)<<"\n";
-	plots.push_back("\""+filename+"\" using 1:2:($2-$3):($2+$3) with yerrorbars title \""+name+"\"");
-	END(data)
-}
-template<class numt>
-Plot<numt>& Plot<numt>::Function(std::string name,FUNC func,numt from,numt to,numt step){
-	WRITE_TO(out)
-	for(double x=from;x<=to;x+=step)
-		out<<x<<" "<<func(x)<<"\n";
-	plots.push_back("\""+filename+"\" w l title \""+name+"\"");
-	END(out)
-}
-template<class numt>
-Plot<numt>& Plot<numt>::Function(std::string name, FUNC func, FUNC error, numt from, numt to, numt step){
-	WRITE_TO(out)
-	for(double x=from;x<=to;x+=step)
-		out<<x<<" "<<func(x)<<" "<<error(x)<<"\n";
-	plots.push_back("\""+filename+"\" using 1:2:($2-$3):($2+$3) with yerrorbars title \""+name+"\"");
-	END(out)
-}
-#undef WRITE_TO
-#undef END
+	Plot(){
+		operator<<(Plotter::Instance().GetTerminal());
+	}
+	virtual ~Plot(){
+		for(std::string line:lines)
+			Plotter::Instance()<<line;
+		for(int i=0,n=plots.size();i<n;i++){
+			std::string line=plots[i];
+			if(i==0)
+				line="plot "+line;
+			if(i<(n-1))
+				line+=",\\";
+			Plotter::Instance()<<line;
+		}
+	}
+public:
+	Plot& OutputPlot(std::string name,PLOTOUTPUT delegate,std::string plotstr){
+		std::ofstream data;
+		std::string filename=ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt";
+		data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
+		if(data.is_open()){
+			delegate(data);
+			data.close();
+			std::string line="\""+filename+"\" ";
+			line+=plotstr;
+			line+=" title \"";
+			line+=name;
+			line+="\"";
+			plots.push_back(line);
+		}
+		return *this;
+	}
+	Plot &Hist(std::string name,LinearInterpolation_fixedsize<numt>&&points){
+		OutputPlot(name,[this,&points](std::ofstream&data){
+			for(int i=0,n=points.size();i<n;i++)
+				data<<points.getX(i)<<" "<<points.getY(i)<<"\n";
+		},"using 1:2 title");
+		return *this;
+	}
+	Plot &HistWithStdError(std::string name,LinearInterpolation_fixedsize<numt>&&points){
+		OutputPlot(name,[&points](std::ofstream&data){
+			for(int i=0,n=points.size();i<n;i++){
+				double y=points.getY(i);
+				if(y<0)throw std::exception();
+				   double dy=sqrt(y);if(y<1)y=1;
+				data<<points.getX(i)<<" "<<y<<" "<<dy<<"\n";
+			}
+		},"using 1:2:($2-$3):($2+$3) with yerrorbars");
+		return *this;
+	}
+	Plot &Line(std::string name,FUNC func,numt from,numt to,numt step){
+		OutputPlot(name,[func,from,to,step](std::ofstream&data){
+			for(double x=from;x<=to;x+=step)
+				data<<x<<" "<<func(x)<<"\n";
+		},"w l");
+		return *this;
+	}
+};
+template<class numt,class Indexer>class PlotPoints:public Plot<numt>{
+public:
+	typedef std::function<numt(numt)> FUNC;
+	typedef std::pair<numt,numt> PAIR;
+	PlotPoints():Plot<numt>(){}
+	virtual ~PlotPoints(){}
+	PlotPoints &WithoutErrors(std::string name,Indexer&&points){
+		Plot<numt>::OutputPlot(name,[&points](std::ofstream&data){
+			for(PAIR p:points)
+				data<<p.first<<" "<<p.second<<"\n";
+		}," using 1:2 title ");
+		return *this;
+	}
+	PlotPoints &WithErrorOnX(std::string name,Indexer&&points,FUNC error){
+		Plot<numt>::OutputPlot(name,[&points,error](std::ofstream&data){
+			for(auto p:points)
+				data<<p.first<<" "<<p.second<<" "<<error(p.first)<<"\n";
+		},"using 1:2:($2-$3):($2+$3) with yerrorbars");
+		return *this;
+	}
+	PlotPoints &WithErrorOnY(std::string name,Indexer&&points,FUNC error){
+		Plot<numt>::OutputPlot(name,[&points,error](std::ofstream&data){
+			for(auto p:points)
+				data<<p.first<<" "<<p.second<<" "<<error(p.second)<<"\n";
+		},"using 1:2:($2-$3):($2+$3) with yerrorbars");
+		return *this;
+	}
+};
 #endif

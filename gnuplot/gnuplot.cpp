@@ -21,7 +21,6 @@ Plotter::~Plotter(){
 	if(script.is_open()){
 		for(string line:lines)
 			script<<line<<"\n";
-		script << "\npause -1";
 		script.close();
 		name=string("gnuplot ")+name;
 		string old=getcwd(NULL,0);
