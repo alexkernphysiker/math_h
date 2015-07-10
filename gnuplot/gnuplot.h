@@ -75,7 +75,7 @@ public:
 		OutputPlot(name,[this,&points](std::ofstream&data){
 			for(int i=0,n=points.size();i<n;i++)
 				data<<points.getX(i)<<" "<<points.getY(i)<<"\n";
-		},"using 1:2 title");
+		},"using 1:2");
 		return *this;
 	}
 	Plot &HistWithStdError(std::string name,LinearInterpolation_fixedsize<numt>&&points){
