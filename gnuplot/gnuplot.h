@@ -107,7 +107,7 @@ public:
 		Plot<numt>::OutputPlot(name,[&points](std::ofstream&data){
 			for(PAIR p:points)
 				data<<p.first<<" "<<p.second<<"\n";
-		}," using 1:2 title ");
+		},"using 1:2");
 		return *this;
 	}
 	PlotPoints &WithErrorOnX(std::string name,Indexer&&points,FUNC error){
