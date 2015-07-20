@@ -107,6 +107,7 @@ TEST(LinearInterpolation,SimpleLine){
 	_EQ(0.7,F(1.3));
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
+	for(double x=0;x<2;x+=0.1)EXPECT_EQ(F(x),F.func()(x));
 }
 TEST(LinearInterpolation_fixedsize,Basic){
 	LinearInterpolation_fixedsize<double> F(0,2,5);
@@ -155,6 +156,7 @@ TEST(LinearInterpolation_fixedsize,Basic){
 	_EQ(0.7,F(1.3));
 	_EQ(0.8,F(1.2));
 	_EQ(0.9,F(1.1));
+	for(double x=0;x<2;x+=0.1)EXPECT_EQ(F(x),F.func()(x));
 }
 TEST(LinearInterpolation_fixedsize,Throwing){
 	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),exception);
