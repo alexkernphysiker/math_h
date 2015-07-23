@@ -35,6 +35,7 @@ public:
 			throw exception();
 		distr=uniform_real_distribution<numt>(LinearInterpolation_fixedsize<numt,numt>::min(),LinearInterpolation_fixedsize<numt,numt>::max());
 	}
+	RandomValueGenerator(numt x1, numt x2,Args... args):RandomValueGenerator([](double){return 1.0;},x1,x2,1,args...){}
 	virtual ~RandomValueGenerator(){}
 	numt operator ()(){
 		return LinearInterpolation_fixedsize<numt,numt>::operator()(distr(generator));
