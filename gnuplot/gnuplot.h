@@ -38,6 +38,7 @@ public:
 	typedef std::function<void(std::ofstream&)> PLOTOUTPUT;
 	Plot &operator<<(std::string line){
 		lines.push_back(line);
+		return *this;
 	}
 	Plot(){
 		operator<<(Plotter::Instance().GetTerminal());
