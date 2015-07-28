@@ -20,14 +20,16 @@ public:
 	Plotter();
 	~Plotter();
 	static Plotter &Instance();
-	void SetOutput(std::string out);
+	void SetOutput(std::string out,std::string prefix="");
 	std::string OutPath();
+	std::string Prefix();
 	std::string GetTerminal();
 	Plotter &operator<<(std::string line);
 private:
 	std::vector<std::string> lines;
 	unsigned int counter;
 	std::string outpath;
+	std::string m_prefix;
 };
 template<class numt>class Plot{
 private:
@@ -104,6 +106,13 @@ public:
 	typedef std::pair<numt,numt> PAIR;
 	PlotPoints():Plot<numt>(){}
 	virtual ~PlotPoints(){}
+	PlotPoints &LineOnly(std::string name,Indexer&&points){
+		Plot<numt>::OutputPlot(name,[&points](std::ofstream&data){
+			for(PAIR p:points)
+				data<<p.first<<" "<<p.second<<"\n";
+		},"w l");
+		return *this;
+	}
 	PlotPoints &WithoutErrors(std::string name,Indexer&&points){
 		Plot<numt>::OutputPlot(name,[&points](std::ofstream&data){
 			for(PAIR p:points)

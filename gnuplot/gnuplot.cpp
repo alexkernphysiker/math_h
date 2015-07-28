@@ -16,7 +16,7 @@ Plotter::Plotter(){
 }
 Plotter::~Plotter(){
 	ofstream script;
-	string name="script.gnuplot";
+	string name=m_prefix+"_script.gnuplot";
 	script.open((outpath+"/"+name).c_str());
 	if(script.is_open()){
 		for(string line:lines)
@@ -34,16 +34,23 @@ Plotter &Plotter::Instance(){
 	static Plotter m_instance;
 	return m_instance;
 }
-void Plotter::SetOutput(string out){
+void Plotter::SetOutput(string out,std::string prefix){
 	if(outpath!="*")
 		throw;
 	outpath=out;
+	m_prefix=prefix;
 }
 string Plotter::OutPath(){
 	if(outpath=="*")
 		throw;
 	return outpath;
 }
+string Plotter::Prefix(){
+	if(outpath=="*")
+		throw;
+	return m_prefix;
+}
+
 string Plotter::GetTerminal(){
 	counter++;
 	return string("set terminal pngcairo size 1024,868 enhanced monochrome font 'Verdana,18'\nset output '")+to_string(counter)+".png'";
