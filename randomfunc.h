@@ -5,7 +5,7 @@
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
-template<class numt,class RG=std::default_random_engine>
+template<class numt,class RG=std::mt19937>
 class RandomValueGenerator:protected LinearInterpolation_fixedsize<numt,numt>{
 private:
 	std::uniform_real_distribution<numt> distr;

@@ -6,7 +6,7 @@
 #include <sigma.h>
 #include <functions.h>
 using namespace std;
-default_random_engine rnd;
+mt19937 rnd;
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
 	for(int i=0;i<100;i++){
