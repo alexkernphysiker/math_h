@@ -6,32 +6,16 @@
 #include <sigma.h>
 #include <functions.h>
 using namespace std;
-void Test_Random_Func(function<double()> R,function<double(double)> F,double from,double to,int bins){
-	Distribution<double> D(from,to,bins);
-	double norm=Sympson(F,from,to,0.0001);
-	int N=5000;
-	for(int i=0;i<N;i++)D.AddValue(R());
-	double S=0;
-	for(int i=0,n=D.size();i<n;i++){
-		double n_exp=D.BinWidth()*double(N);
-		double d=sqrt(D.getY(i));if(d<1)d=1;d/=n_exp;
-		double y=D.getY(i)/n_exp;
-		double f=F(D.getX(i))/norm;
-		S+=pow((y-f)/d,2);
-	}
-	S/=D.size();
-	printf("chi^2=%f\n",S);
-	EXPECT_TRUE(S<1.5);
-}
+default_random_engine rnd;
 TEST(RandomValueGenerator,BaseTest){
 	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
 	for(int i=0;i<100;i++){
-		double r=R();
+		double r=R(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
 	auto R2=R;
 	for(int i=0;i<100;i++){
-		double r=R2();
+		double r=R2(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
 }
@@ -51,7 +35,21 @@ TEST(RandomValueGenerator,Throwing){
 }
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
 	RandomValueGenerator<double> R(F,from,to,bins*accu);
-	Test_Random_Func([&R](){return R();},F,from,to,bins);
+	Distribution<double> D(from,to,bins);
+	double norm=Sympson(F,from,to,0.0001);
+	int N=5000;
+	for(int i=0;i<N;i++)D.AddValue(R(rnd));
+	double S=0;
+	for(int i=0,n=D.size();i<n;i++){
+		double n_exp=D.BinWidth()*double(N);
+		double d=sqrt(D.getY(i));if(d<1)d=1;d/=n_exp;
+		double y=D.getY(i)/n_exp;
+		double f=F(D.getX(i))/norm;
+		S+=pow((y-f)/d,2);
+	}
+	S/=D.size();
+	printf("chi^2=%f\n",S);
+	EXPECT_TRUE(S<1.5);
 }
 TEST(RandomValueGenerator,Uniform){TestRandomDistribution([](double){return 1.0;},0,10,20);}
 TEST(RandomValueGenerator,Linear){TestRandomDistribution([](double x){return x;},0,10,20);}

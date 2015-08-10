@@ -5,16 +5,15 @@
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
-template<class numt,class RG=std::default_random_engine,typename... Args>
+template<class numt,class RG=std::default_random_engine>
 class RandomValueGenerator:protected LinearInterpolation_fixedsize<numt,numt>{
 private:
 	std::uniform_real_distribution<numt> distr;
-	RG generator;
 public:
 	RandomValueGenerator(const RandomValueGenerator &R)
-		:LinearInterpolation_fixedsize<numt,numt>(R),distr(R.distr),generator(R.generator){}
-	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins,Args... args)
-		:LinearInterpolation_fixedsize<numt,numt>(x1,x2,bins),generator(args...){
+		:LinearInterpolation_fixedsize<numt,numt>(R),distr(R.distr){}
+	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins)
+		:LinearInterpolation_fixedsize<numt,numt>(x1,x2,bins){
 		using namespace std;
 		if(bins<=1)throw exception();
 		if(x2<=x1)throw exception();
@@ -35,13 +34,10 @@ public:
 			throw exception();
 		distr=uniform_real_distribution<numt>(LinearInterpolation_fixedsize<numt,numt>::min(),LinearInterpolation_fixedsize<numt,numt>::max());
 	}
-	RandomValueGenerator(numt x1, numt x2,Args... args):RandomValueGenerator([](double){return 1.0;},x1,x2,2,args...){}
+	RandomValueGenerator(numt x1, numt x2):RandomValueGenerator([](double){return 1.0;},x1,x2,2){}
 	virtual ~RandomValueGenerator(){}
-	numt operator ()(){
+	numt operator ()(RG&generator){
 		return LinearInterpolation_fixedsize<numt,numt>::operator()(distr(generator));
-	}
-	numt operator ()(double){
-		return operator()();
 	}
 };
 #endif
