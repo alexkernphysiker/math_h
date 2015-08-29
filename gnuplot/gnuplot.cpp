@@ -40,17 +40,16 @@ void Plotter::SetOutput(string out,std::string prefix){
 	outpath=out;
 	m_prefix=prefix;
 }
-string Plotter::OutPath(){
+string&Plotter::OutPath()const{
 	if(outpath=="*")
 		throw;
-	return outpath;
+	return const_cast<string&>(outpath);
 }
-string Plotter::Prefix(){
+string&Plotter::Prefix()const{
 	if(outpath=="*")
 		throw;
-	return m_prefix;
+	return const_cast<string&>(m_prefix);
 }
-
 string Plotter::GetTerminal(){
 	counter++;
 	return string("set terminal pngcairo size 1024,868 enhanced monochrome font 'Verdana,18'\nset output '")+m_prefix+to_string(counter)+".png'";
