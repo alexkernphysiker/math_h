@@ -115,18 +115,12 @@ public:
 	Point&operator[](int i)const{return data[i];}
 	typedef typename std::vector<Point>::iterator iterator;
 	typedef typename std::vector<Point>::const_iterator const_iterator;
-	iterator begin(){
-		return data.begin();
-	}
-	const_iterator cbegin()const{
-		return data.cbegin();
-	}
-	iterator end(){
-		return data.end();
-	}
-	const_iterator cend() const{
-		return data.cend();
-	}
+	iterator begin(){return data.begin();}
+	const_iterator begin()const{return data.begin();}
+	const_iterator cbegin()const{return data.cbegin();}
+	iterator end(){return data.end();}
+	const_iterator end() const{return data.end();}
+	const_iterator cend() const{return data.cend();}
 };
 template<class numX, class numY=numX>
 class LinearInterpolation_fixedsize{
