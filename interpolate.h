@@ -94,29 +94,25 @@ public:
 			operator<<(static_cast<Point&&>(p));
 	}
 	virtual ~LinearInterpolation(){}
-	int size(){
-		return data.size();
-	}
-	numX min(){
+	int size()const{return data.size();}
+	numX min()const{
 		if(size()<1)
 			throw std::exception();
 		return data[0].first;
 	}
-	numX max(){
+	numX max()const{
 		if(size()<1)
 			throw std::exception();
 		return data[size()-1].first;
 	}
-	numY operator()(numX x){
+	numY operator()(numX x)const{
 		using namespace details;
 		return InterpolateLinear2<numX,numY>(x,data,field_size(data));
 	}
-	std::function<numY(numX)> func(){
+	std::function<numY(numX)> func()const{
 		return [this](double x){return operator()(x);};
 	}
-	Point& operator[](int i){
-		return data[i];
-	}
+	Point&operator[](int i)const{return data[i];}
 	typedef typename std::vector<Point>::iterator iterator;
 	typedef typename std::vector<Point>::const_iterator const_iterator;
 	iterator begin(){
@@ -166,32 +162,30 @@ public:
 		delete[] X;
 		delete[] Y;
 	}
-	int size(){
-		return n;
-	}
-	numX min(){
+	int size()const{return n;}
+	numX min()const{
 		if(size()<1)
 			throw std::exception();
 		return X[0];
 	}
-	numX max(){
+	numX max()const{
 		if(size()<1)
 			throw std::exception();
 		return X[size()-1];
 	}
-	numY operator()(numX x){
+	numY operator()(numX x)const{
 		using namespace details;
 		return Interpolate_Linear(0,n-1,X,Y,x);
 	}
-	std::function<numY(numX)> func(){
+	std::function<numY(numX)> func()const{
 		return [this](double x){return operator()(x);};
 	}
-	numX getX(int i){
+	numX getX(int i)const{
 		if(i<0)throw std::exception();
 		if(i>=size())throw std::exception();
 		return X[i];
 	}
-	numY getY(int i){
+	numY getY(int i)const{
 		if(i<0)throw std::exception();
 		if(i>=size())throw std::exception();
 		return Y[i];
@@ -230,6 +224,6 @@ public:
 		}
 		return *this;
 	}
-	numX BinWidth(){return bindelta*numX(2);}
+	numX BinWidth()const{return bindelta*numX(2);}
 };
 #endif

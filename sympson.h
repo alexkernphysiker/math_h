@@ -47,7 +47,7 @@ public:
 	Convolution(){}
 	Convolution(Convolution &C):A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
 	Convolution(func1 a, func2 b,numX ksi1, numX ksi2, numX step):A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
-	numY operator()(numX x){
+	numY operator()(numX x)const{
 		return Sympson<numX,numY>([this,x](numX ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
 	}
 };

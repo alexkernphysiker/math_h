@@ -10,37 +10,31 @@ class Sigma{
 private:
 	std::list<numt> m_list;
 	numt m_sum;
-	bool cache;
-	numt m_sigsqr;
 public:
-	Sigma(){m_sum=0;cache=false;m_sigsqr=0;}
+	Sigma(){m_sum=0;}
 	virtual ~Sigma(){}
 	Sigma &AddValue(numt value){
 		m_list.push_back(value);
 		m_sum+=value;
-		cache=false;
 		return *this;
 	}
-	numt getAverage(){
+	numt getAverage()const{
 		int sz=m_list.size();
 		if(sz<=0)throw std::exception();
 		return m_sum/sz;
 	}
-	int count(){return m_list.size();}
-	numt getSigmaSqr(){
+	int count()const{return m_list.size();}
+	numt getSigmaSqr()const{
 		int sz=m_list.size();
 		if(sz<=1)throw std::exception();
-		if(!cache){
-			numt average=getAverage();
-			m_sigsqr=0;
-			for(auto value:m_list)
-				m_sigsqr+=pow(value-average,2);
-			m_sigsqr/=sz-1;
-			cache=true;
-		}
+		numt average=getAverage();
+		numt m_sigsqr=0;
+		for(auto value:m_list)
+			m_sigsqr+=pow(value-average,2);
+		m_sigsqr/=sz-1;
 		return m_sigsqr;
 	}
-	numt getSigma(){return sqrt(getSigmaSqr());}
+	numt getSigma()const{return sqrt(getSigmaSqr());}
 };
 template<typename numt>
 class WeightedAverageCalculator{
@@ -57,11 +51,11 @@ public:
 		Wnorm+=w;
 		return *this;
 	}
-	numt Average(){
+	numt Average()const{
 		if(Wnorm<=0)throw std::exception();
 		return Sum/Wnorm;
 	}
-	numt Sigma(){
+	numt Sigma()const{
 		if(Wnorm<=0)throw std::exception();
 		return 1.0/sqrt(Wnorm);
 	}
