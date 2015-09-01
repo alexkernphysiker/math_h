@@ -22,16 +22,16 @@ TEST(RandomValueGenerator,BaseTest){
 TEST(RandomValueGenerator,Throwing){
 	auto f=[](double){return 1;};
 	auto z=[](double){return 0;};
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,0),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,-1),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,1),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,2),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,2),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,0),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,-1),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,1),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,2),math_h_error<LinearInterpolation_fixedsize<double>>);
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,2));
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),exception);
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),math_h_error<RandomValueGenerator<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),math_h_error<LinearInterpolation_fixedsize<double>>);
 	auto n=[](double x){return sin(10*x);};
-	EXPECT_THROW(RandomValueGenerator<double>(n,0,1,100),exception);
+	EXPECT_THROW(RandomValueGenerator<double>(n,0,1,100),math_h_error<RandomValueGenerator<double>>);
 }
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
 	RandomValueGenerator<double> R(F,from,to,bins*accu);

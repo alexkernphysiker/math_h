@@ -5,6 +5,7 @@
 #include <math.h>
 #include "interpolate.h"
 #include "sympson.h"
+#include "exception_math_h.h"
 template<class numt,class RG=std::mt19937>
 class RandomValueGenerator:protected LinearInterpolation_fixedsize<numt,numt>{
 private:
@@ -15,8 +16,6 @@ public:
 	RandomValueGenerator(std::function<numt(numt)> distribution_density,numt x1, numt x2, int bins)
 		:LinearInterpolation_fixedsize<numt,numt>(x1,x2,bins){
 		using namespace std;
-		if(bins<=1)throw exception();
-		if(x2<=x1)throw exception();
 		numt X[bins];
 		for(int i=0;i<bins;i++)
 			X[i]=LinearInterpolation_fixedsize<numt,numt>::getX(i);
@@ -28,10 +27,10 @@ public:
 		delete[] Y;
 		for(int i=1;i<bins;i++){
 			if(LinearInterpolation_fixedsize<numt,numt>::getX(i)<LinearInterpolation_fixedsize<numt,numt>::getX(i-1))
-				throw exception();
+				throw math_h_error<RandomValueGenerator>("Probability density function has points below zero");
 		}
 		if(LinearInterpolation_fixedsize<numt,numt>::min()>=LinearInterpolation_fixedsize<numt,numt>::max())
-			throw exception();
+			throw math_h_error<RandomValueGenerator>("Probability density function has points below zero");
 		distr=uniform_real_distribution<numt>(LinearInterpolation_fixedsize<numt,numt>::min(),LinearInterpolation_fixedsize<numt,numt>::max());
 	}
 	RandomValueGenerator(numt x1, numt x2):RandomValueGenerator([](double){return 1.0;},x1,x2,2){}

@@ -32,16 +32,17 @@ TEST(InsertSorted,BasicTest){
 			EXPECT_TRUE(X[j]<=X[j+1]);
 	}
 }
+typedef std::pair<double,double> Pair;
 TEST(LinearInterpolation,Create){
 	LinearInterpolation<double> F;
 	EXPECT_EQ(0,F.size());
-	EXPECT_THROW(F.min(),exception);
-	EXPECT_THROW(F.max(),exception);
+	EXPECT_THROW(F.min(),math_h_error<LinearInterpolation<double>>);
+	EXPECT_THROW(F.max(),math_h_error<LinearInterpolation<double>>);
 	EXPECT_EQ(&F,&(F<<make_pair(0,0)));
 	EXPECT_EQ(1,F.size());
 	EXPECT_NO_THROW(F.min());
 	EXPECT_NO_THROW(F.max());
-	EXPECT_THROW(F(0.5),exception);
+	EXPECT_THROW(F(0.5),math_h_error<Pair>);
 	EXPECT_EQ(&F,&(F<<make_pair(1,0)));
 	EXPECT_EQ(2,F.size());
 	EXPECT_NO_THROW(F.min());
@@ -159,17 +160,17 @@ TEST(LinearInterpolation_fixedsize,Basic){
 	for(double x=0;x<2;x+=0.1)EXPECT_EQ(F(x),F.func()(x));
 }
 TEST(LinearInterpolation_fixedsize,Throwing){
-	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),exception);
-	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,0,2),exception);
-	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,0),exception);
-	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,1),exception);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(1,0,2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,0,2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,0),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(LinearInterpolation_fixedsize<double>(0,1,1),math_h_error<LinearInterpolation_fixedsize<double>>);
 	EXPECT_NO_THROW(LinearInterpolation_fixedsize<double>(0,1,2));
 	LinearInterpolation_fixedsize<double> F(0,1,2);
 	ASSERT_EQ(2,F.size());
-	EXPECT_THROW(F.getX(-1),exception);
-	EXPECT_THROW(F.getY(-1),exception);
-	EXPECT_THROW(F.getX(2),exception);
-	EXPECT_THROW(F.getY(2),exception);
+	EXPECT_THROW(F.getX(-1),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(F.getY(-1),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(F.getX(2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(F.getY(2),math_h_error<LinearInterpolation_fixedsize<double>>);
 	EXPECT_EQ(0,F.getX(0));
 	EXPECT_EQ(0,F.getY(0));
 	EXPECT_EQ(1,F.getX(1));
@@ -202,9 +203,9 @@ TEST(Distribution,BasicTest){
 	EXPECT_EQ(1,D(1));
 }
 TEST(Distribution,Throwing){
-	EXPECT_THROW(Distribution<double>(1,0,2),exception);
-	EXPECT_THROW(Distribution<double>(0,0,2),exception);
-	EXPECT_THROW(Distribution<double>(0,1,0),exception);
-	EXPECT_THROW(Distribution<double>(0,1,1),exception);
+	EXPECT_THROW(Distribution<double>(1,0,2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(Distribution<double>(0,0,2),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(Distribution<double>(0,1,0),math_h_error<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(Distribution<double>(0,1,1),math_h_error<LinearInterpolation_fixedsize<double>>);
 	EXPECT_NO_THROW(Distribution<double>(0,1,2));
 }

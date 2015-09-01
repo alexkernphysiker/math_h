@@ -3,7 +3,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
-#include <exception>
+#include "exception_math_h.h"
 template<class comparable, class indexer=std::vector<comparable>>
 int  WhereToInsert(int from, int to, indexer X, comparable x){
 	int beg=from;
@@ -40,7 +40,7 @@ numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
 	if(x==X[to])return Y[to];
 	int i=WhereToInsert(from,to,X,x);
 	if((i<=from)||(i>to))
-		throw std::exception();
+		throw math_h_error<std::pair<numX,numY>>("Attempt to interpolate outside given region.");
 	numX k=(x-X[i-1])/(X[i]-X[i-1]);
 	return Y[i-1]+(Y[i]-Y[i-1])*numY(k);
 }
@@ -69,7 +69,7 @@ numY  Interpolate_Linear2(int from, int to, PairIndexer tbl, numX x){
 	pair<numX,numY> p=make_pair(x,numY(0));
 	int i=WhereToInsert<pair<numX,numY>>(from,to,tbl,p);
 	if((i<=from)||(i>to))
-		throw std::exception();
+		throw math_h_error<std::pair<numX,numY>>("Attempt to interpolate outside the given region.");
 	numX k=(x-tbl[i-1].first)/(tbl[i].first-tbl[i-1].first);
 	return tbl[i-1].second+(tbl[i].second-tbl[i-1].second)*numY(k);
 }
@@ -97,12 +97,12 @@ public:
 	int size()const{return data.size();}
 	numX min()const{
 		if(size()<1)
-			throw std::exception();
+			throw math_h_error<LinearInterpolation>("Attempt to obtain empty properties.");
 		return data[0].first;
 	}
 	numX max()const{
 		if(size()<1)
-			throw std::exception();
+			throw math_h_error<LinearInterpolation>("Attempt to obtain empty properties.");
 		return data[size()-1].first;
 	}
 	numY operator()(numX x)const{
@@ -139,8 +139,10 @@ public:
 		}
 	}
 	LinearInterpolation_fixedsize(std::function<numY(numX)> F, numX from,numX to,int points){
-		if(from>=to)throw std::exception();
-		if(points<2)throw std::exception();
+		if(from>=to)
+			throw math_h_error<LinearInterpolation_fixedsize>("Wrong ranges given in constructor");
+		if(points<2)
+			throw math_h_error<LinearInterpolation_fixedsize>("Too few bins given in constructor");
 		numX step= (to-from)/numX(points-1);
 		n=points;
 		X=new numX[n];
@@ -159,12 +161,12 @@ public:
 	int size()const{return n;}
 	numX min()const{
 		if(size()<1)
-			throw std::exception();
+			throw math_h_error<LinearInterpolation_fixedsize>("Attempt to obtain empty proterties");
 		return X[0];
 	}
 	numX max()const{
 		if(size()<1)
-			throw std::exception();
+			throw math_h_error<LinearInterpolation_fixedsize>("Attempt to obtain empty proterties");
 		return X[size()-1];
 	}
 	numY operator()(numX x)const{
@@ -175,24 +177,24 @@ public:
 		return [this](double x){return operator()(x);};
 	}
 	numX getX(int i)const{
-		if(i<0)throw std::exception();
-		if(i>=size())throw std::exception();
+		if((i<0)||(i>=size()))
+			throw math_h_error<LinearInterpolation_fixedsize>("Range check error");
 		return X[i];
 	}
 	numY getY(int i)const{
-		if(i<0)throw std::exception();
-		if(i>=size())throw std::exception();
+		if((i<0)||(i>=size()))
+			throw math_h_error<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
 		return Y[i];
 	}
 	void setY(int i,numY v){
-		if(i<0)throw std::exception();
-		if(i>=size())throw std::exception();
+		if((i<0)||(i>=size()))
+			throw math_h_error<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
 		Y[i]=v;
 	}
 protected:
 	void setX(int i,numX v){
-		if(i<0)throw std::exception();
-		if(i>=size())throw std::exception();
+		if((i<0)||(i>=size()))
+			throw math_h_error<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
 		X[i]=v;
 	}
 };
@@ -206,7 +208,6 @@ public:
 		to-(to-from)/numX(bincount*2),
 		bincount
 	){
-		if(from>=to)throw std::exception();
 		bindelta=(to-from)/numX(bincount*2);
 	}
 	virtual ~Distribution(){}
