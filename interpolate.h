@@ -6,23 +6,16 @@
 #include "exception_math_h.h"
 template<class comparable, class indexer=std::vector<comparable>>
 int  WhereToInsert(int from, int to, indexer X, comparable x){
-	int beg=from;
-	int end=to;
-	if(beg>end)
-		return beg;
-	if(x>X[end])
-		return end+1;
-	if(x<X[beg])
-		return beg;
+	if(from>to) return from;
+	int beg=from,end=to;
+	if(x>X[end]) return end+1;
+	if(x<X[beg]) return beg;
 	while(1<(end-beg)){
 		int mid=(beg+end)/2;
-		if(x<X[mid])
-			end=mid;
+		if(x<X[mid]) end=mid;
 		else
-			if(x>X[mid])
-				beg=mid;
-			else
-				return mid;
+			if(x>X[mid]) beg=mid;
+			else return mid;
 	}
 	return end;
 }
