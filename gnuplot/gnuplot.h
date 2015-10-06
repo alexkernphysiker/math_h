@@ -58,19 +58,27 @@ public:
 		}
 	}
 public:
-	Plot& OutputPlot(std::string&&name,PLOTOUTPUT delegate,std::string&&plotstr){
+	Plot& File(std::string&&name,std::string&&title,std::string&&descr){
+		std::string line="\""+name+"\" ";
+		line+=descr;
+		line+=" title \"";
+		line+=title;
+		line+="\"";
+		plots.push_back(line);
+		return *this;
+	}
+	Plot& OutputPlot(std::string&&name,PLOTOUTPUT delegate,std::string&&description){
 		std::ofstream data;
 		std::string filename=ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt";
 		data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
 		if(data.is_open()){
 			delegate(data);
+			File(
+				static_cast<std::string&&>(filename),
+				static_cast<std::string&&>(name),
+				static_cast<std::string&&>(description)
+			);
 			data.close();
-			std::string line="\""+filename+"\" ";
-			line+=plotstr;
-			line+=" title \"";
-			line+=name;
-			line+="\"";
-			plots.push_back(line);
 		}
 		return *this;
 	}
