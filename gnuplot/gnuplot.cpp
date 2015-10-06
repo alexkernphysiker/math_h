@@ -52,7 +52,7 @@ string&Plotter::Prefix()const{
 }
 string Plotter::GetTerminal(){
 	counter++;
-	return string("set terminal pngcairo size 1024,868 enhanced monochrome font 'Verdana,18'\nset output '")+m_prefix+to_string(counter)+".png'";
+	return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\nset output '")+m_prefix+to_string(counter)+".png'";
 }
 Plotter &Plotter::operator<<(string line){
 	lines.push_back(line);
