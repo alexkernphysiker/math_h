@@ -24,6 +24,13 @@ TEST(WhereToInsert,NormalConditions){
 			else EXPECT_TRUE((x>=TestArray[index-1])&&(x<=TestArray[index]));
 		}
 }
+TEST(WhereToInsert,Search){
+	for(double x=TestArray[0]-0.5;x<=TestArray[9]+0.5;x+=0.5)
+		for(int beg=0;beg<10;beg++)for(int end=beg+1;end<10;end++){
+			int index=Search(beg,end,TestArray,x);
+			if(index>=beg)EXPECT_EQ(x,TestArray[index]);
+		}
+}
 TEST(InsertSorted,BasicTest){
 	vector<int> X;
 	for(int i=0;i<50;i++){

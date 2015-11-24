@@ -19,6 +19,23 @@ int  WhereToInsert(int from, int to, indexer X, comparable x){
 	}
 	return end;
 }
+template<class comparable, class indexer=std::vector<comparable>>
+int Search(int from, int to, indexer X, comparable x){
+	if(from>to) return from-1;
+	int beg=from,end=to;
+	if(x>X[end]) return from-1;
+	if(x<X[beg]) return from-1;
+	while(1<(end-beg)){
+		int mid=(beg+end)/2;
+		if(x<X[mid]) end=mid;
+		else
+			if(x>X[mid]) beg=mid;
+			else return mid;
+	}
+	if(X[beg]==x)return beg;
+	if(X[end]==x)return end;
+	return from-1;
+}
 template<class comparable,class indexer, class Size, class Insert>
 void InsertSorted(comparable x,indexer X,Size size,Insert insert){
 	insert(WhereToInsert(0,size()-1,X,x),x);
