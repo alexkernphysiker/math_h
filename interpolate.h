@@ -78,8 +78,38 @@ private:
 	std::vector<Point> data;
 public:
 	LinearInterpolation(){}
-	virtual LinearInterpolation &operator<<(Point&&p){
+	LinearInterpolation &operator<<(Point&&p){
 		InsertSorted(p,data,field_size(data),field_insert(data,Point));
+		return *this;
+	}
+	LinearInterpolation &operator+=(numY value){
+		for(Point&point:data)
+			point.second+=value;
+		return *this;
+	}
+	LinearInterpolation &operator-=(numY value){
+		for(Point&point:data)
+			point.second-=value;
+		return *this;
+	}
+	LinearInterpolation &operator*=(numY value){
+		for(Point&point:data)
+			point.second*=value;
+		return *this;
+	}
+	LinearInterpolation &operator/=(numY value){
+		for(Point&point:data)
+			point.second/=value;
+		return *this;
+	}
+	LinearInterpolation &transform(std::function<numY(numY)>F){
+		for(Point&point:data)
+			point.second/=F(point.second);
+		return *this;
+	}
+	LinearInterpolation &transform(std::function<numY(numX,numY)>F){
+		for(Point&point:data)
+			point.second/=F(point.first,point.second);
 		return *this;
 	}
 	LinearInterpolation(std::vector<Point>&&points){
