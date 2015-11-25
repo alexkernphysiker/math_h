@@ -121,12 +121,12 @@ public:
 	}
 	LinearInterpolation &transform(std::function<numY(numY)>F){
 		for(Point&point:data)
-			point.second/=F(point.second);
+			point.second=F(point.second);
 		return *this;
 	}
 	LinearInterpolation &transform(std::function<numY(numX,numY)>F){
 		for(Point&point:data)
-			point.second/=F(point.first,point.second);
+			point.second=F(point.first,point.second);
 		return *this;
 	}
 	LinearInterpolation(std::vector<Point>&&points){

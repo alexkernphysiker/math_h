@@ -58,14 +58,17 @@ public:
 		}
 	}
 public:
+	Plot& Object(std::string&&plot){
+		plots.push_back(plot);
+		return *this;
+	}
 	Plot& File(std::string&&name,std::string&&title,std::string&&descr){
 		std::string line="\""+name+"\" ";
 		line+=descr;
 		line+=" title \"";
 		line+=title;
 		line+="\"";
-		plots.push_back(line);
-		return *this;
+		return Object(static_cast<std::string&&>(line));
 	}
 	Plot& OutputPlot(std::string&&name,PLOTOUTPUT delegate,std::string&&description){
 		std::ofstream data;
