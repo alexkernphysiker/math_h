@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <exception>
-#include "../interpolate.h"
+#include "interpolate.h"
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 class Plotter{
 public:
