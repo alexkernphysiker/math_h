@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(math_h)
 set(CMAKE_CXX_FLAGS "-pthread -std=gnu++11")
-include_directories(.)
+include_directories(include)
 add_subdirectory(gnuplot_wrap)
 add_subdirectory(math_h_tests)

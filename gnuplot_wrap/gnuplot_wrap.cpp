@@ -1,6 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include "gnuplot_wrap.h"
+#include <gnuplot_wrap.h>
 using namespace std;
 string ReplaceAll(string str, const string& from, const string& to) {
 	size_t start_pos = 0;
