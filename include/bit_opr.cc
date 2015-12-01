@@ -1,3 +1,5 @@
+// this file is distributed under 
+// MIT license
 #include "exception_math_h.h"
 //NOTE: numtype should be defined before including this file
 template<int b>

@@ -1,3 +1,5 @@
+// this file is distributed under 
+// MIT license
 #ifndef EMEFWAYNIGJGENCP
 #define EMEFWAYNIGJGENCP
 #include <math.h>

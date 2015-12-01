@@ -1,3 +1,5 @@
+// this file is distributed under 
+// MIT license
 #include <random>
 #include <gtest/gtest.h>
 #include <sigma.h>
