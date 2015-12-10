@@ -2,7 +2,7 @@
 // MIT license
 #include <gtest/gtest.h>
 #include <functional>
-#include <functions.h>
+#include <math_h/functions.h>
 using namespace std;
 template<class numt>
 void Test_Peak_Shape(function<numt(numt)> f,numt from,numt peak,numt to){

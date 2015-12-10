@@ -1,8 +1,8 @@
 // this file is distributed under 
 // MIT license
 #include <gtest/gtest.h>
-#include <singleparam.h>
-#include <functions.h>
+#include <math_h/singleparam.h>
+#include <math_h/functions.h>
 using namespace std;
 TEST(SingleParam,BaseTest){
 	SingleParam<double,0,double,double,double> G(&Gaussian,INFINITY,5,1);

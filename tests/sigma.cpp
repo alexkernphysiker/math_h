@@ -2,7 +2,7 @@
 // MIT license
 #include <random>
 #include <gtest/gtest.h>
-#include <sigma.h>
+#include <math_h/sigma.h>
 using namespace std;
 TEST(Sigma,Throwing){
 	Sigma<double> S;

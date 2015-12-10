@@ -2,7 +2,7 @@
 // MIT license
 #include <gtest/gtest.h>
 #include <functional>
-#include <bit_opr.h>
+#include <math_h/bit_opr.h>
 using namespace std;
 using namespace BitOperations;
 template<int bn>

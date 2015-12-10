@@ -3,10 +3,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <math.h>
-#include <randomfunc.h>
-#include <interpolate.h>
-#include <sigma.h>
-#include <functions.h>
+#include <math_h/randomfunc.h>
+#include <math_h/interpolate.h>
+#include <math_h/sigma.h>
+#include <math_h/functions.h>
 using namespace std;
 mt19937 rnd;
 TEST(RandomValueGenerator,BaseTest){

@@ -1,8 +1,8 @@
 // this file is distributed under 
 // MIT license
 #include <gtest/gtest.h>
-#include <sympson.h>
-#include <functions.h>
+#include <math_h/sympson.h>
+#include <math_h/functions.h>
 using namespace std;
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00000001)
 TEST(Sympson,BaseTest){
