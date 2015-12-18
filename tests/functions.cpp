@@ -67,9 +67,9 @@ void test_polynom(function<double(int)> f){
 		}
 	}
 }
-TEST(Polynom,Extended0){test_polynom([](int i){return 0;});}
-TEST(Polynom,Extended1){test_polynom([](int i){return 1;});}
-TEST(Polynom,Extended_1){test_polynom([](int i){return -1;});}
+TEST(Polynom,Extended0){test_polynom([](int ){return 0;});}
+TEST(Polynom,Extended1){test_polynom([](int ){return 1;});}
+TEST(Polynom,Extended_1){test_polynom([](int ){return -1;});}
 TEST(Polynom,ExtendedI){test_polynom([](int i){return i;});}
 TEST(Polynom,Extended_chs){test_polynom([](int i){return pow(-1,i);});}
 TEST(Polynom,Extended_chs_){test_polynom([](int i){return pow(-1,i+1);});}

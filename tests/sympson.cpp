@@ -13,8 +13,8 @@ TEST(Sympson,BaseTest){
 	_EQ(-0.5,Sympson(F,1.0,0.0,-0.1));
 }
 TEST(Sympson,BaseTest2){
-	_EQ(0.0,Sympson([](double x){return 0.0;},0.0,1.0,0.00001));
-	_EQ(1.0,Sympson([](double x){return 1.0;},0.0,1.0,0.00001));
+	_EQ(0.0,Sympson([](double ){return 0.0;},0.0,1.0,0.00001));
+	_EQ(1.0,Sympson([](double ){return 1.0;},0.0,1.0,0.00001));
 	_EQ(0.5,Sympson([](double x){return x;},0.0,1.0,0.00001));
 	_EQ(0.333333,Sympson([](double x){return x*x;},0.0,1.0,0.00001));
 	_EQ(0.25,Sympson([](double x){return x*x*x;},0.0,1.0,0.00001));
