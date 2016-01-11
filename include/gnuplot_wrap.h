@@ -14,17 +14,19 @@
 #include <math.h>
 #include <exception>
 #include <math_h/interpolate.h>
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
+std::string ReplaceAll(const std::string&str, const std::string& from, const std::string& to);
+std::string ReplaceAll(std::string&&str, const std::string& from, const std::string& to);
 class Plotter{
 public:
 	Plotter();
 	~Plotter();
 	static Plotter &Instance();
-	void SetOutput(std::string out,std::string prefix="");
+	void SetOutput(std::string&&out,std::string&&prefix="");
 	std::string&OutPath()const;
 	std::string&Prefix()const;
 	std::string GetTerminal();
-	Plotter &operator<<(std::string line);
+	Plotter &operator<<(const std::string&line);
+	Plotter &operator<<(std::string&&line);
 private:
 	std::vector<std::string> lines;
 	unsigned int counter;
@@ -38,15 +40,16 @@ private:
 public:
 	typedef std::function<numt(numt)> FUNC;
 	typedef std::function<void(std::ofstream&)> PLOTOUTPUT;
-	Plot &operator<<(std::string line){
+	Plot&operator<<(const std::string&line){
 		lines.push_back(line);
 		return *this;
 	}
+	Plot&operator<<(std::string&&line){return operator<<(line);}
 	Plot(){
 		operator<<(Plotter::Instance().GetTerminal());
 	}
 	virtual ~Plot(){
-		for(std::string line:lines)
+		for(std::string&line:lines)
 			Plotter::Instance()<<line;
 		for(int i=0,n=plots.size();i<n;i++){
 			std::string line=plots[i];
@@ -70,7 +73,7 @@ public:
 		line+="\"";
 		return Object(static_cast<std::string&&>(line));
 	}
-	Plot& OutputPlot(std::string&&name,PLOTOUTPUT delegate,std::string&&description){
+	Plot&OutputPlot(std::string&&name,PLOTOUTPUT delegate,std::string&&description){
 		std::ofstream data;
 		std::string filename=ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt";
 		data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
