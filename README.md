@@ -1,7 +1,7 @@
 Header files with mathematical template functions and classes (C++11)
 ====================================================================
 
-this repository also contains a small static library which is an interface between these classes and gnuplot_wrap
+this repository also contains a small static library which is an interface between these classes and gnuplot
 
 
 
