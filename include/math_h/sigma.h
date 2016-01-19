@@ -6,7 +6,7 @@
 #include <vector>
 #include <utility>
 #include <math.h>
-#include "exception_math_h.h"
+#include "error.h"
 template<typename numt>
 class Sigma{
 private:
@@ -23,14 +23,14 @@ public:
 	numt getAverage()const{
 		int sz=m_list.size();
 		if(sz<=0)
-			throw math_h_error<Sigma>("No data to check. For average needed at least one element.");
+			throw Error<Sigma>("No data to check. For average needed at least one element.");
 		return m_sum/sz;
 	}
 	int count()const{return m_list.size();}
 	numt getSigmaSqr()const{
 		int sz=m_list.size();
 		if(sz<=1)
-			throw math_h_error<Sigma>("No data to check. for sigma needed at least two elements.");
+			throw Error<Sigma>("No data to check. for sigma needed at least two elements.");
 		numt average=getAverage();
 		numt m_sigsqr=0;
 		for(auto value:m_list)
@@ -50,18 +50,18 @@ public:
 	virtual ~WeightedAverageCalculator(){}
 	WeightedAverageCalculator &AddValue(numt X,numt deltaX){
 		if(deltaX<=0)
-			throw math_h_error<WeightedAverageCalculator>("Attempt to add point with zero error.");
+			throw Error<WeightedAverageCalculator>("Attempt to add point with zero error.");
 		numt w=1.0/pow(deltaX,2);
 		Sum+=w*X;
 		Wnorm+=w;
 		return *this;
 	}
 	numt Average()const{
-		if(Wnorm<=0)throw math_h_error<WeightedAverageCalculator>("Attempt to check empty data");
+		if(Wnorm<=0)throw Error<WeightedAverageCalculator>("Attempt to check empty data");
 		return Sum/Wnorm;
 	}
 	numt Sigma()const{
-		if(Wnorm<=0)throw math_h_error<WeightedAverageCalculator>("Attempt to check empty data");
+		if(Wnorm<=0)throw Error<WeightedAverageCalculator>("Attempt to check empty data");
 		return 1.0/sqrt(Wnorm);
 	}
 };

@@ -1,6 +1,6 @@
 // this file is distributed under 
 // MIT license
-#include "exception_math_h.h"
+#include "error.h"
 //NOTE: numtype should be defined before including this file
 template<int b>
 struct bit{enum{set=numtype(1)<<b,unset = !set};};
@@ -11,6 +11,6 @@ struct bits_in<b,b>{enum{set=bit<b>::set,unset = !set};};
 template<int a, int b>
 inline numtype occupy_bits(numtype small_value){
 	numtype cut=small_value&bits_in<a-b,0>::set;
-	if(small_value!=cut)throw math_h_error<numtype>("Invalid bit operation. Number is larger than amount of bits to occupy");
+	if(small_value!=cut)throw Error<numtype>("Invalid bit operation. Number is larger than amount of bits to occupy");
 	return cut<<b;
 }
