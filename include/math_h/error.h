@@ -4,14 +4,15 @@
 #define zVoOnNfd
 #include <exception>
 #include <string>
-template<class SOURCE, int code=0>
-class Error:public std::exception{
-private:
-	std::string m_msg;
-public:
-	Error(std::string msg){m_msg=msg;}
-	virtual ~Error() throw(){}
-	virtual const char* what() const throw(){return m_msg.c_str();}
+namespace MathTemplates{
+	template<typename SOURCE, int code=0>
+	class Exception:public std::exception{
+	private:
+		std::string m_msg;
+	public:
+		Exception(std::string msg){m_msg=msg;}
+		virtual ~Exception() throw(){}
+		virtual const char* what() const throw(){return m_msg.c_str();}
+	};
 };
-
 #endif  

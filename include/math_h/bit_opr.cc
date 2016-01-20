@@ -11,6 +11,6 @@ struct bits_in<b,b>{enum{set=bit<b>::set,unset = !set};};
 template<int a, int b>
 inline numtype occupy_bits(numtype small_value){
 	numtype cut=small_value&bits_in<a-b,0>::set;
-	if(small_value!=cut)throw Error<numtype>("Invalid bit operation. Number is larger than amount of bits to occupy");
+	if(small_value!=cut)throw MathTemplates::Exception<numtype>("Invalid bit operation. Number is larger than amount of bits to occupy");
 	return cut<<b;
 }

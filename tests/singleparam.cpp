@@ -4,6 +4,7 @@
 #include <math_h/singleparam.h>
 #include <math_h/functions.h>
 using namespace std;
+using namespace MathTemplates;
 TEST(SingleParam,BaseTest){
 	SingleParam<double,0,double,double,double> G(&Gaussian,INFINITY,5,1);
 	for(double x=0;x<=10;x+=0.1)

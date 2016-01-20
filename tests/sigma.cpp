@@ -4,17 +4,18 @@
 #include <gtest/gtest.h>
 #include <math_h/sigma.h>
 using namespace std;
+using namespace MathTemplates;
 TEST(Sigma,Throwing){
 	Sigma<double> S;
 	EXPECT_EQ(0,S.count());
-	EXPECT_THROW(S.getAverage(),Error<Sigma<double>>);
-	EXPECT_THROW(S.getSigmaSqr(),Error<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Error<Sigma<double>>);
+	EXPECT_THROW(S.getAverage(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(1,S.count());
 	EXPECT_EQ(0,S.getAverage());
-	EXPECT_THROW(S.getSigmaSqr(),Error<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Error<Sigma<double>>);
+	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0,S.getAverage());
@@ -27,8 +28,8 @@ TEST(Sigma,Base){
 	S.AddValue(0);
 	EXPECT_EQ(1,S.count());
 	EXPECT_EQ(0,S.getAverage());
-	EXPECT_THROW(S.getSigmaSqr(),Error<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Error<Sigma<double>>);
+	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
 	S.AddValue(1);
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0.5,S.getAverage());
@@ -48,9 +49,9 @@ TEST(Sigma,WithRandomValues){
 
 TEST(WeightedAverageCalculator,Zeros){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.Average(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.Sigma(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.AddValue(0,0),Error<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Average(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Sigma(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.AddValue(0,0),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W.AddValue(0,1)));
 	_EQ(0,W.Average());
 	_EQ(1,W.Sigma());
@@ -63,9 +64,9 @@ TEST(WeightedAverageCalculator,Zeros){
 }
 TEST(WeightedAverageCalculator,Ones){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.Average(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.Sigma(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.AddValue(1,0),Error<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Average(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Sigma(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.AddValue(1,0),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W.AddValue(1,1)));
 	_EQ(1,W.Average());
 	_EQ(1,W.Sigma());
@@ -78,9 +79,9 @@ TEST(WeightedAverageCalculator,Ones){
 }
 TEST(WeightedAverageCalculator,Zeros_plus_Ones){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.Average(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.Sigma(),Error<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W.AddValue(0,0),Error<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Average(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.Sigma(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W.AddValue(0,0),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W.AddValue(1,1)));
 	_EQ(1,W.Average());
 	_EQ(1,W.Sigma());

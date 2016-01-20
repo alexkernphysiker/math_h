@@ -16,8 +16,9 @@
 #include <math_h/interpolate.h>
 namespace GnuplotWrap{
 	using namespace std;
-	std::string ReplaceAll(const std::string&str, const std::string& from, const std::string& to);
-	std::string ReplaceAll(std::string&&str, const std::string& from, const std::string& to);
+	using namespace MathTemplates;
+	string ReplaceAll(const string&str, const string& from, const string& to);
+	string ReplaceAll(string&&str, const string& from, const string& to);
 	class Plotter{
 	public:
 		Plotter();

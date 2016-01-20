@@ -3,8 +3,9 @@
 #include <gtest/gtest.h>
 #include <functional>
 #include <math_h/bit_opr.h>
+#include <math_h/error.h>
 using namespace std;
-using namespace BitOperations;
+using namespace MathTemplates;
 template<int bn>
 inline numtype bit_test(){
 	numtype v=bit_test<bn-1>();
@@ -36,7 +37,7 @@ TEST(bits_in,BasicTest){bits_test<sizeof(numtype)*8-1>();}
 TEST(occupy_bits,BasicTest){o_bits_test<sizeof(numtype)*8-1>();}
 TEST(occupy_bits,Throws){
 	auto must_throw=[](){return occupy_bits<7,4>(255);};
-	EXPECT_THROW(must_throw(),Error<long unsigned int>);
+	EXPECT_ANY_THROW(must_throw());
 	auto must_not_throw=[](){return occupy_bits<7,4>(15);};
 	EXPECT_NO_THROW(must_not_throw());
 }

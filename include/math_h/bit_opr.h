@@ -2,7 +2,7 @@
 // MIT license
 #ifndef ZRONCKJHLREWTQTI
 #define ZRONCKJHLREWTQTI
-namespace BitOperations{
+namespace MathTemplates{
 	typedef long unsigned int numtype;
 	#include "bit_opr.cc"
 }

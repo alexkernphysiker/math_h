@@ -4,6 +4,7 @@
 #include <math_h/sympson.h>
 #include <math_h/functions.h>
 using namespace std;
+using namespace MathTemplates;
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00000001)
 TEST(Sympson,BaseTest){
 	auto F=[](double x){return x;};

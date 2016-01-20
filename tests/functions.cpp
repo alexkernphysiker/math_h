@@ -4,6 +4,7 @@
 #include <functional>
 #include <math_h/functions.h>
 using namespace std;
+using namespace MathTemplates;
 template<class numt>
 void Test_Peak_Shape(function<numt(numt)> f,numt from,numt peak,numt to){
 	for(numt x=from;x<=to;x+=0.05){
