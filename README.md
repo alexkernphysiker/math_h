@@ -8,7 +8,12 @@ this repository also contains a small static library which is an interface betwe
 
 Compiling
 =========
-For using this library, please run:
+
+If you are going to use only headers with mathematical templates then you don't need to compile anything else outside your project.
+
+But this repository also contains one library (gnuplot interface) and unit tests for headers with templates.
+
+For compiling this stuff you need to run:
 
 git clone https://github.com/alexkernphysiker/math_h.git
 
@@ -18,7 +23,7 @@ cmake .
 
 make
 
-For using this library as a submodule in your git repository please run:
+For using this project as a submodule in your git repository please run:
 
 git submodule add https://github.com/alexkernphysiker/math_h.git
 
