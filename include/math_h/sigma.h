@@ -113,14 +113,14 @@ namespace MathTemplates{
 		virtual ~Sigma(){
 			delete m_cache;
 		}
-		Sigma &AddValue(numt x){
+		Sigma &operator<<(numt x){
 			m_list.push_back(x);
 			m_sum+=x;
 			(*m_cache)=value<numt>(INFINITY,INFINITY);
 			return *this;
 		}
 		int count()const{return m_list.size();}
-		value<numt>&getValue()const{
+		value<numt>&get()const{
 			if(isfinite(m_cache->val())){
 				return const_cast<value<numt>&>(*m_cache);
 			}else{
@@ -142,24 +142,33 @@ namespace MathTemplates{
 	private:
 		numt Sum;
 		numt Wnorm;
+		value<numt>*m_cache;
 	public:
-		WeightedAverageCalculator(){Sum=0;Wnorm=0;}
-		virtual ~WeightedAverageCalculator(){}
-		WeightedAverageCalculator &AddValue(numt X,numt deltaX){
-			if(deltaX<=0)
-				throw Exception<WeightedAverageCalculator>("Attempt to add point with zero error.");
-			numt w=1.0/pow(deltaX,2);
-			Sum+=w*X;
+		WeightedAverageCalculator(){
+			Sum=0;Wnorm=0;
+			m_cache=new value<numt>(INFINITY,INFINITY);
+		}
+		virtual ~WeightedAverageCalculator(){delete m_cache;}
+		WeightedAverageCalculator &operator<<(const value<numt>&X){
+			if(X.delta()<=0)
+				throw Exception<WeightedAverageCalculator>("Cannot add value with zero error");
+			numt w=1.0/pow(X.delta(),2);
+			Sum+=w*X.val();
 			Wnorm+=w;
+			(*m_cache)=value<numt>(INFINITY,INFINITY);
 			return *this;
 		}
-		numt Average()const{
-			if(Wnorm<=0)throw Exception<WeightedAverageCalculator>("Attempt to check empty data");
-			return Sum/Wnorm;
+		WeightedAverageCalculator &operator<<(value<numt>&&X){
+			return operator<<(X);
 		}
-		numt Sigma()const{
-			if(Wnorm<=0)throw Exception<WeightedAverageCalculator>("Attempt to check empty data");
-			return 1.0/sqrt(Wnorm);
+		value<numt>&get()const{
+			if(isfinite(m_cache->val())){
+				return const_cast<value<numt>&>(*m_cache);
+			}else{
+				if(Wnorm<=0)throw Exception<WeightedAverageCalculator>("Attempt to check empty data");
+				(*m_cache)=value<numt>(Sum/Wnorm,1.0/sqrt(Wnorm));
+				return const_cast<value<numt>&>(*m_cache);
+			}
 		}
 	};
 };
