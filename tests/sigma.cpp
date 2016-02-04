@@ -8,33 +8,25 @@ using namespace MathTemplates;
 TEST(Sigma,Throwing){
 	Sigma<double> S;
 	EXPECT_EQ(0,S.count());
-	EXPECT_THROW(S.getAverage(),Exception<Sigma<double>>);
-	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getValue(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(1,S.count());
-	EXPECT_EQ(0,S.getAverage());
-	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getValue(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S.AddValue(0)));
 	EXPECT_EQ(2,S.count());
-	EXPECT_EQ(0,S.getAverage());
-	EXPECT_EQ(0,S.getSigmaSqr());
-	EXPECT_EQ(0,S.getSigma());
+	EXPECT_EQ(0,S.getValue().val());
+	EXPECT_EQ(0,S.getValue().delta());
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(Sigma,Base){
 	Sigma<double> S;
 	S.AddValue(0);
 	EXPECT_EQ(1,S.count());
-	EXPECT_EQ(0,S.getAverage());
-	EXPECT_THROW(S.getSigmaSqr(),Exception<Sigma<double>>);
-	EXPECT_THROW(S.getSigma(),Exception<Sigma<double>>);
+	EXPECT_THROW(S.getValue(),Exception<Sigma<double>>);
 	S.AddValue(1);
 	EXPECT_EQ(2,S.count());
-	EXPECT_EQ(0.5,S.getAverage());
-	EXPECT_EQ(0.5,S.getSigmaSqr());
-	EXPECT_EQ(S.getSigma(),sqrt(S.getSigmaSqr()));
+	EXPECT_EQ(0.5,S.getValue().val());
+	EXPECT_EQ(sqrt(0.5),S.getValue().delta());
 }
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(Sigma,WithRandomValues){
@@ -43,8 +35,8 @@ TEST(Sigma,WithRandomValues){
 	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)
 		S.AddValue(distribution(generator));
-	_EQ2(1.0,S.getAverage());
-	_EQ2(3.0,S.getSigma());
+	_EQ2(1.0,S.getValue().val());
+	_EQ2(3.0,S.getValue().delta());
 }
 
 TEST(WeightedAverageCalculator,Zeros){
