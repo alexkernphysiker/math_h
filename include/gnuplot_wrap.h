@@ -119,36 +119,21 @@ namespace GnuplotWrap{
 	};
 	template<class numt,class Indexer>class PlotPoints:public Plot<numt>{
 	public:
-		typedef std::function<numt(numt)> FUNC;
 		typedef std::pair<numt,numt> PAIR;
 		PlotPoints():Plot<numt>(){}
 		virtual ~PlotPoints(){}
-		PlotPoints &LineOnly(string&&name,const Indexer&points){
+		PlotPoints &Line(string&&name,const Indexer&points){
 			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points](ofstream&data){
 				for(PAIR p:points)
 					data<<p.first<<" "<<p.second<<"\n";
 			},"w l");
 			return *this;
 		}
-		PlotPoints &WithoutErrors(string&&name,const Indexer&points){
+		PlotPoints &Points(string&&name,const Indexer&points){
 			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points](ofstream&data){
 				for(PAIR p:points)
 					data<<p.first<<" "<<p.second<<"\n";
 			},"using 1:2");
-			return *this;
-		}
-		PlotPoints &WithErrorOnX(string&&name,const Indexer&points,FUNC error){
-			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points,error](ofstream&data){
-				for(auto p:points)
-					data<<p.first<<" "<<p.second<<" "<<error(p.first)<<"\n";
-			},"using 1:2:($2-$3):($2+$3) with yerrorbars");
-			return *this;
-		}
-		PlotPoints &WithErrorOnY(string&&name,const Indexer&points,FUNC error){
-			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points,error](ofstream&data){
-				for(auto p:points)
-					data<<p.first<<" "<<p.second<<" "<<error(p.second)<<"\n";
-			},"using 1:2:($2-$3):($2+$3) with yerrorbars");
 			return *this;
 		}
 	};
