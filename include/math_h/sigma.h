@@ -22,8 +22,8 @@ namespace MathTemplates{
 		double val()const{return Value;}
 		double delta()const{return Error;}
 		double epsilon()const{return Error/Value;}
-		double min()const{return Value+Error;}
-		double max()const{return Value-Error;}
+		double min()const{return Value-Error;}
+		double max()const{return Value+Error;}
 		bool contains(double x)const{return (x>=min())&&(x<=max());}
 		bool contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
 		
