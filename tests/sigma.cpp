@@ -5,6 +5,32 @@
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
+TEST(value,throwing){
+	EXPECT_THROW(value<double>(1,-0.1),Exception<value<double>>);
+	EXPECT_NO_THROW(value<double>(1,0));
+	EXPECT_NO_THROW(value<double>(1,0.1));
+}
+TEST(value,base){
+	mt19937 gen;
+	normal_distribution<double> G;
+	for(size_t i=0;i<10;i++){
+		double x=G(gen);
+		value<double> V(x,0.1);
+		EXPECT_EQ(x,V.val());
+		EXPECT_EQ(0.1,V.delta());
+		EXPECT_EQ(0.1/x,V.epsilon());
+		EXPECT_EQ(x-0.1,V.min());
+		EXPECT_EQ(x+0.1,V.max());
+	}
+}
+TEST(value,contains){
+	value<double> V(0,0.1);
+	EXPECT_EQ(false,V.contains(-0.2));
+	EXPECT_EQ(true,V.contains(-0.05));
+	EXPECT_EQ(true,V.contains(0));
+	EXPECT_EQ(true,V.contains(0.05));
+	EXPECT_EQ(false,V.contains(0.2));
+}
 TEST(Sigma,Throwing){
 	Sigma<double> S;
 	EXPECT_EQ(0,S.count());
