@@ -14,6 +14,7 @@
 #include <math.h>
 #include <exception>
 #include <math_h/interpolate.h>
+#include <math_h/sigma.h>
 namespace GnuplotWrap{
 	using namespace std;
 	using namespace MathTemplates;
@@ -94,7 +95,7 @@ namespace GnuplotWrap{
 		Plot &Hist(string&&name,const LinearInterpolation_fixedsize<numt>&points){
 			OutputPlot(static_cast<string&&>(name),[this,&points](ofstream&data){
 				for(int i=0,n=points.size();i<n;i++)
-					data<<points.getX(i)<<" "<<points.getY(i)<<"\n";
+					data<<points.getX(i)<<" "<<points.getY(i)<<endl;
 			},"using 1:2");
 			return *this;
 		}
@@ -104,7 +105,7 @@ namespace GnuplotWrap{
 					double y=points.getY(i);
 					if(y<0)throw std::exception();
 				   double dy=sqrt(y);if(y<1)y=1;
-				   data<<points.getX(i)<<" "<<y<<" "<<dy<<"\n";
+				   data<<points.getX(i)<<" "<<y<<" "<<dy<<endl;
 				}
 			},"using 1:2:($2-$3):($2+$3) with yerrorbars");
 			return *this;
@@ -112,28 +113,41 @@ namespace GnuplotWrap{
 		Plot &Line(string&&name,FUNC func,numt from,numt to,numt step){
 			OutputPlot(static_cast<string&&>(name),[func,from,to,step](ofstream&data){
 				for(double x=from;x<=to;x+=step)
-					data<<x<<" "<<func(x)<<"\n";
+					data<<x<<" "<<func(x)<<endl;
 			},"w l");
 			return *this;
 		}
 	};
 	template<class numt,class Indexer>class PlotPoints:public Plot<numt>{
 	public:
-		typedef std::pair<numt,numt> PAIR;
+		typedef std::pair<numt,numt> POINT;
 		PlotPoints():Plot<numt>(){}
 		virtual ~PlotPoints(){}
 		PlotPoints &Line(string&&name,const Indexer&points){
 			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points](ofstream&data){
-				for(PAIR p:points)
-					data<<p.first<<" "<<p.second<<"\n";
+				for(POINT p:points)
+					data<<p.first<<" "<<p.second<<endl;
 			},"w l");
 			return *this;
 		}
 		PlotPoints &Points(string&&name,const Indexer&points){
 			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points](ofstream&data){
-				for(PAIR p:points)
-					data<<p.first<<" "<<p.second<<"\n";
+				for(POINT p:points)
+					data<<p.first<<" "<<p.second<<endl;
 			},"using 1:2");
+			return *this;
+		}
+	};
+	template<class numt,class Indexer>class PlotValues:public Plot<numt>{
+	public:
+		typedef std::pair<value<double>,value<double>> POINT;
+		PlotValues():Plot<numt>(){}
+		virtual ~PlotValues(){}
+		PlotValues &Points(string&&name,const Indexer&points){
+			Plot<numt>::OutputPlot(static_cast<string&&>(name),[&points](ofstream&data){
+				for(POINT p:points)
+					data<<p.first.val()<<" "<<p.first.delta()<<" "<<p.second.val()<<" "<<p.second.delta()<<endl;
+			},"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars");
 			return *this;
 		}
 	};
