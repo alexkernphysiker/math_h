@@ -109,7 +109,7 @@ namespace GnuplotWrap{
 			},"using 1:2:($2-$3):($2+$3) with yerrorbars",static_cast<string&&>(title));
 			return *this;
 		}
-		Plot &Line(FUNC func,numt from,numt to,numt step,string&&title=""){
+		Plot &Func(FUNC func,numt from,numt to,numt step,string&&title=""){
 			OutputPlot([func,from,to,step](ofstream&data){
 				for(double x=from;x<=to;x+=step)
 					data<<x<<" "<<func(x)<<endl;
