@@ -3,21 +3,9 @@
 #include <gnuplot_wrap.h>
 namespace GnuplotWrap{
 	using namespace std;
-	string ReplaceAll(const string&source, const string& from, const string& to) {
-		string str=source;
-		size_t start_pos = 0;
-		while((start_pos = str.find(from, start_pos)) != string::npos) {
-			str.replace(start_pos, from.length(), to);
-			start_pos += to.length();
-		}
-		return str;
-	}
-	string ReplaceAll(string&& str, const string& from, const string& to){
-		return ReplaceAll(str,from,to);
-	}
-	
 	Plotter::Plotter(){
-		counter=0;
+		terminal_counter=0;
+		filename_counter=0;
 		outpath="*";
 	}
 	Plotter::~Plotter(){
@@ -57,8 +45,13 @@ namespace GnuplotWrap{
 		return const_cast<string&>(m_prefix);
 	}
 	string Plotter::GetTerminal(){
-		counter++;
-		return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\nset output '")+m_prefix+to_string(counter)+".png'";
+		terminal_counter++;
+		return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\nset output '")
+			+m_prefix+to_string(terminal_counter)+".png'";
+	}
+	string Plotter::GetFileName(){
+		filename_counter++;
+		return m_prefix+"-data-"+to_string(filename_counter)+".txt";
 	}
 	Plotter &Plotter::operator<<(const string&line){
 		lines.push_back(line);

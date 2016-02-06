@@ -18,8 +18,6 @@
 namespace GnuplotWrap{
 	using namespace std;
 	using namespace MathTemplates;
-	string ReplaceAll(const string&str, const string& from, const string& to);
-	string ReplaceAll(string&&str, const string& from, const string& to);
 	class Plotter{
 	public:
 		Plotter();
@@ -29,11 +27,12 @@ namespace GnuplotWrap{
 		string&OutPath()const;
 		string&Prefix()const;
 		string GetTerminal();
+		string GetFileName();
 		Plotter &operator<<(const string&line);
 		Plotter &operator<<(string&&line);
 	private:
 		vector<string> lines;
-		unsigned int counter;
+		unsigned int terminal_counter,filename_counter;
 		string outpath;
 		string m_prefix;
 	};
@@ -79,14 +78,14 @@ namespace GnuplotWrap{
 		}
 		Plot&OutputPlot(string&&name,PLOTOUTPUT delegate,string&&description){
 			ofstream data;
-			string filename=ReplaceAll(ReplaceAll(name," ","_"),"=","_")+".txt";
+			string filename=Plotter::Instance().GetFileName();
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
 			if(data.is_open()){
 				delegate(data);
 				File(
 					static_cast<std::string&&>(filename),
-				     static_cast<std::string&&>(name),
-				     static_cast<std::string&&>(description)
+					static_cast<std::string&&>(name),
+					static_cast<std::string&&>(description)
 				);
 				data.close();
 			}
