@@ -11,7 +11,7 @@ namespace MathTemplates{
 	private:
 		string m_msg;
 	public:
-		Exception(string msg){m_msg=msg;}
+		Exception(string&&msg){m_msg=msg;}
 		virtual ~Exception() throw(){}
 		virtual const char* what() const throw(){return m_msg.c_str();}
 	};
