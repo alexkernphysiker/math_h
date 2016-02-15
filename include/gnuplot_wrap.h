@@ -68,7 +68,7 @@ namespace GnuplotWrap{
 			plots.push_back(plot);
 			return *this;
 		}
-		Plot& File(string&&name,string&&options,string&&title=""){
+		Plot& File(const string&name,const string&options,const string&title){
 			string line="\""+name+"\" ";
 			line+=options;
 			line+=" title \"";
@@ -76,26 +76,28 @@ namespace GnuplotWrap{
 			line+="\"";
 			return Object(static_cast<std::string&&>(line));
 		}
-		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
+		Plot& File(string&&name,string&&options,string&&title=""){
+			return File(name,options,title);
+		}
+		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,const string&title){
 			ofstream data;
 			string filename=Plotter::Instance().GetFileName();
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
 			if(data.is_open()){
 				delegate(data);
-				File(
-					static_cast<std::string&&>(filename),
-					static_cast<std::string&&>(options),
-					static_cast<std::string&&>(title)
-				);
+				File(filename,options,title);
 				data.close();
 			}
 			return *this;
+		}
+		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
+			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
 		Plot &Hist(const LinearInterpolation_fixedsize<numt>&points,string&&title=""){
 			OutputPlot([this,&points](ofstream&data){
 				for(int i=0,n=points.size();i<n;i++)
 					data<<points.getX(i)<<" "<<points.getY(i)<<endl;
-			},"using 1:2",static_cast<string&&>(title));
+			},"using 1:2",title);
 			return *this;
 		}
 		Plot &HistWithStdError(const LinearInterpolation_fixedsize<numt>&points,string&&title=""){
@@ -106,14 +108,14 @@ namespace GnuplotWrap{
 				   double dy=sqrt(y);if(y<1)y=1;
 				   data<<points.getX(i)<<" "<<y<<" "<<dy<<endl;
 				}
-			},"using 1:2:($2-$3):($2+$3) with yerrorbars",static_cast<string&&>(title));
+			},"using 1:2:($2-$3):($2+$3) with yerrorbars",title);
 			return *this;
 		}
 		Plot &Func(FUNC func,numt from,numt to,numt step,string&&title=""){
 			OutputPlot([func,from,to,step](ofstream&data){
 				for(double x=from;x<=to;x+=step)
 					data<<x<<" "<<func(x)<<endl;
-			},"w l",static_cast<string&&>(title));
+			},"w l",title);
 			return *this;
 		}
 	};
@@ -126,14 +128,14 @@ namespace GnuplotWrap{
 			Plot<numt>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
-			},"w l",static_cast<string&&>(title));
+			},"w l",title);
 			return *this;
 		}
 		PlotPoints &Points(const Indexer&points,string&&title=""){
 			Plot<numt>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
-			},"using 1:2",static_cast<string&&>(title));
+			},"using 1:2",title);
 			return *this;
 		}
 	};
@@ -146,7 +148,7 @@ namespace GnuplotWrap{
 			Plot<numt>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first.val()<<" "<<p.first.delta()<<" "<<p.second.val()<<" "<<p.second.delta()<<endl;
-			},"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars",static_cast<string&&>(title));
+			},"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars",title);
 			return *this;
 		}
 	};
