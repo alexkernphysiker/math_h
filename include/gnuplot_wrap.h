@@ -15,6 +15,7 @@
 #include <exception>
 #include <math_h/interpolate.h>
 #include <math_h/sigma.h>
+#include <math_h/hist.h>
 namespace GnuplotWrap{
 	using namespace std;
 	using namespace MathTemplates;
@@ -101,19 +102,20 @@ namespace GnuplotWrap{
 			return *this;
 		}
 	};
-	template<class numt,class Indexer=vector<pair<numt,numt>>>class PlotPoints:public Plot<numt>{
+	template<class numt,class Indexer=LinearInterpolation<numt>>
+	class PlotPointsErrorless:public Plot<numt>{
 	public:
 		typedef pair<numt,numt> POINT;
-		PlotPoints():Plot<numt>(){}
-		virtual ~PlotPoints(){}
-		PlotPoints &Line(const Indexer&points,string&&title=""){
+		PlotPointsErrorless():Plot<numt>(){}
+		virtual ~PlotPointsErrorless(){}
+		PlotPointsErrorless &Line(const Indexer&points,string&&title=""){
 			Plot<numt>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		PlotPoints &Points(const Indexer&points,string&&title=""){
+		PlotPointsErrorless &Points(const Indexer&points,string&&title=""){
 			Plot<numt>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
@@ -121,19 +123,20 @@ namespace GnuplotWrap{
 			return *this;
 		}
 	};
-	template<class numt,class Indexer=vector<pair<value<numt>,value<numt>>>>class PlotValues:public Plot<numt>{
+	template<class numt,class Indexer=hist<numt>>
+	class PlotPoints:public Plot<numt>{
 	public:
-		typedef pair<value<numt>,value<numt>> POINT;
-		PlotValues():Plot<numt>(){}
-		virtual ~PlotValues(){}
-		PlotValues &Points(const Indexer&points,string&&title=""){
-			Plot<numt>::OutputPlot([&points](ofstream&data){
-				for(POINT p:points)
-					data<<p.first.val()<<" "<<p.first.delta()<<" "<<p.second.val()<<" "<<p.second.delta()<<endl;
-			},"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars",title);
+		PlotPoints(){}
+		virtual ~PlotPoints(){}
+		PlotPoints&Hist(const Indexer&data,const string&title){
+			Plot<double>::OutputPlot([&data](ofstream&str){
+				for(const point<numt> p:data)
+					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<endl;
+			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}
+		PlotPoints&Hist(const Indexer&data,string&&title=""){return Hist(data,title);}
+		PlotPoints&Hist(Indexer&&data,string&&title=""){return Hist(data,title);}
 	};
-	template<class numt,class Indexer2D>class Plot2D:public Plot<numt>{};
 };
 #endif
