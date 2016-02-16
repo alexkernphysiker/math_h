@@ -4,14 +4,13 @@
 #include <vector>
 #include <math.h>
 #include <math_h/randomfunc.h>
-#include <math_h/interpolate.h>
-#include <math_h/sigma.h>
+#include <math_h/hist.h>
 #include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
 mt19937 rnd;
 TEST(RandomValueGenerator,BaseTest){
-	RandomValueGenerator<double> R([](double){return 1;},0,1,10);
+	RandomValueGenerator<double> R([](double)->double{return 1;},10,0,1);
 	for(int i=0;i<100;i++){
 		double r=R(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -25,29 +24,29 @@ TEST(RandomValueGenerator,BaseTest){
 TEST(RandomValueGenerator,Throwing){
 	auto f=[](double){return 1;};
 	auto z=[](double){return 0;};
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,0),Exception<LinearInterpolation_fixedsize<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,-1),Exception<LinearInterpolation_fixedsize<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,1,1),Exception<LinearInterpolation_fixedsize<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,-1,2),Exception<LinearInterpolation_fixedsize<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,2),Exception<LinearInterpolation_fixedsize<double>>);
-	EXPECT_NO_THROW(RandomValueGenerator<double>(f,0,1,2));
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,1,2),Exception<RandomValueGenerator<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),Exception<LinearInterpolation_fixedsize<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,1),Exception<LinearInterpolation<double>>);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,1,0,1));
+	EXPECT_THROW(RandomValueGenerator<double>(f,2,0,-1),Exception<LinearInterpolation<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,2,0,0),Exception<LinearInterpolation<double>>);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,2,0,1));
+	EXPECT_NO_THROW(RandomValueGenerator<double>(z,2,0,1));
+	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),Exception<LinearInterpolation<double>>);
 	auto n=[](double x){return sin(10*x);};
-	EXPECT_THROW(RandomValueGenerator<double>(n,0,1,100),Exception<RandomValueGenerator<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(n,100,0,1),Exception<LinearInterpolation<double>>);
 }
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
-	RandomValueGenerator<double> R(F,from,to,bins*accu);
-	Distribution<double> D(from,to,bins);
+	RandomValueGenerator<double> R(F,bins*accu,from,to);
+	double step=(to-from)/double(bins);
+	Distribution1D<double> D(BinsByStep(from,step,to));
 	double norm=Sympson(F,from,to,0.0001);
 	int N=5000;
-	for(int i=0;i<N;i++)D.AddValue(R(rnd));
+	for(int i=0;i<N;i++)D.Fill(R(rnd));
 	double S=0;
-	for(int i=0,n=D.size();i<n;i++){
-		double n_exp=D.BinWidth()*double(N);
-		double d=sqrt(D.getY(i));if(d<1)d=1;d/=n_exp;
-		double y=D.getY(i)/n_exp;
-		double f=F(D.getX(i))/norm;
+	for(const auto&p:D){
+		double n_exp=step*double(N);
+		double d=p.Y().delta();
+		double y=p.Y().val()/n_exp;
+		double f=F(p.X().val())/norm;
 		S+=pow((y-f)/d,2);
 	}
 	S/=D.size();

@@ -6,41 +6,29 @@
 #include <functional>
 #include <math.h>
 #include "interpolate.h"
-#include "sympson.h"
+#include "integrate.h"
 #include "error.h"
 namespace MathTemplates{
 	using namespace std;
 	template<class numt,class RG=mt19937>
-	class RandomValueGenerator:protected LinearInterpolation_fixedsize<numt,numt>{
+	class RandomValueGenerator{
 	private:
-		uniform_real_distribution<numt> distr;
+		LinearInterpolation<numt,numt> reverse_distr_func;
+		uniform_real_distribution<numt> uniform;
 	public:
-		RandomValueGenerator(const RandomValueGenerator &R)
-			:LinearInterpolation_fixedsize<numt,numt>(R),distr(R.distr){}
-		RandomValueGenerator(function<numt(numt)> distribution_density,numt x1, numt x2, int bins)
-		:LinearInterpolation_fixedsize<numt,numt>(x1,x2,bins){
-			using namespace std;
-			numt X[bins];
-			for(int i=0;i<bins;i++)
-				X[i]=LinearInterpolation_fixedsize<numt,numt>::getX(i);
-			numt* Y=SympsonTable<numt,numt*>(distribution_density,X,bins);
-			for(int i=0;i<bins;i++){
-				LinearInterpolation_fixedsize<numt,numt>::setX(i,Y[i]);
-				LinearInterpolation_fixedsize<numt,numt>::setY(i,X[i]);
-			}
-			delete[] Y;
-			for(int i=1;i<bins;i++){
-				if(LinearInterpolation_fixedsize<numt,numt>::getX(i)<LinearInterpolation_fixedsize<numt,numt>::getX(i-1))
-					throw Exception<RandomValueGenerator>("Probability density function has points below zero");
-			}
-			if(LinearInterpolation_fixedsize<numt,numt>::min()>=LinearInterpolation_fixedsize<numt,numt>::max())
-				throw Exception<RandomValueGenerator>("Probability density function has points below zero");
-			distr=uniform_real_distribution<numt>(LinearInterpolation_fixedsize<numt,numt>::min(),LinearInterpolation_fixedsize<numt,numt>::max());
-		}
-		RandomValueGenerator(numt x1, numt x2):RandomValueGenerator([](double){return 1.0;},x1,x2,2){}
+		RandomValueGenerator(const RandomValueGenerator &R):reverse_distr_func(R.reverse_distr_func),uniform(R.uniform){}
+		RandomValueGenerator(const LinearInterpolation<numt,numt>&distribution_density)
+			:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate())
+			,uniform(reverse_distr_func.min(),reverse_distr_func.max()){}
+		RandomValueGenerator(function<numt(numt)> distribution_density,size_t bins,numt x1, numt x2)
+			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,bins,x1,x2)){}
+		RandomValueGenerator(numt x1, numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x1+x2/numt(2),numt(1)),make_pair(x2,numt(1))}){}
 		virtual ~RandomValueGenerator(){}
 		numt operator ()(RG&generator){
-			return LinearInterpolation_fixedsize<numt,numt>::operator()(distr(generator));
+			return reverse_distr_func(uniform(generator));
+		}
+		function<numt()>func(RG&generator){
+			return [&generator]()->numt{return operator()(generator);};
 		}
 	};
 };

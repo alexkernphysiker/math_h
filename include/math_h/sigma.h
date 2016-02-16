@@ -171,5 +171,20 @@ namespace MathTemplates{
 			}
 		}
 	};
+	template<class numt>
+	vector<value<numt>> BinsByStep(numt from,numt step,numt to){
+		if(0>=step)throw Exception<vector<value<numt>>>("wrong bin width");
+		if(to<=from)throw Exception<vector<value<numt>>>("wrong range");
+		numt delta=step/numt(2);
+		vector<value<numt>> res;
+		for(numt x=from+delta;x<to;x+=step)
+			res.push_back(value<numt>(x,delta));
+		return res;
+	}
+	template<class numt>
+	vector<value<numt>> BinsByCount(size_t count,numt from,numt to){
+		if(0==count)throw Exception<vector<value<numt>>>("wrong bins count");
+		return BinsByStep(from,(to-from)/numt(count),to);
+	}
 };
 #endif

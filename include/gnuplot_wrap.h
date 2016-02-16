@@ -93,35 +93,17 @@ namespace GnuplotWrap{
 		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
 			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
-		Plot &Hist(const LinearInterpolation_fixedsize<numt>&points,string&&title=""){
-			OutputPlot([this,&points](ofstream&data){
-				for(int i=0,n=points.size();i<n;i++)
-					data<<points.getX(i)<<" "<<points.getY(i)<<endl;
-			},"using 1:2",title);
-			return *this;
-		}
-		Plot &HistWithStdError(const LinearInterpolation_fixedsize<numt>&points,string&&title=""){
-			OutputPlot([&points](ofstream&data){
-				for(int i=0,n=points.size();i<n;i++){
-					double y=points.getY(i);
-					if(y<0)throw std::exception();
-				   double dy=sqrt(y);if(y<1)y=1;
-				   data<<points.getX(i)<<" "<<y<<" "<<dy<<endl;
-				}
-			},"using 1:2:($2-$3):($2+$3) with yerrorbars",title);
-			return *this;
-		}
 		Plot &Func(FUNC func,numt from,numt to,numt step,string&&title=""){
 			OutputPlot([func,from,to,step](ofstream&data){
-				for(double x=from;x<=to;x+=step)
+				for(numt x=from;x<=to;x+=step)
 					data<<x<<" "<<func(x)<<endl;
 			},"w l",title);
 			return *this;
 		}
 	};
-	template<class numt,class Indexer>class PlotPoints:public Plot<numt>{
+	template<class numt,class Indexer=vector<pair<numt,numt>>>class PlotPoints:public Plot<numt>{
 	public:
-		typedef std::pair<numt,numt> POINT;
+		typedef pair<numt,numt> POINT;
 		PlotPoints():Plot<numt>(){}
 		virtual ~PlotPoints(){}
 		PlotPoints &Line(const Indexer&points,string&&title=""){
@@ -139,9 +121,9 @@ namespace GnuplotWrap{
 			return *this;
 		}
 	};
-	template<class numt,class Indexer>class PlotValues:public Plot<numt>{
+	template<class numt,class Indexer=vector<pair<value<numt>,value<numt>>>>class PlotValues:public Plot<numt>{
 	public:
-		typedef std::pair<value<double>,value<double>> POINT;
+		typedef pair<value<numt>,value<numt>> POINT;
 		PlotValues():Plot<numt>(){}
 		virtual ~PlotValues(){}
 		PlotValues &Points(const Indexer&points,string&&title=""){
@@ -152,5 +134,6 @@ namespace GnuplotWrap{
 			return *this;
 		}
 	};
+	template<class numt,class Indexer2D>class Plot2D:public Plot<numt>{};
 };
 #endif

@@ -1,11 +1,12 @@
 // this file is distributed under 
 // MIT license
+#include <iostream>
 #include <gtest/gtest.h>
-#include <math_h/sympson.h>
+#include <math_h/integrate.h>
 #include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00000001)
+#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00001)
 TEST(Sympson,BaseTest){
 	auto F=[](double x){return x;};
 	_EQ(0.5,Sympson(F,0.0,1.0,0.1));
@@ -21,29 +22,27 @@ TEST(Sympson,BaseTest2){
 	_EQ(0.25,Sympson([](double x){return x*x*x;},0.0,1.0,0.00001));
 	_EQ(1.0,Sympson([](double x){return Gaussian(x,5.0,1.0);},0.0,10.0,0.0001));
 }
-TEST(SympsonTable,Simplest){
-	double *X=nullptr;
-	double *Y=SympsonTable<double,double*>([](double){return 0.0;},X,0);
-	EXPECT_EQ(nullptr,Y);
+TEST(Int_Trapez_Table,BasicTest){
+	LinearInterpolation<double> func;
+	for(double x=0;x<=1;x+=0.0001)
+		func<<make_pair(x,x*x);
+	auto res=Int_Trapez_Table(func);
+	EXPECT_EQ(func.left().first,res.left().first);
+	EXPECT_EQ(func.right().first,res.right().first);
+	EXPECT_EQ(0,res.left().second);
+	_EQ(0.33333333,res.right().second);
+	cout<<res.right().second<<endl;
 }
-TEST(SympsonTable,BasicTest){
-	double *X=new double[11];
-	for(int i=0;i<=10;i++)X[i]=0.1*i;
-	auto F=[](double x){return x;};
-	double S=Sympson(F,0.0,1.0,0.1);
-	double *ST=SympsonTable<double,double*>(F,X,11);
-	_EQ(0,ST[0]);
-	_EQ(S,ST[10]);
-	for(int i=1;i<=10;i++)EXPECT_TRUE(ST[i-1]<=ST[i]);
-	EXPECT_NO_THROW(delete ST);
-	auto F2=[](double x){return x*x;};
-	S=Sympson(F2,0.0,1.0,0.1);
-	ST=SympsonTable<double,double*>(F2,X,11);
-	_EQ(0,ST[0]);
-	_EQ(S,ST[10]);
-	for(int i=1;i<=10;i++)EXPECT_TRUE(ST[i-1]<=ST[i]);
-	EXPECT_NO_THROW(delete ST);
-	EXPECT_NO_THROW(delete X);
+TEST(Int_Trapez_Table_PositiveStrict,BasicTest){
+	LinearInterpolation<double> func;
+	for(double x=0;x<=1;x+=0.0001)
+		func<<make_pair(x,x*x);
+	auto res=Int_Trapez_Table_PositiveStrict(func);
+	EXPECT_EQ(func.left().first,res.left().first);
+	EXPECT_EQ(func.right().first,res.right().first);
+	EXPECT_EQ(0,res.left().second);
+	_EQ(0.333333,res.right().second);
+	cout<<res.right().second<<endl;
 }
 TEST(Convolution,BasicTest){
 	auto F1=[](double x){return x;};

@@ -48,20 +48,6 @@ namespace MathTemplates{
 	#define std_insert(vector,type) [&vector](int pos,type x){vector.insert(vector.begin()+pos,x);}
 	#define field_size(vector)  [this](){return vector.size();}
 	#define field_insert(vector,type)  [this](int pos,type x){vector.insert(vector.begin()+pos,x);}
-	template<class numX, class indexerX, class numY=numX, class indexerY=indexerX>
-	numY  Interpolate_Linear(int from, int to, indexerX X, indexerY Y, numX x){
-		if(x==X[from])return Y[from];
-		if(x==X[to])return Y[to];
-		int i=WhereToInsert(from,to,X,x);
-		if((i<=from)||(i>to))
-			throw Exception<std::pair<numX,numY>>("Attempt to interpolate outside given region.");
-		numX k=(x-X[i-1])/(X[i]-X[i-1]);
-		return Y[i-1]+(Y[i]-Y[i-1])*numY(k);
-	}
-	template<class numX, class Size,class indexerX, class numY, class indexerY=indexerX>
-	numY InterpolateLinear(numX x, indexerX X, indexerY Y,Size size){
-		return Interpolate_Linear(0,size()-1,X,Y,x);
-	}
 	namespace details{
 		template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>>
 		bool operator<(PairIndexer a,PairIndexer b){
@@ -73,7 +59,7 @@ namespace MathTemplates{
 		}
 	}
 	template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>>
-	numY  Interpolate_Linear2(int from, int to, PairIndexer tbl, numX x){
+	numY  Interpolate_Linear(int from, int to, PairIndexer tbl, numX x){
 		using namespace std;
 		using namespace details;
 		if(x==tbl[from].first)
@@ -88,8 +74,8 @@ namespace MathTemplates{
 		return tbl[i-1].second+(tbl[i].second-tbl[i-1].second)*numY(k);
 	}
 	template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>,class Size=std::function<int()>>
-	numY InterpolateLinear2(numX x, PairIndexer tbl,Size size){
-		return Interpolate_Linear2(0,size()-1,tbl,x);
+	numY InterpolateLinear(numX x, PairIndexer tbl,Size size){
+		return Interpolate_Linear(0,size()-1,tbl,x);
 	}
 	template<class numX, class numY=numX>
 	class LinearInterpolation{
@@ -99,9 +85,69 @@ namespace MathTemplates{
 		vector<Point> data;
 	public:
 		LinearInterpolation(){}
-		LinearInterpolation &operator<<(Point&&p){
+		LinearInterpolation &operator<<(const Point&p){
 			InsertSorted(p,data,field_size(data),field_insert(data,Point));
 			return *this;
+		}
+		LinearInterpolation &operator<<(Point&&p){
+			return operator<<(p);
+		}
+		LinearInterpolation(const initializer_list<Point>&points){
+			for(const Point&p:points)operator<<(p);
+		}
+		LinearInterpolation(initializer_list<Point>&&points):LinearInterpolation(points){}
+		LinearInterpolation(function<numY(numX)> f,numX from,numX step,numX to){
+			if(from>=to)throw Exception<LinearInterpolation>("wrong binning ranges");
+			if(step<=0)throw Exception<LinearInterpolation>("wrong binning step");
+			for(numX x=from;x<=to;x+=step)operator<<(make_pair(x,f(x)));
+		}
+		LinearInterpolation(function<numY(numX)> f,size_t bins, numX from,numX to){
+			if(from>=to)throw Exception<LinearInterpolation>("wrong binning ranges");
+			if(0==bins)throw Exception<LinearInterpolation>("wrong bins count");
+			numX step=(to-from)/numX(bins);
+			for(numX x=from;x<=to;x+=step)operator<<(make_pair(x,f(x)));
+		}
+		virtual ~LinearInterpolation(){}
+		//Points access
+		int size()const{return data.size();}
+		Point&operator[](int i)const{
+			if(size()<=i)
+				throw Exception<LinearInterpolation>("Range check error");
+			return const_cast<Point&>(data[i]);
+		}
+		typedef typename vector<Point>::iterator iterator;
+		typedef typename vector<Point>::const_iterator const_iterator;
+		iterator begin(){return data.begin();}
+		const_iterator begin()const{return data.begin();}
+		const_iterator cbegin()const{return data.cbegin();}
+		iterator end(){return data.end();}
+		const_iterator end() const{return data.end();}
+		const_iterator cend() const{return data.cend();}
+		Point&left()const{
+			if(size()<1)
+				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
+			return const_cast<Point&>(data[0]);
+		}
+		Point&right()const{
+			if(size()<1)
+				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
+			return const_cast<Point&>(data[size()-1]);
+		}
+		numX min()const{return left().first;}
+		numX max()const{return right().first;}
+		numY operator()(numX x)const{
+			using namespace details;
+			return InterpolateLinear<numX,numY>(x,data,field_size(data));
+		}
+		function<numY(numX)> func()const{
+			return [this](double x){return operator()(x);};
+		}
+		//Arithmetic actions
+		LinearInterpolation<numY,numX> Transponate()const{
+			LinearInterpolation<numY,numX> res;
+			for(const Point&p:data)
+				res<<make_pair(p.second,p.first);
+			return res;
 		}
 		LinearInterpolation &operator+=(numY value){
 			for(Point&point:data)
@@ -133,137 +179,6 @@ namespace MathTemplates{
 				point.second=F(point.first,point.second);
 			return *this;
 		}
-		LinearInterpolation(std::vector<Point>&&points){
-			for(Point&p:points)
-				operator<<(static_cast<Point&&>(p));
-		}
-		virtual ~LinearInterpolation(){}
-		int size()const{return data.size();}
-		numX min()const{
-			if(size()<1)
-				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
-			return data[0].first;
-		}
-		numX max()const{
-			if(size()<1)
-				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
-			return data[size()-1].first;
-		}
-		numY operator()(numX x)const{
-			using namespace details;
-			return InterpolateLinear2<numX,numY>(x,data,field_size(data));
-		}
-		std::function<numY(numX)> func()const{
-			return [this](double x){return operator()(x);};
-		}
-		Point&operator[](int i)const{return data[i];}
-		typedef typename vector<Point>::iterator iterator;
-		typedef typename vector<Point>::const_iterator const_iterator;
-		iterator begin(){return data.begin();}
-		const_iterator begin()const{return data.begin();}
-		const_iterator cbegin()const{return data.cbegin();}
-		iterator end(){return data.end();}
-		const_iterator end() const{return data.end();}
-		const_iterator cend() const{return data.cend();}
-	};
-	template<class numX, class numY=numX>
-	class LinearInterpolation_fixedsize{
-	private:
-		numX *X;
-		numY *Y;
-		int n;
-	public:
-		LinearInterpolation_fixedsize(const LinearInterpolation_fixedsize &source){
-			n=source.n;
-			X=new numX[n];
-			Y=new numY[n];
-			for(int i=0;i<n;i++){
-				X[i]=source.X[i];
-				Y[i]=source.Y[i];
-			}
-		}
-		LinearInterpolation_fixedsize(std::function<numY(numX)> F, numX from,numX to,int points){
-			if(from>=to)
-				throw Exception<LinearInterpolation_fixedsize>("Wrong ranges given in constructor");
-			if(points<2)
-				throw Exception<LinearInterpolation_fixedsize>("Too few bins given in constructor");
-			numX step= (to-from)/numX(points-1);
-			n=points;
-			X=new numX[n];
-			Y=new numY[n];
-			for(int i=0;i<n;i++){
-				numX x=from+step*numX(i);
-				X[i]=x;
-				Y[i]=F(x);
-			}
-		}
-		LinearInterpolation_fixedsize(numX from,numX to,int points):LinearInterpolation_fixedsize([](numX){return numY(0);},from,to,points){}
-		virtual ~LinearInterpolation_fixedsize(){
-			delete[] X;
-			delete[] Y;
-		}
-		int size()const{return n;}
-		numX min()const{
-			if(size()<1)
-				throw Exception<LinearInterpolation_fixedsize>("Attempt to obtain empty proterties");
-			return X[0];
-		}
-		numX max()const{
-			if(size()<1)
-				throw Exception<LinearInterpolation_fixedsize>("Attempt to obtain empty proterties");
-			return X[size()-1];
-		}
-		numY operator()(numX x)const{
-			using namespace details;
-			return Interpolate_Linear(0,n-1,X,Y,x);
-		}
-		std::function<numY(numX)> func()const{
-			return [this](double x){return operator()(x);};
-		}
-		numX getX(int i)const{
-			if((i<0)||(i>=size()))
-				throw Exception<LinearInterpolation_fixedsize>("Range check error");
-			return X[i];
-		}
-		numY getY(int i)const{
-			if((i<0)||(i>=size()))
-				throw Exception<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
-			return Y[i];
-		}
-		void setY(int i,numY v){
-			if((i<0)||(i>=size()))
-				throw Exception<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
-			Y[i]=v;
-		}
-	protected:
-		void setX(int i,numX v){
-			if((i<0)||(i>=size()))
-				throw Exception<LinearInterpolation_fixedsize<numX,numY>>("Range check error");
-			X[i]=v;
-		}
-	};
-	template<class numX, class numY=numX>
-	class Distribution:public LinearInterpolation_fixedsize<numX,numY>{
-	private:
-		numX bindelta;
-	public:
-		Distribution(numX from,numX to,int bincount):LinearInterpolation_fixedsize<numX,numY>(
-			from+(to-from)/numX(bincount*2),
-			to-(to-from)/numX(bincount*2),
-			bincount
-		){
-			bindelta=(to-from)/numX(bincount*2);
-		}
-		virtual ~Distribution(){}
-		Distribution &AddValue(numX v){
-			for(int i=0,n=LinearInterpolation_fixedsize<numX,numY>::size();i<n;i++){
-				numX x=LinearInterpolation_fixedsize<numX,numY>::getX(i);
-				if(((x-bindelta)<=v)&&(v<(x+bindelta)))
-					LinearInterpolation_fixedsize<numX,numY>::setY(i,LinearInterpolation_fixedsize<numX,numY>::getY(i)+1);
-			}
-			return *this;
-		}
-		numX BinWidth()const{return bindelta*numX(2);}
 	};
 };
 #endif
