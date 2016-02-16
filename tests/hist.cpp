@@ -14,3 +14,50 @@ TEST(point,basetest){
 	EXPECT_EQ(y.val(),p.Y().val());
 	EXPECT_EQ(y.delta(),p.Y().delta());
 }
+//ToDo: cover hist by unit-tests
+TEST(Distribution2D,BaseTest){
+	Distribution2D<double> D(
+		{value<double>(-1.0,0.5),value<double>(-0.0,0.5),value<double>(1.0,0.5)},
+		{value<double>(-0.0,0.5),value<double>(1.0,0.5)}
+	);
+	ASSERT_EQ(3,D.X().size());
+	ASSERT_EQ(2,D.Y().size());
+	ASSERT_EQ(3,D.size());
+	ASSERT_EQ(2,D[0].size());
+	ASSERT_EQ(2,D[1].size());
+	ASSERT_EQ(2,D[2].size());
+	EXPECT_EQ(0,D[0][0].val());
+	EXPECT_EQ(0,D[0][1].val());
+	EXPECT_EQ(0,D[1][0].val());
+	EXPECT_EQ(0,D[1][1].val());
+	EXPECT_EQ(0,D[2][0].val());
+	EXPECT_EQ(0,D[2][1].val());
+	D<<make_pair(0.0,0.0)<<make_pair(0.1,0.2)<<make_pair(0.9,1.1)<<make_pair(-0.9,1.1)<<make_pair(0.6,0.6)<<make_pair(0.6,0.4);
+	EXPECT_EQ(0,D[0][0].val());
+	EXPECT_EQ(1,D[0][1].val());
+	EXPECT_EQ(2,D[1][0].val());
+	EXPECT_EQ(0,D[1][1].val());
+	EXPECT_EQ(1,D[2][0].val());
+	EXPECT_EQ(2,D[2][1].val());
+	vector<Distribution2D<double>::Point> dbg;
+	D.FullCycle([&dbg](Distribution2D<double>::Point&&p){dbg.push_back(p);});
+	ASSERT_EQ(6,dbg.size());
+	EXPECT_EQ(-1,dbg[0].X().val());
+	EXPECT_EQ( 0,dbg[0].Y().val());
+	EXPECT_EQ(0,dbg[0].Z().val());
+	EXPECT_EQ(-1,dbg[1].X().val());
+	EXPECT_EQ( 1,dbg[1].Y().val());
+	EXPECT_EQ(1,dbg[1].Z().val());
+	EXPECT_EQ( 0,dbg[2].X().val());
+	EXPECT_EQ( 0,dbg[2].Y().val());
+	EXPECT_EQ(2,dbg[2].Z().val());
+	EXPECT_EQ( 0,dbg[3].X().val());
+	EXPECT_EQ( 1,dbg[3].Y().val());
+	EXPECT_EQ(0,dbg[3].Z().val());
+	EXPECT_EQ( 1,dbg[4].X().val());
+	EXPECT_EQ( 0,dbg[4].Y().val());
+	EXPECT_EQ(1,dbg[4].Z().val());
+	EXPECT_EQ( 1,dbg[5].X().val());
+	EXPECT_EQ( 1,dbg[5].Y().val());
+	EXPECT_EQ(2,dbg[5].Z().val());
+}

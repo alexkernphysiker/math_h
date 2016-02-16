@@ -37,12 +37,12 @@ namespace GnuplotWrap{
 		string outpath;
 		string m_prefix;
 	};
-	template<class numt>class Plot{
+	template<class numtX,class numtY=numtX>class Plot{
 	private:
 		vector<string> lines;
 		vector<string> plots;
 	public:
-		typedef function<numt(numt)> FUNC;
+		typedef function<numtY(numtX)> FUNC;
 		typedef function<void(ofstream&)> PLOTOUTPUT;
 		Plot&operator<<(const string&line){
 			lines.push_back(line);
@@ -94,49 +94,152 @@ namespace GnuplotWrap{
 		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
 			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
-		Plot &Func(FUNC func,numt from,numt to,numt step,string&&title=""){
+		Plot &Func(FUNC func,numtX from,numtX to,numtX step,string&&title=""){
 			OutputPlot([func,from,to,step](ofstream&data){
-				for(numt x=from;x<=to;x+=step)
+				for(numtX x=from;x<=to;x+=step)
 					data<<x<<" "<<func(x)<<endl;
 			},"w l",title);
 			return *this;
 		}
 	};
-	template<class numt,class Indexer=LinearInterpolation<numt>>
-	class PlotPointsErrorless:public Plot<numt>{
+	template<class numtX,class numtY=numtX>
+	class PlotPointsErrorless:public Plot<numtX,numtY>{
 	public:
-		typedef pair<numt,numt> POINT;
-		PlotPointsErrorless():Plot<numt>(){}
+		typedef pair<numtX,numtY> POINT;
+		PlotPointsErrorless(){}
 		virtual ~PlotPointsErrorless(){}
-		PlotPointsErrorless &Line(const Indexer&points,string&&title=""){
-			Plot<numt>::OutputPlot([&points](ofstream&data){
+		PlotPointsErrorless &Line(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		PlotPointsErrorless &Points(const Indexer&points,string&&title=""){
-			Plot<numt>::OutputPlot([&points](ofstream&data){
+		PlotPointsErrorless &Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(POINT p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
 	};
-	template<class numt,class Indexer=hist<numt>>
-	class PlotPoints:public Plot<numt>{
+	template<class numtX,class numtY=numtX>
+	class PlotPoints:public Plot<numtX,numtY>{
 	public:
 		PlotPoints(){}
 		virtual ~PlotPoints(){}
-		PlotPoints&Hist(const Indexer&data,const string&title){
-			Plot<double>::OutputPlot([&data](ofstream&str){
-				for(const point<numt> p:data)
+		PlotPoints&Hist(const hist<numtX,numtY>&data,const string&title){
+			Plot<numtX,numtY>::OutputPlot([&data](ofstream&str){
+				for(const point<numtX,numtY> p:data)
 					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<endl;
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}
-		PlotPoints&Hist(const Indexer&data,string&&title=""){return Hist(data,title);}
-		PlotPoints&Hist(Indexer&&data,string&&title=""){return Hist(data,title);}
+		PlotPoints&Hist(const hist<numtX,numtY>&data,string&&title=""){return Hist(data,title);}
+		PlotPoints&Hist(hist<numtX,numtY>&&data,string&&title=""){return Hist(data,title);}
+	};
+	
+	enum TypeOf3D{normal,sp2};
+	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	class PlotDistribution2D{
+	public:
+		class point{
+		private:
+			numtX _x;
+			numtY _y;
+			numtZ _z;
+		public:
+			point(numtX x,numtY y, numtZ z){
+				_x=x;_y=y;_z=z;
+			}
+			point(const point&source):point(source._x,source._y,source._z){}
+			~point(){}
+			numtX x()const{return _x;}
+			numtY y()const{return _y;}
+			numtZ z()const{return _z;}
+		};
+	private:
+		vector<string> lines;
+		vector<string> plots;
+		string Distr2File(const Distribution2D<numtX,numtY,numtZ>&D)const{
+			string filename=Plotter::Instance().GetFileName();
+			ofstream data;
+			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
+			if(data.is_open()){
+				data<<D.Y().size()<<" ";
+				for(const auto&y:D.Y())
+					data<<y.val()<<" ";
+				for(size_t i=0,I=D.size();i<I;i++){
+					data<<endl<<D.X()[i].val();
+					for(const auto&cell:D[i])
+						data<<" "<<cell.val();
+				}
+				data.close();
+			}
+			return filename;
+		}
+		string Points2File(const vector<point>&points){
+			string filename=Plotter::Instance().GetFileName();
+			ofstream data;
+			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
+			if(data.is_open()){
+				for(const point&p:points)
+					data<<p.x()<<" "<<p.y()<<" "<<p.z()<<endl;
+				data.close();
+			}
+			return filename;
+		}
+	public:
+		PlotDistribution2D&operator<<(const string&line){
+			lines.push_back(line);
+			return *this;
+		}
+		PlotDistribution2D&operator<<(string&&line){return operator<<(line);}
+		PlotDistribution2D(TypeOf3D type){
+			operator<<(Plotter::Instance().GetTerminal());
+			if(sp2==type){
+				operator<<("unset key");
+				operator<<("unset sur");
+				operator<<("set view map");
+				operator<<("set pm3d at b");
+			}
+		}
+		virtual ~PlotDistribution2D(){
+			for(string&line:lines)Plotter::Instance()<<line;
+			for(int i=0,n=plots.size();i<n;i++){
+				string line=plots[i];
+				if(i==0)
+					line="splot "+line;
+				if(i<(n-1))
+					line+=",\\";
+				Plotter::Instance()<<line;
+			}
+		}
+		PlotDistribution2D& Object(string&&plot){
+			plots.push_back(plot);
+			return *this;
+		}
+		PlotDistribution2D&Distr(const Distribution2D<numtX,numtY,numtZ>&D,string&&title=""){
+			return Object(string("'")+Distr2File(D)+"' matrix nonuniform title'"+title+"'");
+		}
+		PlotDistribution2D&Points(const vector<point>&points,string&&title=""){
+			return Object(string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
+		}
+		PlotDistribution2D&Points(const vector<point>&&points,string&&title=""){
+			return Points(points,static_cast<string&&>(title));
+		}
+		PlotDistribution2D&Points(initializer_list<point>&&points,string&&title=""){
+			return Points(vector<point>(points),static_cast<string&&>(title));
+		}
+		PlotDistribution2D&Line(const vector<point>&points,string&&title=""){
+			return Object(string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
+		}
+		PlotDistribution2D&Line(const vector<point>&&points,string&&title=""){
+			return Line(points,static_cast<string&&>(title));
+		}
+		PlotDistribution2D&Line(initializer_list<point>&&points,string&&title=""){
+			return Line(vector<point>(points),static_cast<string&&>(title));
+		}
 	};
 };
 #endif
