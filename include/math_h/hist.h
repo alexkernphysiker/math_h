@@ -54,6 +54,7 @@ namespace MathTemplates{
 		vector<Point> m_data;
 	public:
 		//Copying
+		hist(){}
 		hist(const initializer_list<value<numtX>>&data){
 			for(const auto& v:data)m_data.push_back(Point(v));
 		}
