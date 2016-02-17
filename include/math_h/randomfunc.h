@@ -22,7 +22,7 @@ namespace MathTemplates{
 			,uniform(reverse_distr_func.min(),reverse_distr_func.max()){}
 		RandomValueGenerator(function<numt(numt)> distribution_density,size_t bins,numt x1, numt x2)
 			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,bins,x1,x2)){}
-		RandomValueGenerator(numt x1, numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x1+x2/numt(2),numt(1)),make_pair(x2,numt(1))}){}
+		RandomValueGenerator(numt x1, numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x2,numt(1))}){}
 		virtual ~RandomValueGenerator(){}
 		numt operator ()(RG&generator){
 			return reverse_distr_func(uniform(generator));
