@@ -103,15 +103,18 @@ namespace GnuplotWrap{
 		Plot&Line(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
 			return Line(points,static_cast<string&&>(title));
 		}
-		Plot&Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+		Plot&Points(const LinearInterpolation<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
+		Plot&Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+			return Points(points,title);
+		}
 		Plot&Points(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
-			return Points(points,static_cast<string&&>(title));
+			return Points(points,title);
 		}
 		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&data](ofstream&str){
