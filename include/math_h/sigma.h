@@ -120,7 +120,7 @@ namespace MathTemplates{
 			return *this;
 		}
 		int count()const{return m_list.size();}
-		value<numt>&get()const{
+		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
 				return const_cast<value<numt>&>(*m_cache);
 			}else{
@@ -161,7 +161,7 @@ namespace MathTemplates{
 		WeightedAverageCalculator &operator<<(value<numt>&&X){
 			return operator<<(X);
 		}
-		value<numt>&get()const{
+		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
 				return const_cast<value<numt>&>(*m_cache);
 			}else{

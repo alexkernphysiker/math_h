@@ -110,7 +110,7 @@ namespace MathTemplates{
 		virtual ~LinearInterpolation(){}
 		//Points access
 		int size()const{return data.size();}
-		Point&operator[](int i)const{
+		const Point&operator[](int i)const{
 			if(size()<=i)
 				throw Exception<LinearInterpolation>("Range check error");
 			return const_cast<Point&>(data[i]);
@@ -123,12 +123,12 @@ namespace MathTemplates{
 		iterator end(){return data.end();}
 		const_iterator end() const{return data.end();}
 		const_iterator cend() const{return data.cend();}
-		Point&left()const{
+		const Point&left()const{
 			if(size()<1)
 				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
 			return const_cast<Point&>(data[0]);
 		}
-		Point&right()const{
+		const Point&right()const{
 			if(size()<1)
 				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
 			return const_cast<Point&>(data[size()-1]);

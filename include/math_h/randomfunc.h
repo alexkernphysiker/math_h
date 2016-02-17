@@ -28,7 +28,7 @@ namespace MathTemplates{
 			return reverse_distr_func(uniform(generator));
 		}
 		function<numt()>func(RG&generator){
-			return [&generator]()->numt{return operator()(generator);};
+			return [&generator,this]()->numt{return operator()(generator);};
 		}
 	};
 };

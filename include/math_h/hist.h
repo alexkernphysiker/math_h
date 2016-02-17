@@ -23,8 +23,8 @@ namespace MathTemplates{
 		point(const value<numtX>&pos,value<numtY>&&val):x(pos),y(val){}
 		point(value<numtX>&&pos,value<numtY>&&val):x(pos),y(val){}
 		point(const point&source):x(source.x),y(source.y){}
-		value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
-		value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
+		const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
+		const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
 	protected:
 		value<numtX>&__X(){return x;}
 		value<numtY>&__Y(){return y;}
@@ -96,7 +96,7 @@ namespace MathTemplates{
 		const_iterator end() const{return m_data.cend();}
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
-		Point&operator[](size_t i)const{
+		const Point&operator[](size_t i)const{
 			if(m_data.size()<=i)
 				throw Exception<hist>("range check error");
 			return const_cast<Point&>(m_data[i]);
@@ -408,12 +408,12 @@ namespace MathTemplates{
 		const_iterator end() const{return m_data.cend();}
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
-		vector<value<numtZ>>&operator[](size_t i)const{
+		const vector<value<numtZ>>&operator[](size_t i)const{
 			if(size()<=i)throw Exception<Distribution2D>("range check error");
 			return const_cast<vector<value<numtZ>>&>(m_data[i]);
 		}
-		vector<value<numtX>>&X()const{return const_cast<vector<value<numtX>>&>(m_x_axis);}
-		vector<value<numtY>>&Y()const{return const_cast<vector<value<numtY>>&>(m_y_axis);}
+		const vector<value<numtX>>&X()const{return const_cast<vector<value<numtX>>&>(m_x_axis);}
+		const vector<value<numtY>>&Y()const{return const_cast<vector<value<numtY>>&>(m_y_axis);}
 		class Point{
 			friend class Distribution2D;
 		private:
@@ -425,9 +425,9 @@ namespace MathTemplates{
 				:x(_x),y(_y),z(_z){}
 		public:
 			virtual ~Point(){}
-			value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
-			value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
-			value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
+			const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
+			const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
+			const value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
 		};
 		Point operator()(size_t i,size_t j)const{
 			if(size()<=i)throw Exception<Distribution2D>("range check error");
