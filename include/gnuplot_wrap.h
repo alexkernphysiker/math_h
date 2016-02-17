@@ -93,6 +93,26 @@ namespace GnuplotWrap{
 		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
 			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
+		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&title){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
+				for(const auto&p:points)
+					data<<p.first<<" "<<p.second<<endl;
+			},"w l",title);
+			return *this;
+		}
+		Plot&Line(const vector<pair<numtX,numtY>>&points,string&&title=""){
+			return Line(points,title);
+		}
+		Plot&Line(vector<pair<numtX,numtY>>&&points,string&&title=""){
+			return Line(points,title);
+		}
+		Plot&Line(initializer_list<pair<numtX,numtY>>&&points,string&&title=""){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
+				for(const auto&p:points)
+					data<<p.first<<" "<<p.second<<endl;
+			},"w l",title);
+			return *this;
+		}
 		Plot&Line(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
@@ -102,6 +122,26 @@ namespace GnuplotWrap{
 		}
 		Plot&Line(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
 			return Line(points,static_cast<string&&>(title));
+		}
+		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&title){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
+				for(const auto&p:points)
+					data<<p.first<<" "<<p.second<<endl;
+			},"using 1:2",title);
+			return *this;
+		}
+		Plot&Points(const vector<pair<numtX,numtY>>&points,string&&title=""){
+			return Points(points,title);
+		}
+		Plot&Points(vector<pair<numtX,numtY>>&&points,string&&title=""){
+			return Points(points,title);
+		}
+		Plot&Points(initializer_list<pair<numtX,numtY>>&&points,string&&title=""){
+			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
+				for(const auto&p:points)
+					data<<p.first<<" "<<p.second<<endl;
+			},"using 1:2",title);
+			return *this;
 		}
 		Plot&Points(const LinearInterpolation<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
