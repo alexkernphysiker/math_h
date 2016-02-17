@@ -19,12 +19,12 @@ namespace MathTemplates{
 		value(double v,double err):Value(v),Error(err){if(Error<0)throw Exception<value>("Error cannot be negative");}
 		value(const value&source):Value(source.Value),Error(source.Error){}
 		
-		double val()const{return Value;}
-		double delta()const{return Error;}
-		double epsilon()const{return Error/Value;}
-		double min()const{return Value-Error;}
-		double max()const{return Value+Error;}
-		bool contains(double x)const{return (x>=min())&&(x<=max());}
+		numt val()const{return Value;}
+		numt delta()const{return Error;}
+		numt epsilon()const{return Error/Value;}
+		numt min()const{return Value-Error;}
+		numt max()const{return Value+Error;}
+		bool contains(numt x)const{return (x>=min())&&(x<=max());}
 		bool contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
 		
 		value&operator+=(const value&other){
