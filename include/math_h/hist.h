@@ -53,6 +53,7 @@ namespace MathTemplates{
 	private:
 		vector<Point> m_data;
 	public:
+		//Copying
 		hist(const initializer_list<value<numtX>>&data){
 			for(const auto& v:data)m_data.push_back(Point(v));
 		}
@@ -86,6 +87,7 @@ namespace MathTemplates{
 			for(const Point& P:source.m_data)m_data.push_back(P);
 			return *this;
 		}
+		//Iterating
 		typedef typename vector<Point>::const_iterator const_iterator;
 		const_iterator begin()const{return m_data.cbegin();}
 		const_iterator cbegin()const{return m_data.cbegin();}
@@ -97,6 +99,7 @@ namespace MathTemplates{
 				throw Exception<hist>("range check error");
 			return const_cast<Point&>(m_data[i]);
 		}
+		//Simple calculations
 		hist CloneEmptyBins()const{
 			vector<Point> initer;
 			for(const Point&P:m_data)initer.push_back(P);
@@ -112,6 +115,7 @@ namespace MathTemplates{
 			for(const Point&P:m_data)res+=P.Y();
 			return res;
 		}
+		//Comparing
 		numtY ChiSq_only_y_error(function<numtY(numtX)>f,size_t paramcount){
 			numtY res=0,k=numtY(size())-numtY(paramcount);
 			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
@@ -144,7 +148,7 @@ namespace MathTemplates{
 			}
 			return res/k;
 		}
-		
+		//Arithmetic operations
 		hist&operator+=(const hist& second){
 			for(size_t i=0,n=size();i<n;i++){
 				if(m_data[i].X().val()==second[i].X().val()){
@@ -224,7 +228,8 @@ namespace MathTemplates{
 			return *this;
 		}
 		hist&operator/=(value<numtY>&&c){return operator/=(c);}
-	protected:
+	
+		//Advanced transrormations
 		hist&FillWithValues(const value<numtY>&v){
 			for(Point&P:m_data)P.varY()=v;
 			return *this;
@@ -232,7 +237,7 @@ namespace MathTemplates{
 		hist&FillWithValues(value<numtY>&&v){
 			return FillWithValues(v);
 		}
-		hist&imbibe(const hist& second){//the uncertanties are set standard way (sqrt)
+		hist&imbibe(const hist& second){//Sum of histograms. the uncertanties are set standard way (sqrt)
 			for(int i=0,n=size();i<n;i++){
 				if(m_data[i].X().val()==second[i].X().val()){
 					m_data[i].varY()=value<numtY>(m_data[i].Y().val()+second[i].Y().val());
@@ -241,6 +246,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
+	protected:
 		hist&fill(numtX v){
 			for(Point&P:m_data)
 				if(P.X().contains(v))
