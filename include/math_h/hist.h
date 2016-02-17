@@ -260,14 +260,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-	protected:
-		hist&fill(numtX v){
-			for(Point&P:m_data)
-				if(P.X().contains(v))
-					P.varY()=value<numtY>(P.Y().val()+numtY(1));
-			return *this;
-		}
-		
 	};
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const hist<numtX,numtY>&b){auto res=a;res+=b;return res;}
@@ -369,7 +361,9 @@ namespace MathTemplates{
 		Distribution1D(const vector<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
 		Distribution1D(vector<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
 		Distribution1D&operator<<(numtX v){
-			hist<numtX,numtY>::fill(v);
+			for(size_t i=0,n=hist<double>::size();i<n;i++)
+				if(hist<double>::Bin(i).X().contains(v))
+					hist<double>::Bin(i).varY()=value<numtY>(hist<double>::Bin(i).Y().val()+numtY(1));
 			return *this;
 		}
 	};
