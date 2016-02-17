@@ -8,6 +8,7 @@
 #include <functional>
 #include "error.h"
 #include "sigma.h"
+#include "interpolate.h"
 namespace MathTemplates{
 	using namespace std;
 	template<class numtX,class numtY=numtX>class point{
@@ -100,12 +101,12 @@ namespace MathTemplates{
 				throw Exception<hist>("range check error");
 			return const_cast<Point&>(m_data[i]);
 		}
-		Point&operator[](size_t i){
+		Point&Bin(size_t i){
 			if(m_data.size()<=i)
 				throw Exception<hist>("range check error");
 			return m_data[i];
 		}
-		//Simple calculations
+		//Simple transform
 		hist CloneEmptyBins()const{
 			vector<Point> initer;
 			for(const Point&P:m_data)initer.push_back(P);
@@ -121,6 +122,13 @@ namespace MathTemplates{
 			for(const Point&P:m_data)res+=P.Y();
 			return res;
 		}
+		LinearInterpolation<numtX,numtY> Line()const{
+			LinearInterpolation<numtX,numtY> res;
+			for(const Point&P:m_data)
+				res<<make_pair(P.X().val(),P.Y().val());
+			return res;
+		}
+		
 		//Comparing
 		numtY ChiSq_only_y_error(function<numtY(numtX)>f,size_t paramcount){
 			numtY res=0,k=numtY(size())-numtY(paramcount);
