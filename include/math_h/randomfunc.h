@@ -20,8 +20,12 @@ namespace MathTemplates{
 		RandomValueGenerator(const LinearInterpolation<numt,numt>&distribution_density)
 			:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate())
 			,uniform(reverse_distr_func.min(),reverse_distr_func.max()){}
-		RandomValueGenerator(function<numt(numt)> distribution_density,size_t bins,numt x1, numt x2)
-			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,bins,x1,x2)){}
+		RandomValueGenerator(function<numt(numt)> distribution_density,const vector<numt>&chain)
+			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
+		RandomValueGenerator(function<numt(numt)> distribution_density,vector<numt>&&chain)
+			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
+		RandomValueGenerator(function<numt(numt)> distribution_density,initializer_list<numt>&&chain)
+			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
 		RandomValueGenerator(numt x1, numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x2,numt(1))}){}
 		virtual ~RandomValueGenerator(){}
 		numt operator ()(RG&generator){

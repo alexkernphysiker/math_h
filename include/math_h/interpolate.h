@@ -77,6 +77,23 @@ namespace MathTemplates{
 	numY InterpolateLinear(numX x, PairIndexer tbl,Size size){
 		return Interpolate_Linear(0,size()-1,tbl,x);
 	}
+	template<class numX>
+	vector<numX> ChainWithStep(numX from,numX step,numX to){
+		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
+		if(step<=0)throw Exception<vector<numX>>("wrong binning step");
+		vector<numX> res;
+		for(numX x=from;x<=to;x+=step)res.push_back(x);
+		return res;
+	}
+	template<class numX>
+	vector<numX> ChainWithCount(size_t cont,numX from,numX to){
+		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
+		if(0==cont)throw Exception<vector<numX>>("wrong bins count");
+		numX step=(to-from)/numX(cont);
+		vector<numX> res;
+		for(numX x=from;x<=to;x+=step)res.push_back(x);
+		return res;
+	}
 	template<class numX, class numY=numX>
 	class LinearInterpolation{
 	public:
@@ -96,16 +113,14 @@ namespace MathTemplates{
 			for(const Point&p:points)operator<<(p);
 		}
 		LinearInterpolation(initializer_list<Point>&&points):LinearInterpolation(points){}
-		LinearInterpolation(function<numY(numX)> f,numX from,numX step,numX to){
-			if(from>=to)throw Exception<LinearInterpolation>("wrong binning ranges");
-			if(step<=0)throw Exception<LinearInterpolation>("wrong binning step");
-			for(numX x=from;x<=to;x+=step)operator<<(make_pair(x,f(x)));
+		LinearInterpolation(function<numY(numX)> f,const vector<numX>&chain){
+			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
-		LinearInterpolation(function<numY(numX)> f,size_t bins, numX from,numX to){
-			if(from>=to)throw Exception<LinearInterpolation>("wrong binning ranges");
-			if(0==bins)throw Exception<LinearInterpolation>("wrong bins count");
-			numX step=(to-from)/numX(bins);
-			for(numX x=from;x<=to;x+=step)operator<<(make_pair(x,f(x)));
+		LinearInterpolation(function<numY(numX)> f,vector<numX>&&chain){
+			for(numX x:chain)operator<<(make_pair(x,f(x)));
+		}
+		LinearInterpolation(function<numY(numX)> f,initializer_list<numX>&&chain){
+			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
 		virtual ~LinearInterpolation(){}
 		//Points access

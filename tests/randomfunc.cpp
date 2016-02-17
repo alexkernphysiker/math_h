@@ -10,7 +10,7 @@ using namespace std;
 using namespace MathTemplates;
 mt19937 rnd;
 TEST(RandomValueGenerator,BaseTest){
-	RandomValueGenerator<double> R([](double)->double{return 1;},10,0,1);
+	RandomValueGenerator<double> R([](double)->double{return 1;},ChainWithCount(10,0.0,1.0));
 	for(int i=0;i<100;i++){
 		double r=R(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -24,18 +24,18 @@ TEST(RandomValueGenerator,BaseTest){
 TEST(RandomValueGenerator,Throwing){
 	auto f=[](double){return 1;};
 	auto z=[](double){return 0;};
-	EXPECT_THROW(RandomValueGenerator<double>(f,0,0,1),Exception<LinearInterpolation<double>>);
-	EXPECT_NO_THROW(RandomValueGenerator<double>(f,1,0,1));
-	EXPECT_THROW(RandomValueGenerator<double>(f,2,0,-1),Exception<LinearInterpolation<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,2,0,0),Exception<LinearInterpolation<double>>);
-	EXPECT_NO_THROW(RandomValueGenerator<double>(f,2,0,1));
-	EXPECT_NO_THROW(RandomValueGenerator<double>(z,2,0,1));
-	EXPECT_THROW(RandomValueGenerator<double>(z,0,0,0),Exception<LinearInterpolation<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(0,0.0,1.0)),Exception<vector<double>>);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,ChainWithCount(1,0.0,1.0)));
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,-1.0)),Exception<vector<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,0.0)),Exception<vector<double>>);
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,1.0)));
+	EXPECT_NO_THROW(RandomValueGenerator<double>(z,ChainWithCount(2,0.0,1.0)));
+	EXPECT_THROW(RandomValueGenerator<double>(z,ChainWithCount(0,0.0,0.0)),Exception<vector<double>>);
 	auto n=[](double x){return sin(10*x);};
-	EXPECT_THROW(RandomValueGenerator<double>(n,100,0,1),Exception<LinearInterpolation<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<LinearInterpolation<double>>);
 }
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
-	RandomValueGenerator<double> R(F,bins*accu,from,to);
+	RandomValueGenerator<double> R(F,ChainWithCount(bins*accu,from,to));
 	double step=(to-from)/double(bins);
 	Distribution1D<double> D(BinsByStep(from,step,to));
 	double norm=Sympson(F,from,to,0.0001);
