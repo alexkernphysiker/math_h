@@ -119,6 +119,22 @@ namespace MathTemplates{
 				res+=pow((p.Y().val()-f(p.X().val()))/p.Y().delta(),2);
 			return res/k;
 		}
+		numtY ChiSq_only_y_error(const hist<numtX,numtY>&H,size_t paramcount){
+			if(H.size()!=size())throw Exception<hist>("ChiSq: histograms size mismatch");
+			numtY res=0,k=numtY(size())-numtY(paramcount);
+			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
+			for(size_t i=0,n=size();i<n;i++){
+				if(
+					(m_data[i].X().val()!=H[i].X().val())&&
+					(m_data[i].X().delta()!=H[i].X().delta())
+				)throw Exception<hist>("ChiSq: histograms bins mismatch");
+				res+=pow(m_data[i].Y().val()-H[i].Y().val(),2)/(pow(m_data[i].Y().delta(),2)+pow(H[i].Y().delta(),2));
+			}
+			return res/k;
+		}
+		numtY ChiSq_only_y_error(hist<numtX,numtY>&&H,size_t paramcount){
+			ChiSq_only_y_error(H,paramcount);
+		}
 		numtY ChiSq(function<numtY(numtX)>f,size_t paramcount){
 			numtY res=0,k=numtY(size())-numtY(paramcount);
 			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
