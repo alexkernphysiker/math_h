@@ -3,8 +3,6 @@
 #ifndef VIJVUSSC
 #define VIJVUSSC
 #include <vector>
-#include <functional>
-#include <memory>
 #include <fstream>
 #include <stdlib.h>
 #include <string>
@@ -51,6 +49,7 @@ namespace GnuplotWrap{
 		Plot&operator<<(string&&line){return operator<<(line);}
 		Plot(){
 			operator<<(Plotter::Instance().GetTerminal());
+			operator<<("unset pm3d");
 		}
 		virtual ~Plot(){
 			for(string&line:lines)
@@ -94,49 +93,35 @@ namespace GnuplotWrap{
 		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
 			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
-		Plot &Func(FUNC func,numtX from,numtX to,numtX step,string&&title=""){
-			OutputPlot([func,from,to,step](ofstream&data){
-				for(numtX x=from;x<=to;x+=step)
-					data<<x<<" "<<func(x)<<endl;
-			},"w l",title);
-			return *this;
-		}
-	};
-	template<class numtX,class numtY=numtX>
-	class PlotPointsErrorless:public Plot<numtX,numtY>{
-	public:
-		typedef pair<numtX,numtY> POINT;
-		PlotPointsErrorless(){}
-		virtual ~PlotPointsErrorless(){}
-		PlotPointsErrorless &Line(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+		Plot&Line(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
-				for(POINT p:points)
+				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		PlotPointsErrorless &Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+		Plot&Line(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
+			return Line(points,static_cast<string&&>(title));
+		}
+		Plot&Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
-				for(POINT p:points)
+				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
-	};
-	template<class numtX,class numtY=numtX>
-	class PlotPoints:public Plot<numtX,numtY>{
-	public:
-		PlotPoints(){}
-		virtual ~PlotPoints(){}
-		PlotPoints&Hist(const hist<numtX,numtY>&data,const string&title){
+		Plot&Points(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
+			return Points(points,static_cast<string&&>(title));
+		}
+		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&data](ofstream&str){
 				for(const point<numtX,numtY> p:data)
 					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<endl;
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}
-		PlotPoints&Hist(const hist<numtX,numtY>&data,string&&title=""){return Hist(data,title);}
-		PlotPoints&Hist(hist<numtX,numtY>&&data,string&&title=""){return Hist(data,title);}
+		Plot&Hist(const hist<numtX,numtY>&data,string&&title=""){return Hist(data,title);}
+		Plot&Hist(hist<numtX,numtY>&&data,string&&title=""){return Hist(data,title);}
 	};
 	
 	enum TypeOf3D{normal,sp2};
@@ -199,9 +184,14 @@ namespace GnuplotWrap{
 			operator<<(Plotter::Instance().GetTerminal());
 			if(sp2==type){
 				operator<<("unset key");
-				operator<<("unset sur");
+				operator<<("unset surface");
 				operator<<("set view map");
 				operator<<("set pm3d at b");
+			}else{
+				operator<<("unset key");
+				operator<<("unset surface");
+				operator<<("unset view");
+				operator<<("set pm3d");
 			}
 		}
 		virtual ~PlotDistribution2D(){
