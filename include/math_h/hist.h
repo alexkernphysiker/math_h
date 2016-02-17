@@ -398,7 +398,7 @@ namespace MathTemplates{
 			if(m_y_axis.size()<=j)throw Exception<Distribution2D>("range check error");
 			return Point(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycle(function<void(Point&&)>f){
+		void FullCycle(function<void(Point&&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(Point(m_x_axis[i],m_y_axis[j],m_data[i][j]));
