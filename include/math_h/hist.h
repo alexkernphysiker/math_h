@@ -100,6 +100,11 @@ namespace MathTemplates{
 				throw Exception<hist>("range check error");
 			return const_cast<Point&>(m_data[i]);
 		}
+		Point&operator[](size_t i){
+			if(m_data.size()<=i)
+				throw Exception<hist>("range check error");
+			return m_data[i];
+		}
 		//Simple calculations
 		hist CloneEmptyBins()const{
 			vector<Point> initer;
