@@ -64,6 +64,15 @@ TEST(Sigma,WithRandomValues){
 	_EQ2(1.0,S.get().val());
 	_EQ2(3.0,S.get().delta());
 }
+TEST(Sigma,WithRandomValues2){
+	Sigma<double> S(2);
+	default_random_engine generator;
+	normal_distribution<double> distribution(1.0,3.0);
+	for(int i=0;i<2000;i++)
+		S<<distribution(generator);
+	_EQ2(1.0,S.get().val());
+	_EQ2(6.0,S.get().delta());
+}
 
 TEST(WeightedAverageCalculator,Zeros){
 	WeightedAverageCalculator<double> W;

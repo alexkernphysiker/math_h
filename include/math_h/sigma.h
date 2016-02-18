@@ -105,8 +105,11 @@ namespace MathTemplates{
 		list<numt> m_list;
 		numt m_sum;
 		value<numt>*m_cache;
+		numt m_scale;
 	public:
-		Sigma(){
+		Sigma(numt scale=1){
+			if(scale<=0)throw Exception<Sigma>("Uncertainty scaling factor must be greater than zero");
+			m_scale=scale;
 			m_sum=0;
 			m_cache=new value<numt>(INFINITY,INFINITY);
 		}
@@ -120,6 +123,7 @@ namespace MathTemplates{
 			return *this;
 		}
 		int count()const{return m_list.size();}
+		numt scaling_factor()const{return m_scale;}
 		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
 				return const_cast<value<numt>&>(*m_cache);
@@ -132,7 +136,7 @@ namespace MathTemplates{
 				for(auto value:m_list)
 					m_sigsqr+=pow(value-average,2);
 				m_sigsqr/=sz-1;
-				(*m_cache)=value<numt>(average,sqrt(m_sigsqr));
+				(*m_cache)=value<numt>(average,sqrt(m_sigsqr)*m_scale);
 				return const_cast<value<numt>&>(*m_cache);
 			}
 		}
