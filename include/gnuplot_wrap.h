@@ -169,7 +169,7 @@ namespace GnuplotWrap{
 	
 	enum TypeOf3D{normal,sp2};
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
-	class PlotDistribution2D{
+	class PlotHist2d{
 	public:
 		class point{
 		private:
@@ -189,7 +189,7 @@ namespace GnuplotWrap{
 	private:
 		vector<string> lines;
 		vector<string> plots;
-		string Distr2File(const Distribution2D<numtX,numtY,numtZ>&D)const{
+		string Distr2File(const hist2d<numtX,numtY,numtZ>&D)const{
 			string filename=Plotter::Instance().GetFileName();
 			ofstream data;
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
@@ -218,12 +218,12 @@ namespace GnuplotWrap{
 			return filename;
 		}
 	public:
-		PlotDistribution2D&operator<<(const string&line){
+		PlotHist2d&operator<<(const string&line){
 			lines.push_back(line);
 			return *this;
 		}
-		PlotDistribution2D&operator<<(string&&line){return operator<<(line);}
-		PlotDistribution2D(TypeOf3D type){
+		PlotHist2d&operator<<(string&&line){return operator<<(line);}
+		PlotHist2d(TypeOf3D type){
 			operator<<(Plotter::Instance().GetTerminal());
 			if(sp2==type){
 				operator<<("unset key");
@@ -237,7 +237,7 @@ namespace GnuplotWrap{
 				operator<<("set pm3d");
 			}
 		}
-		virtual ~PlotDistribution2D(){
+		virtual ~PlotHist2d(){
 			for(string&line:lines)Plotter::Instance()<<line;
 			for(int i=0,n=plots.size();i<n;i++){
 				string line=plots[i];
@@ -248,29 +248,32 @@ namespace GnuplotWrap{
 				Plotter::Instance()<<line;
 			}
 		}
-		PlotDistribution2D& Object(string&&plot){
+		PlotHist2d& Object(string&&plot){
 			plots.push_back(plot);
 			return *this;
 		}
-		PlotDistribution2D&Distr(const Distribution2D<numtX,numtY,numtZ>&D,string&&title=""){
+		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&D,string&&title=""){
 			return Object(string("'")+Distr2File(D)+"' matrix nonuniform title'"+title+"'");
 		}
-		PlotDistribution2D&Points(const vector<point>&points,string&&title=""){
+		PlotHist2d&Distr(hist2d<numtX,numtY,numtZ>&&D,string&&title=""){
+			return Object(string("'")+Distr2File(D)+"' matrix nonuniform title'"+title+"'");
+		}
+		PlotHist2d&Points(const vector<point>&points,string&&title=""){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
 		}
-		PlotDistribution2D&Points(const vector<point>&&points,string&&title=""){
+		PlotHist2d&Points(const vector<point>&&points,string&&title=""){
 			return Points(points,static_cast<string&&>(title));
 		}
-		PlotDistribution2D&Points(initializer_list<point>&&points,string&&title=""){
+		PlotHist2d&Points(initializer_list<point>&&points,string&&title=""){
 			return Points(vector<point>(points),static_cast<string&&>(title));
 		}
-		PlotDistribution2D&Line(const vector<point>&points,string&&title=""){
+		PlotHist2d&Line(const vector<point>&points,string&&title=""){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
 		}
-		PlotDistribution2D&Line(const vector<point>&&points,string&&title=""){
+		PlotHist2d&Line(const vector<point>&&points,string&&title=""){
 			return Line(points,static_cast<string&&>(title));
 		}
-		PlotDistribution2D&Line(initializer_list<point>&&points,string&&title=""){
+		PlotHist2d&Line(initializer_list<point>&&points,string&&title=""){
 			return Line(vector<point>(points),static_cast<string&&>(title));
 		}
 	};

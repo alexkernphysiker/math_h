@@ -415,6 +415,13 @@ namespace MathTemplates{
 		}
 		const vector<value<numtX>>&X()const{return const_cast<vector<value<numtX>>&>(m_x_axis);}
 		const vector<value<numtY>>&Y()const{return const_cast<vector<value<numtY>>&>(m_y_axis);}
+		hist2d&imbibe(const hist2d& second){//Sum of histograms. the uncertanties are set standard way (sqrt)
+			if((X().size()!=second.X().size())||(Y().size()!=second.Y().size()))
+				throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
+			for(int i=0,n=size();i<n;i++)for(int j=0,m=m_data[i].size();j<m;j++)
+				m_data[i][j].varY()=value<numtY>(m_data[i][j].val()+second[i][j].val());
+			return *this;
+		}
 		class Point{
 			friend class hist2d;
 		private:
