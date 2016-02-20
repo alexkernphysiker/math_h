@@ -368,8 +368,10 @@ namespace MathTemplates{
 		}
 	};
 	
+	
+	
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
-	class Distribution2D{
+	class hist2d{
 	private:
 		vector<value<numtX>> m_x_axis;
 		vector<value<numtY>> m_y_axis;
@@ -383,19 +385,19 @@ namespace MathTemplates{
 			}
 		}
 	public:
-		Distribution2D(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y){
+		hist2d(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y){
 			for(const auto&x:X)m_x_axis.push_back(x);
 			for(const auto&y:Y)m_y_axis.push_back(y);
 			init();
 		}
-		Distribution2D(initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):Distribution2D(X,Y){}
-		Distribution2D(const vector<value<numtX>>&X,const vector<value<numtY>>&Y){
+		hist2d(initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const vector<value<numtX>>&X,const vector<value<numtY>>&Y){
 			for(const auto&x:X)m_x_axis.push_back(x);
 			for(const auto&y:Y)m_y_axis.push_back(y);
 			init();
 		}
-		Distribution2D(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):Distribution2D(X,Y){}
-		virtual ~Distribution2D(){}
+		hist2d(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d(X,Y){}
+		virtual ~hist2d(){}
 		typedef typename vector<vector<value<numtZ>>>::const_iterator const_iterator;
 		const_iterator begin()const{return m_data.cbegin();}
 		const_iterator cbegin()const{return m_data.cbegin();}
@@ -403,13 +405,18 @@ namespace MathTemplates{
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
 		const vector<value<numtZ>>&operator[](size_t i)const{
-			if(size()<=i)throw Exception<Distribution2D>("range check error");
-			return const_cast<vector<value<numtZ>>&>(m_data[i]);
+			if(size()<=i)throw Exception<hist2d>("range check error");
+			return m_data[i];
+		}
+		value<numtZ>&Bin(size_t i,size_t j){
+			if(size()<=i)throw Exception<hist2d>("range check error");
+			if(m_data[i].size()<=j)throw Exception<hist2d>("range check error");
+			return m_data[i][j];
 		}
 		const vector<value<numtX>>&X()const{return const_cast<vector<value<numtX>>&>(m_x_axis);}
 		const vector<value<numtY>>&Y()const{return const_cast<vector<value<numtY>>&>(m_y_axis);}
 		class Point{
-			friend class Distribution2D;
+			friend class hist2d;
 		private:
 			value<numtX> x;
 			value<numtY> y;
@@ -424,8 +431,8 @@ namespace MathTemplates{
 			const value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
 		};
 		Point operator()(size_t i,size_t j)const{
-			if(size()<=i)throw Exception<Distribution2D>("range check error");
-			if(m_y_axis.size()<=j)throw Exception<Distribution2D>("range check error");
+			if(size()<=i)throw Exception<hist2d>("range check error");
+			if(m_y_axis.size()<=j)throw Exception<hist2d>("range check error");
 			return Point(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
 		void FullCycle(function<void(Point&&)>f)const{
@@ -433,11 +440,19 @@ namespace MathTemplates{
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(Point(m_x_axis[i],m_y_axis[j],m_data[i][j]));
 		}
+	};
+	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	class Distribution2D:public hist2d<numtX,numtY,numtZ>{
+	public:
+		Distribution2D(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
+		Distribution2D(initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
+		Distribution2D(const vector<value<numtX>>&X,const vector<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
+		Distribution2D(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
 		Distribution2D&operator<<(const pair<numtX,numtY>&p){
-			for(size_t i=0,I=m_x_axis.size();i<I;i++)if(m_x_axis[i].contains(p.first))
-				for(size_t j=0,J=m_y_axis.size();j<J;j++)if(m_y_axis[j].contains(p.second))
-					m_data[i][j]=value<numtZ>(m_data[i][j].val()+numtZ(1));
-			return *this;
+			for(size_t i=0,I=hist2d<numtX,numtY,numtZ>::X().size();i<I;i++)if(hist2d<numtX,numtY,numtZ>::X()[i].contains(p.first))
+				for(size_t j=0,J=hist2d<numtX,numtY,numtZ>::Y().size();j<J;j++)if(hist2d<numtX,numtY,numtZ>::Y()[j].contains(p.second))
+					hist2d<numtX,numtY,numtZ>::Bin(i,j)=value<numtZ>(hist2d<numtX,numtY,numtZ>::operator[](i)[j].val()+numtZ(1));
+				return *this;
 		}
 		Distribution2D&operator<<(pair<numtX,numtY>&&p){
 			return operator<<(p);
