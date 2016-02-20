@@ -14,7 +14,50 @@ TEST(point,basetest){
 	EXPECT_EQ(y.val(),p.Y().val());
 	EXPECT_EQ(y.delta(),p.Y().delta());
 }
-//ToDo: cover hist by unit-tests
+TEST(Distribution1D,basetest){
+	Distribution1D<double> D{value<double>(-1.0,0.5),value<double>(-0.0,0.5),value<double>(1.0,0.5)};
+	ASSERT_EQ(3,D.size());
+	ASSERT_EQ(-1,D[0].X().val());
+	ASSERT_EQ(0,D[1].X().val());
+	ASSERT_EQ(1,D[2].X().val());
+	ASSERT_EQ(0.5,D[0].X().delta());
+	ASSERT_EQ(0.5,D[1].X().delta());
+	ASSERT_EQ(0.5,D[2].X().delta());
+	EXPECT_EQ(0,D[0].Y().val());
+	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(0,D[1].Y().val());
+	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(0,D[2].Y().val());
+	EXPECT_EQ(1,D[2].Y().delta());
+	D<<0.0;
+	EXPECT_EQ(0,D[0].Y().val());
+	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[1].Y().val());
+	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(0,D[2].Y().val());
+	EXPECT_EQ(1,D[2].Y().delta());
+	D<<1.0;
+	EXPECT_EQ(0,D[0].Y().val());
+	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[1].Y().val());
+	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[2].Y().val());
+	EXPECT_EQ(1,D[2].Y().delta());
+	D<<-0.7;
+	EXPECT_EQ(1,D[0].Y().val());
+	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[1].Y().val());
+	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[2].Y().val());
+	EXPECT_EQ(1,D[2].Y().delta());
+	D<<-0.2;
+	EXPECT_EQ(1,D[0].Y().val());
+	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(2,D[1].Y().val());
+	EXPECT_EQ(sqrt(2.0),D[1].Y().delta());
+	EXPECT_EQ(1,D[2].Y().val());
+	EXPECT_EQ(1,D[2].Y().delta());
+}
 TEST(Distribution2D,BaseTest){
 	Distribution2D<double> D(
 		{value<double>(-1.0,0.5),value<double>(-0.0,0.5),value<double>(1.0,0.5)},
