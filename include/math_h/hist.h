@@ -397,6 +397,16 @@ namespace MathTemplates{
 			init();
 		}
 		hist2d(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d():hist2d({},{}){}
+		hist2d(const hist2d&source){
+			for(const auto&item:source.m_x_axis)m_x_axis.push_back(item);
+			for(const auto&item:source.m_y_axis)m_y_axis.push_back(item);
+			for(size_t i=0,I=source.m_data.size();i<I;i++){
+				m_data.push_back(vector<value<numtZ>>());
+				for(const auto&item:source.m_data[i])
+					m_data[i].push_back(item);
+			}
+		}
 		virtual ~hist2d(){}
 		typedef typename vector<vector<value<numtZ>>>::const_iterator const_iterator;
 		const_iterator begin()const{return m_data.cbegin();}
@@ -419,7 +429,7 @@ namespace MathTemplates{
 			if((X().size()!=second.X().size())||(Y().size()!=second.Y().size()))
 				throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
 			for(int i=0,n=size();i<n;i++)for(int j=0,m=m_data[i].size();j<m;j++)
-				m_data[i][j].varY()=value<numtY>(m_data[i][j].val()+second[i][j].val());
+				m_data[i][j]=value<numtY>(m_data[i][j].val()+second[i][j].val());
 			return *this;
 		}
 		class Point{
