@@ -23,8 +23,8 @@ namespace GnuplotWrap{
 		~Plotter();
 		static Plotter &Instance();
 		void SetOutput(string&&out,string&&prefix="");
-		string&OutPath()const;
-		string&Prefix()const;
+		const string&OutPath()const;
+		const string&Prefix()const;
 		string GetTerminal();
 		string GetFileName();
 		Plotter &operator<<(const string&line);

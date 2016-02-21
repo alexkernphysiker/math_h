@@ -128,7 +128,7 @@ namespace MathTemplates{
 		const Point&operator[](int i)const{
 			if(size()<=i)
 				throw Exception<LinearInterpolation>("Range check error");
-			return const_cast<Point&>(data[i]);
+			return data[i];
 		}
 		typedef typename vector<Point>::iterator iterator;
 		typedef typename vector<Point>::const_iterator const_iterator;
@@ -141,12 +141,12 @@ namespace MathTemplates{
 		const Point&left()const{
 			if(size()<1)
 				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
-			return const_cast<Point&>(data[0]);
+			return data[0];
 		}
 		const Point&right()const{
 			if(size()<1)
 				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
-			return const_cast<Point&>(data[size()-1]);
+			return data[size()-1];
 		}
 		numX min()const{return left().first;}
 		numX max()const{return right().first;}

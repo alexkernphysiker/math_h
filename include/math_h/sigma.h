@@ -126,7 +126,7 @@ namespace MathTemplates{
 		numt scaling_factor()const{return m_scale;}
 		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
-				return const_cast<value<numt>&>(*m_cache);
+				return *m_cache;
 			}else{
 				int sz=m_list.size();
 				if(sz<=1)
@@ -137,7 +137,7 @@ namespace MathTemplates{
 					m_sigsqr+=pow(value-average,2);
 				m_sigsqr/=sz-1;
 				(*m_cache)=value<numt>(average,sqrt(m_sigsqr)*m_scale);
-				return const_cast<value<numt>&>(*m_cache);
+				return *m_cache;
 			}
 		}
 	};
@@ -167,11 +167,11 @@ namespace MathTemplates{
 		}
 		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
-				return const_cast<value<numt>&>(*m_cache);
+				return *m_cache;
 			}else{
 				if(Wnorm<=0)throw Exception<WeightedAverageCalculator>("Attempt to check empty data");
 				(*m_cache)=value<numt>(Sum/Wnorm,1.0/sqrt(Wnorm));
-				return const_cast<value<numt>&>(*m_cache);
+				return *m_cache;
 			}
 		}
 	};

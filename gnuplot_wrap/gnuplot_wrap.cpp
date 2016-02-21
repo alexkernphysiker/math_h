@@ -1,8 +1,10 @@
 // this file is distributed under 
 // MIT license
 #include <gnuplot_wrap.h>
+#include <math_h/error.h>
 namespace GnuplotWrap{
 	using namespace std;
+	using namespace MathTemplates;
 	Plotter::Plotter(){
 		terminal_counter=0;
 		filename_counter=0;
@@ -30,24 +32,24 @@ namespace GnuplotWrap{
 	}
 	void Plotter::SetOutput(string&&out,string&&prefix){
 		if(outpath!="*")
-			throw;
+			throw Exception<Plotter>("Attempt to reset plot output settings");
 		outpath=out;
 		m_prefix=prefix;
 	}
-	string&Plotter::OutPath()const{
+	const string&Plotter::OutPath()const{
 		if(outpath=="*")
-			throw;
-		return const_cast<string&>(outpath);
+			throw Exception<Plotter>("Attempt to use Plotter without initializing");
+		return outpath;
 	}
-	string&Plotter::Prefix()const{
+	const string&Plotter::Prefix()const{
 		if(outpath=="*")
-			throw;
-		return const_cast<string&>(m_prefix);
+			throw Exception<Plotter>("Attempt to use Plotter without initializing");
+		return m_prefix;
 	}
 	string Plotter::GetTerminal(){
 		terminal_counter++;
 		return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\nset output '")
-			+m_prefix+to_string(terminal_counter)+".png'";
+		+m_prefix+to_string(terminal_counter)+".png'";
 	}
 	string Plotter::GetFileName(){
 		filename_counter++;

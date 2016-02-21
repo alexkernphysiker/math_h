@@ -23,8 +23,8 @@ namespace MathTemplates{
 		point(const value<numtX>&pos,value<numtY>&&val):x(pos),y(val){}
 		point(value<numtX>&&pos,value<numtY>&&val):x(pos),y(val){}
 		point(const point&source):x(source.x),y(source.y){}
-		const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
-		const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
+		const value<numtX>&X()const{return x;}
+		const value<numtY>&Y()const{return y;}
 	protected:
 		value<numtX>&__X(){return x;}
 		value<numtY>&__Y(){return y;}
@@ -62,9 +62,9 @@ namespace MathTemplates{
 		point3d(numtX _x,numtY _y,numtZ _z)
 		:x(_x,0),y(_y,0),z(_z,0){}
 		virtual ~point3d(){}
-		const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
-		const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
-		const value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
+		const value<numtX>&X()const{return x;}
+		const value<numtY>&Y()const{return y;}
+		const value<numtZ>&Z()const{return z;}
 	};
 	
 
@@ -121,7 +121,7 @@ namespace MathTemplates{
 		const Point&operator[](size_t i)const{
 			if(m_data.size()<=i)
 				throw Exception<hist>("range check error");
-			return const_cast<Point&>(m_data[i]);
+			return m_data[i];
 		}
 		Point&Bin(size_t i){
 			if(m_data.size()<=i)
@@ -428,8 +428,8 @@ namespace MathTemplates{
 			if(m_data[i].size()<=j)throw Exception<hist2d>("range check error");
 			return m_data[i][j];
 		}
-		const vector<value<numtX>>&X()const{return const_cast<vector<value<numtX>>&>(m_x_axis);}
-		const vector<value<numtY>>&Y()const{return const_cast<vector<value<numtY>>&>(m_y_axis);}
+		const vector<value<numtX>>&X()const{return m_x_axis;}
+		const vector<value<numtY>>&Y()const{return m_y_axis;}
 		hist2d&imbibe(const hist2d& second){//Sum of histograms. the uncertanties are set standard way (sqrt)
 			if((X().size()!=second.X().size())||(Y().size()!=second.Y().size()))
 				throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
