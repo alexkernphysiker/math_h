@@ -48,6 +48,28 @@ namespace MathTemplates{
 		value<numtX>&varX(){return point<numtX,numtY>::__X();}
 		value<numtY>&varY(){return point<numtX,numtY>::__Y();}
 	};
+	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	class point3d{
+	private:
+		value<numtX> x;
+		value<numtY> y;
+		value<numtZ> z;
+	public: 
+		point3d(const value<numtX>&_x,const value<numtY>&_y,const value<numtZ>&_z)
+		:x(_x),y(_y),z(_z){}
+		point3d(value<numtX>&&_x,value<numtY>&&_y,value<numtZ>&&_z)
+		:x(_x),y(_y),z(_z){}
+		point3d(numtX _x,numtY _y,numtZ _z)
+		:x(_x,0),y(_y,0),z(_z,0){}
+		virtual ~point3d(){}
+		const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
+		const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
+		const value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
+	};
+	
+
+
+
 	template<class numtX,class numtY=numtX>class hist{
 	public:
 		typedef point_editable_y<numtX,numtY> Point;
@@ -352,24 +374,7 @@ namespace MathTemplates{
 	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,value<numtY>&&b){return a/b;}
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,value<numtY>&&b){return a/b;}
-	
-	template<class numtX,class numtY=numtX>
-	class Distribution1D:public hist<numtX,numtY>{
-	public:
-		Distribution1D(const initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D(initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D(const vector<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D(vector<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D&operator<<(numtX v){
-			for(size_t i=0,n=hist<double>::size();i<n;i++)
-				if(hist<double>::Bin(i).X().contains(v))
-					hist<double>::Bin(i).varY()=value<numtY>(hist<double>::Bin(i).Y().val()+numtY(1));
-			return *this;
-		}
-	};
-	
-	
-	
+
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class hist2d{
 	private:
@@ -432,30 +437,31 @@ namespace MathTemplates{
 				m_data[i][j]=value<numtY>(m_data[i][j].val()+second[i][j].val());
 			return *this;
 		}
-		class Point{
-			friend class hist2d;
-		private:
-			value<numtX> x;
-			value<numtY> y;
-			value<numtZ> z;
-		protected:
-			Point(const value<numtX>&_x,const value<numtY>&_y,const value<numtZ>&_z)
-				:x(_x),y(_y),z(_z){}
-		public:
-			virtual ~Point(){}
-			const value<numtX>&X()const{return const_cast<value<numtX>&>(x);}
-			const value<numtY>&Y()const{return const_cast<value<numtY>&>(y);}
-			const value<numtZ>&Z()const{return const_cast<value<numtZ>&>(z);}
-		};
-		Point operator()(size_t i,size_t j)const{
+		point3d<numtX,numtY,numtZ> operator()(size_t i,size_t j)const{
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			if(m_y_axis.size()<=j)throw Exception<hist2d>("range check error");
-			return Point(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+			return point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycle(function<void(Point&&)>f)const{
+		void FullCycle(function<void(point3d<numtX,numtY,numtZ>&&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
-					f(Point(m_x_axis[i],m_y_axis[j],m_data[i][j]));
+					f(point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]));
+		}
+	};
+
+	
+	template<class numtX,class numtY=numtX>
+	class Distribution1D:public hist<numtX,numtY>{
+	public:
+		Distribution1D(const initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D(initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D(const vector<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D(vector<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D&operator<<(numtX v){
+			for(size_t i=0,n=hist<double>::size();i<n;i++)
+				if(hist<double>::Bin(i).X().contains(v))
+					hist<double>::Bin(i).varY()=value<numtY>(hist<double>::Bin(i).Y().val()+numtY(1));
+				return *this;
 		}
 	};
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
