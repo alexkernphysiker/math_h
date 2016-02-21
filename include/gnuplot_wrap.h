@@ -194,13 +194,13 @@ namespace GnuplotWrap{
 			ofstream data;
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
 			if(data.is_open()){
-				data<<D.Y().size()<<" ";
-				for(const auto&y:D.Y())
-					data<<y.val()<<" ";
-				for(size_t i=0,I=D.size();i<I;i++){
-					data<<endl<<D.X()[i].val();
-					for(const auto&cell:D[i])
-						data<<" "<<cell.val();
+				data<<D.X().size()<<" ";
+				for(const auto&x:D.X())
+					data<<x.val()<<" ";
+				for(size_t i=0,I=D.Y().size();i<I;i++){
+					data<<endl<<D.Y()[i].val();
+					for(size_t j=0,J=D.X().size();j<J;j++)
+						data<<" "<<D[j][i].val();
 				}
 				data.close();
 			}
