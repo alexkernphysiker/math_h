@@ -430,13 +430,44 @@ namespace MathTemplates{
 		}
 		const vector<value<numtX>>&X()const{return m_x_axis;}
 		const vector<value<numtY>>&Y()const{return m_y_axis;}
-		hist2d&imbibe(const hist2d& second){//Sum of histograms. the uncertanties are set standard way (sqrt)
+		
+		hist2d Scale(size_t sc_x,size_t sc_y)const{
+			//uncertanties are set to standard sqrt
+			vector<value<numtX>> new_x,sorted_x;
+			for(const auto&item:X())
+				InsertSorted(item,sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
+			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
+				auto min=sorted_x[i+1-sc_x].min();
+				auto max=sorted_x[i].max();
+				new_x.push_back(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
+			}
+			vector<value<numtY>> new_y,sorted_y;
+			for(const auto&item:Y())
+				InsertSorted(item,sorted_y,std_size(sorted_y),std_insert(sorted_y,value<numtY>));
+			for(size_t i=sc_y-1,n=sorted_y.size();i<n;i+=sc_y){
+				auto min=sorted_y[i+1-sc_y].min();
+				auto max=sorted_y[i].max();
+				new_y.push_back(value<numtY>((max+min)/numtY(2),(max-min)/numtY(2)));
+			}
+			hist2d res(new_x,new_y);
+			for(size_t i=0;i<new_x.size();i++)for(size_t j=0;j<new_y.size();j++){
+				numtZ v=0;
+				for(size_t ii=0;ii<sc_x;ii++)
+					for(size_t jj=0;jj<sc_y;jj++)
+						v+=m_data[i*sc_x+ii][j*sc_y+jj].val();
+				res.Bin(i,j)=value<numtZ>(v,sqrt(v));
+			}
+			return res;
+		}
+		hist2d&imbibe(const hist2d& second){
+			//Sum of histograms. the uncertanties are set to standard sqrt
 			if((X().size()!=second.X().size())||(Y().size()!=second.Y().size()))
 				throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
 			for(int i=0,n=size();i<n;i++)for(int j=0,m=m_data[i].size();j<m;j++)
 				m_data[i][j]=value<numtY>(m_data[i][j].val()+second[i][j].val());
 			return *this;
 		}
+		
 		point3d<numtX,numtY,numtZ> operator()(size_t i,size_t j)const{
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			if(m_y_axis.size()<=j)throw Exception<hist2d>("range check error");
@@ -446,6 +477,16 @@ namespace MathTemplates{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]));
+		}
+		void FullCycle(function<void(const value<numtX>&,const value<numtY>&,const value<numtZ>&)>f)const{
+			for(size_t i=0,I=m_x_axis.size();i<I;i++)
+				for(size_t j=0,J=m_y_axis.size();j<J;j++)
+					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+		}
+		void FullCycleVar(function<void(const value<numtX>&,const value<numtY>&,value<numtZ>&)>f){
+			for(size_t i=0,I=m_x_axis.size();i<I;i++)
+				for(size_t j=0,J=m_y_axis.size();j<J;j++)
+					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
 	};
 

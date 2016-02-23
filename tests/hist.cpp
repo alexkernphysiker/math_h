@@ -14,6 +14,23 @@ TEST(point,basetest){
 	EXPECT_EQ(y.val(),p.Y().val());
 	EXPECT_EQ(y.delta(),p.Y().delta());
 }
+TEST(hist2d,scale_norm){
+	hist2d<double> H(BinsByCount(10,0.0,1.0),BinsByCount(10,0.0,1.0));
+	H.FullCycleVar([](const value<double>&x,const value<double>&y,value<double>&z){
+		z=value<double>(10.0+4.0*sin(x.val()+y.val()));
+	});
+	double s1=0;
+	H.FullCycle([&s1](const value<double>&,const value<double>&,const value<double>&z){s1+=z.val();});
+	double s2=0;
+	auto H2=H.Scale(2,2);
+	H2.FullCycle([&s2](const value<double>&,const value<double>&,const value<double>&z){s2+=z.val();});
+	EXPECT_TRUE(pow(s1-s2,2)<0.000001);
+	for(size_t x=0;x<H2.X().size();x++)
+		for(size_t y=0;y<H2.Y().size();y++){
+			EXPECT_EQ(sqrt(H2[x][y].val()),H2[x][y].delta());
+			EXPECT_EQ(H2[x][y].val(),H[x*2][y*2].val()+H[x*2+1][y*2].val()+H[x*2][y*2+1].val()+H[x*2+1][y*2+1].val());
+		}
+}
 TEST(Distribution1D,basetest){
 	Distribution1D<double> D{value<double>(-1.0,0.5),value<double>(-0.0,0.5),value<double>(1.0,0.5)};
 	ASSERT_EQ(3,D.size());
