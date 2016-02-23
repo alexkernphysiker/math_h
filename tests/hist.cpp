@@ -14,6 +14,21 @@ TEST(point,basetest){
 	EXPECT_EQ(y.val(),p.Y().val());
 	EXPECT_EQ(y.delta(),p.Y().delta());
 }
+TEST(hist,scale_norm){
+	hist<double> H(BinsByCount(10,0.0,1.0));
+	for(size_t i=0;i<H.size();i++)
+		H.Bin(i).varY()=value<double>(10.0+4.0*sin(H[i].X().val()));
+	double s1=0;
+	for(const auto&p:H)s1+=p.Y().val();
+	double s2=0;
+	auto H2=H.Scale(2);
+	for(const auto&p:H2)s2+=p.Y().val();
+	EXPECT_TRUE(pow(s1-s2,2)<0.000001);
+	for(size_t x=0;x<H2.size();x++){
+		EXPECT_EQ(sqrt(H2[x].Y().val()),H2[x].Y().delta());
+		EXPECT_EQ(H2[x].Y().val(),H[x*2].Y().val()+H[x*2+1].Y().val());
+	}
+}
 TEST(hist2d,scale_norm){
 	hist2d<double> H(BinsByCount(10,0.0,1.0),BinsByCount(10,0.0,1.0));
 	H.FullCycleVar([](const value<double>&x,const value<double>&y,value<double>&z){

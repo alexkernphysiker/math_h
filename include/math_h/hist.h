@@ -273,7 +273,27 @@ namespace MathTemplates{
 		hist&FillWithValues(value<numtY>&&v){
 			return FillWithValues(v);
 		}
-		hist&imbibe(const hist& second){//Sum of histograms. the uncertanties are set standard way (sqrt)
+		hist Scale(size_t sc_x)const{
+			//uncertanties are set to standard sqrt
+			vector<value<numtX>> new_x,sorted_x;
+			for(const auto&item:m_data)
+				InsertSorted(item.X(),sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
+			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
+				auto min=sorted_x[i+1-sc_x].min();
+				auto max=sorted_x[i].max();
+				new_x.push_back(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
+			}
+			hist res(new_x);
+			for(size_t i=0;i<new_x.size();i++){
+				numtY v=0;
+				for(size_t ii=0;ii<sc_x;ii++)
+					v+=m_data[i*sc_x+ii].Y().val();
+				res.Bin(i).varY()=value<numtY>(v,sqrt(v));
+			}
+			return res;
+		}
+		hist&imbibe(const hist& second){
+			//Sum of histograms. the uncertanties are set to standard sqrt
 			for(int i=0,n=size();i<n;i++){
 				if(m_data[i].X().val()==second[i].X().val()){
 					m_data[i].varY()=value<numtY>(m_data[i].Y().val()+second[i].Y().val());
