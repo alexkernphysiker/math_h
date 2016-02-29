@@ -18,6 +18,7 @@ Then add to your CMakeLists.txt
 	add_subdirectory(math_h)
 	include_directories(math_h/include)
 
+Then commit your changes :)
 
 CMake Options
 =============
