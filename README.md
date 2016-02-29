@@ -8,9 +8,12 @@ This repository also contains a small static library which is an interface betwe
 Compiling
 =========
 If you have your own git repository with cmake project you can add this repo as a submodule:
+
 	git submodule add https://github.com/alexkernphysiker/math_h.git
 	git submodule update --init
+
 Then add to your CMakeLists.txt
+
 	set(gnuplot_wrap ON CACHE BOOL "") #if you want to use gnuplot interface library
 	add_subdirectory(math_h)
 	include_directories(math_h/include)
