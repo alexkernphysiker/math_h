@@ -9,28 +9,20 @@ this repository also contains a small static library which is an interface betwe
 Compiling
 =========
 
-If you are going to use only headers with mathematical templates then you don't need to compile anything else outside your project.
-
-But this repository also contains one library (gnuplot interface) and unit tests for headers with templates.
-
-For compiling this stuff you need to run:
-
-git clone https://github.com/alexkernphysiker/math_h.git
-
-cd math_h
-
-cmake .
-
-make
-
-For using this project as a submodule in your git repository please run:
+#If you have your own git repository with cmake project you can add this repo as a submodule:
 
 git submodule add https://github.com/alexkernphysiker/math_h.git
 
 git submodule update --init
 
-If you have your own cmake project, you can use this library by adding add_subdirectory instruction.
-But you will have to add path math_h/include to your include directories.
+#then add to your CMakeLists.txt
+
+set(gnuplot_wrap ON CACHE BOOL "") #if you want to use gnuplot interface library
+
+add_subdirectory(math_h)
+
+include_directories(math_h/include)
+
 
 
 
