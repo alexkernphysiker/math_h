@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 2.6)
 project(math_h)
+
 option(debug "Compile in debug mode" OFF)
 if(debug)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
+
 add_definitions(-std=c++11 -Wall -Wunused-parameter)
+set(CMAKE_CXX_FLAGS "-pthread -fPIC")
 set(math_h_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${math_h_INCLUDES})
-option(gnuplot_wrap "Build library for plotting." OFF) 
-if(gnuplot_wrap)
-	set(CMAKE_CXX_FLAGS "-pthread -fPIC")
-	add_library(gpwrap STATIC gnuplot_wrap/gnuplot_wrap.cpp)
-endif()
+add_library(gpwrap STATIC gnuplot_wrap/gnuplot_wrap.cpp)
+
 option(test "Build all tests." OFF) 
 if(test)
 	add_subdirectory(tests)

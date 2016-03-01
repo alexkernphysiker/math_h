@@ -14,7 +14,6 @@ If you have your own git repository with cmake project you can add this repo as 
 
 Then add to your CMakeLists.txt
 
-	set(gnuplot_wrap ON CACHE BOOL "") #if you want to use gnuplot interface library
 	add_subdirectory(math_h)
 	include_directories(math_h/include)
 
@@ -24,8 +23,6 @@ CMake Options
 =============
 	debug - if ON the project is compiled in debug mode
 	test - if ON the tests are compiled
-	gnuplot_wrap - if ON the library which is an interface for gnuplot is compiled
-
 	
 Header files
 ============
