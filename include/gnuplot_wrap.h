@@ -21,14 +21,14 @@ namespace GnuplotWrap{
 	public:
 		Plotter();
 		~Plotter();
-		static Plotter &Instance();
-		void SetOutput(string&&out,string&&prefix="");
+		static Plotter&Instance();
+		void SetOutput(const string&&out,const string&&prefix="");
 		const string&OutPath()const;
 		const string&Prefix()const;
-		string GetTerminal();
-		string GetFileName();
+		const string GetTerminal();
+		const string GetFileName();
 		Plotter &operator<<(const string&line);
-		Plotter &operator<<(string&&line);
+		Plotter &operator<<(const string&&line);
 	private:
 		vector<string> lines;
 		unsigned int terminal_counter,filename_counter;
@@ -46,13 +46,13 @@ namespace GnuplotWrap{
 			lines.push_back(line);
 			return *this;
 		}
-		Plot&operator<<(string&&line){return operator<<(line);}
+		Plot&operator<<(const string&&line){return operator<<(line);}
 		Plot(){
 			operator<<(Plotter::Instance().GetTerminal());
 			operator<<("unset pm3d");
 		}
 		virtual ~Plot(){
-			for(string&line:lines)
+			for(const string&line:lines)
 				Plotter::Instance()<<line;
 			for(int i=0,n=plots.size();i<n;i++){
 				string line=plots[i];
@@ -64,7 +64,7 @@ namespace GnuplotWrap{
 			}
 		}
 	public:
-		Plot& Object(string&&plot){
+		Plot& Object(const string&&plot){
 			plots.push_back(plot);
 			return *this;
 		}
@@ -76,10 +76,10 @@ namespace GnuplotWrap{
 			line+="\"";
 			return Object(static_cast<std::string&&>(line));
 		}
-		Plot& File(string&&name,string&&options,string&&title=""){
+		Plot& File(const string&&name,const string&&options,const string&&title=""){
 			return File(name,options,title);
 		}
-		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,const string&title){
+		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&title){
 			ofstream data;
 			string filename=Plotter::Instance().GetFileName();
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
@@ -90,7 +90,7 @@ namespace GnuplotWrap{
 			}
 			return *this;
 		}
-		Plot&OutputPlot(PLOTOUTPUT delegate,string&&options,string&&title=""){
+		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&&title=""){
 			return OutputPlot(delegate,static_cast<string&&>(options),title);
 		}
 		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&title){
@@ -100,27 +100,27 @@ namespace GnuplotWrap{
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const vector<pair<numtX,numtY>>&points,string&&title=""){
+		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Line(vector<pair<numtX,numtY>>&&points,string&&title=""){
+		Plot&Line(const vector<pair<numtX,numtY>>&&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Line(initializer_list<pair<numtX,numtY>>&&points,string&&title=""){
+		Plot&Line(const initializer_list<pair<numtX,numtY>>&&points,const string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
+		Plot&Line(const LinearInterpolation<numtX,numtY>&&points,const string&&title=""){
 			return Line(points,static_cast<string&&>(title));
 		}
 		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&title){
@@ -130,13 +130,13 @@ namespace GnuplotWrap{
 			},"using 1:2",title);
 			return *this;
 		}
-		Plot&Points(const vector<pair<numtX,numtY>>&points,string&&title=""){
+		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(vector<pair<numtX,numtY>>&&points,string&&title=""){
+		Plot&Points(const vector<pair<numtX,numtY>>&&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(initializer_list<pair<numtX,numtY>>&&points,string&&title=""){
+		Plot&Points(const initializer_list<pair<numtX,numtY>>&&points,const string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
@@ -150,10 +150,10 @@ namespace GnuplotWrap{
 			},"using 1:2",title);
 			return *this;
 		}
-		Plot&Points(const LinearInterpolation<numtX,numtY>&points,string&&title=""){
+		Plot&Points(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(LinearInterpolation<numtX,numtY>&&points,string&&title=""){
+		Plot&Points(const LinearInterpolation<numtX,numtY>&&points,const string&&title=""){
 			return Points(points,title);
 		}
 		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
@@ -163,8 +163,8 @@ namespace GnuplotWrap{
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}
-		Plot&Hist(const hist<numtX,numtY>&data,string&&title=""){return Hist(data,title);}
-		Plot&Hist(hist<numtX,numtY>&&data,string&&title=""){return Hist(data,title);}
+		Plot&Hist(const hist<numtX,numtY>&data,const string&&title=""){return Hist(data,title);}
+		Plot&Hist(const hist<numtX,numtY>&&data,const string&&title=""){return Hist(data,title);}
 	};
 	
 	enum TypeOf3D{normal,sp2};
@@ -206,8 +206,8 @@ namespace GnuplotWrap{
 			lines.push_back(line);
 			return *this;
 		}
-		PlotHist2d&operator<<(string&&line){return operator<<(line);}
-		PlotHist2d(TypeOf3D type){
+		PlotHist2d&operator<<(const string&&line){return operator<<(line);}
+		PlotHist2d(const TypeOf3D type){
 			operator<<(Plotter::Instance().GetTerminal());
 			if(sp2==type){
 				operator<<("unset key");
@@ -222,7 +222,7 @@ namespace GnuplotWrap{
 			}
 		}
 		virtual ~PlotHist2d(){
-			for(string&line:lines)Plotter::Instance()<<line;
+			for(const string&line:lines)Plotter::Instance()<<line;
 			for(int i=0,n=plots.size();i<n;i++){
 				string line=plots[i];
 				if(i==0)
@@ -232,29 +232,29 @@ namespace GnuplotWrap{
 				Plotter::Instance()<<line;
 			}
 		}
-		PlotHist2d& Object(string&&plot){
+		PlotHist2d& Object(const string&&plot){
 			plots.push_back(plot);
 			return *this;
 		}
 		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&D,const string&title){
 			return Object(string("'")+Distr2File(D)+"' matrix nonuniform title'"+title+"'");
 		}
-		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&D,string&&title=""){return Distr(D,title);}
-		PlotHist2d&Distr(hist2d<numtX,numtY,numtZ>&&D,string&&title=""){return Distr(D,title);}
+		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&D,const string&&title=""){return Distr(D,title);}
+		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&&D,const string&&title=""){return Distr(D,title);}
 		
 		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&points,const string&title=""){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
 		}
-		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&points,string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(vector<point3d<numtX,numtY,numtZ>>&&points,string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const initializer_list<point3d<numtX,numtY,numtZ>>&points,string&&title=""){return Points(vector<point3d<numtX,numtY,numtZ>>(points),title);}
+		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Points(points,title);}
+		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Points(points,title);}
+		PlotHist2d&Points(const initializer_list<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Points(vector<point3d<numtX,numtY,numtZ>>(points),title);}
 		
 		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&points,const string&title){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
 		}
-		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&points,string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(vector<point3d<numtX,numtY,numtZ>>&&points,string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(initializer_list<point3d<numtX,numtY,numtZ>>&&points,string&&title=""){return Line(vector<point3d<numtX,numtY,numtZ>>(points),title);}
+		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Line(points,title);}
+		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Line(points,title);}
+		PlotHist2d&Line(const initializer_list<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Line(vector<point3d<numtX,numtY,numtZ>>(points),title);}
 	};
 };
 #endif

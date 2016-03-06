@@ -30,7 +30,7 @@ namespace GnuplotWrap{
 		static Plotter m_instance;
 		return m_instance;
 	}
-	void Plotter::SetOutput(string&&out,string&&prefix){
+	void Plotter::SetOutput(const string&&out,const string&&prefix){
 		if(outpath!="*")
 			throw Exception<Plotter>("Attempt to reset plot output settings");
 		outpath=out;
@@ -46,12 +46,12 @@ namespace GnuplotWrap{
 			throw Exception<Plotter>("Attempt to use Plotter without initializing");
 		return m_prefix;
 	}
-	string Plotter::GetTerminal(){
+	const string Plotter::GetTerminal(){
 		terminal_counter++;
 		return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\nset output '")
 		+m_prefix+to_string(terminal_counter)+".png'";
 	}
-	string Plotter::GetFileName(){
+	const string Plotter::GetFileName(){
 		filename_counter++;
 		return m_prefix+"-data-"+to_string(filename_counter)+".txt";
 	}
@@ -59,5 +59,5 @@ namespace GnuplotWrap{
 		lines.push_back(line);
 		return *this;
 	}
-	Plotter& Plotter::operator<<(string&&line){return operator<<(line);}
+	Plotter& Plotter::operator<<(const string&&line){return operator<<(line);}
 };
