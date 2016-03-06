@@ -64,9 +64,12 @@ namespace GnuplotWrap{
 			}
 		}
 	public:
-		Plot& Object(const string&&plot){
+		Plot& Object(const string&plot){
 			plots.push_back(plot);
 			return *this;
+		}
+		Plot& Object(const string&&plot){
+			return Object(plot);
 		}
 		Plot& File(const string&name,const string&options,const string&title){
 			string line="\""+name+"\" ";
@@ -74,12 +77,12 @@ namespace GnuplotWrap{
 			line+=" title \"";
 			line+=title;
 			line+="\"";
-			return Object(static_cast<std::string&&>(line));
+			return Object(line);
 		}
 		Plot& File(const string&&name,const string&&options,const string&&title=""){
 			return File(name,options,title);
 		}
-		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&title){
+		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&options,const string&title){
 			ofstream data;
 			string filename=Plotter::Instance().GetFileName();
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
@@ -90,8 +93,11 @@ namespace GnuplotWrap{
 			}
 			return *this;
 		}
+		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&title){
+			return OutputPlot(delegate,options,title);
+		}
 		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&&title=""){
-			return OutputPlot(delegate,static_cast<string&&>(options),title);
+			return OutputPlot(delegate,options,title);
 		}
 		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
@@ -113,15 +119,18 @@ namespace GnuplotWrap{
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
+		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
+		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
+			return Line(points,title);
+		}
 		Plot&Line(const LinearInterpolation<numtX,numtY>&&points,const string&&title=""){
-			return Line(points,static_cast<string&&>(title));
+			return Line(points,title);
 		}
 		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
