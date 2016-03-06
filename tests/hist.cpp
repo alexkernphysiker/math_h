@@ -29,32 +29,6 @@ TEST(hist,scale_norm){
 		EXPECT_EQ(H2[x].Y().val(),H[x*2].Y().val()+H[x*2+1].Y().val());
 	}
 }
-TEST(hist,chisq1){
-	hist<double> H1(BinsByStep(0.0,0.1,1.0)),H2(BinsByStep(0.0,0.1,1.0));
-	for(size_t i=0,n=H2.size();i<n;i++){
-		H1.Bin(i).varY()=value<double>(1,1);
-		H2.Bin(i).varY()=value<double>(1,1);
-	}
-	EXPECT_EQ(0,H1.ChiSq_only_y_error(H2,0));
-	EXPECT_EQ(0,H1.ChiSq_only_y_error(H2,1));
-	EXPECT_EQ(0,H1.ChiSq_only_y_error(H2,2));
-	EXPECT_EQ(0,H1.ChiSq_only_y_error(H2,3));
-}
-TEST(hist,chisq2){
-	hist<double> H1(BinsByStep(0.0,0.1,1.0)),H2(BinsByStep(0.0,0.1,1.0));
-	for(size_t i=0,n=H2.size();i<n;i++){
-		H1.Bin(i).varY()=value<double>(1,1);
-		H2.Bin(i).varY()=value<double>(0,0);
-	}
-	EXPECT_EQ(1,H1.ChiSq_only_y_error(H2,0));
-	EXPECT_EQ(2,H1.ChiSq_only_y_error(H2,5));
-	for(size_t i=0,n=H2.size();i<n;i++){
-		H1.Bin(i).varY()=value<double>(1,0);
-		H2.Bin(i).varY()=value<double>(0,1);
-	}
-	EXPECT_EQ(1,H1.ChiSq_only_y_error(H2,0));
-	EXPECT_EQ(2,H1.ChiSq_only_y_error(H2,5));
-}
 TEST(hist2d,scale_norm){
 	hist2d<double> H(BinsByCount(10,0.0,1.0),BinsByCount(10,0.0,1.0));
 	H.FullCycleVar([](const value<double>&x,const value<double>&y,value<double>&z){
