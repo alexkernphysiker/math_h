@@ -15,8 +15,10 @@ namespace MathTemplates{
 		numt Value,Error;
 	public:
 		value():Value(0),Error(0){}
-		value(double v):Value(v),Error(sqrt(v)){if(Error<1)Error=1;}
-		value(double v,double err):Value(v),Error(err){if(Error<0)throw Exception<value>("Error cannot be negative");}
+		value(const double v):Value(v),Error(sqrt(v)){if(Error<1)Error=1;}
+		value(const double v,const double err):Value(v),Error(err){
+			if(Error<0)throw Exception<value>("Error cannot be negative");
+		}
 		value(const value&source):Value(source.Value),Error(source.Error){}
 		
 		numt val()const{return Value;}
@@ -24,80 +26,85 @@ namespace MathTemplates{
 		numt epsilon()const{return Error/Value;}
 		numt min()const{return Value-Error;}
 		numt max()const{return Value+Error;}
-		bool contains(numt x)const{return (x>=min())&&(x<=max());}
+		bool contains(const numt x)const{return (x>=min())&&(x<=max());}
 		bool contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
+		bool contains(const value&&x)const{return (x.max()>=min())&&(x.min()<=max());}
 		
 		value&operator+=(const value&other){
 			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value+=other.Value;
+			return *this;
 		}
 		value&operator-=(const value&other){
 			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value-=other.Value;
+			return *this;
 		}
 		value&operator*=(const value&other){
 			Error=sqrt(pow(Error*other.Value,2)+pow(other.Error*Value,2));
 			Value*=other.Value;
+			return *this;
 		}
 		value&operator/=(const value&other){
 			Error=sqrt(pow(Error/other.Value,2)+pow(other.Error*Value/pow(other.Value,2),2));
 			Value/=other.Value;
+			return *this;
 		}
 	};
 	
 	template<typename numt>
 	value<numt> operator+(const value<numt>&a,const value<numt>&b){auto res=a;res+=b;return res;}
 	template<typename numt>
-	value<numt> operator+(value<numt>&&a,const value<numt>&b){return a+b;}
+	value<numt> operator+(const value<numt>&&a,const value<numt>&b){return a+b;}
 	template<typename numt>
-	value<numt> operator+(const value<numt>&a,value<numt>&&b){return a+b;}
+	value<numt> operator+(const value<numt>&a,const value<numt>&&b){return a+b;}
 	template<typename numt>
-	value<numt> operator+(value<numt>&&a,value<numt>&&b){return a+b;}
+	value<numt> operator+(const value<numt>&&a,const value<numt>&&b){return a+b;}
 	
 	template<typename numt>
 	value<numt> operator-(const value<numt>&a,const value<numt>&b){auto res=a;res-=b;return res;}
 	template<typename numt>
-	value<numt> operator-(value<numt>&&a,const value<numt>&b){return a-b;}
+	value<numt> operator-(const value<numt>&&a,const value<numt>&b){return a-b;}
 	template<typename numt>
-	value<numt> operator-(const value<numt>&a,value<numt>&&b){return a-b;}
+	value<numt> operator-(const value<numt>&a,const value<numt>&&b){return a-b;}
 	template<typename numt>
-	value<numt> operator-(value<numt>&&a,value<numt>&&b){return a-b;}
+	value<numt> operator-(const value<numt>&&a,const value<numt>&&b){return a-b;}
 	
 	template<typename numt>
 	value<numt> operator*(const value<numt>&a,const value<numt>&b){auto res=a;res*=b;return res;}
 	template<typename numt>
-	value<numt> operator*(value<numt>&&a,const value<numt>&b){return a*b;}
+	value<numt> operator*(const value<numt>&&a,const value<numt>&b){return a*b;}
 	template<typename numt>
-	value<numt> operator*(const value<numt>&a,value<numt>&&b){return a*b;}
+	value<numt> operator*(const value<numt>&a,const value<numt>&&b){return a*b;}
 	template<typename numt>
-	value<numt> operator*(value<numt>&&a,value<numt>&&b){return a*b;}
+	value<numt> operator*(const value<numt>&&a,const value<numt>&&b){return a*b;}
 
 	template<typename numt>
 	value<numt> operator/(const value<numt>&a,const value<numt>&b){auto res=a;res/=b;return res;}
 	template<typename numt>
-	value<numt> operator/(value<numt>&&a,const value<numt>&b){return a/b;}
+	value<numt> operator/(const value<numt>&&a,const value<numt>&b){return a/b;}
 	template<typename numt>
-	value<numt> operator/(const value<numt>&a,value<numt>&&b){return a/b;}
+	value<numt> operator/(const value<numt>&a,const value<numt>&&b){return a/b;}
 	template<typename numt>
-	value<numt> operator/(value<numt>&&a,value<numt>&&b){return a/b;}
+	value<numt> operator/(const value<numt>&&a,const value<numt>&&b){return a/b;}
 
 	template<typename numt>
 	bool operator<(const value<numt>&a,const value<numt>&b){return a.val()<b.val();}
 	template<typename numt>
-	bool operator<(value<numt>&&a,const value<numt>&b){return a.val()<b.val();}
+	bool operator<(const value<numt>&&a,const value<numt>&b){return a.val()<b.val();}
 	template<typename numt>
-	bool operator<(const value<numt>&a,value<numt>&&b){return a.val()<b.val();}
+	bool operator<(const value<numt>&a,const value<numt>&&b){return a.val()<b.val();}
 	template<typename numt>
-	bool operator<(value<numt>&&a,value<numt>&&b){return a.val()<b.val();}
+	bool operator<(const value<numt>&&a,const value<numt>&&b){return a.val()<b.val();}
 
 	template<typename numt>
 	bool operator>(const value<numt>&a,const value<numt>&b){return a.val()>b.val();}
 	template<typename numt>
-	bool operator>(value<numt>&&a,const value<numt>&b){return a.val()>b.val();}
+	bool operator>(const value<numt>&&a,const value<numt>&b){return a.val()>b.val();}
 	template<typename numt>
-	bool operator>(const value<numt>&a,value<numt>&&b){return a.val()>b.val();}
+	bool operator>(const value<numt>&a,const value<numt>&&b){return a.val()>b.val();}
 	template<typename numt>
-	bool operator>(value<numt>&&a,value<numt>&&b){return a.val()>b.val();}
+	bool operator>(const value<numt>&&a,const value<numt>&&b){return a.val()>b.val();}
 	
 	template<typename numt>
 	class Sigma{
@@ -107,7 +114,7 @@ namespace MathTemplates{
 		value<numt>*m_cache;
 		numt m_scale;
 	public:
-		Sigma(numt scale=1){
+		Sigma(const numt scale=1){
 			if(scale<=0)throw Exception<Sigma>("Uncertainty scaling factor must be greater than zero");
 			m_scale=scale;
 			m_sum=0;
@@ -116,14 +123,14 @@ namespace MathTemplates{
 		virtual ~Sigma(){
 			delete m_cache;
 		}
-		Sigma &operator<<(numt x){
+		Sigma &operator<<(const numt x){
 			m_list.push_back(x);
 			m_sum+=x;
 			(*m_cache)=value<numt>(INFINITY,INFINITY);
 			return *this;
 		}
-		int count()const{return m_list.size();}
-		numt scaling_factor()const{return m_scale;}
+		const int count()const{return m_list.size();}
+		const numt scaling_factor()const{return m_scale;}
 		const value<numt>&get()const{
 			if(isfinite(m_cache->val())){
 				return *m_cache;
@@ -162,7 +169,7 @@ namespace MathTemplates{
 			(*m_cache)=value<numt>(INFINITY,INFINITY);
 			return *this;
 		}
-		WeightedAverageCalculator &operator<<(value<numt>&&X){
+		WeightedAverageCalculator &operator<<(const value<numt>&&X){
 			return operator<<(X);
 		}
 		const value<numt>&get()const{
@@ -176,7 +183,7 @@ namespace MathTemplates{
 		}
 	};
 	template<class numt>
-	vector<value<numt>> BinsByStep(numt from,numt step,numt to){
+	const vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
 		if(0>=step)throw Exception<vector<value<numt>>>("wrong bin width");
 		if(to<=from)throw Exception<vector<value<numt>>>("wrong range");
 		numt delta=step/numt(2);
@@ -186,7 +193,7 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numt>
-	vector<value<numt>> BinsByCount(size_t count,numt from,numt to){
+	const vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
 		if(0==count)throw Exception<vector<value<numt>>>("wrong bins count");
 		return BinsByStep(from,(to-from)/numt(count),to);
 	}

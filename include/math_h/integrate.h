@@ -8,7 +8,7 @@
 namespace MathTemplates{
 	using namespace std;
 	template<class numX,class numY=numX,class functype=std::function<numY(numX)>>
-	numY Sympson(functype y,numX a, numX b, numX step){
+	numY Sympson(const functype y,const numX a,const numX b,const numX step){
 		numX stp=step;
 		if((stp*(b-a))<=0) stp=-stp;
 		numX halfstep=stp/2;
@@ -23,7 +23,7 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX,class numY=numX>
-	LinearInterpolation<numX,numY> Int_Trapez_Table(const LinearInterpolation<numX,numY>&source){
+	const LinearInterpolation<numX,numY> Int_Trapez_Table(const LinearInterpolation<numX,numY>&source){
 		LinearInterpolation<numX,numY> res;
 		res<<make_pair(source.left().first,0);
 		for(size_t i=1;i<source.size();i+=1)
@@ -31,7 +31,7 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX,class numY=numX>//Accepts only positive function
-	LinearInterpolation<numX,numY>  Int_Trapez_Table_PositiveStrict(const LinearInterpolation<numX,numY>&source){
+	const LinearInterpolation<numX,numY>  Int_Trapez_Table_PositiveStrict(const LinearInterpolation<numX,numY>&source){
 		LinearInterpolation<numX,numY> res;
 		res<<make_pair(source.left().first,0);
 		for(size_t i=1;i<source.size();i+=1){
@@ -42,11 +42,11 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX,class numY=numX>
-	LinearInterpolation<numX,numY> Int_Trapez_Table_RV(LinearInterpolation<numX,numY>&&source){
+	const LinearInterpolation<numX,numY> Int_Trapez_Table_RV(const LinearInterpolation<numX,numY>&&source){
 		return Int_Trapez_Table(source);
 	}
 	template<class numX,class numY=numX>
-	LinearInterpolation<numX,numY> Int_Trapez_Table_PositiveStrict_RV(LinearInterpolation<numX,numY>&&source){
+	const LinearInterpolation<numX,numY> Int_Trapez_Table_PositiveStrict_RV(const LinearInterpolation<numX,numY>&&source){
 		return Int_Trapez_Table_PositiveStrict(source);
 	}
 	template<class numX,class numY=numX,class func1=function<numY(numX)>,class func2=function<numY(numX)>>
@@ -59,9 +59,11 @@ namespace MathTemplates{
 		numX Step;
 	public:
 		Convolution(){}
-		Convolution(Convolution &C):A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
-		Convolution(func1 a, func2 b,numX ksi1, numX ksi2, numX step):A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
-		numY operator()(numX x)const{
+		Convolution(const Convolution &C)
+		:A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
+		Convolution(const func1 a,const func2 b,const numX ksi1,const numX ksi2,const numX step)
+		:A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
+		numY operator()(const numX x)const{
 			return Sympson<numX,numY>([this,x](numX ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
 		}
 	};

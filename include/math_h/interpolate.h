@@ -9,7 +9,7 @@
 namespace MathTemplates{
 	using namespace std;
 	template<class comparable, class indexer=std::vector<comparable>>
-	int  WhereToInsert(int from, int to, indexer X, comparable x){
+	int  WhereToInsert(const int from,const int to,const indexer X,const comparable x){
 		if(from>to) return from;
 		int beg=from,end=to;
 		if(x>X[end]) return end+1;
@@ -24,7 +24,7 @@ namespace MathTemplates{
 		return end;
 	}
 	template<class comparable, class indexer=std::vector<comparable>>
-	int Search(int from, int to, indexer X, comparable x){
+	int Search(const int from,const int to,const indexer X,const comparable x){
 		if(from>to) return from-1;
 		int beg=from,end=to;
 		if(x>X[end]) return from-1;
@@ -41,25 +41,39 @@ namespace MathTemplates{
 		return from-1;
 	}
 	template<class comparable,class indexer, class Size, class Insert>
-	void InsertSorted(comparable x,indexer X,Size size,Insert insert){
+	void InsertSorted(const comparable x,indexer&X,const Size size,const Insert insert){
 		insert(WhereToInsert(0,size()-1,X,x),x);
 	}
 	#define std_size(vector) [&vector](){return vector.size();}
 	#define std_insert(vector,type) [&vector](int pos,type x){vector.insert(vector.begin()+pos,x);}
 	#define field_size(vector)  [this](){return vector.size();}
 	#define field_insert(vector,type)  [this](int pos,type x){vector.insert(vector.begin()+pos,x);}
+	
 	namespace details{
-		template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>>
-		bool operator<(PairIndexer a,PairIndexer b){
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator<(const Pair&a,const Pair&b){
 			return a.first<b.first;
 		}
-		template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>>
-		bool operator>(PairIndexer a,PairIndexer b){
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator<(const Pair&a,const Pair&&b){return a<b;}
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator<(const Pair&&a,const Pair&b){return a<b;}
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator<(const Pair&&a,const Pair&&b){return a<b;}
+		
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator>(const Pair&a,const Pair&b){
 			return a.first>b.first;
 		}
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator>(const Pair&a,const Pair&&b){return a>b;}
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator>(const Pair&&a,const Pair&b){return a>b;}
+		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
+		inline bool operator>(const Pair&&a,const Pair&&b){return a>b;}
 	}
 	template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>>
-	numY  Interpolate_Linear(int from, int to, PairIndexer tbl, numX x){
+	numY  Interpolate_Linear(const int from,const int to,const PairIndexer tbl,const numX x){
 		using namespace std;
 		using namespace details;
 		if(x==tbl[from].first)
@@ -74,11 +88,11 @@ namespace MathTemplates{
 		return tbl[i-1].second+(tbl[i].second-tbl[i-1].second)*numY(k);
 	}
 	template<class numX, class numY=numX, class PairIndexer=std::vector<std::pair<numX,numY>>,class Size=std::function<int()>>
-	numY InterpolateLinear(numX x, PairIndexer tbl,Size size){
+	numY InterpolateLinear(const numX x,const PairIndexer tbl,const Size size){
 		return Interpolate_Linear(0,size()-1,tbl,x);
 	}
 	template<class numX>
-	vector<numX> ChainWithStep(numX from,numX step,numX to){
+	const vector<numX> ChainWithStep(const numX from,const numX step,const numX to){
 		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
 		if(step<=0)throw Exception<vector<numX>>("wrong binning step");
 		vector<numX> res;
@@ -86,7 +100,7 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX>
-	vector<numX> ChainWithCount(size_t cont,numX from,numX to){
+	const vector<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
 		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
 		if(0==cont)throw Exception<vector<numX>>("wrong bins count");
 		numX step=(to-from)/numX(cont);
@@ -106,36 +120,36 @@ namespace MathTemplates{
 			InsertSorted(p,data,field_size(data),field_insert(data,Point));
 			return *this;
 		}
-		LinearInterpolation &operator<<(Point&&p){
+		LinearInterpolation &operator<<(const Point&&p){
 			return operator<<(p);
 		}
 		LinearInterpolation(const initializer_list<Point>&points){
 			for(const Point&p:points)operator<<(p);
 		}
-		LinearInterpolation(initializer_list<Point>&&points):LinearInterpolation(points){}
-		LinearInterpolation(function<numY(numX)> f,const vector<numX>&chain){
+		LinearInterpolation(const initializer_list<Point>&&points):LinearInterpolation(points){}
+		LinearInterpolation(const function<numY(numX)> f,const vector<numX>&chain){
 			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
-		LinearInterpolation(function<numY(numX)> f,vector<numX>&&chain){
+		LinearInterpolation(const function<numY(numX)> f,const vector<numX>&&chain){
 			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
-		LinearInterpolation(function<numY(numX)> f,initializer_list<numX>&&chain){
+		LinearInterpolation(const function<numY(numX)> f,const initializer_list<numX>&&chain){
 			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
 		virtual ~LinearInterpolation(){}
 		//Points access
 		int size()const{return data.size();}
-		const Point&operator[](int i)const{
+		const Point&operator[](const int i)const{
 			if(size()<=i)
 				throw Exception<LinearInterpolation>("Range check error");
 			return data[i];
 		}
-		typedef typename vector<Point>::iterator iterator;
+		//typedef typename vector<Point>::iterator iterator;
 		typedef typename vector<Point>::const_iterator const_iterator;
-		iterator begin(){return data.begin();}
+		//iterator begin(){return data.begin();}
 		const_iterator begin()const{return data.begin();}
 		const_iterator cbegin()const{return data.cbegin();}
-		iterator end(){return data.end();}
+		//iterator end(){return data.end();}
 		const_iterator end() const{return data.end();}
 		const_iterator cend() const{return data.cend();}
 		const Point&left()const{
@@ -150,46 +164,46 @@ namespace MathTemplates{
 		}
 		numX min()const{return left().first;}
 		numX max()const{return right().first;}
-		numY operator()(numX x)const{
+		numY operator()(const numX x)const{
 			using namespace details;
 			return InterpolateLinear<numX,numY>(x,data,field_size(data));
 		}
-		function<numY(numX)> func()const{
+		const function<numY(numX)> func()const{
 			return [this](double x){return operator()(x);};
 		}
 		//Arithmetic actions
-		LinearInterpolation<numY,numX> Transponate()const{
+		const LinearInterpolation<numY,numX> Transponate()const{
 			LinearInterpolation<numY,numX> res;
 			for(const Point&p:data)
 				res<<make_pair(p.second,p.first);
 			return res;
 		}
-		LinearInterpolation &operator+=(numY value){
+		LinearInterpolation &operator+=(const numY value){
 			for(Point&point:data)
 				point.second+=value;
 			return *this;
 		}
-		LinearInterpolation &operator-=(numY value){
+		LinearInterpolation &operator-=(const numY value){
 			for(Point&point:data)
 				point.second-=value;
 			return *this;
 		}
-		LinearInterpolation &operator*=(numY value){
+		LinearInterpolation &operator*=(const numY value){
 			for(Point&point:data)
 				point.second*=value;
 			return *this;
 		}
-		LinearInterpolation &operator/=(numY value){
+		LinearInterpolation &operator/=(const numY value){
 			for(Point&point:data)
 				point.second/=value;
 			return *this;
 		}
-		LinearInterpolation &transform(std::function<numY(numY)>F){
+		LinearInterpolation &transform(const std::function<numY(numY)>F){
 			for(Point&point:data)
 				point.second=F(point.second);
 			return *this;
 		}
-		LinearInterpolation &transform(std::function<numY(numX,numY)>F){
+		LinearInterpolation &transform(const std::function<numY(numX,numY)>F){
 			for(Point&point:data)
 				point.second=F(point.first,point.second);
 			return *this;

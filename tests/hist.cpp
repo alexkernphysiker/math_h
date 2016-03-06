@@ -141,7 +141,7 @@ TEST(Distribution2D,BaseTest){
 	EXPECT_EQ(1,D[2][0].val());
 	EXPECT_EQ(2,D[2][1].val());
 	vector<point3d<double>> dbg;
-	D.FullCycle([&dbg](point3d<double>&&p){dbg.push_back(p);});
+	D.FullCycle([&dbg](const point3d<double>&p){dbg.push_back(p);});
 	ASSERT_EQ(6,dbg.size());
 	EXPECT_EQ(-1,dbg[0].X().val());
 	EXPECT_EQ( 0,dbg[0].Y().val());

@@ -5,15 +5,15 @@
 #include <math.h>
 namespace MathTemplates{
 	template<class numt=double>
-	numt Gaussian(numt x, numt X_max, numt sigma){
+	numt Gaussian(const numt x,const numt X_max,const numt sigma){
 		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*3.1415926));
 	}
 	template<class numt=double>
-	numt BreitWigner(numt x, numt pos, numt gamma){
+	numt BreitWigner(const numt x,const numt pos,const numt gamma){
 		return gamma/(2*3.1415926*(pow(x-pos,2)+pow(gamma/2,2)));
 	}
 	template<class numt=double>
-	numt Novosibirsk(numt x,numt pos,numt sigma,numt asym){
+	numt Novosibirsk(const numt x,const numt pos,const numt sigma,const numt asym){
 		if(pow(asym/sigma,2)<=0.000001)
 			return Gaussian<numt>(x,pos,sigma);
 		numt Lsqlog4=asym*sqrt(log(4));
@@ -27,17 +27,17 @@ namespace MathTemplates{
 	
 	
 	template<class numt=double>
-	numt FermiFunc(numt x, numt X_border, numt diffuse){
+	numt FermiFunc(const numt x,const numt X_border,const numt diffuse){
 		return 1.0/(1.0+exp((x-X_border)/diffuse));
 	}
 	template<class numt, class indexer>
-	numt Polynom(numt x,indexer  p,unsigned int P, int index_offset=0){
+	numt Polynom(const numt x,const indexer  p,const unsigned int P,const int index_offset=0){
 		numt res=0;numt c=1;
 		for(unsigned int i=0; i<=P;i++){res+=c*p[index_offset+i];if(i<P)c*=x;}
 		return res;
 	}
 	template<unsigned int P,class numt, class indexer, int index_offset=0>
-	inline numt Polynom(numt x,indexer  p){
+	inline numt Polynom(const numt x,const indexer  p){
 		return Polynom<numt,indexer>(x,p,P,index_offset);
 	}
 };

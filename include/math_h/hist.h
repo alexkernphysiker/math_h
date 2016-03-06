@@ -17,11 +17,11 @@ namespace MathTemplates{
 		value<numtY> y;
 	public:
 		point(const value<numtX>&pos):x(pos){}
-		point(value<numtX>&&pos):x(pos){}
+		point(const value<numtX>&&pos):x(pos){}
 		point(const value<numtX>&pos,const value<numtY>&val):x(pos),y(val){}
-		point(value<numtX>&&pos,const value<numtY>&val):x(pos),y(val){}
-		point(const value<numtX>&pos,value<numtY>&&val):x(pos),y(val){}
-		point(value<numtX>&&pos,value<numtY>&&val):x(pos),y(val){}
+		point(const value<numtX>&&pos,const value<numtY>&val):x(pos),y(val){}
+		point(const value<numtX>&pos,const value<numtY>&&val):x(pos),y(val){}
+		point(const value<numtX>&&pos,const value<numtY>&&val):x(pos),y(val){}
 		point(const point&source):x(source.x),y(source.y){}
 		const value<numtX>&X()const{return x;}
 		const value<numtY>&Y()const{return y;}
@@ -32,19 +32,19 @@ namespace MathTemplates{
 	template<class numtX,class numtY=numtX> class point_editable_x:public point<numtX,numtY>{
 	public:
 		point_editable_x(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable_x(point<numtX,numtY>&&source):point<numtX,numtY>(source){}
+		point_editable_x(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
 		value<numtX>&varX(){return point<numtX,numtY>::__X();}
 	};
 	template<class numtX,class numtY=numtX> class point_editable_y:public point<numtX,numtY>{
 	public:
 		point_editable_y(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable_y(point<numtX,numtY>&&source):point<numtX,numtY>(source){}
+		point_editable_y(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
 		value<numtY>&varY(){return point<numtX,numtY>::__Y();}
 	};
 	template<class numtX,class numtY=numtX> class point_editable:public point<numtX,numtY>{
 	public:
 		point_editable(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable(point<numtX,numtY>&&source):point<numtX,numtY>(source){}
+		point_editable(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
 		value<numtX>&varX(){return point<numtX,numtY>::__X();}
 		value<numtY>&varY(){return point<numtX,numtY>::__Y();}
 	};
@@ -57,9 +57,9 @@ namespace MathTemplates{
 	public: 
 		point3d(const value<numtX>&_x,const value<numtY>&_y,const value<numtZ>&_z)
 		:x(_x),y(_y),z(_z){}
-		point3d(value<numtX>&&_x,value<numtY>&&_y,value<numtZ>&&_z)
+		point3d(const value<numtX>&&_x,const value<numtY>&&_y,const value<numtZ>&&_z)
 		:x(_x),y(_y),z(_z){}
-		point3d(numtX _x,numtY _y,numtZ _z)
+		point3d(const numtX _x,const numtY _y,const numtZ _z)
 		:x(_x,0),y(_y,0),z(_z,0){}
 		virtual ~point3d(){}
 		const value<numtX>&X()const{return x;}
@@ -67,9 +67,6 @@ namespace MathTemplates{
 		const value<numtZ>&Z()const{return z;}
 	};
 	
-
-
-
 	template<class numtX,class numtY=numtX>class hist{
 	public:
 		typedef point_editable_y<numtX,numtY> Point;
@@ -81,27 +78,27 @@ namespace MathTemplates{
 		hist(const initializer_list<value<numtX>>&data){
 			for(const auto& v:data)m_data.push_back(Point(v));
 		}
-		hist(initializer_list<value<numtX>>&&data):hist(data){}
+		hist(const initializer_list<value<numtX>>&&data):hist(data){}
 		hist(const vector<value<numtX>>&data){
 			for(const auto& v:data)m_data.push_back(Point(v));
 		}
-		hist(vector<value<numtX>>&&data):hist(data){}
+		hist(const vector<value<numtX>>&&data):hist(data){}
 		hist(const initializer_list<point<numtX,numtY>>&data){
 			for(const auto& P:data)m_data.push_back(Point(P));
 		}
-		hist(initializer_list<point<numtX,numtY>>&&data):hist(data){}
+		hist(const initializer_list<point<numtX,numtY>>&&data):hist(data){}
 		hist(const vector<point<numtX,numtY>>&data){
 			for(const auto& P:data)m_data.push_back(Point(P));
 		}
-		hist(vector<point<numtX,numtY>>&&data):hist(data){}
+		hist(const vector<point<numtX,numtY>>&&data):hist(data){}
 		hist(const initializer_list<Point>&data){
 			for(const auto& P:data)m_data.push_back(P);
 		}
-		hist(initializer_list<Point>&&data):hist(data){}
+		hist(const initializer_list<Point>&&data):hist(data){}
 		hist(const vector<Point>&data){
 			for(const auto& P:data)m_data.push_back(P);
 		}
-		hist(vector<Point>&&data):hist(data){}
+		hist(const vector<Point>&&data):hist(data){}
 		hist(const hist&source){
 			for(const Point& P:source.m_data)m_data.push_back(P);
 		}
@@ -118,12 +115,12 @@ namespace MathTemplates{
 		const_iterator end() const{return m_data.cend();}
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
-		const Point&operator[](size_t i)const{
+		const Point&operator[](const size_t i)const{
 			if(m_data.size()<=i)
 				throw Exception<hist>("range check error");
 			return m_data[i];
 		}
-		Point&Bin(size_t i){
+		Point&Bin(const size_t i){
 			if(m_data.size()<=i)
 				throw Exception<hist>("range check error");
 			return m_data[i];
@@ -152,14 +149,14 @@ namespace MathTemplates{
 		}
 		
 		//Comparing
-		numtY ChiSq_only_y_error(function<numtY(numtX)>f,size_t paramcount){
+		numtY ChiSq_only_y_error(function<numtY(numtX)>f,size_t paramcount)const{
 			numtY res=0,k=numtY(size())-numtY(paramcount);
 			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
 			for(const Point&p:m_data)
 				res+=pow((p.Y().val()-f(p.X().val()))/p.Y().delta(),2);
 			return res/k;
 		}
-		numtY ChiSq_only_y_error(const hist<numtX,numtY>&H,size_t paramcount){
+		numtY ChiSq_only_y_error(const hist<numtX,numtY>&H,size_t paramcount)const{
 			if(H.size()!=size())throw Exception<hist>("ChiSq: histograms size mismatch");
 			numtY res=0,k=numtY(size())-numtY(paramcount);
 			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
@@ -172,10 +169,10 @@ namespace MathTemplates{
 			}
 			return res/k;
 		}
-		numtY ChiSq_only_y_error(hist<numtX,numtY>&&H,size_t paramcount){
+		numtY ChiSq_only_y_error(hist<numtX,numtY>&&H,size_t paramcount)const{
 			ChiSq_only_y_error(H,paramcount);
 		}
-		numtY ChiSq(function<numtY(numtX)>f,size_t paramcount){
+		numtY ChiSq(function<numtY(numtX)>f,size_t paramcount)const{
 			numtY res=0,k=numtY(size())-numtY(paramcount);
 			if(k<=0)throw Exception<hist>("ChiSq error: too few points or too many parameters");
 			for(const Point&p:m_data){
@@ -194,7 +191,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		hist&operator+=(function<numtY(numtX)>f){
+		hist&operator+=(const function<numtY(numtX)>f){
 			for(size_t i=0,n=size();i<n;i++)
 				m_data[i].varY()+=value<numtY>(f(m_data[i].X().val()),0);
 			return *this;
@@ -203,7 +200,7 @@ namespace MathTemplates{
 			for(size_t i=0,n=size();i<n;i++)m_data[i].varY()+=c;
 			return *this;
 		}
-		hist&operator+=(value<numtY>&&c){return operator+=(c);}
+		hist&operator+=(const value<numtY>&&c){return operator+=(c);}
 		
 		hist&operator-=(const hist& second){
 			for(size_t i=0,n=size();i<n;i++){
@@ -214,7 +211,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		hist&operator-=(function<numtY(numtX)>f){
+		hist&operator-=(const function<numtY(numtX)>f){
 			for(size_t i=0,n=size();i<n;i++)
 				m_data[i].varY()-=value<numtY>(f(m_data[i].X().val()),0);
 			return *this;
@@ -223,7 +220,7 @@ namespace MathTemplates{
 			for(size_t i=0,n=size();i<n;i++)m_data[i].varY()-=c;
 			return *this;
 		}
-		hist&operator-=(value<numtY>&&c){return operator-=(c);}
+		hist&operator-=(const value<numtY>&&c){return operator-=(c);}
 		
 		hist&operator*=(const hist& second){
 			for(size_t i=0,n=size();i<n;i++){
@@ -234,7 +231,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		hist&operator*=(function<numtY(numtX)>f){
+		hist&operator*=(const function<numtY(numtX)>f){
 			for(size_t i=0,n=size();i<n;i++)
 				m_data[i].varY()*=value<numtY>(f(m_data[i].X().val()),0);
 			return *this;
@@ -243,7 +240,7 @@ namespace MathTemplates{
 			for(size_t i=0,n=size();i<n;i++)m_data[i].varY()*=c;
 			return *this;
 		}
-		hist&operator*=(value<numtY>&&c){return operator*=(c);}
+		hist&operator*=(const value<numtY>&&c){return operator*=(c);}
 		
 		hist&operator/=(const hist& second){
 			for(size_t i=0,n=size();i<n;i++){
@@ -254,7 +251,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		hist&operator/=(function<numtY(numtX)>f){
+		hist&operator/=(const function<numtY(numtX)>f){
 			for(size_t i=0,n=size();i<n;i++)
 				m_data[i].varY()/=value<numtY>(f(m_data[i].X().val()),0);
 			return *this;
@@ -263,17 +260,17 @@ namespace MathTemplates{
 			for(size_t i=0,n=size();i<n;i++)m_data[i].varY()/=c;
 			return *this;
 		}
-		hist&operator/=(value<numtY>&&c){return operator/=(c);}
+		hist&operator/=(const value<numtY>&&c){return operator/=(c);}
 	
 		//Advanced transrormations
 		hist&FillWithValues(const value<numtY>&v){
 			for(Point&P:m_data)P.varY()=v;
 			return *this;
 		}
-		hist&FillWithValues(value<numtY>&&v){
+		hist&FillWithValues(const value<numtY>&&v){
 			return FillWithValues(v);
 		}
-		hist Scale(size_t sc_x)const{
+		hist Scale(const size_t sc_x)const{
 			//uncertanties are set to standard sqrt
 			vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:m_data)
@@ -306,94 +303,94 @@ namespace MathTemplates{
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const hist<numtX,numtY>&b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res+=b;return res;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,hist<numtX,numtY>&&b){auto res=a;res+=b;return res;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const hist<numtX,numtY>&&b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(hist<numtX,numtY>&&a,hist<numtX,numtY>&&b){auto res=a;res+=b;return res;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&&b){auto res=a;res+=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,function<numtY(numtX)>b){auto res=a;res+=b;return res;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(hist<numtX,numtY>&&a,function<numtY(numtX)>b){auto res=a;res+=b;return res;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const value<numtY>&b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(hist<numtX,numtY>&&a,const value<numtY>&b){return a+b;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const value<numtY>&b){return a+b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,value<double>&&b){return a+b;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const value<double>&&b){return a+b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator+(hist<numtX,numtY>&&a,value<double>&&b){return a+b;}
+	inline hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const value<double>&&b){return a+b;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const hist<numtX,numtY>&b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res-=b;return res;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,hist<numtX,numtY>&&b){auto res=a;res-=b;return res;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const hist<numtX,numtY>&&b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(hist<numtX,numtY>&&a,hist<numtX,numtY>&&b){auto res=a;res-=b;return res;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&&b){auto res=a;res-=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,function<numtY(numtX)>b){auto res=a;res-=b;return res;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(hist<numtX,numtY>&&a,function<numtY(numtX)>b){auto res=a;res-=b;return res;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const value<numtY>&b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(hist<numtX,numtY>&&a,const value<numtY>&b){return a-b;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const value<numtY>&b){return a-b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,value<numtY>&&b){return a-b;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const value<numtY>&&b){return a-b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator-(hist<numtX,numtY>&&a,value<numtY>&&b){return a-b;}
+	inline hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const value<numtY>&&b){return a-b;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const hist<numtX,numtY>&b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res*=b;return res;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,hist<numtX,numtY>&&b){auto res=a;res*=b;return res;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const hist<numtX,numtY>&&b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(hist<numtX,numtY>&&a,hist<numtX,numtY>&&b){auto res=a;res*=b;return res;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&&b){auto res=a;res*=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,function<numtY(numtX)>b){auto res=a;res*=b;return res;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(hist<numtX,numtY>&&a,function<numtY(numtX)>b){auto res=a;res*=b;return res;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const value<numtY>&b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(hist<numtX,numtY>&&a,const value<numtY>&b){return a*b;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const value<numtY>&b){return a*b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,value<numtY>&&b){return a*b;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const value<numtY>&&b){return a*b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator*(hist<numtX,numtY>&&a,value<numtY>&&b){return a*b;}
+	inline hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const value<numtY>&&b){return a*b;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const hist<numtX,numtY>&b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res/=b;return res;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,hist<numtX,numtY>&&b){auto res=a;res/=b;return res;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const hist<numtX,numtY>&&b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,hist<numtX,numtY>&&b){auto res=a;res/=b;return res;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const hist<numtX,numtY>&&b){auto res=a;res/=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,function<numtY(numtX)>b){auto res=a;res/=b;return res;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,function<numtY(numtX)>b){auto res=a;res/=b;return res;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const value<numtY>&b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,const value<numtY>&b){return a/b;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const value<numtY>&b){return a/b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,value<numtY>&&b){return a/b;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const value<numtY>&&b){return a/b;}
 	template<class numtX,class numtY>
-	inline hist<numtX,numtY> operator/(hist<numtX,numtY>&&a,value<numtY>&&b){return a/b;}
+	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const value<numtY>&&b){return a/b;}
 
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class hist2d{
@@ -415,13 +412,13 @@ namespace MathTemplates{
 			for(const auto&y:Y)m_y_axis.push_back(y);
 			init();
 		}
-		hist2d(initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const initializer_list<value<numtX>>&&X,const initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
 		hist2d(const vector<value<numtX>>&X,const vector<value<numtY>>&Y){
 			for(const auto&x:X)m_x_axis.push_back(x);
 			for(const auto&y:Y)m_y_axis.push_back(y);
 			init();
 		}
-		hist2d(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const vector<value<numtX>>&&X,const vector<value<numtY>>&&Y):hist2d(X,Y){}
 		hist2d():hist2d({},{}){}
 		hist2d(const hist2d&source){
 			for(const auto&item:source.m_x_axis)m_x_axis.push_back(item);
@@ -439,11 +436,11 @@ namespace MathTemplates{
 		const_iterator end() const{return m_data.cend();}
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
-		const vector<value<numtZ>>&operator[](size_t i)const{
+		const vector<value<numtZ>>&operator[](const size_t i)const{
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			return m_data[i];
 		}
-		value<numtZ>&Bin(size_t i,size_t j){
+		value<numtZ>&Bin(const size_t i,const size_t j){
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			if(m_data[i].size()<=j)throw Exception<hist2d>("range check error");
 			return m_data[i][j];
@@ -451,7 +448,7 @@ namespace MathTemplates{
 		const vector<value<numtX>>&X()const{return m_x_axis;}
 		const vector<value<numtY>>&Y()const{return m_y_axis;}
 		
-		hist2d Scale(size_t sc_x,size_t sc_y)const{
+		hist2d Scale(const size_t sc_x,const size_t sc_y)const{
 			//uncertanties are set to standard sqrt
 			vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:X())
@@ -488,22 +485,24 @@ namespace MathTemplates{
 			return *this;
 		}
 		
-		point3d<numtX,numtY,numtZ> operator()(size_t i,size_t j)const{
+		const point3d<numtX,numtY,numtZ> operator()(const size_t i,const size_t j)const{
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			if(m_y_axis.size()<=j)throw Exception<hist2d>("range check error");
 			return point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycle(function<void(point3d<numtX,numtY,numtZ>&&)>f)const{
+		void FullCycle(const function<void(const point3d<numtX,numtY,numtZ>&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
-				for(size_t j=0,J=m_y_axis.size();j<J;j++)
-					f(point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]));
+				for(size_t j=0,J=m_y_axis.size();j<J;j++){
+					point3d<numtX,numtY,numtZ> P(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+					f(P);
+				}
 		}
-		void FullCycle(function<void(const value<numtX>&,const value<numtY>&,const value<numtZ>&)>f)const{
+		void FullCycle(const function<void(const value<numtX>&,const value<numtY>&,const value<numtZ>&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycleVar(function<void(const value<numtX>&,const value<numtY>&,value<numtZ>&)>f){
+		void FullCycleVar(const function<void(const value<numtX>&,const value<numtY>&,value<numtZ>&)>f){
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
@@ -515,10 +514,10 @@ namespace MathTemplates{
 	class Distribution1D:public hist<numtX,numtY>{
 	public:
 		Distribution1D(const initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D(initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D(const initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
 		Distribution1D(const vector<value<numtX>>&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D(vector<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
-		Distribution1D&operator<<(numtX v){
+		Distribution1D(const vector<value<numtX>>&&data):hist<numtX,numtY>(data){hist<numtX,numtY>::FillWithValues(value<numtY>(0));}
+		Distribution1D&operator<<(const numtX v){
 			for(size_t i=0,n=hist<double>::size();i<n;i++)
 				if(hist<double>::Bin(i).X().contains(v))
 					hist<double>::Bin(i).varY()=value<numtY>(hist<double>::Bin(i).Y().val()+numtY(1));
@@ -529,16 +528,16 @@ namespace MathTemplates{
 	class Distribution2D:public hist2d<numtX,numtY,numtZ>{
 	public:
 		Distribution2D(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
-		Distribution2D(initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
+		Distribution2D(const initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
 		Distribution2D(const vector<value<numtX>>&X,const vector<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
-		Distribution2D(vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
+		Distribution2D(const vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){}
 		Distribution2D&operator<<(const pair<numtX,numtY>&p){
 			for(size_t i=0,I=hist2d<numtX,numtY,numtZ>::X().size();i<I;i++)if(hist2d<numtX,numtY,numtZ>::X()[i].contains(p.first))
 				for(size_t j=0,J=hist2d<numtX,numtY,numtZ>::Y().size();j<J;j++)if(hist2d<numtX,numtY,numtZ>::Y()[j].contains(p.second))
 					hist2d<numtX,numtY,numtZ>::Bin(i,j)=value<numtZ>(hist2d<numtX,numtY,numtZ>::operator[](i)[j].val()+numtZ(1));
 				return *this;
 		}
-		Distribution2D&operator<<(pair<numtX,numtY>&&p){
+		Distribution2D&operator<<(const pair<numtX,numtY>&&p){
 			return operator<<(p);
 		}
 	};
