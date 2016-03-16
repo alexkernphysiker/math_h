@@ -51,16 +51,6 @@ TEST(FermiFunc,Shape){
 			Test_stair_Shape<double>([diffuse,X](double x){return FermiFunc(x,X,diffuse);},X-diffuse*5,X,X+diffuse*5);
 }
 
-TEST(Polynom,Base){
-	for(int p=0;p<10;p++){
-		double C[p+1];
-		for(int i=0;i<p;i++)C[i]=0;
-		C[p]=1;
-		for(double x=-2;x<=2;x+=0.01)for(int P=p;P>=0;P--){
-			EXPECT_EQ(true,pow(pow(x,P)-Polynom(x,C,P,p-P),2)<0.0001);
-		}
-	}
-}
 void test_polynom(function<double(int)> f){
 	double C[9+1];
 	for (int i=0;i<=9;i++)C[i]=f(i);
@@ -69,6 +59,16 @@ void test_polynom(function<double(int)> f){
 		for(int p=0;p<=9;p++){
 			V+=pow(x,p)*C[p];
 			EXPECT_EQ(true,pow(V-Polynom(x,C,p),2)<0.0001);
+		}
+	}
+}
+TEST(Polynom,Base){
+	for(int p=0;p<10;p++){
+		double C[p+1];
+		for(int i=0;i<p;i++)C[i]=0;
+		C[p]=1;
+		for(double x=-2;x<=2;x+=0.01)for(int P=p;P>=0;P--){
+			EXPECT_EQ(true,pow(pow(x,P)-Polynom(x,C,P,p-P),2)<0.0001);
 		}
 	}
 }
