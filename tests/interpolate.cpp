@@ -46,8 +46,8 @@ typedef std::pair<double,double> Pair;
 TEST(LinearInterpolation,Create){
 	LinearInterpolation<double> F;
 	EXPECT_EQ(0,F.size());
-	EXPECT_THROW(F.min(),Exception<LinearInterpolation<double>>);
-	EXPECT_THROW(F.max(),Exception<LinearInterpolation<double>>);
+	EXPECT_THROW(F.min(),Exception<SortedPoints<double>>);
+	EXPECT_THROW(F.max(),Exception<SortedPoints<double>>);
 	EXPECT_EQ(&F,&(F<<make_pair(0,0)));
 	EXPECT_EQ(1,F.size());
 	EXPECT_NO_THROW(F.min());

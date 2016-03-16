@@ -32,7 +32,7 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_NO_THROW(RandomValueGenerator<double>(z,ChainWithCount(2,0.0,1.0)));
 	EXPECT_THROW(RandomValueGenerator<double>(z,ChainWithCount(0,0.0,0.0)),Exception<vector<double>>);
 	auto n=[](double x){return sin(10*x);};
-	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<LinearInterpolation<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<SortedPoints<double>>);
 }
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
 	RandomValueGenerator<double> R(F,ChainWithCount(bins*accu,from,to));
