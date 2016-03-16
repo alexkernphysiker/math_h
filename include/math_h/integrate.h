@@ -2,7 +2,7 @@
 // MIT license
 #ifndef GRIVHOWXKUEHYGQF
 #	define GRIVHOWXKUEHYGQF
-#include <functional>
+#include "functions.h"
 #include "interpolate.h"
 #include "error.h"
 namespace MathTemplates{
@@ -50,7 +50,7 @@ namespace MathTemplates{
 		return Int_Trapez_Table_PositiveStrict(source);
 	}
 	template<class numX,class numY=numX,class func1=function<numY(numX)>,class func2=function<numY(numX)>>
-	class Convolution{
+	class Convolution:public IFunction<numX,numY>{
 	private:
 		func1 A;
 		func2 B;
@@ -63,7 +63,7 @@ namespace MathTemplates{
 		:A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
 		Convolution(const func1 a,const func2 b,const numX ksi1,const numX ksi2,const numX step)
 		:A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
-		numY operator()(const numX x)const{
+		virtual numY operator()(const numX x)const override{
 			return Sympson<numX,numY>([this,x](numX ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
 		}
 	};

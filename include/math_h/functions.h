@@ -9,7 +9,9 @@ namespace MathTemplates{
 	class IFunction{
 	public:
 		virtual numY operator()(const numX x)const=0;
-		virtual const std::function<numY(numX)> func()const=0;		
+		const std::function<numY(numX)> func()const{
+			return [this](numX x){return operator()(x);};
+		}
 	};
 	
 	

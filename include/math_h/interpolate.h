@@ -220,9 +220,6 @@ namespace MathTemplates{
 			using namespace details;
 			return InterpolateLinear<numX,numY>(x,*this,field_size(*this));
 		}
-		virtual const function<numY(numX)> func()const override{
-			return [this](double x){return operator()(x);};
-		}
 	};
 };
 #endif
