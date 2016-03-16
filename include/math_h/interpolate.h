@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include "functions.h"
 #include "error.h"
 namespace MathTemplates{
 	using namespace std;
@@ -44,10 +45,10 @@ namespace MathTemplates{
 	void InsertSorted(const comparable x,indexer&X,const Size size,const Insert insert){
 		insert(WhereToInsert(0,size()-1,X,x),x);
 	}
-	#define std_size(vector) [&vector](){return vector.size();}
-	#define std_insert(vector,type) [&vector](int pos,type x){vector.insert(vector.begin()+pos,x);}
-	#define field_size(vector)  [this](){return vector.size();}
-	#define field_insert(vector,type)  [this](int pos,type x){vector.insert(vector.begin()+pos,x);}
+	#define std_size(vector) [&vector](){return (vector).size();}
+	#define std_insert(vector,type) [&vector](int pos,type x){(vector).insert((vector).begin()+pos,x);}
+	#define field_size(vector)  [this](){return (vector).size();}
+	#define field_insert(vector,type)  [this](int pos,type x){(vector).insert((vector).begin()+pos,x);}
 	
 	namespace details{
 		template<class numX, class numY=numX, class Pair=std::pair<numX,numY>>
@@ -109,39 +110,41 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX, class numY=numX>
-	class LinearInterpolation{
+	class SortedPoints{
 	public:
 		typedef pair<numX,numY> Point;
 	private:
 		vector<Point> data;
 	public:
-		LinearInterpolation(){}
-		LinearInterpolation &operator<<(const Point&p){
+		SortedPoints(){}
+		SortedPoints &operator<<(const Point&p){
 			InsertSorted(p,data,field_size(data),field_insert(data,Point));
 			return *this;
 		}
-		LinearInterpolation &operator<<(const Point&&p){
+		SortedPoints &operator<<(const Point&&p){
 			return operator<<(p);
 		}
-		LinearInterpolation(const initializer_list<Point>&points){
+		SortedPoints(const initializer_list<Point>&points){
 			for(const Point&p:points)operator<<(p);
 		}
-		LinearInterpolation(const initializer_list<Point>&&points):LinearInterpolation(points){}
-		LinearInterpolation(const function<numY(numX)> f,const vector<numX>&chain){
+		SortedPoints(const initializer_list<Point>&&points):SortedPoints(points){}
+		SortedPoints(const SortedPoints&points){
+			for(const Point&p:points.data)operator<<(p);
+		}
+		SortedPoints(const SortedPoints&&points):SortedPoints(points){}
+		SortedPoints(const function<numY(numX)> f,const vector<numX>&chain){
 			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
-		LinearInterpolation(const function<numY(numX)> f,const vector<numX>&&chain){
+		SortedPoints(const function<numY(numX)> f,const vector<numX>&&chain):SortedPoints(f,chain){}
+		SortedPoints(const function<numY(numX)> f,const initializer_list<numX>&&chain){
 			for(numX x:chain)operator<<(make_pair(x,f(x)));
 		}
-		LinearInterpolation(const function<numY(numX)> f,const initializer_list<numX>&&chain){
-			for(numX x:chain)operator<<(make_pair(x,f(x)));
-		}
-		virtual ~LinearInterpolation(){}
+		virtual ~SortedPoints(){}
 		//Points access
 		int size()const{return data.size();}
 		const Point&operator[](const int i)const{
 			if(size()<=i)
-				throw Exception<LinearInterpolation>("Range check error");
+				throw Exception<SortedPoints>("Range check error");
 			return data[i];
 		}
 		//typedef typename vector<Point>::iterator iterator;
@@ -154,59 +157,71 @@ namespace MathTemplates{
 		const_iterator cend() const{return data.cend();}
 		const Point&left()const{
 			if(size()<1)
-				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
+				throw Exception<SortedPoints>("Attempt to obtain empty properties.");
 			return data[0];
 		}
 		const Point&right()const{
 			if(size()<1)
-				throw Exception<LinearInterpolation>("Attempt to obtain empty properties.");
+				throw Exception<SortedPoints>("Attempt to obtain empty properties.");
 			return data[size()-1];
 		}
 		numX min()const{return left().first;}
 		numX max()const{return right().first;}
-		numY operator()(const numX x)const{
-			using namespace details;
-			return InterpolateLinear<numX,numY>(x,data,field_size(data));
-		}
-		const function<numY(numX)> func()const{
-			return [this](double x){return operator()(x);};
-		}
 		//Arithmetic actions
-		const LinearInterpolation<numY,numX> Transponate()const{
-			LinearInterpolation<numY,numX> res;
+		const SortedPoints<numY,numX> Transponate()const{
+			SortedPoints<numY,numX> res;
 			for(const Point&p:data)
 				res<<make_pair(p.second,p.first);
 			return res;
 		}
-		LinearInterpolation &operator+=(const numY value){
+		SortedPoints &operator+=(const numY value){
 			for(Point&point:data)
 				point.second+=value;
 			return *this;
 		}
-		LinearInterpolation &operator-=(const numY value){
+		SortedPoints &operator-=(const numY value){
 			for(Point&point:data)
 				point.second-=value;
 			return *this;
 		}
-		LinearInterpolation &operator*=(const numY value){
+		SortedPoints &operator*=(const numY value){
 			for(Point&point:data)
 				point.second*=value;
 			return *this;
 		}
-		LinearInterpolation &operator/=(const numY value){
+		SortedPoints &operator/=(const numY value){
 			for(Point&point:data)
 				point.second/=value;
 			return *this;
 		}
-		LinearInterpolation &transform(const std::function<numY(numY)>F){
+		SortedPoints &transform(const std::function<numY(numY)>F){
 			for(Point&point:data)
 				point.second=F(point.second);
 			return *this;
 		}
-		LinearInterpolation &transform(const std::function<numY(numX,numY)>F){
+		SortedPoints &transform(const std::function<numY(numX,numY)>F){
 			for(Point&point:data)
 				point.second=F(point.first,point.second);
 			return *this;
+		}
+	};
+	template<class numX, class numY=numX>
+	class LinearInterpolation:public SortedPoints<numX,numY>,public IFunction<numX,numY>{
+	public:
+		typedef pair<numX,numY> Point;
+	private:
+		vector<Point> data;
+	public:
+		LinearInterpolation(){}
+		LinearInterpolation(const SortedPoints<numX,numY>&source):SortedPoints<numX,numY>(source){}
+		LinearInterpolation(const SortedPoints<numX,numY>&&source):SortedPoints<numX,numY>(source){}
+		virtual ~LinearInterpolation(){}
+		virtual numY operator()(const numX x)const override{
+			using namespace details;
+			return InterpolateLinear<numX,numY>(x,*this,field_size(*this));
+		}
+		virtual const function<numY(numX)> func()const override{
+			return [this](double x){return operator()(x);};
 		}
 	};
 };

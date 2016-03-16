@@ -3,7 +3,16 @@
 #ifndef EMEFWAYNIGJGENCP
 #define EMEFWAYNIGJGENCP
 #include <math.h>
+#include <functional>
 namespace MathTemplates{
+	template<class numX, class numY=numX>
+	class IFunction{
+	public:
+		virtual numY operator()(const numX x)const=0;
+		virtual const std::function<numY(numX)> func()const=0;		
+	};
+	
+	
 	template<class numt=double>
 	numt Gaussian(const numt x,const numt X_max,const numt sigma){
 		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*3.1415926));

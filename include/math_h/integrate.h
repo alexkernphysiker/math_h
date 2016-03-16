@@ -23,30 +23,30 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX,class numY=numX>
-	const LinearInterpolation<numX,numY> Int_Trapez_Table(const LinearInterpolation<numX,numY>&source){
-		LinearInterpolation<numX,numY> res;
+	const SortedPoints<numX,numY> Int_Trapez_Table(const SortedPoints<numX,numY>&source){
+		SortedPoints<numX,numY> res;
 		res<<make_pair(source.left().first,0);
 		for(size_t i=1;i<source.size();i+=1)
 			res<<make_pair(source[i].first,res.right().second+(source[i].second+source[i-1].second)*(source[i].first-source[i-1].first)/numY(2));
 		return res;
 	}
 	template<class numX,class numY=numX>//Accepts only positive function
-	const LinearInterpolation<numX,numY>  Int_Trapez_Table_PositiveStrict(const LinearInterpolation<numX,numY>&source){
-		LinearInterpolation<numX,numY> res;
+	const SortedPoints<numX,numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<numX,numY>&source){
+		SortedPoints<numX,numY> res;
 		res<<make_pair(source.left().first,0);
 		for(size_t i=1;i<source.size();i+=1){
 			if(source[i-0].second<0)
-				throw Exception<LinearInterpolation<numX,numY>>("SympsonTablePositiveStrict: negative value detected");
+				throw Exception<SortedPoints<numX,numY>>("SympsonTablePositiveStrict: negative value detected");
 			res<<make_pair(source[i].first,res.right().second+(source[i].second+source[i-1].second)*(source[i].first-source[i-1].first)/numY(2));
 		}
 		return res;
 	}
 	template<class numX,class numY=numX>
-	const LinearInterpolation<numX,numY> Int_Trapez_Table_RV(const LinearInterpolation<numX,numY>&&source){
+	const SortedPoints<numX,numY> Int_Trapez_Table_RV(const SortedPoints<numX,numY>&&source){
 		return Int_Trapez_Table(source);
 	}
 	template<class numX,class numY=numX>
-	const LinearInterpolation<numX,numY> Int_Trapez_Table_PositiveStrict_RV(const LinearInterpolation<numX,numY>&&source){
+	const SortedPoints<numX,numY> Int_Trapez_Table_PositiveStrict_RV(const SortedPoints<numX,numY>&&source){
 		return Int_Trapez_Table_PositiveStrict(source);
 	}
 	template<class numX,class numY=numX,class func1=function<numY(numX)>,class func2=function<numY(numX)>>

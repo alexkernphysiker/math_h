@@ -17,15 +17,15 @@ namespace MathTemplates{
 		std::pair<numt,numt> range;
 	public:
 		RandomValueGenerator(const RandomValueGenerator &R):reverse_distr_func(R.reverse_distr_func),range(R.range){}
-		RandomValueGenerator(const LinearInterpolation<numt,numt>&distribution_density)
+		RandomValueGenerator(const SortedPoints<numt,numt>&distribution_density)
 			:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate())
 			,range(reverse_distr_func.min(),reverse_distr_func.max()){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const vector<numt>&chain)
-			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
+		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const vector<numt>&&chain)
-			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
+		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const initializer_list<numt>&&chain)
-			:RandomValueGenerator(LinearInterpolation<numt>(distribution_density,chain)){}
+		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const numt x1,const numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x2,numt(1))}){}
 		virtual ~RandomValueGenerator(){}
 		numt operator ()(RG&generator)const{
