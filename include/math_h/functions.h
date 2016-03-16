@@ -13,15 +13,19 @@ namespace MathTemplates{
 			return [this](numX x){return operator()(x);};
 		}
 	};
-	
-	
+	template<class numt=double>
+	inline numt PI(){return 3.1415926;}
 	template<class numt=double>
 	numt Gaussian(const numt x,const numt X_max,const numt sigma){
-		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*3.1415926));
+		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*PI<numt>()));
+	}
+	template<class numt=double>
+	numt Lorentzian(const numt x,const numt X_max,const numt gamma){
+		return pow(gamma,2)/(PI<numt>()*gamma*(pow(gamma,2)+pow(x-X_max,2)));
 	}
 	template<class numt=double>
 	numt BreitWigner(const numt x,const numt pos,const numt gamma){
-		return gamma/(2*3.1415926*(pow(x-pos,2)+pow(gamma/2,2)));
+		return gamma/(2*PI<numt>()*(pow(x-pos,2)+pow(gamma/2,2)));
 	}
 	template<class numt=double>
 	numt Novosibirsk(const numt x,const numt pos,const numt sigma,const numt asym){
@@ -32,7 +36,7 @@ namespace MathTemplates{
 		numt q4=qb*asym*(x-pos)/sigma + 1;
 		if(q4<=0)return 0;
 		numt slq4=pow(log(q4),2);
-		numt k=sigma*sqrt(2*3.1415926*(pow(asym,2)+1.0));
+		numt k=sigma*sqrt(2*PI<numt>()*(pow(asym,2)+1.0));
 		return exp(-slq4/(pow(asym,2)*2)+pow(asym,2))/k;
 	}
 	

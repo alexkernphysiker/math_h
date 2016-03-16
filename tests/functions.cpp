@@ -1,7 +1,6 @@
 // this file is distributed under 
 // MIT license
 #include <gtest/gtest.h>
-#include <functional>
 #include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
@@ -19,6 +18,11 @@ TEST(Gaussian,Shape){
 	for(double sigma=0.5;sigma<10;sigma+=0.5)
 		for(double X=-5;X<=5;X+=1)
 			Test_Peak_Shape<double>([sigma,X](double x){return Gaussian(x,X,sigma);},X-sigma*5,X,X+sigma*5);
+}
+TEST(Lorentzian,Shape){
+	for(double gamma=0.5;gamma<10;gamma+=0.5)
+		for(double X=-5;X<=5;X+=1)
+			Test_Peak_Shape<double>([gamma,X](double x){return Lorentzian(x,X,gamma);},X-gamma*5,X,X+gamma*5);
 }
 TEST(BreitWigner,Shape){
 	for(double sigma=0.5;sigma<10;sigma+=0.5)
