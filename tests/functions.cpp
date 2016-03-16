@@ -25,13 +25,6 @@ TEST(Lorentzian,Shape){
 		for(double X=-5;X<=5;X+=1)
 			Test_Peak_Shape<double>([gamma,X](double x){return Lorentzian(x,X,gamma);},X-gamma*5,X,X+gamma*5);
 }
-TEST(Voigt,Shape){
-	for(double gamma=0.5;gamma<10;gamma+=0.5)for(double sigma=0.5;sigma<10;sigma+=0.5)
-		for(double X=-5;X<=5;X+=1){
-			Convolution<double> Voigt([X,gamma](double x){return Lorentzian(x,X,gamma);},[X,sigma](double x){return Gaussian(x,X,sigma);},-50,50,0.001);
-			Test_Peak_Shape<double>(Voigt.func(),X-gamma*5-sigma*5,X,X+gamma*5+sigma*5);
-		}
-}
 TEST(BreitWigner,Shape){
 	for(double sigma=0.5;sigma<10;sigma+=0.5)
 		for(double X=-5;X<=5;X+=1)
