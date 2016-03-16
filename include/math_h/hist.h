@@ -141,8 +141,8 @@ namespace MathTemplates{
 			for(const Point&P:m_data)res+=P.Y();
 			return res;
 		}
-		LinearInterpolation<numtX,numtY> Line()const{
-			LinearInterpolation<numtX,numtY> res;
+		SortedPoints<numtX,numtY> Line()const{
+			SortedPoints<numtX,numtY> res;
 			for(const Point&P:m_data)
 				res<<make_pair(P.X().val(),P.Y().val());
 			return res;

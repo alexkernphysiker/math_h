@@ -119,17 +119,17 @@ namespace GnuplotWrap{
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&title){
+		Plot&Line(const SortedPoints<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
+		Plot&Line(const SortedPoints<numtX,numtY>&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Line(const LinearInterpolation<numtX,numtY>&&points,const string&&title=""){
+		Plot&Line(const SortedPoints<numtX,numtY>&&points,const string&&title=""){
 			return Line(points,title);
 		}
 		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&title){
@@ -152,17 +152,17 @@ namespace GnuplotWrap{
 			},"using 1:2",title);
 			return *this;
 		}
-		Plot&Points(const LinearInterpolation<numtX,numtY>&points,const string&title){
+		Plot&Points(const SortedPoints<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
 					data<<p.first<<" "<<p.second<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
-		Plot&Points(const LinearInterpolation<numtX,numtY>&points,const string&&title=""){
+		Plot&Points(const SortedPoints<numtX,numtY>&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(const LinearInterpolation<numtX,numtY>&&points,const string&&title=""){
+		Plot&Points(const SortedPoints<numtX,numtY>&&points,const string&&title=""){
 			return Points(points,title);
 		}
 		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
