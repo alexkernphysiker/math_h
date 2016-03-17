@@ -51,7 +51,7 @@ TEST(LinearInterpolation,Create){
 	EXPECT_EQ(1,F.size());
 	EXPECT_NO_THROW(F.min());
 	EXPECT_NO_THROW(F.max());
-	EXPECT_THROW(F(0.5),Exception<point<double>>);
+	EXPECT_THROW(F(0.5),Exception<LinearInterpolation<double>>);
 	EXPECT_EQ(&F,&(F<<point<double>(1,0)));
 	EXPECT_EQ(2,F.size());
 	EXPECT_NO_THROW(F.min());
