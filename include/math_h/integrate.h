@@ -25,19 +25,19 @@ namespace MathTemplates{
 	template<class numX,class numY=numX>
 	const SortedPoints<numX,numY> Int_Trapez_Table(const SortedPoints<numX,numY>&source){
 		SortedPoints<numX,numY> res;
-		res<<make_pair(source.left().first,0);
+		res<<point<numX,numY>(source.left().X(),0);
 		for(size_t i=1;i<source.size();i+=1)
-			res<<make_pair(source[i].first,res.right().second+(source[i].second+source[i-1].second)*(source[i].first-source[i-1].first)/numY(2));
+			res<<point<numX,numY>(source[i].X(),res.right().Y()+(source[i].Y()+source[i-1].Y())*numY(source[i].X()-source[i-1].X())/numY(2));
 		return res;
 	}
 	template<class numX,class numY=numX>//Accepts only positive function
 	const SortedPoints<numX,numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<numX,numY>&source){
 		SortedPoints<numX,numY> res;
-		res<<make_pair(source.left().first,0);
+		res<<point<numX,numY>(source.left().X(),0);
 		for(size_t i=1;i<source.size();i+=1){
-			if(source[i-0].second<0)
+			if(source[i-0].Y()<0)
 				throw Exception<SortedPoints<numX,numY>>("SympsonTablePositiveStrict: negative value detected");
-			res<<make_pair(source[i].first,res.right().second+(source[i].second+source[i-1].second)*(source[i].first-source[i-1].first)/numY(2));
+			res<<point<numX,numY>(source[i].X(),res.right().Y()+(source[i].Y()+source[i-1].Y())*numY(source[i].X()-source[i-1].X())/numY(2));
 		}
 		return res;
 	}

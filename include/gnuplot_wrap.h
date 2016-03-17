@@ -99,23 +99,23 @@ namespace GnuplotWrap{
 		Plot&OutputPlot(const PLOTOUTPUT delegate,const string&&options,const string&&title=""){
 			return OutputPlot(delegate,options,title);
 		}
-		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&title){
+		Plot&Line(const vector<point<numtX,numtY>>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"w l",title);
 			return *this;
 		}
-		Plot&Line(const vector<pair<numtX,numtY>>&points,const string&&title=""){
+		Plot&Line(const vector<point<numtX,numtY>>&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Line(const vector<pair<numtX,numtY>>&&points,const string&&title=""){
+		Plot&Line(const vector<point<numtX,numtY>>&&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Line(const initializer_list<pair<numtX,numtY>>&&points,const string&&title=""){
+		Plot&Line(const initializer_list<point<numtX,numtY>>&&points,const string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"w l",title);
 			return *this;
 		}
@@ -132,30 +132,30 @@ namespace GnuplotWrap{
 		Plot&Line(const SortedPoints<numtX,numtY>&&points,const string&&title=""){
 			return Line(points,title);
 		}
-		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&title){
+		Plot&Points(const vector<point<numtX,numtY>>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
-		Plot&Points(const vector<pair<numtX,numtY>>&points,const string&&title=""){
+		Plot&Points(const vector<point<numtX,numtY>>&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(const vector<pair<numtX,numtY>>&&points,const string&&title=""){
+		Plot&Points(const vector<point<numtX,numtY>>&&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Points(const initializer_list<pair<numtX,numtY>>&&points,const string&&title=""){
+		Plot&Points(const initializer_list<point<numtX,numtY>>&&points,const string&&title=""){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
 		Plot&Points(const SortedPoints<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"using 1:2",title);
 			return *this;
 		}
@@ -167,7 +167,7 @@ namespace GnuplotWrap{
 		}
 		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&data](ofstream&str){
-				for(const point<numtX,numtY> p:data)
+				for(const auto p:data)
 					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<endl;
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;

@@ -25,24 +25,24 @@ TEST(Sympson,BaseTest2){
 TEST(Int_Trapez_Table,BasicTest){
 	LinearInterpolation<double> func;
 	for(double x=0;x<=1;x+=0.0001)
-		func<<make_pair(x,x*x);
+		func<<point<double>(x,x*x);
 	auto res=Int_Trapez_Table(func);
-	EXPECT_EQ(func.left().first,res.left().first);
-	EXPECT_EQ(func.right().first,res.right().first);
-	EXPECT_EQ(0,res.left().second);
-	_EQ(0.33333333,res.right().second);
-	cout<<res.right().second<<endl;
+	EXPECT_EQ(func.left().X(),res.left().X());
+	EXPECT_EQ(func.right().X(),res.right().X());
+	EXPECT_EQ(0,res.left().Y());
+	_EQ(0.33333333,res.right().Y());
+	cout<<res.right().Y()<<endl;
 }
 TEST(Int_Trapez_Table_PositiveStrict,BasicTest){
 	LinearInterpolation<double> func;
 	for(double x=0;x<=1;x+=0.0001)
-		func<<make_pair(x,x*x);
+		func<<point<double>(x,x*x);
 	auto res=Int_Trapez_Table_PositiveStrict(func);
-	EXPECT_EQ(func.left().first,res.left().first);
-	EXPECT_EQ(func.right().first,res.right().first);
-	EXPECT_EQ(0,res.left().second);
-	_EQ(0.333333,res.right().second);
-	cout<<res.right().second<<endl;
+	EXPECT_EQ(func.left().X(),res.left().X());
+	EXPECT_EQ(func.right().X(),res.right().X());
+	EXPECT_EQ(0,res.left().Y());
+	_EQ(0.333333,res.right().Y());
+	cout<<res.right().Y()<<endl;
 }
 TEST(Convolution,BasicTest){
 	auto F1=[](double x){return x;};

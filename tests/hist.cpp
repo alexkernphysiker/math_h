@@ -8,7 +8,7 @@ using namespace std;
 using namespace MathTemplates;
 TEST(point,basetest){
 	value<double> x(25),y(78);
-	point<double> p(x,y);
+	point<value<double>> p(x,y);
 	EXPECT_EQ(x.val(),p.X().val());
 	EXPECT_EQ(x.delta(),p.X().delta());
 	EXPECT_EQ(y.val(),p.Y().val());

@@ -8,46 +8,9 @@
 #include <functional>
 #include "error.h"
 #include "sigma.h"
-#include "interpolate.h"
+#include "structures.h"
 namespace MathTemplates{
 	using namespace std;
-	template<class numtX,class numtY=numtX>class point{
-	private:
-		value<numtX> x;
-		value<numtY> y;
-	public:
-		point(const value<numtX>&pos):x(pos){}
-		point(const value<numtX>&&pos):x(pos){}
-		point(const value<numtX>&pos,const value<numtY>&val):x(pos),y(val){}
-		point(const value<numtX>&&pos,const value<numtY>&val):x(pos),y(val){}
-		point(const value<numtX>&pos,const value<numtY>&&val):x(pos),y(val){}
-		point(const value<numtX>&&pos,const value<numtY>&&val):x(pos),y(val){}
-		point(const point&source):x(source.x),y(source.y){}
-		const value<numtX>&X()const{return x;}
-		const value<numtY>&Y()const{return y;}
-	protected:
-		value<numtX>&__X(){return x;}
-		value<numtY>&__Y(){return y;}
-	};
-	template<class numtX,class numtY=numtX> class point_editable_x:public point<numtX,numtY>{
-	public:
-		point_editable_x(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable_x(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
-		value<numtX>&varX(){return point<numtX,numtY>::__X();}
-	};
-	template<class numtX,class numtY=numtX> class point_editable_y:public point<numtX,numtY>{
-	public:
-		point_editable_y(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable_y(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
-		value<numtY>&varY(){return point<numtX,numtY>::__Y();}
-	};
-	template<class numtX,class numtY=numtX> class point_editable:public point<numtX,numtY>{
-	public:
-		point_editable(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
-		point_editable(const point<numtX,numtY>&&source):point<numtX,numtY>(source){}
-		value<numtX>&varX(){return point<numtX,numtY>::__X();}
-		value<numtY>&varY(){return point<numtX,numtY>::__Y();}
-	};
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class point3d{
 	private:
@@ -69,7 +32,7 @@ namespace MathTemplates{
 	
 	template<class numtX,class numtY=numtX>class hist{
 	public:
-		typedef point_editable_y<numtX,numtY> Point;
+		typedef point_editable_y<value<numtX>,value<numtY>> Point;
 	private:
 		vector<Point> m_data;
 	public:
