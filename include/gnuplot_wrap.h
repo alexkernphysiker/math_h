@@ -11,9 +11,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <exception>
-#include <math_h/interpolate.h>
-#include <math_h/sigma.h>
-#include <math_h/hist.h>
+#include <math_h/structures.h>
 namespace GnuplotWrap{
 	using namespace std;
 	using namespace MathTemplates;

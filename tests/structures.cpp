@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <math.h>
-#include <math_h/hist.h>
+#include <math_h/structures.h>
 using namespace std;
 using namespace MathTemplates;
 TEST(point,basetest){

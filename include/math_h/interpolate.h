@@ -7,7 +7,6 @@
 #include <functional>
 #include "functions.h"
 #include "structures.h"
-#include "error.h"
 namespace MathTemplates{
 	using namespace std;
 	template<class numX, class numY=numX>
