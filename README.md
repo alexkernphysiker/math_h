@@ -38,6 +38,10 @@ Header files
 	gnuplot_wrap.h - header for gnuplot interface library (libgpwrap)
 
 
+Examples
+========
+	Examples/*.cpp - simple programs that show how to use this template classes
+	
 
 Tests
 =====
