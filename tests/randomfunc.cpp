@@ -39,7 +39,7 @@ void TestRandomDistribution(function<double(double)> F,double from,double to,int
 	double step=(to-from)/double(bins);
 	Distribution1D<double> D(BinsByStep(from,step,to));
 	double norm=Sympson(F,from,to,0.0001);
-	int N=3000;
+	int N=500;
 	for(int i=0;i<N;i++)D<<R(rnd);
 	double S=0;
 	for(const auto&p:D){
@@ -51,7 +51,7 @@ void TestRandomDistribution(function<double(double)> F,double from,double to,int
 	}
 	S/=D.size();
 	printf("chi^2=%f\n",S);
-	EXPECT_TRUE(S<1.5);
+	EXPECT_TRUE(S<0.5);
 }
 TEST(RandomValueGenerator,Uniform){TestRandomDistribution([](double){return 1.0;},0,10,20);}
 TEST(RandomValueGenerator,Linear){TestRandomDistribution([](double x){return x;},0,10,20);}
