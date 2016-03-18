@@ -3,7 +3,7 @@
 #ifndef GRIVHOWXKUEHYGQF
 #	define GRIVHOWXKUEHYGQF
 #include "functions.h"
-#include "interpolate.h"
+#include "structures.h"
 #include "error.h"
 namespace MathTemplates{
 	using namespace std;

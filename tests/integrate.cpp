@@ -23,7 +23,7 @@ TEST(Sympson,BaseTest2){
 	_EQ(1.0,Sympson([](double x){return Gaussian(x,5.0,1.0);},0.0,10.0,0.0001));
 }
 TEST(Int_Trapez_Table,BasicTest){
-	LinearInterpolation<double> func;
+	SortedPoints<double> func;
 	for(double x=0;x<=1;x+=0.0001)
 		func<<point<double>(x,x*x);
 	auto res=Int_Trapez_Table(func);
@@ -34,7 +34,7 @@ TEST(Int_Trapez_Table,BasicTest){
 	cout<<res.right().Y()<<endl;
 }
 TEST(Int_Trapez_Table_PositiveStrict,BasicTest){
-	LinearInterpolation<double> func;
+	SortedPoints<double> func;
 	for(double x=0;x<=1;x+=0.0001)
 		func<<point<double>(x,x*x);
 	auto res=Int_Trapez_Table_PositiveStrict(func);

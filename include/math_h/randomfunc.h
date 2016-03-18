@@ -5,9 +5,9 @@
 #include <random>
 #include <functional>
 #include <math.h>
+#include "structures.h"
 #include "interpolate.h"
 #include "integrate.h"
-#include "error.h"
 namespace MathTemplates{
 	using namespace std;
 	template<class numt,class RG=mt19937>

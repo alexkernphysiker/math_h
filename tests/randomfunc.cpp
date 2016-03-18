@@ -4,8 +4,6 @@
 #include <vector>
 #include <math.h>
 #include <math_h/randomfunc.h>
-#include <math_h/structures.h>
-#include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
 mt19937 rnd;
