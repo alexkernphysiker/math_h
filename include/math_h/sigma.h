@@ -110,6 +110,16 @@ namespace MathTemplates{
 	bool operator>(const value<numt>&a,const value<numt>&&b){return a.val()>b.val();}
 	template<typename numt>
 	bool operator>(const value<numt>&&a,const value<numt>&&b){return a.val()>b.val();}
+
+	template<typename numt>
+	bool operator==(const value<numt>&a,const value<numt>&b){return a.val()==b.val();}
+	template<typename numt>
+	bool operator==(const value<numt>&&a,const value<numt>&b){return a.val()==b.val();}
+	template<typename numt>
+	bool operator==(const value<numt>&a,const value<numt>&&b){return a.val()==b.val();}
+	template<typename numt>
+	bool operator==(const value<numt>&&a,const value<numt>&&b){return a.val()==b.val();}
+	
 	
 	template<typename numt>
 	class Sigma{

@@ -40,7 +40,7 @@ void TestRandomDistribution(function<double(double)> F,double from,double to,int
 	Distribution1D<double> D(BinsByStep(from,step,to));
 	double norm=Sympson(F,from,to,0.0001);
 	int N=500;
-	for(int i=0;i<N;i++)D<<R(rnd);
+	for(int i=0;i<N;i++)D.Fill(R(rnd));
 	double S=0;
 	for(const auto&p:D){
 		double n_exp=step*double(N);
