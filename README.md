@@ -28,12 +28,12 @@ Header files
 ============
 	math_h/bit_opr.h - useful templates for constructing bit masks
 	math_h/error.h - template exception class that requires "what"-message as constructor argument and the template parameter is the name of class that throws it.
-	math_h/interpolate.h - templates for searching in sorted arrays and for linear interpolated functions based on table data.
-	math_h/integrate.h - templates for calculating numeric integrals
-	math_h/sigma.h - templates for calculations of dispersion and wieghted average.
-	math_h/hist.h - template classes for creating histograms
+	math_h/functions.h - interface IFunction and some useful template functions.
+	math_h/sigma.h - class for representing value with uncertainty and templates for calculations of dispersion and wieghted average.
+	math_h/structures.h - classes for representing data structures usually useful in calculations
+	math_h/interpolate.h - interpolation algorithm(s).
+	math_h/integrate.h - calculating numeric integrals
 	math_h/randomfunc.h - templates for generating random values distributed by given function.
-	math_h/functions.h - templates for functions that I frequently need in my calculations.
 
 	gnuplot_wrap.h - header for gnuplot interface library (libgpwrap)
 
