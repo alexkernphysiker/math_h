@@ -28,6 +28,8 @@ TEST(RandomValueGenerator,Throwing){
 	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,0.0)),Exception<vector<double>>);
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,1.0)));
 	EXPECT_NO_THROW(RandomValueGenerator<double>(z,ChainWithCount(2,0.0,1.0)));
+	EXPECT_NO_THROW(RandomValueGenerator<double>(f,{0.0,1.0}));
+	EXPECT_NO_THROW(RandomValueGenerator<double>({point<double>(0.0,1.0),point<double>(1.0,1.0)}));
 	EXPECT_THROW(RandomValueGenerator<double>(z,ChainWithCount(0,0.0,0.0)),Exception<vector<double>>);
 	auto n=[](double x){return sin(10*x);};
 	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<SortedPoints<double>>);
