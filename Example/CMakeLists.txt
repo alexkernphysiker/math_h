@@ -1,0 +1,2 @@
+add_executable(interpolation interpolation.cpp)
+target_link_libraries(interpolation gpwrap)
