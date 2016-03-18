@@ -120,7 +120,7 @@ namespace GnuplotWrap{
 		Plot&Line(const SortedPoints<numtX,numtY>&points,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&points](ofstream&data){
 				for(const auto&p:points)
-					data<<p.first<<" "<<p.second<<endl;
+					data<<p.X()<<" "<<p.Y()<<endl;
 			},"w l",title);
 			return *this;
 		}
