@@ -168,7 +168,12 @@ namespace MathTemplates{
 			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
 		}
 		virtual ~SortedPoints(){}
-
+		SortedPoints& operator=(const SortedPoints&points){
+			data.clear();
+			for(const auto&p:points.data)operator<<(p);
+			return *this;
+		}
+		
 		const size_t size()const{return data.size();}
 		const point<numX,numY>&operator[](const int i)const{
 			if(size()<=i)
@@ -426,6 +431,10 @@ namespace MathTemplates{
 		hist(const vector<Point>&&data):hist(data){}
 		hist(const SortedPoints<value<numtX>,value<numtY>>&source):SortedPoints<value<numtX>,value<numtY>>(source){}
 		virtual ~hist(){}
+		hist& operator=(const SortedPoints<value<numtX>,value<numtY>>&points){
+			SortedPoints<value<numtX>,value<numtY>>::operator=(points);
+			return *this;
+		}
 		//Simple transform
 		hist CloneEmptyBins()const{
 			vector<Point> initer;
@@ -448,28 +457,6 @@ namespace MathTemplates{
 				res<<point<numtX,numtY>(P.X().val(),P.Y().val());
 			return res;
 		}
-		//Arithmetic
-		hist&operator+=(const function<numtY(numtX)>f){
-			for(size_t i=0,n=this->size();i<n;i++)
-				this->Bin(i).varY()+=value<numtY>(f(this->operator[](i).X().val()),0);
-			return *this;
-		}
-		hist&operator-=(const function<numtY(numtX)>f){
-			for(size_t i=0,n=this->size();i<n;i++)
-				this->Bin(i).varY()-=value<numtY>(f(this->operator[](i).X().val()),0);
-			return *this;
-		}
-		hist&operator*=(const function<numtY(numtX)>f){
-			for(size_t i=0,n=this->size();i<n;i++)
-				this->Bin(i).varY()*=value<numtY>(f(this->operator[](i).X().val()),0);
-			return *this;
-		}
-		hist&operator/=(const function<numtY(numtX)>f){
-			for(size_t i=0,n=this->size();i<n;i++)
-				this->Bin(i).varY()/=value<numtY>(f(this->operator[](i).X().val()),0);
-			return *this;
-		}
-		
 		//Advanced transrormations
 		const hist Scale(const size_t sc_x)const{
 			//uncertanties are set to standard sqrt
@@ -501,25 +488,6 @@ namespace MathTemplates{
 			return *this;
 		}
 	};
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator+(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator+(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
-
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator-(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator-(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
-	
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator*(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator*(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
-	
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator/(const hist<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
-	template<class numtX,class numtY>
-	inline const hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
 	
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class hist2d{

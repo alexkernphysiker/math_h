@@ -163,15 +163,15 @@ namespace GnuplotWrap{
 		Plot&Points(const SortedPoints<numtX,numtY>&&points,const string&&title=""){
 			return Points(points,title);
 		}
-		Plot&Hist(const hist<numtX,numtY>&data,const string&title){
+		Plot&Hist(const SortedPoints<value<numtX>,value<numtY>>&data,const string&title){
 			Plot<numtX,numtY>::OutputPlot([&data](ofstream&str){
 				for(const auto p:data)
 					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<endl;
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}
-		Plot&Hist(const hist<numtX,numtY>&data,const string&&title=""){return Hist(data,title);}
-		Plot&Hist(const hist<numtX,numtY>&&data,const string&&title=""){return Hist(data,title);}
+		Plot&Hist(const SortedPoints<value<numtX>,value<numtY>>&data,const string&&title=""){return Hist(data,title);}
+		Plot&Hist(const SortedPoints<value<numtX>,value<numtY>>&&data,const string&&title=""){return Hist(data,title);}
 	};
 	
 	enum TypeOf3D{normal,sp2};
