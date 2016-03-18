@@ -216,6 +216,7 @@ namespace MathTemplates{
 		}
 		
 		//Arithmetic operations
+		typedef function<numY(const numX&)> Func;
 		SortedPoints&operator+=(const SortedPoints& second){
 			for(size_t i=0,n=size();i<n;i++){
 				if(data[i].X()==second[i].X())
@@ -225,7 +226,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator+=(const function<numY(numX)>f){
+		SortedPoints&operator+=(const Func f){
 			for(size_t i=0,n=size();i<n;i++)
 				data[i].varY()+=f(data[i].X());
 			return *this;
@@ -248,7 +249,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator-=(const function<numY(numX)>f){
+		SortedPoints&operator-=(const Func f){
 			for(size_t i=0,n=size();i<n;i++)
 				data[i].varY()-=f(data[i].X());
 			return *this;
@@ -271,7 +272,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator*=(const function<numY(numX)>f){
+		SortedPoints&operator*=(const Func f){
 			for(size_t i=0,n=size();i<n;i++)
 				data[i].varY()*=f(data[i].X());
 			return *this;
@@ -294,7 +295,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator/=(const function<numY(numX)>f){
+		SortedPoints&operator/=(const Func f){
 			for(size_t i=0,n=size();i<n;i++)
 				data[i].varY()/=f(data[i].X());
 			return *this;
@@ -318,9 +319,9 @@ namespace MathTemplates{
 	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&&a,const SortedPoints<numtX,numtY>&&b){auto res=a;res+=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res+=b;return res;}
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res+=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res+=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline const SortedPoints<numtX,numtY> operator+(const SortedPoints<numtX,numtY>&a,const numtY&b){auto res=a;res+=b;return res;}
@@ -341,9 +342,9 @@ namespace MathTemplates{
 	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&&a,const SortedPoints<numtX,numtY>&&b){auto res=a;res-=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res-=b;return res;}
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res-=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res-=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline const SortedPoints<numtX,numtY> operator-(const SortedPoints<numtX,numtY>&a,const numtY&b){auto res=a;res-=b;return res;}
@@ -364,9 +365,9 @@ namespace MathTemplates{
 	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&&a,const SortedPoints<numtX,numtY>&&b){auto res=a;res*=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res*=b;return res;}
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res*=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res*=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline const SortedPoints<numtX,numtY> operator*(const SortedPoints<numtX,numtY>&a,const numtY&b){auto res=a;res*=b;return res;}
@@ -387,9 +388,9 @@ namespace MathTemplates{
 	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&&a,const SortedPoints<numtX,numtY>&&b){auto res=a;res/=b;return res;}
 	
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res/=b;return res;}
 	template<class numtX,class numtY>
-	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&&a,const function<numtY(numtX)>b){auto res=a;res/=b;return res;}
+	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&&a,const typename SortedPoints<numtX,numtY>::Func b){auto res=a;res/=b;return res;}
 	
 	template<class numtX,class numtY>
 	inline const SortedPoints<numtX,numtY> operator/(const SortedPoints<numtX,numtY>&a,const numtY&b){auto res=a;res/=b;return res;}
