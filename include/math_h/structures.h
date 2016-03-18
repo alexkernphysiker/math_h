@@ -105,14 +105,14 @@ namespace MathTemplates{
 			if(X[end]==x)return end;
 			return from-1;
 		}
-		template<class comparable,class indexer, class Size, class Insert>
-		void InsertSorted(const comparable&x,indexer&X,const Size size,const Insert insert){
-			insert(details::WhereToInsert(0,size()-1,X,x),x);
-		}
-		template<class comparable,class indexer, class Size, class Insert>
-		void InsertSorted(const comparable&&x,indexer&X,const Size size,const Insert insert){
-			InsertSorted(x,X,size,insert);
-		}
+	}
+	template<class comparable,class indexer, class Size, class Insert>
+	void InsertSorted(const comparable&x,indexer&X,const Size size,const Insert insert){
+		insert(details::WhereToInsert(0,size()-1,X,x),x);
+	}
+	template<class comparable,class indexer, class Size, class Insert>
+	void InsertSorted(const comparable&&x,indexer&X,const Size size,const Insert insert){
+		InsertSorted(x,X,size,insert);
 	}
 	#define std_size(vector) [&vector](){return (vector).size();}
 	#define std_insert(vector,type) [&vector](int pos,type x){(vector).insert((vector).begin()+pos,x);}
@@ -146,7 +146,7 @@ namespace MathTemplates{
 		SortedPoints(){}
 		SortedPoints&operator<<(const point<numX,numY>&p){
 			typedef point_editable_y<numX,numY> P;
-			details::InsertSorted(P(p),data,field_size(data),field_insert(data,P));
+			InsertSorted(P(p),data,field_size(data),field_insert(data,P));
 			return *this;
 		}
 		SortedPoints&operator<<(const point<numX,numY>&&p){
@@ -463,7 +463,7 @@ namespace MathTemplates{
 			//uncertanties are set to standard sqrt
 			vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:*this)
-				details::InsertSorted(item.X(),sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
+				InsertSorted(item.X(),sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
 			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
 				auto min=sorted_x[i+1-sc_x].min();
 				auto max=sorted_x[i].max();
@@ -550,7 +550,7 @@ namespace MathTemplates{
 			//uncertanties are set to standard sqrt
 			vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:X())
-				details::InsertSorted(item,sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
+				InsertSorted(item,sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
 			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
 				auto min=sorted_x[i+1-sc_x].min();
 				auto max=sorted_x[i].max();
@@ -558,7 +558,7 @@ namespace MathTemplates{
 			}
 			vector<value<numtY>> new_y,sorted_y;
 			for(const auto&item:Y())
-				details::InsertSorted(item,sorted_y,std_size(sorted_y),std_insert(sorted_y,value<numtY>));
+				InsertSorted(item,sorted_y,std_size(sorted_y),std_insert(sorted_y,value<numtY>));
 			for(size_t i=sc_y-1,n=sorted_y.size();i<n;i+=sc_y){
 				auto min=sorted_y[i+1-sc_y].min();
 				auto max=sorted_y[i].max();

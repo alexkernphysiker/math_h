@@ -37,7 +37,7 @@ TEST(WhereToInsert,Search){
 TEST(InsertSorted,BasicTest){
 	vector<int> X;
 	for(int i=0;i<50;i++){
-		details::InsertSorted(rand()%10,X,std_size(X),std_insert(X,int));
+		InsertSorted(rand()%10,X,std_size(X),std_insert(X,int));
 		for(int j=0;j<i;j++)
 			EXPECT_TRUE(X[j]<=X[j+1]);
 	}
