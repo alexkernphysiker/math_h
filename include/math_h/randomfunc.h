@@ -26,7 +26,7 @@ namespace MathTemplates{
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const initializer_list<numt>&&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
-		RandomValueGenerator(const numt x1,const numt x2):RandomValueGenerator({make_pair(x1,numt(1)),make_pair(x2,numt(1))}){}
+		RandomValueGenerator(const numt x1,const numt x2):RandomValueGenerator({point<numt>(x1,numt(1)),point<numt>(x2,numt(1))}){}
 		virtual ~RandomValueGenerator(){}
 		numt operator ()(RG&generator)const{
 			uniform_real_distribution<numt> uniform(range.first,range.second);
