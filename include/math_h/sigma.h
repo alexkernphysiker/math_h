@@ -2,6 +2,7 @@
 // MIT license
 #ifndef YJIOGPKSIIYJVKND
 #define YJIOGPKSIIYJVKND
+#include <iostream>
 #include <list>
 #include <vector>
 #include <functional>
@@ -62,7 +63,15 @@ namespace MathTemplates{
 			return *this;
 		}
 	};
-
+	template<typename numt>
+	ostream&operator<<(ostream&str,const value<numt>&P){
+		return str<<P.val()<<"+/-"<<P.delta();
+	}
+	template<typename numt>
+	ostream&operator<<(ostream&str,const value<numt>&&P){
+		return str<<P;
+	}
+	
 	template<typename numt>
 	value<numt> operator*(const function<numt(numt)> F,const value<numt>&X){
 		numt val=F(X.val());
