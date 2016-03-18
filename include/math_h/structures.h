@@ -13,8 +13,8 @@ namespace MathTemplates{
 		numtX x;
 		numtY y;
 	public:
-		point(const numtX&pos):x(pos){}
-		point(const numtX&&pos):x(pos){}
+		point(const numtX&pos):x(pos),y(numtY(0)){}
+		point(const numtX&&pos):x(pos),y(numtY(0)){}
 		point(const numtX&pos,const numtY&val):x(pos),y(val){}
 		point(const numtX&&pos,const numtY&val):x(pos),y(val){}
 		point(const numtX&pos,const numtY&&val):x(pos),y(val){}
@@ -531,7 +531,7 @@ namespace MathTemplates{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++){
 				m_data.push_back(vector<value<numtZ>>());
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
-					m_data[m_data.size()-1].push_back(value<numtZ>(0));
+					m_data[m_data.size()-1].push_back(value<numtZ>::std_error(0));
 			}
 		}
 	public:
@@ -648,7 +648,7 @@ namespace MathTemplates{
 		Distribution1D&operator<<(const numtX v){
 			for(size_t i=0,n=hist<double>::size();i<n;i++)
 				if(hist<double>::Bin(i).X().contains(v))
-					hist<double>::Bin(i).varY()=value<numtY>(hist<double>::Bin(i).Y().val()+numtY(1));
+					hist<double>::Bin(i).varY()=value<numtY>::std_error(hist<double>::Bin(i).Y().val()+numtY(1));
 				return *this;
 		}
 	};
@@ -662,7 +662,7 @@ namespace MathTemplates{
 		Distribution2D&operator<<(const pair<numtX,numtY>&p){
 			for(size_t i=0,I=hist2d<numtX,numtY,numtZ>::X().size();i<I;i++)if(hist2d<numtX,numtY,numtZ>::X()[i].contains(p.first))
 				for(size_t j=0,J=hist2d<numtX,numtY,numtZ>::Y().size();j<J;j++)if(hist2d<numtX,numtY,numtZ>::Y()[j].contains(p.second))
-					hist2d<numtX,numtY,numtZ>::Bin(i,j)=value<numtZ>(hist2d<numtX,numtY,numtZ>::operator[](i)[j].val()+numtZ(1));
+					hist2d<numtX,numtY,numtZ>::Bin(i,j)=value<numtZ>::std_error(hist2d<numtX,numtY,numtZ>::operator[](i)[j].val()+numtZ(1));
 				return *this;
 		}
 		Distribution2D&operator<<(const pair<numtX,numtY>&&p){

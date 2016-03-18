@@ -14,9 +14,15 @@ namespace MathTemplates{
 		numt Value,Error;
 	public:
 		value():Value(0),Error(0){}
-		value(const double v):Value(v),Error(sqrt(v)){if(Error<1)Error=1;}
-		value(const double v,const double err):Value(v),Error(err){
+		value(const numt v):Value(v),Error(numt(0)){if(Error<1)Error=1;}
+		value(const numt v,const numt err):Value(v),Error(err){
 			if(Error<0)throw Exception<value>("Error cannot be negative");
+		}
+		static value std_error(const numt v){
+			if(v<0)throw Exception<value>("Cannot calculate std error for negative value");
+			auto res=value(v,sqrt(v));
+			if(res.Error<numt(1))res.Error=numt(1);
+			return res;
 		}
 		value(const value&source):Value(source.Value),Error(source.Error){}
 		
