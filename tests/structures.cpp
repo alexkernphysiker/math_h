@@ -94,6 +94,17 @@ TEST(SortedPoints,size2){
 		EXPECT_EQ(i,chain[i].X().val());
 	}
 }
+TEST(SortedPoints,range){
+	SortedPoints<double> chain({point<double>(0,1),point<double>(2,1.1),point<double>(3,1.2),point<double>(4,1.3),point<double>(5,1.4)});
+	auto xcut=chain.XRange(0.5,4.5);
+	EXPECT_EQ(3,xcut.size());
+	EXPECT_EQ(2,xcut.left().X());
+	EXPECT_EQ(4,xcut.right().X());
+	auto ycut=chain.YRange(1.15,1.35).Transponate();
+	EXPECT_EQ(2,ycut.size());
+	EXPECT_EQ(1.2,ycut.left().X());
+	EXPECT_EQ(1.3,ycut.right().X());
+}
 
 
 

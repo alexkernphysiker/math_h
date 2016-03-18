@@ -222,12 +222,31 @@ namespace MathTemplates{
 				res<<point<numX,numY>(p.Y(),p.X());
 			return res;
 		}
+		const SortedPoints XRange(const numX from,const numX to)const{
+			SortedPoints res;
+			for(const auto&P:*this)
+				if((P.X()>=from)&&(P.X()<=to))
+					res<<P;
+				return res;
+		}
+		const SortedPoints YRange(const numY from,const numY to)const{
+			SortedPoints res;
+			for(const auto&P:*this)
+				if((P.Y()>=from)&&(P.Y()<=to))
+					res<<P;
+				return res;
+		}
 		SortedPoints&FillWithValues(const numY&v){
 			for(point_editable_y<numX,numY>&P:data)P.varY()=v;
 			return *this;
 		}
 		SortedPoints&FillWithValues(const numY&&v){
 			return FillWithValues(v);
+		}
+		SortedPoints&Transform(const function<numY(const numX&,const numY&)>&F){
+			for(point_editable_y<numX,numY>&P:data)
+				P.varY()=F(P.X(),P.Y());
+			return *this;
 		}
 		
 		//Arithmetic operations
