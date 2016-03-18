@@ -136,6 +136,21 @@ namespace MathTemplates{
 		for(numX x=from;x<=to;x+=step)res.push_back(x);
 		return res;
 	}
+	template<class numt>
+	const vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
+		if(0>=step)throw Exception<vector<value<numt>>>("wrong bin width");
+		if(to<=from)throw Exception<vector<value<numt>>>("wrong range");
+		numt delta=step/numt(2);
+		vector<value<numt>> res;
+		for(numt x=from+delta;x<to;x+=step)
+			res.push_back(value<numt>(x,delta));
+		return res;
+	}
+	template<class numt>
+	const vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
+		if(0==count)throw Exception<vector<value<numt>>>("wrong bins count");
+		return BinsByStep(from,(to-from)/numt(count),to);
+	}
 	
 	
 	template<class numX, class numY=numX>

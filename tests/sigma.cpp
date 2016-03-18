@@ -1,6 +1,7 @@
 // this file is distributed under 
 // MIT license
 #include <random>
+#include <math.h>
 #include <gtest/gtest.h>
 #include <math_h/sigma.h>
 using namespace std;
@@ -31,28 +32,35 @@ TEST(value,contains){
 	EXPECT_EQ(true,V.contains(0.05));
 	EXPECT_EQ(false,V.contains(0.2));
 }
+#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
+TEST(value,func_mul){
+	value<double> V(1,0.1);
+	function<double(double)> F=[](double x)->double{return 2.0*x;};
+	auto V2=F*V;
+	EXPECT_EQ(2*V.val(),V2.val());
+	_EQ(2*V.delta(),V2.delta());
+}
 TEST(Sigma,Throwing){
 	Sigma<double> S;
 	EXPECT_EQ(0,S.count());
-	EXPECT_THROW(S.get(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S<<0.0));
 	EXPECT_EQ(1,S.count());
-	EXPECT_THROW(S.get(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<Sigma<double>>);
 	EXPECT_EQ(&S,&(S<<0.0));
 	EXPECT_EQ(2,S.count());
-	EXPECT_EQ(0,S.get().val());
-	EXPECT_EQ(0,S.get().delta());
+	EXPECT_EQ(0,S().val());
+	EXPECT_EQ(0,S().delta());
 }
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(Sigma,Base){
 	Sigma<double> S;
 	S<<0.0;
 	EXPECT_EQ(1,S.count());
-	EXPECT_THROW(S.get(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<Sigma<double>>);
 	S<<1.0;
 	EXPECT_EQ(2,S.count());
-	EXPECT_EQ(0.5,S.get().val());
-	EXPECT_EQ(sqrt(0.5),S.get().delta());
+	EXPECT_EQ(0.5,S().val());
+	EXPECT_EQ(sqrt(0.5),S().delta());
 }
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(Sigma,WithRandomValues){
@@ -61,8 +69,8 @@ TEST(Sigma,WithRandomValues){
 	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)
 		S<<distribution(generator);
-	_EQ2(1.0,S.get().val());
-	_EQ2(3.0,S.get().delta());
+	_EQ2(1.0,S().val());
+	_EQ2(3.0,S().delta());
 }
 TEST(Sigma,WithRandomValues2){
 	Sigma<double> S(2);
@@ -70,51 +78,51 @@ TEST(Sigma,WithRandomValues2){
 	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)
 		S<<distribution(generator);
-	_EQ2(1.0,S.get().val());
-	_EQ2(6.0,S.get().delta());
+	_EQ2(1.0,S().val());
+	_EQ2(6.0,S().delta());
 }
 
 TEST(WeightedAverageCalculator,Zeros){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.get(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_THROW(W<<value<double>(0,0),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
-	_EQ(0,W.get().val());
-	_EQ(1,W.get().delta());
+	_EQ(0,W().val());
+	_EQ(1,W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
-	_EQ(0,W.get().val());
-	_EQ(1.0/sqrt(2.0),W.get().delta());
+	_EQ(0,W().val());
+	_EQ(1.0/sqrt(2.0),W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
-	_EQ(0,W.get().val());
-	_EQ(1.0/sqrt(3.0),W.get().delta());
+	_EQ(0,W().val());
+	_EQ(1.0/sqrt(3.0),W().delta());
 }
 TEST(WeightedAverageCalculator,Ones){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.get(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_THROW(W<<value<double>(1,0),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
-	_EQ(1,W.get().val());
-	_EQ(1,W.get().delta());
+	_EQ(1,W().val());
+	_EQ(1,W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
-	_EQ(1,W.get().val());
-	_EQ(1.0/sqrt(2.0),W.get().delta());
+	_EQ(1,W().val());
+	_EQ(1.0/sqrt(2.0),W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
-	_EQ(1,W.get().val());
-	_EQ(1.0/sqrt(3.0),W.get().delta());
+	_EQ(1,W().val());
+	_EQ(1.0/sqrt(3.0),W().delta());
 }
 TEST(WeightedAverageCalculator,Zeros_plus_Ones){
 	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W.get(),Exception<WeightedAverageCalculator<double>>);
+	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
-	_EQ(1,W.get().val());
-	_EQ(1,W.get().delta());
+	_EQ(1,W().val());
+	_EQ(1,W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
-	_EQ(0.5,W.get().val());
-	_EQ(1.0/sqrt(2.0),W.get().delta());
+	_EQ(0.5,W().val());
+	_EQ(1.0/sqrt(2.0),W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
-	_EQ(2.0/3.0,W.get().val());
-	_EQ(1.0/sqrt(3.0),W.get().delta());
+	_EQ(2.0/3.0,W().val());
+	_EQ(1.0/sqrt(3.0),W().delta());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
-	_EQ(0.5,W.get().val());
-	_EQ(1.0/sqrt(4.0),W.get().delta());
+	_EQ(0.5,W().val());
+	_EQ(1.0/sqrt(4.0),W().delta());
 }

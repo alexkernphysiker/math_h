@@ -4,6 +4,7 @@
 #define YJIOGPKSIIYJVKND
 #include <list>
 #include <vector>
+#include <functional>
 #include <math.h>
 #include "error.h"
 namespace MathTemplates{
@@ -13,7 +14,7 @@ namespace MathTemplates{
 	private:
 		numt Value,Error;
 	public:
-		value():Value(0),Error(0){}
+		value():Value(numt(0)),Error(numt(0)){}
 		value(const numt v):Value(v),Error(numt(0)){if(Error<1)Error=1;}
 		value(const numt v,const numt err):Value(v),Error(err){
 			if(Error<0)throw Exception<value>("Error cannot be negative");
@@ -25,6 +26,11 @@ namespace MathTemplates{
 			return res;
 		}
 		value(const value&source):Value(source.Value),Error(source.Error){}
+		value&operator=(const value&source){
+			Value=source.Value;
+			Error=source.Error;
+			return *this;
+		}
 		
 		numt val()const{return Value;}
 		numt delta()const{return Error;}
@@ -56,6 +62,15 @@ namespace MathTemplates{
 			return *this;
 		}
 	};
+
+	template<typename numt>
+	value<numt> operator*(const function<numt(numt)> F,const value<numt>&X){
+		numt val=F(X.val());
+		return value<numt>(val,sqrt( (pow(F(X.min())-val,2)+pow(F(X.max())-val,2)) / numt(2) ));
+	}
+	template<typename numt>
+	value<numt> operator*(const function<numt(numt)> F,const value<numt>&&X){return F*X;}
+	
 	
 	template<typename numt>
 	value<numt> operator+(const value<numt>&a,const value<numt>&b){auto res=a;res+=b;return res;}
@@ -146,7 +161,7 @@ namespace MathTemplates{
 		}
 		const int count()const{return m_list.size();}
 		const numt scaling_factor()const{return m_scale;}
-		const value<numt>&get()const{
+		const value<numt>&operator()()const{
 			if(isfinite(m_cache->val())){
 				return *m_cache;
 			}else{
@@ -187,7 +202,7 @@ namespace MathTemplates{
 		WeightedAverageCalculator &operator<<(const value<numt>&&X){
 			return operator<<(X);
 		}
-		const value<numt>&get()const{
+		const value<numt>&operator()()const{
 			if(isfinite(m_cache->val())){
 				return *m_cache;
 			}else{
@@ -197,20 +212,5 @@ namespace MathTemplates{
 			}
 		}
 	};
-	template<class numt>
-	const vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
-		if(0>=step)throw Exception<vector<value<numt>>>("wrong bin width");
-		if(to<=from)throw Exception<vector<value<numt>>>("wrong range");
-		numt delta=step/numt(2);
-		vector<value<numt>> res;
-		for(numt x=from+delta;x<to;x+=step)
-			res.push_back(value<numt>(x,delta));
-		return res;
-	}
-	template<class numt>
-	const vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
-		if(0==count)throw Exception<vector<value<numt>>>("wrong bins count");
-		return BinsByStep(from,(to-from)/numt(count),to);
-	}
 };
 #endif
