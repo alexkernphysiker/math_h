@@ -13,10 +13,10 @@ int main(){
 	normal_distribution<double> d1(2,1);
 	normal_distribution<double> d2(5,1);
 	Sigma<double> S1,S2,S_sum;
-	
 	for(size_t i=0;i<5000;i++){
 		double a=d1(engine),b=d2(engine);
-		S1<<a;S2<<b;S_sum<<(a+b);
+		S1<<a;S2<<b;
+		S_sum<<(a+b);
 	}
 	
 	cout<<"magnitude 1 = "<<S1().val()<<"+/-"<<S1().delta()<<endl;
