@@ -151,7 +151,7 @@ namespace MathTemplates{
 		}
 		virtual ~SortedPoints(){}
 
-		int size()const{return data.size();}
+		const size_t size()const{return data.size();}
 		const point<numX,numY>&operator[](const int i)const{
 			if(size()<=i)
 				throw Exception<SortedPoints>("Range check error");
@@ -172,8 +172,6 @@ namespace MathTemplates{
 				throw Exception<SortedPoints>("Attempt to obtain empty properties.");
 			return data[size()-1];
 		}
-		numX min()const{return left().X();}
-		numX max()const{return right().X();}
 		//Arithmetic actions
 		const SortedPoints<numY,numX> Transponate()const{
 			SortedPoints<numY,numX> res;

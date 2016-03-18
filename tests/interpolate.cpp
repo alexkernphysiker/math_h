@@ -9,17 +9,17 @@ using namespace MathTemplates;
 TEST(LinearInterpolation,Create){
 	LinearInterpolation<double> F;
 	EXPECT_EQ(0,F.size());
-	EXPECT_THROW(F.min(),Exception<SortedPoints<double>>);
-	EXPECT_THROW(F.max(),Exception<SortedPoints<double>>);
+	EXPECT_THROW(F.left().X(),Exception<SortedPoints<double>>);
+	EXPECT_THROW(F.right().X(),Exception<SortedPoints<double>>);
 	EXPECT_EQ(&F,&(F<<point<double>(0,0)));
 	EXPECT_EQ(1,F.size());
-	EXPECT_NO_THROW(F.min());
-	EXPECT_NO_THROW(F.max());
+	EXPECT_NO_THROW(F.left().X());
+	EXPECT_NO_THROW(F.right().X());
 	EXPECT_THROW(F(0.5),Exception<LinearInterpolation<double>>);
 	EXPECT_EQ(&F,&(F<<point<double>(1,0)));
 	EXPECT_EQ(2,F.size());
-	EXPECT_NO_THROW(F.min());
-	EXPECT_NO_THROW(F.max());
+	EXPECT_NO_THROW(F.left().X());
+	EXPECT_NO_THROW(F.right().X());
 	EXPECT_EQ(0,F(0.5));
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.0001)

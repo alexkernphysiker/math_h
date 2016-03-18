@@ -50,6 +50,53 @@ TEST(point,basetest){
 	EXPECT_EQ(y.val(),p.Y().val());
 	EXPECT_EQ(y.delta(),p.Y().delta());
 }
+TEST(SortedPoints,size1){
+	SortedPoints<double> chain;
+	EXPECT_EQ(0,chain.size());
+	chain<<point<double>(0,1);
+	EXPECT_EQ(1,chain.size());
+	chain<<point<double>(2,1);
+	EXPECT_EQ(2,chain.size());
+	chain<<point<double>(1,1);
+	EXPECT_EQ(3,chain.size());
+	chain<<point<double>(3,1);
+	EXPECT_EQ(4,chain.size());
+	chain<<point<double>(5,1);
+	EXPECT_EQ(5,chain.size());
+	chain<<point<double>(4,1);
+	EXPECT_EQ(6,chain.size());
+	EXPECT_EQ(0,chain.left().X());
+	EXPECT_EQ(5,chain.right().X());
+	for(size_t i=0;i<chain.size();i++){
+		EXPECT_EQ(1,chain[i].Y());
+		EXPECT_EQ(i,chain[i].X());
+	}
+}
+TEST(SortedPoints,size2){
+	SortedPoints<value<double>> chain;
+	EXPECT_EQ(0,chain.size());
+	chain<<point<value<double>>(0,1);
+	EXPECT_EQ(1,chain.size());
+	chain<<point<value<double>>(2,1);
+	EXPECT_EQ(2,chain.size());
+	chain<<point<value<double>>(1,1);
+	EXPECT_EQ(3,chain.size());
+	chain<<point<value<double>>(3,1);
+	EXPECT_EQ(4,chain.size());
+	chain<<point<value<double>>(5,1);
+	EXPECT_EQ(5,chain.size());
+	chain<<point<value<double>>(4,1);
+	EXPECT_EQ(6,chain.size());
+	EXPECT_EQ(0,chain.left().X().val());
+	EXPECT_EQ(5,chain.right().X().val());
+	for(size_t i=0;i<chain.size();i++){
+		EXPECT_EQ(1,chain[i].Y().val());
+		EXPECT_EQ(i,chain[i].X().val());
+	}
+}
+
+
+
 TEST(hist,scale_norm){
 	hist<double> H(BinsByCount(10,0.0,1.0));
 	for(size_t i=0;i<H.size();i++)

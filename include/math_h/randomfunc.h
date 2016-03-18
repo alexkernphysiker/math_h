@@ -19,7 +19,7 @@ namespace MathTemplates{
 		RandomValueGenerator(const RandomValueGenerator &R):reverse_distr_func(R.reverse_distr_func),range(R.range){}
 		RandomValueGenerator(const SortedPoints<numt,numt>&distribution_density)
 			:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate())
-			,range(reverse_distr_func.min(),reverse_distr_func.max()){}
+			,range(reverse_distr_func.left().X(),reverse_distr_func.right().X()){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const vector<numt>&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const vector<numt>&&chain)
