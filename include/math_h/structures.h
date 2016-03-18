@@ -213,27 +213,6 @@ namespace MathTemplates{
 		}
 	};
 	
-	
-	
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
-	class point3d{
-	private:
-		value<numtX> x;
-		value<numtY> y;
-		value<numtZ> z;
-	public: 
-		point3d(const value<numtX>&_x,const value<numtY>&_y,const value<numtZ>&_z)
-		:x(_x),y(_y),z(_z){}
-		point3d(const value<numtX>&&_x,const value<numtY>&&_y,const value<numtZ>&&_z)
-		:x(_x),y(_y),z(_z){}
-		point3d(const numtX _x,const numtY _y,const numtZ _z)
-		:x(_x,0),y(_y,0),z(_z,0){}
-		virtual ~point3d(){}
-		const value<numtX>&X()const{return x;}
-		const value<numtY>&Y()const{return y;}
-		const value<numtZ>&Z()const{return z;}
-	};
-	
 	template<class numtX,class numtY=numtX>class hist{
 	public:
 		typedef point_editable_y<value<numtX>,value<numtY>> Point;
@@ -526,6 +505,23 @@ namespace MathTemplates{
 	template<class numtX,class numtY>
 	inline hist<numtX,numtY> operator/(const hist<numtX,numtY>&&a,const value<numtY>&&b){return a/b;}
 	
+	
+	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	class point3d{
+	private:
+		numtX x;
+		numtY y;
+		numtZ z;
+	public: 
+		point3d(const numtX&_x,const numtY&_y,const numtZ&_z)
+		:x(_x),y(_y),z(_z){}
+		point3d(const numtX&&_x,const numtY&&_y,const numtZ&&_z)
+		:x(_x),y(_y),z(_z){}
+		virtual ~point3d(){}
+		const numtX&X()const{return x;}
+		const numtY&Y()const{return y;}
+		const numtZ&Z()const{return z;}
+	};
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class hist2d{
 	private:
@@ -619,15 +615,15 @@ namespace MathTemplates{
 			return *this;
 		}
 		
-		const point3d<numtX,numtY,numtZ> operator()(const size_t i,const size_t j)const{
+		const point3d<value<numtX>,value<numtY>,value<numtZ>> operator()(const size_t i,const size_t j)const{
 			if(size()<=i)throw Exception<hist2d>("range check error");
 			if(m_y_axis.size()<=j)throw Exception<hist2d>("range check error");
-			return point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+			return point3d<value<numtX>,value<numtY>,value<numtZ>>(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycle(const function<void(const point3d<numtX,numtY,numtZ>&)>f)const{
+		void FullCycle(const function<void(const point3d<value<numtX>,value<numtY>,value<numtZ>>&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++){
-					point3d<numtX,numtY,numtZ> P(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+					point3d<value<numtX>,value<numtY>,value<numtZ>> P(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 					f(P);
 				}
 		}

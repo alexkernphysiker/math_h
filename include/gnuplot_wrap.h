@@ -197,12 +197,12 @@ namespace GnuplotWrap{
 			}
 			return filename;
 		}
-		string Points2File(const vector<point3d<numtX,numtY,numtZ>>&points){
+		string Points2File(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points){
 			string filename=Plotter::Instance().GetFileName();
 			ofstream data;
 			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
 			if(data.is_open()){
-				for(const point3d<numtX,numtY,numtZ>&p:points)
+				for(const point3d<value<numtX>,value<numtY>,value<numtZ>>&p:points)
 					data<<p.X().val()<<" "<<p.Y().val()<<" "<<p.Z().val()<<endl;
 				data.close();
 			}
@@ -249,19 +249,19 @@ namespace GnuplotWrap{
 		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&D,const string&&title=""){return Distr(D,title);}
 		PlotHist2d&Distr(const hist2d<numtX,numtY,numtZ>&&D,const string&&title=""){return Distr(D,title);}
 		
-		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&points,const string&title=""){
+		PlotHist2d&Points(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points,const string&title=""){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
 		}
-		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const vector<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const initializer_list<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Points(vector<point3d<numtX,numtY,numtZ>>(points),title);}
+		PlotHist2d&Points(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points,const string&&title=""){return Points(points,title);}
+		PlotHist2d&Points(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&&points,const string&&title=""){return Points(points,title);}
+		PlotHist2d&Points(const initializer_list<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points,const string&&title=""){return Points(vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>(points),title);}
 		
-		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&points,const string&title){
+		PlotHist2d&Line(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points,const string&title){
 			return Object(string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
 		}
-		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&points,const string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const vector<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const initializer_list<point3d<numtX,numtY,numtZ>>&&points,const string&&title=""){return Line(vector<point3d<numtX,numtY,numtZ>>(points),title);}
+		PlotHist2d&Line(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&points,const string&&title=""){return Line(points,title);}
+		PlotHist2d&Line(const vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>&&points,const string&&title=""){return Line(points,title);}
+		PlotHist2d&Line(const initializer_list<point3d<value<numtX>,value<numtY>,value<numtZ>>>&&points,const string&&title=""){return Line(vector<point3d<value<numtX>,value<numtY>,value<numtZ>>>(points),title);}
 	};
 };
 #endif
