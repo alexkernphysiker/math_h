@@ -13,7 +13,7 @@ int main(){
 	
 	mt19937 engine;
 	Distribution2D<double> hist(BinsByCount(40,0.0,4.0),BinsByCount(40,0.0,4.0));
-	for(size_t i=0;i<100000;i++)hist.Fill(make_pair(X(engine),Y(engine)));
+	for(size_t i=0;i<10000;i++)hist.Fill(make_pair(X(engine),Y(engine)));
 	
 	Plotter::Instance().SetOutput(".","randomfunc2");
 	PlotHist2d<double>(sp2).Distr(hist);
