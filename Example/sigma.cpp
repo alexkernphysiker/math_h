@@ -29,5 +29,5 @@ int main(){
 	cout<<"theory mul = "<<S1()*S2()<<endl;
 	cout<<"experiment mul = "<<S_mul()<<endl;
 	cout<<"theory func = "<<F*(S1()+S2())<<endl;
-	cout<<"experiment func = "<<S_f().val()<<"+/-"<<S_f().delta()<<endl;
+	cout<<"experiment func = "<<S_f()<<endl;
 }
