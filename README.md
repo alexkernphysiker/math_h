@@ -46,5 +46,5 @@ Examples
 
 Tests
 =====
-The directory FitGen_tests contains cmake project with unit tests.
+The directory tests contains cmake project with unit tests.
 The tests require GoogleTest framework to be installed
