@@ -100,7 +100,7 @@ TEST(SortedPoints,range){
 	EXPECT_EQ(3,xcut.size());
 	EXPECT_EQ(2,xcut.left().X());
 	EXPECT_EQ(4,xcut.right().X());
-	auto ycut=chain.YRange(1.15,1.35).Transponate();
+	auto ycut=SortedPoints<double>(chain.YRange(1.15,1.35).Transponate());
 	EXPECT_EQ(2,ycut.size());
 	EXPECT_EQ(1.2,ycut.left().X());
 	EXPECT_EQ(1.3,ycut.right().X());

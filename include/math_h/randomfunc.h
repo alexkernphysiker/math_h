@@ -17,8 +17,8 @@ namespace MathTemplates{
 		std::pair<numt,numt> range;
 	public:
 		RandomValueGenerator(const RandomValueGenerator &R):reverse_distr_func(R.reverse_distr_func),range(R.range){}
-		RandomValueGenerator(const SortedPoints<numt,numt>&distribution_density)
-			:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate())
+		RandomValueGenerator(const SortedPoints<numt>&distribution_density)
+			:reverse_distr_func(SortedPoints<numt>(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate()))
 			,range(reverse_distr_func.left().X(),reverse_distr_func.right().X()){}
 		RandomValueGenerator(const function<numt(numt)> distribution_density,const vector<numt>&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}

@@ -171,6 +171,10 @@ namespace MathTemplates{
 			for(const auto&p:points)operator<<(p);
 		}
 		SortedPoints(const initializer_list<point<numX,numY>>&&points):SortedPoints(points){}
+		SortedPoints(const vector<point<numX,numY>>&points){
+			for(const auto&p:points)operator<<(p);
+		}
+		SortedPoints(const vector<point<numX,numY>>&&points):SortedPoints(points){}
 		SortedPoints(const SortedPoints&points){
 			for(const auto&p:points.data)operator<<(p);
 		}
@@ -216,10 +220,10 @@ namespace MathTemplates{
 		const_iterator end() const{return data.end();}
 		const_iterator cend() const{return data.cend();}
 
-		const SortedPoints<numY,numX> Transponate()const{
-			SortedPoints<numY,numX> res;
+		const  vector<point<numY,numX>> Transponate()const{
+			vector<point<numY,numX>> res;
 			for(const point_editable_y<numX,numY>&p:data)
-				res<<point<numX,numY>(p.Y(),p.X());
+				res.push_back(point<numX,numY>(p.Y(),p.X()));
 			return res;
 		}
 		const SortedPoints XRange(const numX from,const numX to)const{

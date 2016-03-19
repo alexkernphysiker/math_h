@@ -15,6 +15,7 @@ int main(){
 	Plot<double> output;
 	output.Line(SortedPoints<double>(test.func(),x_chain),"y");
 	output.Line(SortedPoints<double>(LinearInterpolation<double>(test*2.0).func(),x_chain),"y*2");
-	
+	//Here we won't interpolate - just use existing points
+	output.Line(test.Transponate(),"transp");
 	return 0;
 }
