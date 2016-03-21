@@ -1,9 +1,16 @@
-add_executable(interpolation interpolation.cpp)
-target_link_libraries(interpolation gpwrap)
+add_executable(sigma sigma.cpp)
+
 add_executable(randomfunc randomfunc.cpp)
 target_link_libraries(randomfunc gpwrap)
+
 add_executable(randomfunc2 randomfunc2.cpp)
 target_link_libraries(randomfunc2 gpwrap)
+
 add_executable(integrate integrate.cpp)
 target_link_libraries(integrate gpwrap)
-add_executable(sigma sigma.cpp)
+
+add_executable(interpolation interpolation.cpp)
+target_link_libraries(interpolation gpwrap)
+
+add_executable(interpolation-perversion interpolate_perver.cpp)
+target_link_libraries(interpolation-perversion gpwrap)

@@ -50,7 +50,7 @@ namespace MathTemplates{
 		return Int_Trapez_Table_PositiveStrict(source);
 	}
 	template<class numX,class numY=numX,class func1=function<numY(numX)>,class func2=function<numY(numX)>>
-	class Convolution:public IFunction<numX,numY>{
+	class Convolution:public IFunction<numY,const numX>{
 	private:
 		func1 A;
 		func2 B;

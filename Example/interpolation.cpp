@@ -15,7 +15,15 @@ int main(){
 	Plot<double> output;
 	output.Line(SortedPoints<double>(test.func(),x_chain),"y");
 	output.Line(SortedPoints<double>(LinearInterpolation<double>(test*2.0).func(),x_chain),"y*2");
-	//Here we won't interpolate - just use existing points
-	output.Line(test.Transponate(),"transp");
+	
+	BiLinearInterpolation<double> test2({0.0,1.0,2.0,3.0},{0.0,1.0,2.0,3.0});
+	test2.FullCycleVar([](const double&x,const double&y,double&z){
+		z=(pow(x,2)+pow(y,2));
+	});
+	BiSortedPoints<double> for_plot(ChainWithStep(0.1,0.1,2.9),ChainWithStep(0.1,0.1,2.9));
+	for_plot.FullCycleVar([&test2](const double&x,const double&y,double&z){
+		z=test2(x,y);
+	});
+	PlotHist2d<double>(normal).Surface(for_plot);
 	return 0;
 }

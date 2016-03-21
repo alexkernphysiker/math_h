@@ -9,8 +9,8 @@ using namespace MathTemplates;
 TEST(LinearInterpolation,Create){
 	LinearInterpolation<double> F;
 	EXPECT_EQ(0,F.size());
-	EXPECT_THROW(F.left().X(),Exception<SortedPoints<double>>);
-	EXPECT_THROW(F.right().X(),Exception<SortedPoints<double>>);
+	EXPECT_THROW(F.left().X(),Exception<SortedChain<point_editable_y<double>>>);
+	EXPECT_THROW(F.right().X(),Exception<SortedChain<point_editable_y<double>>>);
 	EXPECT_EQ(&F,&(F<<point<double>(0,0)));
 	EXPECT_EQ(1,F.size());
 	EXPECT_NO_THROW(F.left().X());

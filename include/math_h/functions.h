@@ -5,12 +5,12 @@
 #include <math.h>
 #include <functional>
 namespace MathTemplates{
-	template<class numX, class numY=numX>
+	template<class result, typename... Args>
 	class IFunction{
 	public:
-		virtual numY operator()(const numX x)const=0;
-		const std::function<numY(numX)> func()const{
-			return [this](numX x){return operator()(x);};
+		virtual result operator()(Args...)const=0;
+		inline const std::function<result(Args...)> func()const{
+			return [this](Args... args)->result{return this->operator()(args...);};
 		}
 	};
 	template<class numt=double>

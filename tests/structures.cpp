@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <math.h>
+#include <random>
 #include <math_h/structures.h>
 using namespace std;
 using namespace MathTemplates;
@@ -27,10 +28,10 @@ TEST(WhereToInsert,NormalConditions){
 			else EXPECT_TRUE((x>=TestArray[index-1])&&(x<=TestArray[index]));
 		}
 }
-TEST(WhereToInsert,Search){
+TEST(WhereToInsert,ClosestPosition){
 	for(double x=TestArray[0]-0.5;x<=TestArray[9]+0.5;x+=0.5)
 		for(int beg=0;beg<10;beg++)for(int end=beg+1;end<10;end++){
-			int index=details::Search(beg,end,TestArray,x);
+			int index=details::ClosestPosition(beg,end,TestArray,x);
 			if(index>=beg)EXPECT_EQ(x,TestArray[index]);
 		}
 }
@@ -41,6 +42,15 @@ TEST(InsertSorted,BasicTest){
 		for(int j=0;j<i;j++)
 			EXPECT_TRUE(X[j]<=X[j+1]);
 	}
+}
+TEST(SortedChain,basetest){
+	mt19937 engine;
+	SortedChain<double> chain;
+	uniform_real_distribution<double> get(-10,10);
+	for(size_t i=0; i<100;i++)
+		chain<<get(engine);
+	for(size_t i=1; i<100;i++)
+		EXPECT_TRUE(chain[i]>chain[i-1]);
 }
 TEST(point,basetest){
 	value<double> x(25),y(78);
