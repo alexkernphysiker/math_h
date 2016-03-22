@@ -35,8 +35,7 @@ TEST(value,contains){
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(value,func_mul){
 	value<double> V(1,0.1);
-	function<double(double)> F=[](double x)->double{return 2.0*x;};
-	auto V2=F*V;
+	auto V2=func_value<double>([](double x){return 2.0*x;},V);
 	EXPECT_EQ(2*V.val(),V2.val());
 	_EQ(2*V.delta(),V2.delta());
 }

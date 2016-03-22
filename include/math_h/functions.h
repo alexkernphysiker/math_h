@@ -8,6 +8,7 @@ namespace MathTemplates{
 	template<class result, typename... Args>
 	class IFunction{
 	public:
+		virtual ~IFunction(){}
 		virtual result operator()(Args...)const=0;
 		inline const std::function<result(Args...)> func()const{
 			return [this](Args... args)->result{return this->operator()(args...);};

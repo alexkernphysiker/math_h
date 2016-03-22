@@ -73,13 +73,12 @@ namespace MathTemplates{
 	}
 	
 	template<typename numt>
-	value<numt> operator*(const function<numt(numt)> F,const value<numt>&X){
+	value<numt> func_value(const function<numt(const numt&)>F,const value<numt>&X){
 		numt val=F(X.val());
 		return value<numt>(val,sqrt( (pow(F(X.min())-val,2)+pow(F(X.max())-val,2)) / numt(2) ));
 	}
 	template<typename numt>
-	value<numt> operator*(const function<numt(numt)> F,const value<numt>&&X){return F*X;}
-	
+	inline value<numt> func_value(const function<numt(const numt&)> F,const value<numt>&&X){return F*X;}
 	
 	template<typename numt>
 	value<numt> operator+(const value<numt>&a,const value<numt>&b){auto res=a;res+=b;return res;}
