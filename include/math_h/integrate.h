@@ -6,7 +6,6 @@
 #include "structures.h"
 #include "error.h"
 namespace MathTemplates{
-	using namespace std;
 	template<class numX,class numY=numX,class functype=std::function<numY(numX)>>
 	numY Sympson(const functype y,const numX a,const numX b,const numX step){
 		numX stp=step;
@@ -49,7 +48,7 @@ namespace MathTemplates{
 	const SortedPoints<numX,numY> Int_Trapez_Table_PositiveStrict_RV(const SortedPoints<numX,numY>&&source){
 		return Int_Trapez_Table_PositiveStrict(source);
 	}
-	template<class numX,class numY=numX,class func1=function<numY(numX)>,class func2=function<numY(numX)>>
+	template<class numX,class numY=numX,class func1=std::function<numY(numX)>,class func2=std::function<numY(numX)>>
 	class Convolution:public IFunction<numY,const numX>{
 	private:
 		func1 A;

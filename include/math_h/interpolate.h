@@ -8,19 +8,18 @@
 #include "functions.h"
 #include "structures.h"
 namespace MathTemplates{
-	using namespace std;
 	template<class numX, class numY=numX>
 	class LinearInterpolation:public SortedPoints<numX,numY>,public IFunction<numY,const numX&>{
 	public:
 		typedef typename SortedPoints<numX,numY>::Func Func;
 		LinearInterpolation(){}
-		LinearInterpolation(const initializer_list<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const initializer_list<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const vector<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const vector<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const Func f,const vector<numX>&chain):SortedPoints<numX,numY>(f,chain){}
-		LinearInterpolation(const Func f,const vector<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
-		LinearInterpolation(const Func f,const initializer_list<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const std::initializer_list<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const std::initializer_list<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const std::vector<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const std::vector<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const Func f,const std::vector<numX>&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const std::vector<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const std::initializer_list<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedPoints<numX,numY>&source):SortedPoints<numX,numY>(source){}
@@ -44,10 +43,10 @@ namespace MathTemplates{
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class BiLinearInterpolation:public BiSortedPoints<numtX,numtY,numtZ>,public IFunction<numtZ,const numtX&,const numtY&>{
 	public:
-		BiLinearInterpolation(const initializer_list<numtX>&X,const initializer_list<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
-		BiLinearInterpolation(const initializer_list<numtX>&&X,const initializer_list<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
-		BiLinearInterpolation(const vector<numtX>&X,const vector<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
-		BiLinearInterpolation(const vector<numtX>&&X,const vector<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const std::initializer_list<numtX>&X,const std::initializer_list<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const std::initializer_list<numtX>&&X,const std::initializer_list<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const std::vector<numtX>&X,const std::vector<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const std::vector<numtX>&&X,const std::vector<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
 		BiLinearInterpolation():BiLinearInterpolation({},{}){}
 		BiLinearInterpolation(const BiSortedPoints<numtX,numtY,numtZ>&source):BiSortedPoints<numtX,numtY,numtZ>(source){}
 		virtual ~BiLinearInterpolation(){}

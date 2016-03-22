@@ -33,11 +33,17 @@ TEST(value,contains){
 	EXPECT_EQ(false,V.contains(0.2));
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
-TEST(value,func_mul){
+TEST(value,func_val){
 	value<double> V(1,0.1);
 	auto V2=func_value<double>([](double x){return 2.0*x;},V);
 	EXPECT_EQ(2*V.val(),V2.val());
 	_EQ(2*V.delta(),V2.delta());
+}
+TEST(value,func_val2){
+	value<double> V(1,0.1);
+	auto F=value_func<double>([](double x){return 2.0*x;});
+	EXPECT_EQ(2*V.val(),F(V).val());
+	_EQ(2*V.delta(),F(V).delta());
 }
 TEST(Sigma,Throwing){
 	Sigma<double> S;

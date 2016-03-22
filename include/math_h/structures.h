@@ -7,42 +7,41 @@
 #include "sigma.h"
 #include "error.h"
 namespace MathTemplates{
-	using namespace std;
 	template<class numX>
-	const vector<numX> ChainWithStep(const numX from,const numX step,const numX to){
-		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
-		if(step<=0)throw Exception<vector<numX>>("wrong binning step");
-		vector<numX> res;
+	const std::vector<numX> ChainWithStep(const numX from,const numX step,const numX to){
+		if(from>=to)throw Exception<std::vector<numX>>("wrong binning ranges");
+		if(step<=0)throw Exception<std::vector<numX>>("wrong binning step");
+		std::vector<numX> res;
 		for(numX x=from;x<=to;x+=step)res.push_back(x);
 		return res;
 	}
 	template<class numX>
-	const vector<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
-		if(from>=to)throw Exception<vector<numX>>("wrong binning ranges");
-		if(0==cont)throw Exception<vector<numX>>("wrong bins count");
+	const std::vector<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
+		if(from>=to)throw Exception<std::vector<numX>>("wrong binning ranges");
+		if(0==cont)throw Exception<std::vector<numX>>("wrong bins count");
 		numX step=(to-from)/numX(cont);
-		vector<numX> res;
+		std::vector<numX> res;
 		for(numX x=from;x<=to;x+=step)res.push_back(x);
 		return res;
 	}
 	template<class numt>
-	const vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
-		if(0>=step)throw Exception<vector<value<numt>>>("wrong bin width");
-		if(to<=from)throw Exception<vector<value<numt>>>("wrong range");
+	const std::vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
+		if(0>=step)throw Exception<std::vector<value<numt>>>("wrong bin width");
+		if(to<=from)throw Exception<std::vector<value<numt>>>("wrong range");
 		numt delta=step/numt(2);
-		vector<value<numt>> res;
+		std::vector<value<numt>> res;
 		for(numt x=from+delta;x<to;x+=step)
 			res.push_back(value<numt>(x,delta));
 		return res;
 	}
 	template<class numt>
-	const vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
-		if(0==count)throw Exception<vector<value<numt>>>("wrong bins count");
+	const std::vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
+		if(0==count)throw Exception<std::vector<value<numt>>>("wrong bins count");
 		return BinsByStep(from,(to-from)/numt(count),to);
 	}
 	
 	namespace details{
-		template<class comparable, class indexer=vector<comparable>>
+		template<class comparable, class indexer=std::vector<comparable>>
 		int  WhereToInsert(const int from,const int to,const indexer&X,const comparable&x){
 			if(from>to) return from;
 			int beg=from,end=to;
@@ -57,7 +56,7 @@ namespace MathTemplates{
 			}
 			return end;
 		}
-		template<class comparable, class indexer=vector<comparable>>
+		template<class comparable, class indexer=std::vector<comparable>>
 		int ClosestPosition(const int from,const int to,const indexer&X,const comparable&x){
 			if(from>to) return from-1;
 			int beg=from,end=to;
@@ -91,7 +90,7 @@ namespace MathTemplates{
 	template<class comparable>
 	class SortedChain{
 	private:
-		vector<comparable> data;
+		std::vector<comparable> data;
 	public:
 		SortedChain(){}
 		SortedChain&operator<<(const comparable&p){
@@ -101,16 +100,16 @@ namespace MathTemplates{
 		SortedChain&operator<<(const comparable&&p){
 			return operator<<(p);
 		}
-		SortedChain(const initializer_list<comparable>&points){
+		SortedChain(const std::initializer_list<comparable>&points){
 			for(const auto&p:points)
 				operator<<(p);
 		}
-		SortedChain(const initializer_list<comparable>&&points):SortedChain(points){}
-		SortedChain(const vector<comparable>&points){
+		SortedChain(const std::initializer_list<comparable>&&points):SortedChain(points){}
+		SortedChain(const std::vector<comparable>&points){
 			for(const auto&p:points)
 				operator<<(p);
 		}
-		SortedChain(const vector<comparable>&&points):SortedChain(points){}
+		SortedChain(const std::vector<comparable>&&points):SortedChain(points){}
 		SortedChain(const SortedChain&points){
 			for(const auto&p:points.data)
 				operator<<(p);
@@ -140,7 +139,7 @@ namespace MathTemplates{
 				throw Exception<SortedChain>("Attempt to obtain empty properties.");
 			return data[size()-1];
 		}
-		typedef typename vector<comparable>::const_iterator const_iterator;
+		typedef typename std::vector<comparable>::const_iterator const_iterator;
 		const_iterator begin()const{return data.begin();}
 		const_iterator cbegin()const{return data.cbegin();}
 		const_iterator end() const{return data.end();}
@@ -201,28 +200,28 @@ namespace MathTemplates{
 	template<class numX, class numY=numX>
 	class SortedPoints:public SortedChain<point_editable_y<numX,numY>>{
 	public:
-		typedef function<numY(const numX&)> Func;
+		typedef std::function<numY(const numX&)> Func;
 		SortedPoints(){}
 		SortedPoints&operator<<(const point<numX,numY>&p){
 			SortedChain<point_editable_y<numX,numY>>::operator<<(point_editable_y<numX,numY>(p));
 			return *this;
 		}
 		SortedPoints&operator<<(const point<numX,numY>&&p){return operator<<(p);}
-		SortedPoints(const initializer_list<point<numX,numY>>&points){
+		SortedPoints(const std::initializer_list<point<numX,numY>>&points){
 			for(const auto&p:points)operator<<(p);
 		}
-		SortedPoints(const initializer_list<point<numX,numY>>&&points):SortedPoints(points){}
+		SortedPoints(const std::initializer_list<point<numX,numY>>&&points):SortedPoints(points){}
 		
-		SortedPoints(const vector<point<numX,numY>>&points){
+		SortedPoints(const std::vector<point<numX,numY>>&points){
 			for(const auto&p:points)operator<<(p);
 		}
-		SortedPoints(const vector<point<numX,numY>>&&points):SortedPoints(points){}
+		SortedPoints(const std::vector<point<numX,numY>>&&points):SortedPoints(points){}
 		
-		SortedPoints(const Func f,const vector<numX>&chain){
+		SortedPoints(const Func f,const std::vector<numX>&chain){
 			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
 		}
-		SortedPoints(const Func f,const vector<numX>&&chain):SortedPoints(f,chain){}
-		SortedPoints(const Func f,const initializer_list<numX>&&chain){
+		SortedPoints(const Func f,const std::vector<numX>&&chain):SortedPoints(f,chain){}
+		SortedPoints(const Func f,const std::initializer_list<numX>&&chain){
 			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
 		}
 		
@@ -237,8 +236,8 @@ namespace MathTemplates{
 		
 		point_editable_y<numX,numY>&Bin(const size_t i){return SortedChain<point_editable_y<numX,numY>>::accessBin(i);}
 
-		const  vector<point<numY,numX>> Transponate()const{
-			vector<point<numY,numX>> res;
+		const  std::vector<point<numY,numX>> Transponate()const{
+			std::vector<point<numY,numX>> res;
 			for(const auto&p:*this)
 				res.push_back(point<numX,numY>(p.Y(),p.X()));
 			return res;
@@ -265,7 +264,7 @@ namespace MathTemplates{
 		SortedPoints&FillWithValues(const numY&&v){
 			return FillWithValues(v);
 		}
-		SortedPoints&Transform(const function<numY(const numX&,const numY&)>&F){
+		SortedPoints&Transform(const std::function<numY(const numX&,const numY&)>&F){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()=F(Bin(i).X(),Bin(i).Y());
 			return *this;
@@ -459,30 +458,30 @@ namespace MathTemplates{
 	public:
 		typedef point<value<numtX>,value<numtY>> Point;
 		hist(){}
-		hist(const initializer_list<value<numtX>>&data){
+		hist(const std::initializer_list<value<numtX>>&data){
 			for(const auto& v:data)this->operator<<(Point(v));
 		}
-		hist(const initializer_list<value<numtX>>&&data):hist(data){}
-		hist(const vector<value<numtX>>&data){
+		hist(const std::initializer_list<value<numtX>>&&data):hist(data){}
+		hist(const std::vector<value<numtX>>&data){
 			for(const auto& v:data)this->operator<<(Point(v));
 		}
-		hist(const vector<value<numtX>>&&data):hist(data){}
-		hist(const initializer_list<point<numtX,numtY>>&data){
+		hist(const std::vector<value<numtX>>&&data):hist(data){}
+		hist(const std::initializer_list<point<numtX,numtY>>&data){
 			for(const auto& P:data)this->operator<<(Point(P));
 		}
-		hist(const initializer_list<point<numtX,numtY>>&&data):hist(data){}
-		hist(const vector<point<numtX,numtY>>&data){
+		hist(const std::initializer_list<point<numtX,numtY>>&&data):hist(data){}
+		hist(const std::vector<point<numtX,numtY>>&data){
 			for(const auto& P:data)this->operator<<(Point(P));
 		}
-		hist(const vector<point<numtX,numtY>>&&data):hist(data){}
-		hist(const initializer_list<Point>&data){
+		hist(const std::vector<point<numtX,numtY>>&&data):hist(data){}
+		hist(const std::initializer_list<Point>&data){
 			for(const auto& P:data)this->operator<<(P);
 		}
-		hist(const initializer_list<Point>&&data):hist(data){}
-		hist(const vector<Point>&data){
+		hist(const std::initializer_list<Point>&&data):hist(data){}
+		hist(const std::vector<Point>&data){
 			for(const auto& P:data)this->operator<<(P);
 		}
-		hist(const vector<Point>&&data):hist(data){}
+		hist(const std::vector<Point>&&data):hist(data){}
 		hist(const SortedPoints<value<numtX>,value<numtY>>&source):SortedPoints<value<numtX>,value<numtY>>(source){}
 		virtual ~hist(){}
 		hist& operator=(const SortedPoints<value<numtX>,value<numtY>>&points){
@@ -491,7 +490,7 @@ namespace MathTemplates{
 		}
 		//Simple transform
 		hist CloneEmptyBins()const{
-			vector<Point> initer;
+			std::vector<Point> initer;
 			for(const Point&P:*this)initer.push_back(P);
 			return hist(initer);
 		}
@@ -514,7 +513,7 @@ namespace MathTemplates{
 		//Advanced transrormations
 		const hist Scale(const size_t sc_x)const{
 			//uncertanties are set to standard sqrt
-			vector<value<numtX>> new_x,sorted_x;
+			std::vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:*this)
 				InsertSorted(item.X(),sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
 			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
@@ -567,11 +566,11 @@ namespace MathTemplates{
 	private:
 		SortedChain<numtX> m_x_axis;
 		SortedChain<numtY> m_y_axis;
-		vector<vector<numtZ>> m_data;
+		std::vector<std::vector<numtZ>> m_data;
 		void init(){
 			m_data.clear();
 			for(size_t i=0,I=m_x_axis.size();i<I;i++){
-				m_data.push_back(vector<numtZ>());
+				m_data.push_back(std::vector<numtZ>());
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					m_data[m_data.size()-1].push_back(numtZ(0));
 			}
@@ -579,26 +578,30 @@ namespace MathTemplates{
 	public:
 		const SortedChain<numtX>&X()const{return m_x_axis;}
 		const SortedChain<numtY>&Y()const{return m_y_axis;}
-		BiSortedPoints(const initializer_list<numtX>&X,const initializer_list<numtY>&Y):m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const initializer_list<numtX>&&X,const initializer_list<numtY>&&Y):m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const vector<numtX>&X,const vector<numtY>&Y):m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const vector<numtX>&&X,const vector<numtY>&&Y):m_x_axis(X),m_y_axis(Y){init();}
+		BiSortedPoints(const std::initializer_list<numtX>&X,const std::initializer_list<numtY>&Y)
+		:m_x_axis(X),m_y_axis(Y){init();}
+		BiSortedPoints(const std::initializer_list<numtX>&&X,const std::initializer_list<numtY>&&Y)
+		:m_x_axis(X),m_y_axis(Y){init();}
+		BiSortedPoints(const std::vector<numtX>&X,const std::vector<numtY>&Y)
+		:m_x_axis(X),m_y_axis(Y){init();}
+		BiSortedPoints(const std::vector<numtX>&&X,const std::vector<numtY>&&Y)
+		:m_x_axis(X),m_y_axis(Y){init();}
 		BiSortedPoints():BiSortedPoints({},{}){}
 		BiSortedPoints(const BiSortedPoints&source):m_x_axis(source.X()),m_y_axis(source.Y()){
 			for(size_t i=0,I=source.m_data.size();i<I;i++){
-				m_data.push_back(vector<numtZ>());
+				m_data.push_back(std::vector<numtZ>());
 				for(const auto&item:source.m_data[i])
 					m_data[i].push_back(item);
 			}
 		}
 		virtual ~BiSortedPoints(){}
-		typedef typename vector<vector<numtZ>>::const_iterator const_iterator;
+		typedef typename std::vector<std::vector<numtZ>>::const_iterator const_iterator;
 		const_iterator begin()const{return m_data.cbegin();}
 		const_iterator cbegin()const{return m_data.cbegin();}
 		const_iterator end() const{return m_data.cend();}
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
-		const vector<numtZ>&operator[](const size_t i)const{
+		const std::vector<numtZ>&operator[](const size_t i)const{
 			if(size()<=i)throw Exception<BiSortedPoints>("range check error");
 			return m_data[i];
 		}
@@ -612,19 +615,19 @@ namespace MathTemplates{
 			if(m_y_axis.size()<=j)throw Exception<BiSortedPoints>("range check error");
 			return point3d<numtX,numtY,numtZ>(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycle(const function<void(const point3d<numtX,numtY,numtZ>&)>f)const{
+		void FullCycle(const std::function<void(const point3d<numtX,numtY,numtZ>&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++){
 					point3d<numtX,numtY,numtZ> P(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 					f(P);
 				}
 		}
-		void FullCycle(const function<void(const numtX&,const numtY&,const numtZ&)>f)const{
+		void FullCycle(const std::function<void(const numtX&,const numtY&,const numtZ&)>f)const{
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycleVar(const function<void(const numtX&,const numtY&,numtZ&)>f){
+		void FullCycleVar(const std::function<void(const numtX&,const numtY&,numtZ&)>f){
 			for(size_t i=0,I=m_x_axis.size();i<I;i++)
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
@@ -634,17 +637,20 @@ namespace MathTemplates{
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
 	class hist2d:public BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>{
 	public:
-		hist2d(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y):BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
-		hist2d(const initializer_list<value<numtX>>&&X,const initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
-		hist2d(const vector<value<numtX>>&X,const vector<value<numtY>>&Y):BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
-		hist2d(const vector<value<numtX>>&&X,const vector<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
+		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
+		hist2d(const std::initializer_list<value<numtX>>&&X,const std::initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const std::vector<value<numtX>>&X,const std::vector<value<numtY>>&Y)
+		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
+		hist2d(const std::vector<value<numtX>>&&X,const std::vector<value<numtY>>&&Y):hist2d(X,Y){}
 		hist2d():hist2d({},{}){}
-		hist2d(const BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>&source):BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(source){}
+		hist2d(const BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>&source)
+		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(source){}
 		virtual ~hist2d(){}
 		
 		const hist2d Scale(const size_t sc_x,const size_t sc_y)const{
 			//uncertanties are set to standard sqrt
-			vector<value<numtX>> new_x,sorted_x;
+			std::vector<value<numtX>> new_x,sorted_x;
 			for(const auto&item:this->X())
 				InsertSorted(item,sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
 			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
@@ -652,7 +658,7 @@ namespace MathTemplates{
 				auto max=sorted_x[i].max();
 				new_x.push_back(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
 			}
-			vector<value<numtY>> new_y,sorted_y;
+			std::vector<value<numtY>> new_y,sorted_y;
 			for(const auto&item:this->Y())
 				InsertSorted(item,sorted_y,std_size(sorted_y),std_insert(sorted_y,value<numtY>));
 			for(size_t i=sc_y-1,n=sorted_y.size();i<n;i+=sc_y){
@@ -666,7 +672,7 @@ namespace MathTemplates{
 				for(size_t ii=0;ii<sc_x;ii++)
 					for(size_t jj=0;jj<sc_y;jj++)
 						v+=this->operator[](i*sc_x+ii)[j*sc_y+jj].val();
-					res.Bin(i,j)=value<numtZ>(v,sqrt(v));
+					res.Bin(i,j)=value<numtZ>::std_error(v);
 			}
 			return res;
 		}
@@ -690,10 +696,10 @@ namespace MathTemplates{
 	private:
 		unsigned long long counter;
 	public:
-		Distribution1D(const initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const vector<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const vector<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
+		Distribution1D(const std::initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
+		Distribution1D(const std::initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
+		Distribution1D(const std::vector<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
+		Distribution1D(const std::vector<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
 		Distribution1D&Fill(const numtX& v){
 			counter++;
 			for(size_t i=0,n=this->size();i<n;i++)
@@ -713,20 +719,24 @@ namespace MathTemplates{
 	private:
 		unsigned long long counter;
 	public:
-		Distribution2D(const initializer_list<value<numtX>>&X,const initializer_list<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
-		Distribution2D(const initializer_list<value<numtX>>&&X,initializer_list<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
-		Distribution2D(const vector<value<numtX>>&X,const vector<value<numtY>>&Y):hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
-		Distribution2D(const vector<value<numtX>>&&X,vector<value<numtY>>&&Y):hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
-		Distribution2D&Fill(const pair<numtX,numtY>&p){
+		Distribution2D(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
+		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		Distribution2D(const std::initializer_list<value<numtX>>&&X,std::initializer_list<value<numtY>>&&Y)
+		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		Distribution2D(const std::vector<value<numtX>>&X,const std::vector<value<numtY>>&Y)
+		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		Distribution2D(const std::vector<value<numtX>>&&X,std::vector<value<numtY>>&&Y)
+		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		Distribution2D&Fill(const numtX&x,const numtY&y){
 			counter++;
-			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].contains(p.first))
-				for(size_t j=0,J=this->Y().size();j<J;j++)if(this->Y()[j].contains(p.second))
+			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].contains(x))
+				for(size_t j=0,J=this->Y().size();j<J;j++)if(this->Y()[j].contains(y))
 					this->Bin(i,j)=value<numtZ>::std_error(this->operator[](i)[j].val()+numtZ(1));
 				return *this;
 		}
-		Distribution2D&Fill(const pair<numtX,numtY>&&p){
-			return Fill(p);
-		}
+		Distribution2D&Fill(const numtX&x,const numtY&&y){return Fill(x,y);}
+		Distribution2D&Fill(const numtX&&x,const numtY&y){return Fill(x,y);}
+		Distribution2D&Fill(const numtX&&x,const numtY&&y){return Fill(x,y);}
 		const unsigned long long Entries()const{
 			return counter;
 		}

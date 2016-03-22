@@ -211,7 +211,7 @@ TEST(Distribution2D,BaseTest){
 	EXPECT_EQ(0,D[1][1].val());
 	EXPECT_EQ(0,D[2][0].val());
 	EXPECT_EQ(0,D[2][1].val());
-	D.Fill(make_pair(0.0,0.0)).Fill(make_pair(0.1,0.2)).Fill(make_pair(0.9,1.1)).Fill(make_pair(-0.9,1.1)).Fill(make_pair(0.6,0.6)).Fill(make_pair(0.6,0.4));
+	D.Fill(0.0,0.0).Fill(0.1,0.2).Fill(0.9,1.1).Fill(-0.9,1.1).Fill(0.6,0.6).Fill(0.6,0.4);
 	EXPECT_EQ(0,D[0][0].val());
 	EXPECT_EQ(1,D[0][1].val());
 	EXPECT_EQ(2,D[1][0].val());

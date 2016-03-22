@@ -9,7 +9,6 @@
 #include <math.h>
 #include "error.h"
 namespace MathTemplates{
-	using namespace std;
 	template<typename numt>
 	class value{
 	private:
@@ -64,21 +63,26 @@ namespace MathTemplates{
 		}
 	};
 	template<typename numt>
-	ostream&operator<<(ostream&str,const value<numt>&P){
+	std::ostream&operator<<(std::ostream&str,const value<numt>&P){
 		return str<<P.val()<<"+/-"<<P.delta();
 	}
 	template<typename numt>
-	ostream&operator<<(ostream&str,const value<numt>&&P){
+	std::ostream&operator<<(std::ostream&str,const value<numt>&&P){
 		return str<<P;
 	}
 	
 	template<typename numt>
-	value<numt> func_value(const function<numt(const numt&)>F,const value<numt>&X){
+	value<numt> func_value(const std::function<numt(const numt&)>F,const value<numt>&X){
 		numt val=F(X.val());
 		return value<numt>(val,sqrt( (pow(F(X.min())-val,2)+pow(F(X.max())-val,2)) / numt(2) ));
 	}
 	template<typename numt>
-	inline value<numt> func_value(const function<numt(const numt&)> F,const value<numt>&&X){return F*X;}
+	inline value<numt> func_value(const std::function<numt(const numt&)> F,const value<numt>&&X){return F*X;}
+	
+	template<typename numt>
+	std::function<value<numt>(const value<numt>&)> value_func(const std::function<numt(const numt&)>F){
+		return [F](const value<numt>&X)->value<numt>{return func_value(F,X);};
+	}
 	
 	template<typename numt>
 	value<numt> operator+(const value<numt>&a,const value<numt>&b){auto res=a;res+=b;return res;}
@@ -165,7 +169,7 @@ namespace MathTemplates{
 	template<typename numt>
 	class Sigma{
 	private:
-		list<numt> m_list;
+		std::list<numt> m_list;
 		numt m_sum;
 		value<numt>*m_cache;
 		numt m_scale;
@@ -188,6 +192,7 @@ namespace MathTemplates{
 		const int count()const{return m_list.size();}
 		const numt scaling_factor()const{return m_scale;}
 		const value<numt>&operator()()const{
+			using namespace std;
 			if(isfinite(m_cache->val())){
 				return *m_cache;
 			}else{
@@ -229,6 +234,7 @@ namespace MathTemplates{
 			return operator<<(X);
 		}
 		const value<numt>&operator()()const{
+			using namespace std;
 			if(isfinite(m_cache->val())){
 				return *m_cache;
 			}else{
