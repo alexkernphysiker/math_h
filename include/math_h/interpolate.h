@@ -12,7 +12,15 @@ namespace MathTemplates{
 	template<class numX, class numY=numX>
 	class LinearInterpolation:public SortedPoints<numX,numY>,public IFunction<numY,const numX&>{
 	public:
+		typedef typename SortedPoints<numX,numY>::Func Func;
 		LinearInterpolation(){}
+		LinearInterpolation(const initializer_list<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const initializer_list<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const vector<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const vector<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const Func f,const vector<numX>&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const vector<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const initializer_list<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedPoints<numX,numY>&source):SortedPoints<numX,numY>(source){}

@@ -6,8 +6,9 @@ using namespace std;
 using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main(){
-	LinearInterpolation<double> test;
-	test<<point<double>(0,0)<<point<double>(1,1)<<point<double>(2,4)<<point<double>(3,9);
+	LinearInterpolation<double> test{
+		point<double>(0,0),point<double>(1,1),point<double>(2,4),point<double>(3,9)
+	};
 	test<<point<double>(-1,1)<<point<double>(-2,4)<<point<double>(-3,9);
 	
 	auto x_chain=ChainWithStep(-3.0,0.1,3.0);
@@ -20,7 +21,7 @@ int main(){
 	test2.FullCycleVar([](const double&x,const double&y,double&z){
 		z=sin(sqrt(pow(x,2)+pow(y,2))/2.0);
 	});
-	BiSortedPoints<double> for_plot(ChainWithStep(0.1,0.1,3.9),ChainWithStep(0.1,0.1,3.9));
+	BiSortedPoints<double> for_plot(ChainWithStep(0.0,0.1,4.0),ChainWithStep(0.0,0.1,4.0));
 	for_plot.FullCycleVar([&test2](const double&x,const double&y,double&z){
 		z=test2(x,y);
 	});
