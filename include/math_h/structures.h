@@ -696,10 +696,10 @@ namespace MathTemplates{
 	private:
 		unsigned long long counter;
 	public:
-		Distribution1D(const std::initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const std::initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const std::vector<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
-		Distribution1D(const std::vector<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>(0));counter=0;}
+		Distribution1D(const std::initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
+		Distribution1D(const std::initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
+		Distribution1D(const std::vector<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
+		Distribution1D(const std::vector<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
 		Distribution1D&Fill(const numtX& v){
 			counter++;
 			for(size_t i=0,n=this->size();i<n;i++)
@@ -718,15 +718,19 @@ namespace MathTemplates{
 	class Distribution2D:public hist2d<numtX,numtY,numtZ>{
 	private:
 		unsigned long long counter;
+		void init(){
+			counter=0;
+			this->FullCycleVar([](const value<numtX>&,const value<numtY>&,value<numtZ>&z){z=value<numtZ>::std_error(0);});
+		}
 	public:
 		Distribution2D(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
-		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D(const std::initializer_list<value<numtX>>&&X,std::initializer_list<value<numtY>>&&Y)
-		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D(const std::vector<value<numtX>>&X,const std::vector<value<numtY>>&Y)
-		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D(const std::vector<value<numtX>>&&X,std::vector<value<numtY>>&&Y)
-		:hist2d<numtX,numtY,numtZ>(X,Y){counter=0;}
+		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D&Fill(const numtX&x,const numtY&y){
 			counter++;
 			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].contains(x))
