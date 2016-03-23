@@ -15,7 +15,7 @@ namespace MathTemplates{
 		numt Value,Error;
 	public:
 		value():Value(numt(0)),Error(numt(0)){}
-		value(const numt v):Value(v),Error(numt(0)){if(Error<1)Error=1;}
+		value(const numt v):Value(v),Error(numt(0)){}
 		value(const numt v,const numt err):Value(v),Error(err){
 			if(Error<0)throw Exception<value>("Error cannot be negative");
 		}
