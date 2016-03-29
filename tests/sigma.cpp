@@ -45,31 +45,31 @@ TEST(value,func_val2){
 	EXPECT_EQ(2*V.val(),F(V).val());
 	_EQ(2*V.delta(),F(V).delta());
 }
-TEST(Sigma,Throwing){
-	Sigma<double> S;
+TEST(StandardDeviation,Throwing){
+	StandardDeviation<double> S;
 	EXPECT_EQ(0,S.count());
-	EXPECT_THROW(S(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<StandardDeviation<double>>);
 	EXPECT_EQ(&S,&(S<<0.0));
 	EXPECT_EQ(1,S.count());
-	EXPECT_THROW(S(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<StandardDeviation<double>>);
 	EXPECT_EQ(&S,&(S<<0.0));
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0,S().val());
 	EXPECT_EQ(0,S().delta());
 }
-TEST(Sigma,Base){
-	Sigma<double> S;
+TEST(StandardDeviation,Base){
+	StandardDeviation<double> S;
 	S<<0.0;
 	EXPECT_EQ(1,S.count());
-	EXPECT_THROW(S(),Exception<Sigma<double>>);
+	EXPECT_THROW(S(),Exception<StandardDeviation<double>>);
 	S<<1.0;
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0.5,S().val());
 	EXPECT_EQ(sqrt(0.5),S().delta());
 }
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
-TEST(Sigma,WithRandomValues){
-	Sigma<double> S;
+TEST(StandardDeviation,WithRandomValues){
+	StandardDeviation<double> S;
 	default_random_engine generator;
 	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)
@@ -77,8 +77,8 @@ TEST(Sigma,WithRandomValues){
 	_EQ2(1.0,S().val());
 	_EQ2(3.0,S().delta());
 }
-TEST(Sigma,WithRandomValues2){
-	Sigma<double> S(2);
+TEST(StandardDeviation,WithRandomValues2){
+	StandardDeviation<double> S(2);
 	default_random_engine generator;
 	normal_distribution<double> distribution(1.0,3.0);
 	for(int i=0;i<2000;i++)

@@ -115,23 +115,23 @@ namespace MathTemplates{
 	}
 	
 	template<typename numt>
-	class Sigma{
+	class StandardDeviation{
 	private:
 		std::list<numt> m_list;
 		numt m_sum;
 		value<numt>*m_cache;
 		numt m_scale;
 	public:
-		Sigma(const numt scale=1){
-			if(scale<=0)throw Exception<Sigma>("Uncertainty scaling factor must be greater than zero");
+		StandardDeviation(const numt scale=1){
+			if(scale<=0)throw Exception<StandardDeviation>("Uncertainty scaling factor must be greater than zero");
 			m_scale=scale;
 			m_sum=0;
 			m_cache=new value<numt>(INFINITY,INFINITY);
 		}
-		virtual ~Sigma(){
+		virtual ~StandardDeviation(){
 			delete m_cache;
 		}
-		Sigma &operator<<(const numt x){
+		StandardDeviation &operator<<(const numt x){
 			m_list.push_back(x);
 			m_sum+=x;
 			(*m_cache)=value<numt>(INFINITY,INFINITY);
@@ -146,7 +146,7 @@ namespace MathTemplates{
 			}else{
 				int sz=m_list.size();
 				if(sz<=1)
-					throw Exception<Sigma>("No data to check. for sigma needed at least two elements.");
+					throw Exception<StandardDeviation>("No data to check. for sigma needed at least two elements.");
 				numt average=m_sum/sz;
 				numt m_sigsqr=0;
 				for(auto value:m_list)

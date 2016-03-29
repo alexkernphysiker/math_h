@@ -12,7 +12,7 @@ int main(){
 	mt19937 engine;
 	normal_distribution<double> d1(2,0.1);
 	normal_distribution<double> d2(5,1);
-	Sigma<double> S1,S2,S_sum,S_mul,S_f1,S_f2;
+	StandardDeviation<double> S1,S2,S_sum,S_mul,S_f1,S_f2;
 	auto F=[](double x){return log(x);};
 	for(size_t i=0;i<1000;i++){
 		double a=d1(engine),b=d2(engine);
