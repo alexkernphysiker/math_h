@@ -37,134 +37,82 @@ namespace MathTemplates{
 		numt epsilon()const{return Error/Value;}
 		numt min()const{return Value-Error;}
 		numt max()const{return Value+Error;}
-		bool contains(const numt x)const{return (x>=min())&&(x<=max());}
+		bool contains(const numt& x)const{return (x>=min())&&(x<=max());}
 		bool contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
-		bool contains(const value&&x)const{return (x.max()>=min())&&(x.min()<=max());}
+		bool contains(const numt&&x)const{return contains(x);}
+		bool contains(const value&&x)const{return contains(x);}
 		
 		value&operator+=(const value&other){
 			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value+=other.Value;
 			return *this;
 		}
+		value&operator+=(const value&&other){
+			return operator+=(other);
+		}
 		value&operator-=(const value&other){
 			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value-=other.Value;
 			return *this;
+		}
+		value&operator-=(const value&&other){
+			return operator-=(other);
 		}
 		value&operator*=(const value&other){
 			Error=sqrt(pow(Error*other.Value,2)+pow(other.Error*Value,2));
 			Value*=other.Value;
 			return *this;
 		}
+		value&operator*=(const value&&other){
+			return operator*=(other);
+		}
 		value&operator/=(const value&other){
 			Error=sqrt(pow(Error/other.Value,2)+pow(other.Error*Value/pow(other.Value,2),2));
 			Value/=other.Value;
 			return *this;
 		}
+		value&operator/=(const value&&other){
+			return operator/=(other);
+		}
+		
+		const value operator+(const value&other)const{return value(*this)+=other;}
+		const value operator+(const value&&other)const{return value(*this)+=other;}
+		const value operator-(const value&other)const{return value(*this)-=other;}
+		const value operator-(const value&&other)const{return value(*this)-=other;}
+		const value operator*(const value&other)const{return value(*this)*=other;}
+		const value operator*(const value&&other)const{return value(*this)*=other;}
+		const value operator/(const value&other)const{return value(*this)/=other;}
+		const value operator/(const value&&other)const{return value(*this)/=other;}
+		const value func(const std::function<numt(const numt&)>F)const{
+			numt V=F(val());
+			return value(V,sqrt( (pow(F(min())-V,2)+pow(F(max())-V,2)) / numt(2) ));
+		}
+		
+		bool operator<(const value&other)const{return Value<other.Value;}
+		bool operator<(const value&&other)const{return Value<other.Value;}
+		bool operator>(const value&other)const{return Value>other.Value;}
+		bool operator>(const value&&other)const{return Value>other.Value;}
+		bool operator==(const value&other)const{return Value==other.Value;}
+		bool operator==(const value&&other)const{return Value==other.Value;}
+		bool operator>=(const value&other)const{return Value>=other.Value;}
+		bool operator>=(const value&&other)const{return Value>=other.Value;}
+		bool operator<=(const value&other)const{return Value<=other.Value;}
+		bool operator<=(const value&&other)const{return Value<=other.Value;}
 	};
 	template<typename numt>
 	std::ostream&operator<<(std::ostream&str,const value<numt>&P){
 		return str<<P.val()<<"+/-"<<P.delta();
 	}
 	template<typename numt>
-	std::ostream&operator<<(std::ostream&str,const value<numt>&&P){
-		return str<<P;
+	std::ostream&operator<<(std::ostream&str,const value<numt>&&P){return str<<P;}
+	template<typename numt>
+	const value<numt> func_value(const std::function<numt(const numt&)>F,const value<numt>&X){return X.func(F);}
+	template<typename numt>
+	inline const value<numt> func_value(const std::function<numt(const numt&)> F,const value<numt>&&X){return X.func(F);}
+	template<typename numt>
+	const std::function<value<numt>(const value<numt>&)> value_func(const std::function<numt(const numt&)>F){
+		return [F](const value<numt>&X)->value<numt>{return X.func(F);};
 	}
-	
-	template<typename numt>
-	value<numt> func_value(const std::function<numt(const numt&)>F,const value<numt>&X){
-		numt val=F(X.val());
-		return value<numt>(val,sqrt( (pow(F(X.min())-val,2)+pow(F(X.max())-val,2)) / numt(2) ));
-	}
-	template<typename numt>
-	inline value<numt> func_value(const std::function<numt(const numt&)> F,const value<numt>&&X){return F*X;}
-	
-	template<typename numt>
-	std::function<value<numt>(const value<numt>&)> value_func(const std::function<numt(const numt&)>F){
-		return [F](const value<numt>&X)->value<numt>{return func_value(F,X);};
-	}
-	
-	template<typename numt>
-	value<numt> operator+(const value<numt>&a,const value<numt>&b){auto res=a;res+=b;return res;}
-	template<typename numt>
-	value<numt> operator+(const value<numt>&&a,const value<numt>&b){return a+b;}
-	template<typename numt>
-	value<numt> operator+(const value<numt>&a,const value<numt>&&b){return a+b;}
-	template<typename numt>
-	value<numt> operator+(const value<numt>&&a,const value<numt>&&b){return a+b;}
-	
-	template<typename numt>
-	value<numt> operator-(const value<numt>&a,const value<numt>&b){auto res=a;res-=b;return res;}
-	template<typename numt>
-	value<numt> operator-(const value<numt>&&a,const value<numt>&b){return a-b;}
-	template<typename numt>
-	value<numt> operator-(const value<numt>&a,const value<numt>&&b){return a-b;}
-	template<typename numt>
-	value<numt> operator-(const value<numt>&&a,const value<numt>&&b){return a-b;}
-	
-	template<typename numt>
-	value<numt> operator*(const value<numt>&a,const value<numt>&b){auto res=a;res*=b;return res;}
-	template<typename numt>
-	value<numt> operator*(const value<numt>&&a,const value<numt>&b){return a*b;}
-	template<typename numt>
-	value<numt> operator*(const value<numt>&a,const value<numt>&&b){return a*b;}
-	template<typename numt>
-	value<numt> operator*(const value<numt>&&a,const value<numt>&&b){return a*b;}
-
-	template<typename numt>
-	value<numt> operator/(const value<numt>&a,const value<numt>&b){auto res=a;res/=b;return res;}
-	template<typename numt>
-	value<numt> operator/(const value<numt>&&a,const value<numt>&b){return a/b;}
-	template<typename numt>
-	value<numt> operator/(const value<numt>&a,const value<numt>&&b){return a/b;}
-	template<typename numt>
-	value<numt> operator/(const value<numt>&&a,const value<numt>&&b){return a/b;}
-
-	template<typename numt>
-	bool operator<(const value<numt>&a,const value<numt>&b){return a.val()<b.val();}
-	template<typename numt>
-	bool operator<(const value<numt>&&a,const value<numt>&b){return a.val()<b.val();}
-	template<typename numt>
-	bool operator<(const value<numt>&a,const value<numt>&&b){return a.val()<b.val();}
-	template<typename numt>
-	bool operator<(const value<numt>&&a,const value<numt>&&b){return a.val()<b.val();}
-
-	template<typename numt>
-	bool operator>(const value<numt>&a,const value<numt>&b){return a.val()>b.val();}
-	template<typename numt>
-	bool operator>(const value<numt>&&a,const value<numt>&b){return a.val()>b.val();}
-	template<typename numt>
-	bool operator>(const value<numt>&a,const value<numt>&&b){return a.val()>b.val();}
-	template<typename numt>
-	bool operator>(const value<numt>&&a,const value<numt>&&b){return a.val()>b.val();}
-
-	template<typename numt>
-	bool operator==(const value<numt>&a,const value<numt>&b){return a.val()==b.val();}
-	template<typename numt>
-	bool operator==(const value<numt>&&a,const value<numt>&b){return a.val()==b.val();}
-	template<typename numt>
-	bool operator==(const value<numt>&a,const value<numt>&&b){return a.val()==b.val();}
-	template<typename numt>
-	bool operator==(const value<numt>&&a,const value<numt>&&b){return a.val()==b.val();}
-
-	template<typename numt>
-	bool operator<=(const value<numt>&a,const value<numt>&b){return a.val()<=b.val();}
-	template<typename numt>
-	bool operator<=(const value<numt>&&a,const value<numt>&b){return a.val()<=b.val();}
-	template<typename numt>
-	bool operator<=(const value<numt>&a,const value<numt>&&b){return a.val()<=b.val();}
-	template<typename numt>
-	bool operator<=(const value<numt>&&a,const value<numt>&&b){return a.val()<=b.val();}
-	
-	template<typename numt>
-	bool operator>=(const value<numt>&a,const value<numt>&b){return a.val()>=b.val();}
-	template<typename numt>
-	bool operator>=(const value<numt>&&a,const value<numt>&b){return a.val()>=b.val();}
-	template<typename numt>
-	bool operator>=(const value<numt>&a,const value<numt>&&b){return a.val()>=b.val();}
-	template<typename numt>
-	bool operator>=(const value<numt>&&a,const value<numt>&&b){return a.val()>=b.val();}
-	
 	
 	template<typename numt>
 	class Sigma{

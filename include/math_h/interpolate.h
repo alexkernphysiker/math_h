@@ -51,11 +51,11 @@ namespace MathTemplates{
 		BiLinearInterpolation(const BiSortedPoints<numtX,numtY,numtZ>&source):BiSortedPoints<numtX,numtY,numtZ>(source){}
 		virtual ~BiLinearInterpolation(){}
 		virtual numtZ operator()(const numtX& x,const numtY& y)const override{
-			size_t szx=this->X().size();
+			int szx=this->X().size();
 			int i=details::WhereToInsert<numtX>(0,szx-1,this->X(),x);
 			if((i<=0)||(i>=szx))
 				throw Exception<BiLinearInterpolation>("Attempt to interpolate outside the given region (x).");
-			size_t szy=this->Y().size();
+			int szy=this->Y().size();
 			int j=details::WhereToInsert<numtY>(0,szy-1,this->Y(),y);
 			if((j<=0)||(j>=szy))
 				throw Exception<BiLinearInterpolation>("Attempt to interpolate outside the given region (y).");
