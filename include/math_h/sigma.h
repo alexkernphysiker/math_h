@@ -158,27 +158,27 @@ namespace MathTemplates{
 		}
 	};
 	template<typename numt>
-	class WeightedAverageCalculator{
+	class WeightedAverage{
 	private:
 		numt Sum;
 		numt Wnorm;
 		value<numt>*m_cache;
 	public:
-		WeightedAverageCalculator(){
+		WeightedAverage(){
 			Sum=0;Wnorm=0;
 			m_cache=new value<numt>(INFINITY,INFINITY);
 		}
-		virtual ~WeightedAverageCalculator(){delete m_cache;}
-		WeightedAverageCalculator &operator<<(const value<numt>&X){
+		virtual ~WeightedAverage(){delete m_cache;}
+		WeightedAverage &operator<<(const value<numt>&X){
 			if(X.delta()<=0)
-				throw Exception<WeightedAverageCalculator>("Cannot add value with zero error");
+				throw Exception<WeightedAverage>("Cannot add value with zero error");
 			numt w=1.0/pow(X.delta(),2);
 			Sum+=w*X.val();
 			Wnorm+=w;
 			(*m_cache)=value<numt>(INFINITY,INFINITY);
 			return *this;
 		}
-		WeightedAverageCalculator &operator<<(const value<numt>&&X){
+		WeightedAverage &operator<<(const value<numt>&&X){
 			return operator<<(X);
 		}
 		const value<numt>&operator()()const{
@@ -186,7 +186,7 @@ namespace MathTemplates{
 			if(isfinite(m_cache->val())){
 				return *m_cache;
 			}else{
-				if(Wnorm<=0)throw Exception<WeightedAverageCalculator>("Attempt to check empty data");
+				if(Wnorm<=0)throw Exception<WeightedAverage>("Attempt to check empty data");
 				(*m_cache)=value<numt>(Sum/Wnorm,1.0/sqrt(Wnorm));
 				return *m_cache;
 			}

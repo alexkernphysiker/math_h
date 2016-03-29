@@ -87,10 +87,10 @@ TEST(StandardDeviation,WithRandomValues2){
 	_EQ2(6.0,S().delta());
 }
 
-TEST(WeightedAverageCalculator,Zeros){
-	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W<<value<double>(0,0),Exception<WeightedAverageCalculator<double>>);
+TEST(WeightedAverage,Zeros){
+	WeightedAverage<double> W;
+	EXPECT_THROW(W(),Exception<WeightedAverage<double>>);
+	EXPECT_THROW(W<<value<double>(0,0),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0,W().val());
 	_EQ(1,W().delta());
@@ -101,10 +101,10 @@ TEST(WeightedAverageCalculator,Zeros){
 	_EQ(0,W().val());
 	_EQ(1.0/sqrt(3.0),W().delta());
 }
-TEST(WeightedAverageCalculator,Ones){
-	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
-	EXPECT_THROW(W<<value<double>(1,0),Exception<WeightedAverageCalculator<double>>);
+TEST(WeightedAverage,Ones){
+	WeightedAverage<double> W;
+	EXPECT_THROW(W(),Exception<WeightedAverage<double>>);
+	EXPECT_THROW(W<<value<double>(1,0),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
 	_EQ(1,W().delta());
@@ -115,9 +115,9 @@ TEST(WeightedAverageCalculator,Ones){
 	_EQ(1,W().val());
 	_EQ(1.0/sqrt(3.0),W().delta());
 }
-TEST(WeightedAverageCalculator,Zeros_plus_Ones){
-	WeightedAverageCalculator<double> W;
-	EXPECT_THROW(W(),Exception<WeightedAverageCalculator<double>>);
+TEST(WeightedAverage,Zeros_plus_Ones){
+	WeightedAverage<double> W;
+	EXPECT_THROW(W(),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
 	_EQ(1,W().delta());
