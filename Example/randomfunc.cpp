@@ -1,8 +1,8 @@
 // this file is distributed under 
 // MIT license
 #include <math_h/functions.h>
-#include <math_h/structures.h>
 #include <math_h/randomfunc.h>
+#include <math_h/hists.h>
 #include <gnuplot_wrap.h>
 using namespace std;
 using namespace MathTemplates;

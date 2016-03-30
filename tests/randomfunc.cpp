@@ -34,6 +34,7 @@ TEST(RandomValueGenerator,Throwing){
 	auto n=[](double x){return sin(10*x);};
 	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<SortedPoints<double>>);
 }
+#include <math_h/hists.h>
 void TestRandomDistribution(function<double(double)> F,double from,double to,int bins,int accu=10){
 	RandomValueGenerator<double> R(F,ChainWithCount(bins*accu,from,to));
 	double step=(to-from)/double(bins);

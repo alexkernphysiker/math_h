@@ -3,7 +3,6 @@
 #include <iostream>
 #include <random>
 #include <math_h/sigma.h>
-#include <math_h/structures.h>
 #include <gnuplot_wrap.h>
 using namespace std;
 using namespace MathTemplates;

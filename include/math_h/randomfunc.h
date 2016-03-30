@@ -5,7 +5,7 @@
 #include <random>
 #include <functional>
 #include <math.h>
-#include "structures.h"
+#include "tabledata.h"
 #include "interpolate.h"
 #include "integrate.h"
 namespace MathTemplates{

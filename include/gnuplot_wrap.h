@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <exception>
-#include <math_h/structures.h>
+#include <math_h/hists.h>
 namespace GnuplotWrap{
 	class Plotter{
 	public:

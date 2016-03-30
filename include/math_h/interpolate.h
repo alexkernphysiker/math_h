@@ -6,7 +6,7 @@
 #include <utility>
 #include <functional>
 #include "functions.h"
-#include "structures.h"
+#include "tabledata.h"
 namespace MathTemplates{
 	template<class numX, class numY=numX>
 	class LinearInterpolation:public SortedPoints<numX,numY>,public IFunction<numY,const numX&>{

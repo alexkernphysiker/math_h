@@ -3,7 +3,7 @@
 #ifndef GRIVHOWXKUEHYGQF
 #	define GRIVHOWXKUEHYGQF
 #include "functions.h"
-#include "structures.h"
+#include "tabledata.h"
 #include "error.h"
 namespace MathTemplates{
 	template<class numX,class numY=numX,class functype=std::function<numY(numX)>>
