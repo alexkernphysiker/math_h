@@ -46,6 +46,13 @@ namespace GnuplotWrap{
 		Plot(){
 			operator<<(Plotter::Instance().GetTerminal());
 			operator<<("unset pm3d");
+			operator<<("unset key");
+			operator<<("unset surface");
+			operator<<("unset view");
+			operator<<("unset xrange");
+			operator<<("unset yrange");
+			operator<<("unset xlog");
+			operator<<("unset ylog");
 		}
 		virtual ~Plot(){
 			for(const std::string&line:lines)
@@ -59,7 +66,6 @@ namespace GnuplotWrap{
 				Plotter::Instance()<<line;
 			}
 		}
-	public:
 		Plot& Object(const std::string&plot){
 			plots.push_back(plot);
 			return *this;
