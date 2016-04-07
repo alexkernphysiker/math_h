@@ -66,6 +66,20 @@ namespace MathTemplates{
 					res<<P;
 				return res;
 		}
+		const SortedPoints XExclude(const numX from,const numX to)const{
+			SortedPoints res;
+			for(const auto&P:*this)
+				if((P.X()<from)||(P.X()>to))
+					res<<P;
+				return res;
+		}
+		const SortedPoints YExclude(const numY from,const numY to)const{
+			SortedPoints res;
+			for(const auto&P:*this)
+				if((P.Y()<from)||(P.Y()>to))
+					res<<P;
+				return res;
+		}
 		SortedPoints&FillWithValues(const numY&v){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()=v;
