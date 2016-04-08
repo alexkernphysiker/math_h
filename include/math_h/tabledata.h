@@ -165,7 +165,7 @@ namespace MathTemplates{
 		SortedPoints&operator/=(const SortedPoints& second){
 			for(size_t i=0,n=this->size();i<n;i++){
 				if(Bin(i).X()==second[i].X())
-					Bin(i).varY()*=second[i].Y();
+					Bin(i).varY()/=second[i].Y();
 				else
 					throw Exception<SortedPoints>("Cannot perform arithmetic actions two chains. X coordinates differ");
 			}
