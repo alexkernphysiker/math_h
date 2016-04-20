@@ -22,7 +22,7 @@ Then commit your changes :)
 CMake Options
 =============
 
-	test
+	tests
 if ON the tests are compiled
 
 Header files
