@@ -11,6 +11,26 @@ TEST(value,throwing){
 	EXPECT_NO_THROW(value<double>(1,0));
 	EXPECT_NO_THROW(value<double>(1,0.1));
 }
+TEST(value,fromlist){
+	initializer_list<double> l={};
+	value<double> v;
+	EXPECT_THROW(v=l,Exception<value<double>>);
+	l={1.0,2.0,3.0};
+	EXPECT_THROW(v=l,Exception<value<double>>);
+	l={1.0,2.0,3.0,4.0};
+	EXPECT_THROW(v=l,Exception<value<double>>);
+	l={1.0};
+	EXPECT_NO_THROW(v=l);
+	l={1.0,2.0};
+	EXPECT_NO_THROW(v=l);
+	
+	v={1.0};
+	EXPECT_EQ(1.0,v.val());
+	EXPECT_EQ(0.0,v.delta());
+	v={1.0,2.0};
+	EXPECT_EQ(1.0,v.val());
+	EXPECT_EQ(2.0,v.delta());
+}
 TEST(value,base){
 	mt19937 gen;
 	normal_distribution<double> G;

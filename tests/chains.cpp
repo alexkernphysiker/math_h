@@ -11,8 +11,11 @@ double TestArray[]={-2,-1,0,1,2,3,4,5,6,7};
 TEST(WhereToInsert,BorderConditions){
 	for(int beg=0;beg<10;beg++)
 		for(double V=TestArray[beg]-2;V<=TestArray[beg]+2;V+=0.5){
-			int index=details::WhereToInsert(beg,beg-1,TestArray,V);
-			EXPECT_EQ(beg,index);
+			int index=0;
+			if(beg>0){
+				index=details::WhereToInsert(beg,beg-1,TestArray,V);
+				EXPECT_EQ(beg,index);
+			}
 			index=details::WhereToInsert(beg,beg,TestArray,V);
 			if(V<TestArray[beg])EXPECT_EQ(beg,index);
 			if(V>TestArray[beg])EXPECT_EQ(beg+1,index);

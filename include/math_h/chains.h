@@ -25,9 +25,9 @@ namespace MathTemplates{
 	}
 	namespace details{
 		template<class comparable, class indexer=std::vector<comparable>>
-		int  WhereToInsert(const int from,const int to,const indexer&X,const comparable&x){
+		size_t  WhereToInsert(const size_t from,const size_t to,const indexer&X,const comparable&x){
 			if(from>to) return from;
-			int beg=from,end=to;
+			size_t beg=from,end=to;
 			if(x>X[end]) return end+1;
 			if(x<X[beg]) return beg;
 			while(1<(end-beg)){
@@ -42,7 +42,8 @@ namespace MathTemplates{
 	}
 	template<class comparable,class indexer, class Size, class Insert>
 	void InsertSorted(const comparable&x,indexer&X,const Size size,const Insert insert){
-		insert(details::WhereToInsert(0,size()-1,X,x),x);
+		if(size()==0) insert(0,x);
+		else insert(details::WhereToInsert(0,size()-1,X,x),x);
 	}
 	template<class comparable,class indexer, class Size, class Insert>
 	void InsertSorted(const comparable&&x,indexer&X,const Size size,const Insert insert){

@@ -19,6 +19,16 @@ namespace MathTemplates{
 		value(const numt v,const numt err):Value(v),Error(err){
 			if(Error<0)throw Exception<value>("Error cannot be negative");
 		}
+		value(const std::initializer_list<numt>&source){
+			if(source.size()==0)
+				throw Exception<value>("wrong initialization of value from emply list");
+			if(source.size()>2)
+				throw Exception<value>("wrong initialization of value from list with more than two numbers");
+			std::vector<numt> v;for(const numt&x:source)v.push_back(x);
+			Value=v[0];
+			if(v.size()==1)Error=numt(0);
+			else Error=v[1];
+		}
 		static value std_error(const numt v){
 			if(v<0)throw Exception<value>("Cannot calculate std error for negative value");
 			auto res=value(v,sqrt(v));

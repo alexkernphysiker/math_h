@@ -7,10 +7,10 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main(){
 	LinearInterpolation<value<double>> test{
-		point<value<double>>(value<double>(0.0,0.1),value<double>(0.0,0.4)),
-		point<value<double>>(value<double>(1.0,0.1),value<double>(1.0,0.4)),
-		point<value<double>>(value<double>(2.0,0.1),value<double>(4.0,0.4)),
-		point<value<double>>(value<double>(3.0,0.1),value<double>(9.0,0.4))
+		point<value<double>>({0.0,0.1},{0.0,0.4}),
+		point<value<double>>({1.0,0.1},{1.0,0.4}),
+		point<value<double>>({2.0,0.1},{4.0,0.4}),
+		point<value<double>>({3.0,0.1},{9.0,0.4})
 	};
 	
 	Plotter::Instance().SetOutput(".","interpolation-perversion");
