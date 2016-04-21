@@ -33,11 +33,16 @@ namespace MathTemplates{
 			if(x==tbl(sz-1).X())
 				return tbl(sz-1).Y();
 			auto p=point<numX,numY>(x,numY(0));
-			int i=details::WhereToInsert<point<numX,numY>>(0,sz-1,*this,p);
-			if((i<=0)||(i>=sz))
+			size_t i=details::WhereToInsert<point<numX,numY>>(0,sz-1,*this,p);
+			if((i==0)||(i>=sz))
 				throw Exception<LinearInterpolation>("Attempt to interpolate outside the given region.");
-			numX k=(x-tbl(i-1).X())/(tbl(i).X()-tbl(i-1).X());
-			return tbl(i-1).Y()+(tbl(i).Y()-tbl(i-1).Y())*numY(k);
+			if((x-tbl(i-1).X())<(tbl(i).X()-x)){
+				numX k=(x-tbl(i-1).X())/(tbl(i).X()-tbl(i-1).X());
+				return tbl(i-1).Y()+(tbl(i).Y()-tbl(i-1).Y())*numY(k);
+			}else{
+				numX k=(tbl(i).X()-x)/(tbl(i).X()-tbl(i-1).X());
+				return tbl(i).Y()+(tbl(i-1).Y()-tbl(i).Y())*numY(k);
+			}
 		}
 	};
 	template<class numtX,class numtY=numtX,class numtZ=numtY>
