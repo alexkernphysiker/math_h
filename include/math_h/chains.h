@@ -89,6 +89,7 @@ namespace MathTemplates{
 				operator<<(p);
 			return *this;
 		}
+		void clear(){data.clear();}
 		
 		const size_t size()const{return data.size();}
 		const comparable&operator[](const int i)const{
