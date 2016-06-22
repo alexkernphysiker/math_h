@@ -3,7 +3,7 @@ project(math_h)
 
 add_definitions(-std=c++11 -Wall -Wunused-parameter)
 set(CMAKE_CXX_FLAGS "-pthread -fPIC")
-set(MATH_H ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(MATH_H ${CMAKE_CURRENT_SOURCE_DIR}/include PARENT_SCOPE)
 
 file(GLOB SOURCES gnuplot_wrap/*.cpp)
 file(GLOB TESTS tests/*.cpp)
