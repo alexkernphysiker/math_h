@@ -15,7 +15,7 @@ If you have your own git repository with cmake project you can add this repo as 
 Then add to your CMakeLists.txt
 
 	add_subdirectory(math_h)
-	include_directories(math_h/include)
+	include_directories(${MATH_H_INC})
 	
 Then commit your changes :)
 
