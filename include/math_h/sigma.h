@@ -28,6 +28,7 @@ namespace MathTemplates{
 			Value=v[0];
 			if(v.size()==1)Error=numt(0);
 			else Error=v[1];
+			if(Error<0)throw Exception<value>("Error cannot be negative");
 		}
 		static value std_error(const numt v){
 			if(v<0)throw Exception<value>("Cannot calculate std error for negative value");
@@ -42,49 +43,51 @@ namespace MathTemplates{
 			return *this;
 		}
 		
-		numt val()const{return Value;}
-		numt delta()const{return Error;}
-		numt epsilon()const{return Error/Value;}
-		numt min()const{return Value-Error;}
-		numt max()const{return Value+Error;}
+		const numt&val()const{return Value;}
+		const numt&delta()const{return Error;}
+		const numt epsilon()const{return Error/Value;}
+		const numt min()const{return Value-Error;}
+		const numt max()const{return Value+Error;}
 		bool contains(const numt& x)const{return (x>=min())&&(x<=max());}
 		bool contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
 		bool contains(const numt&&x)const{return contains(x);}
 		bool contains(const value&&x)const{return contains(x);}
-		
 		value&operator+=(const value&other){
-			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value+=other.Value;
+			Error+=other.Error;
 			return *this;
 		}
 		value&operator+=(const value&&other){
 			return operator+=(other);
 		}
 		value&operator-=(const value&other){
-			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value-=other.Value;
+			Error+=other.Error;
 			return *this;
 		}
 		value&operator-=(const value&&other){
 			return operator-=(other);
 		}
 		value&operator*=(const value&other){
-			Error=sqrt(pow(Error*other.Value,2)+pow(other.Error*Value,2));
+			numt v1=Value;if(v1<0)v1=-v1;
+			numt v2=other.Value;if(v2<0)v2=-v2;
 			Value*=other.Value;
+			Error=Error*v2+other.Error*v1;
 			return *this;
 		}
 		value&operator*=(const value&&other){
 			return operator*=(other);
 		}
 		value&operator/=(const value&other){
-			Error=sqrt(pow(Error/other.Value,2)+pow(other.Error*Value/pow(other.Value,2),2));
+			numt v1=Value;if(v1<0)v1=-v1;
+			numt v2=other.Value;if(v2<0)v2=-v2;
 			Value/=other.Value;
+			Error=(Error+other.Error*v1/v2)/v2;
 			return *this;
 		}
 		value&operator/=(const value&&other){
 			return operator/=(other);
 		}
-		
 		const value operator+(const value&other)const{return value(*this)+=other;}
 		const value operator+(const value&&other)const{return value(*this)+=other;}
 		const value operator-(const value&other)const{return value(*this)-=other;}
