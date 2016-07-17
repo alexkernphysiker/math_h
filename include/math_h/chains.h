@@ -6,23 +6,6 @@
 #include <functional>
 #include "error.h"
 namespace MathTemplates{
-	template<class numX>
-	const std::vector<numX> ChainWithStep(const numX from,const numX step,const numX to){
-		if(from>=to)throw Exception<std::vector<numX>>("wrong binning ranges");
-		if(step<=0)throw Exception<std::vector<numX>>("wrong binning step");
-		std::vector<numX> res;
-		for(numX x=from;x<=to;x+=step)res.push_back(x);
-		return res;
-	}
-	template<class numX>
-	const std::vector<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
-		if(from>=to)throw Exception<std::vector<numX>>("wrong binning ranges");
-		if(0==cont)throw Exception<std::vector<numX>>("wrong bins count");
-		numX step=(to-from)/numX(cont);
-		std::vector<numX> res;
-		for(numX x=from;x<=to;x+=step)res.push_back(x);
-		return res;
-	}
 	namespace details{
 		template<class comparable, class indexer=std::vector<comparable>>
 		size_t  WhereToInsert(const size_t from,const size_t to,const indexer&X,const comparable&x){
@@ -31,7 +14,7 @@ namespace MathTemplates{
 			if(x>X[end]) return end+1;
 			if(x<X[beg]) return beg;
 			while(1<(end-beg)){
-				int mid=(beg+end)/2;
+				size_t mid=(beg+end)/2;
 				if(x<X[mid]) end=mid;
 				else
 					if(x>X[mid]) beg=mid;
@@ -60,6 +43,11 @@ namespace MathTemplates{
 		std::vector<comparable> data;
 	public:
 		SortedChain(){}
+		SortedChain(const SortedChain&points){
+			for(const auto&p:points.data)
+				data.push_back(p);
+		}
+		SortedChain(const SortedChain&&points):SortedChain(points){}
 		SortedChain&operator<<(const comparable&p){
 			InsertSorted(p,data,field_size(data),field_insert(data,comparable));
 			return *this;
@@ -72,27 +60,17 @@ namespace MathTemplates{
 				operator<<(p);
 		}
 		SortedChain(const std::initializer_list<comparable>&&points):SortedChain(points){}
-		SortedChain(const std::vector<comparable>&points){
-			for(const auto&p:points)
-				operator<<(p);
-		}
-		SortedChain(const std::vector<comparable>&&points):SortedChain(points){}
-		SortedChain(const SortedChain&points){
-			for(const auto&p:points.data)
-				operator<<(p);
-		}
-		SortedChain(const SortedChain&&points):SortedChain(points){}
 		virtual ~SortedChain(){}
 		SortedChain& operator=(const SortedChain&points){
 			data.clear();
 			for(const auto&p:points.data)
-				operator<<(p);
+				data.push_back(p);
 			return *this;
 		}
 		void clear(){data.clear();}
 		
 		const size_t size()const{return data.size();}
-		const comparable&operator[](const int i)const{
+		const comparable&operator[](const size_t i)const{
 			if(size()<=i)
 				throw Exception<SortedChain>("Range check error");
 			return data[i];
@@ -118,6 +96,24 @@ namespace MathTemplates{
 				throw Exception<SortedChain>("range check error");
 			return data[i];
 		}
+		void append_item_from_sorted(const comparable&c){data.push_back(c);}
 	};
+	template<class numX>
+	const SortedChain<numX> ChainWithStep(const numX from,const numX step,const numX to){
+		if(from>=to)throw Exception<SortedChain<numX>>("wrong binning ranges");
+		if(step<=0)throw Exception<SortedChain<numX>>("wrong binning step");
+		SortedChain<numX> res;
+		for(numX x=from;x<=to;x+=step)res<<x;
+		return res;
+	}
+	template<class numX>
+	const SortedChain<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
+		if(from>=to)throw Exception<SortedChain<numX>>("wrong binning ranges");
+		if(0==cont)throw Exception<SortedChain<numX>>("wrong bins count");
+		numX step=(to-from)/numX(cont);
+		SortedChain<numX> res;
+		for(numX x=from;x<=to;x+=step)res<<x;
+		return res;
+	}
 };
 #endif

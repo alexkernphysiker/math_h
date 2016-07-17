@@ -7,18 +7,18 @@
 #include "error.h"
 namespace MathTemplates{
 	template<class numt>
-	const std::vector<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
-		if(0>=step)throw Exception<std::vector<value<numt>>>("wrong bin width");
-		if(to<=from)throw Exception<std::vector<value<numt>>>("wrong range");
+	const SortedChain<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
+		if(0>=step)throw Exception<SortedChain<value<numt>>>("wrong bin width");
+		if(to<=from)throw Exception<SortedChain<value<numt>>>("wrong range");
 		numt delta=step/numt(2);
-		std::vector<value<numt>> res;
+		SortedChain<value<numt>> res;
 		for(numt x=from+delta;x<to;x+=step)
-			res.push_back(value<numt>(x,delta));
+			res<<value<numt>(x,delta);
 		return res;
 	}
 	template<class numt>
-	const std::vector<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
-		if(0==count)throw Exception<std::vector<value<numt>>>("wrong bins count");
+	const SortedChain<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
+		if(0==count)throw Exception<SortedChain<value<numt>>>("wrong bins count");
 		return BinsByStep(from,(to-from)/numt(count),to);
 	}
 	template<class numtX,class numtY=numtX>
@@ -29,28 +29,25 @@ namespace MathTemplates{
 		hist(const std::initializer_list<value<numtX>>&data){
 			for(const auto& v:data)this->operator<<(Point(v));
 		}
-		hist(const std::initializer_list<value<numtX>>&&data):hist(data){}
-		hist(const std::vector<value<numtX>>&data){
-			for(const auto& v:data)this->operator<<(Point(v));
+		hist(const SortedChain<value<numtX>>&data){
+			for(const auto& v:data)this->append_item_from_sorted(Point(v));
 		}
-		hist(const std::vector<value<numtX>>&&data):hist(data){}
+		hist(const SortedChain<value<numtX>>&&data):hist(data){}
+		hist(const SortedChain<point<numtX,numtY>>&data){
+			for(const auto& P:data)this->append_item_from_sorted(Point(P));
+		}
+		hist(const SortedChain<point<numtX,numtY>>&&data):hist(data){}
+		hist(const SortedChain<Point>&data){
+			for(const auto& P:data)this->append_item_from_sorted(P);
+		}
+		hist(const SortedChain<Point>&&data):hist(data){}
+		hist(const SortedPoints<value<numtX>,value<numtY>>&source):SortedPoints<value<numtX>,value<numtY>>(source){}
 		hist(const std::initializer_list<point<numtX,numtY>>&data){
 			for(const auto& P:data)this->operator<<(Point(P));
 		}
-		hist(const std::initializer_list<point<numtX,numtY>>&&data):hist(data){}
-		hist(const std::vector<point<numtX,numtY>>&data){
-			for(const auto& P:data)this->operator<<(Point(P));
-		}
-		hist(const std::vector<point<numtX,numtY>>&&data):hist(data){}
 		hist(const std::initializer_list<Point>&data){
 			for(const auto& P:data)this->operator<<(P);
 		}
-		hist(const std::initializer_list<Point>&&data):hist(data){}
-		hist(const std::vector<Point>&data){
-			for(const auto& P:data)this->operator<<(P);
-		}
-		hist(const std::vector<Point>&&data):hist(data){}
-		hist(const SortedPoints<value<numtX>,value<numtY>>&source):SortedPoints<value<numtX>,value<numtY>>(source){}
 		virtual ~hist(){}
 		hist& operator=(const SortedPoints<value<numtX>,value<numtY>>&points){
 			SortedPoints<value<numtX>,value<numtY>>::operator=(points);
@@ -81,13 +78,13 @@ namespace MathTemplates{
 		//Advanced transrormations
 		const hist Scale(const size_t sc_x)const{
 			//uncertanties are set to standard sqrt
-			std::vector<value<numtX>> new_x,sorted_x;
+			SortedChain<value<numtX>> new_x,sorted_x;
 			for(const auto&item:*this)
-				InsertSorted(item.X(),sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
+				sorted_x<<item.X();
 			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
 				auto min=sorted_x[i+1-sc_x].min();
 				auto max=sorted_x[i].max();
-				new_x.push_back(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
+				new_x<<value<numtX>((max+min)/numtX(2),(max-min)/numtX(2));
 			}
 			hist res(new_x);
 			for(size_t i=0;i<new_x.size();i++){
@@ -115,9 +112,9 @@ namespace MathTemplates{
 		hist2d(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
 		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
 		hist2d(const std::initializer_list<value<numtX>>&&X,const std::initializer_list<value<numtY>>&&Y):hist2d(X,Y){}
-		hist2d(const std::vector<value<numtX>>&X,const std::vector<value<numtY>>&Y)
+		hist2d(const SortedChain<value<numtX>>&X,const SortedChain<value<numtY>>&Y)
 		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(X,Y){}
-		hist2d(const std::vector<value<numtX>>&&X,const std::vector<value<numtY>>&&Y):hist2d(X,Y){}
+		hist2d(const SortedChain<value<numtX>>&&X,const SortedChain<value<numtY>>&&Y):hist2d(X,Y){}
 		hist2d():hist2d({},{}){}
 		hist2d(const BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>&source)
 		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(source){}
@@ -125,21 +122,17 @@ namespace MathTemplates{
 		
 		const hist2d Scale(const size_t sc_x,const size_t sc_y)const{
 			//uncertanties are set to standard sqrt
-			std::vector<value<numtX>> new_x,sorted_x;
-			for(const auto&item:this->X())
-				InsertSorted(item,sorted_x,std_size(sorted_x),std_insert(sorted_x,value<numtX>));
-			for(size_t i=sc_x-1,n=sorted_x.size();i<n;i+=sc_x){
-				auto min=sorted_x[i+1-sc_x].min();
-				auto max=sorted_x[i].max();
-				new_x.push_back(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
+			SortedChain<value<numtX>> new_x;
+			for(size_t i=sc_x-1,n=this->X().size();i<n;i+=sc_x){
+				auto min=this->X()[i+1-sc_x].min();
+				auto max=this->X()[i].max();
+				new_x<<(value<numtX>((max+min)/numtX(2),(max-min)/numtX(2)));
 			}
-			std::vector<value<numtY>> new_y,sorted_y;
-			for(const auto&item:this->Y())
-				InsertSorted(item,sorted_y,std_size(sorted_y),std_insert(sorted_y,value<numtY>));
-			for(size_t i=sc_y-1,n=sorted_y.size();i<n;i+=sc_y){
-				auto min=sorted_y[i+1-sc_y].min();
-				auto max=sorted_y[i].max();
-				new_y.push_back(value<numtY>((max+min)/numtY(2),(max-min)/numtY(2)));
+			SortedChain<value<numtY>> new_y;
+			for(size_t i=sc_y-1,n=this->Y().size();i<n;i+=sc_y){
+				auto min=this->Y()[i+1-sc_y].min();
+				auto max=this->Y()[i].max();
+				new_y<<(value<numtY>((max+min)/numtY(2),(max-min)/numtY(2)));
 			}
 			hist2d res(new_x,new_y);
 			for(size_t i=0;i<new_x.size();i++)for(size_t j=0;j<new_y.size();j++){
@@ -167,9 +160,8 @@ namespace MathTemplates{
 		unsigned long long counter;
 	public:
 		Distribution1D(const std::initializer_list<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
-		Distribution1D(const std::initializer_list<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
-		Distribution1D(const std::vector<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
-		Distribution1D(const std::vector<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
+		Distribution1D(const SortedChain<value<numtX>>&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
+		Distribution1D(const SortedChain<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
 		Distribution1D&Fill(const numtX& v){
 			counter++;
 			for(size_t i=0,n=this->size();i<n;i++)
@@ -195,11 +187,9 @@ namespace MathTemplates{
 	public:
 		Distribution2D(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
 		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
-		Distribution2D(const std::initializer_list<value<numtX>>&&X,std::initializer_list<value<numtY>>&&Y)
+		Distribution2D(const SortedChain<value<numtX>>&X,const SortedChain<value<numtY>>&Y)
 		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
-		Distribution2D(const std::vector<value<numtX>>&X,const std::vector<value<numtY>>&Y)
-		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
-		Distribution2D(const std::vector<value<numtX>>&&X,std::vector<value<numtY>>&&Y)
+		Distribution2D(const SortedChain<value<numtX>>&&X,SortedChain<value<numtY>>&&Y)
 		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D&Fill(const numtX&x,const numtY&y){
 			counter++;

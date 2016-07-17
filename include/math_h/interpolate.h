@@ -14,12 +14,11 @@ namespace MathTemplates{
 		typedef typename SortedPoints<numX,numY>::Func Func;
 		LinearInterpolation(){}
 		LinearInterpolation(const std::initializer_list<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const std::initializer_list<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const std::vector<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const std::vector<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
-		LinearInterpolation(const Func f,const std::vector<numX>&chain):SortedPoints<numX,numY>(f,chain){}
-		LinearInterpolation(const Func f,const std::vector<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
-		LinearInterpolation(const Func f,const std::initializer_list<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const SortedChain<point<numX,numY>>&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const SortedChain<point<numX,numY>>&&points):SortedPoints<numX,numY>(points){}
+		LinearInterpolation(const Func f,const SortedChain<numX>&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const SortedChain<numX>&&chain):SortedPoints<numX,numY>(f,chain){}
+		LinearInterpolation(const Func f,const std::initializer_list<numX>&chain):SortedPoints<numX,numY>(f,chain){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedChain<point_editable_y<numX,numY>>&&source):SortedPoints<numX,numY>(source){}
 		LinearInterpolation(const SortedPoints<numX,numY>&source):SortedPoints<numX,numY>(source){}
@@ -50,8 +49,8 @@ namespace MathTemplates{
 	public:
 		BiLinearInterpolation(const std::initializer_list<numtX>&X,const std::initializer_list<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
 		BiLinearInterpolation(const std::initializer_list<numtX>&&X,const std::initializer_list<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
-		BiLinearInterpolation(const std::vector<numtX>&X,const std::vector<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
-		BiLinearInterpolation(const std::vector<numtX>&&X,const std::vector<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const SortedChain<numtX>&X,const SortedChain<numtY>&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
+		BiLinearInterpolation(const SortedChain<numtX>&&X,const SortedChain<numtY>&&Y):BiSortedPoints<numtX,numtY,numtZ>(X,Y){}
 		BiLinearInterpolation():BiLinearInterpolation({},{}){}
 		BiLinearInterpolation(const BiSortedPoints<numtX,numtY,numtZ>&source):BiSortedPoints<numtX,numtY,numtZ>(source){}
 		virtual ~BiLinearInterpolation(){}

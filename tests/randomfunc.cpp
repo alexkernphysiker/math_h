@@ -22,15 +22,15 @@ TEST(RandomValueGenerator,BaseTest){
 TEST(RandomValueGenerator,Throwing){
 	auto f=[](double){return 1;};
 	auto z=[](double){return 0;};
-	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(0,0.0,1.0)),Exception<vector<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(0,0.0,1.0)),Exception<SortedChain<double>>);
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,ChainWithCount(1,0.0,1.0)));
-	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,-1.0)),Exception<vector<double>>);
-	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,0.0)),Exception<vector<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,-1.0)),Exception<SortedChain<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,0.0)),Exception<SortedChain<double>>);
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,ChainWithCount(2,0.0,1.0)));
 	EXPECT_NO_THROW(RandomValueGenerator<double>(z,ChainWithCount(2,0.0,1.0)));
 	EXPECT_NO_THROW(RandomValueGenerator<double>(f,{0.0,1.0}));
 	EXPECT_NO_THROW(RandomValueGenerator<double>({point<double>(0.0,1.0),point<double>(1.0,1.0)}));
-	EXPECT_THROW(RandomValueGenerator<double>(z,ChainWithCount(0,0.0,0.0)),Exception<vector<double>>);
+	EXPECT_THROW(RandomValueGenerator<double>(z,ChainWithCount(0,0.0,0.0)),Exception<SortedChain<double>>);
 	auto n=[](double x){return sin(10*x);};
 	EXPECT_THROW(RandomValueGenerator<double>(n,ChainWithCount(100,0.0,1.0)),Exception<SortedPoints<double>>);
 }

@@ -12,6 +12,16 @@ namespace MathTemplates{
 	public:
 		typedef std::function<numY(const numX&)> Func;
 		SortedPoints(){}
+		SortedPoints(const SortedChain<point<numX,numY>>&chain){
+			for(const auto&x:chain)
+				SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(x);
+		}
+		SortedPoints(const SortedChain<point<numX,numY>>&&chain):SortedPoints(chain){}
+		SortedPoints(const Func f,const SortedChain<numX>&chain){
+			for(numX x:chain)
+				SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(point<numX,numY>(x,f(x)));
+		}
+		SortedPoints(const Func f,const SortedChain<numX>&&chain):SortedPoints(f,chain){}
 		SortedPoints&operator<<(const point<numX,numY>&p){
 			SortedChain<point_editable_y<numX,numY>>::operator<<(point_editable_y<numX,numY>(p));
 			return *this;
@@ -20,17 +30,6 @@ namespace MathTemplates{
 		SortedPoints(const std::initializer_list<point<numX,numY>>&points){
 			for(const auto&p:points)operator<<(p);
 		}
-		SortedPoints(const std::initializer_list<point<numX,numY>>&&points):SortedPoints(points){}
-		
-		SortedPoints(const std::vector<point<numX,numY>>&points){
-			for(const auto&p:points)operator<<(p);
-		}
-		SortedPoints(const std::vector<point<numX,numY>>&&points):SortedPoints(points){}
-		
-		SortedPoints(const Func f,const std::vector<numX>&chain){
-			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
-		}
-		SortedPoints(const Func f,const std::vector<numX>&&chain):SortedPoints(f,chain){}
 		SortedPoints(const Func f,const std::initializer_list<numX>&&chain){
 			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
 		}
@@ -50,6 +49,12 @@ namespace MathTemplates{
 			std::vector<point<numY,numX>> res;
 			for(const auto&p:*this)
 				res.push_back(point<numX,numY>(p.Y(),p.X()));
+			return res;
+		}
+		const  SortedChain<point<numY,numX>> TransponateAndSort()const{
+			SortedChain<point<numY,numX>> res;
+			for(const auto&p:*this)
+				res<<point<numX,numY>(p.Y(),p.X());
 			return res;
 		}
 		const SortedPoints XRange(const numX from,const numX to)const{
@@ -230,9 +235,9 @@ namespace MathTemplates{
 		:m_x_axis(X),m_y_axis(Y){init();}
 		BiSortedPoints(const std::initializer_list<numtX>&&X,const std::initializer_list<numtY>&&Y)
 		:m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const std::vector<numtX>&X,const std::vector<numtY>&Y)
+		BiSortedPoints(const SortedChain<numtX>&X,const SortedChain<numtY>&Y)
 		:m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const std::vector<numtX>&&X,const std::vector<numtY>&&Y)
+		BiSortedPoints(const SortedChain<numtX>&&X,const SortedChain<numtY>&&Y)
 		:m_x_axis(X),m_y_axis(Y){init();}
 		BiSortedPoints():BiSortedPoints({},{}){}
 		BiSortedPoints(const BiSortedPoints&source):m_x_axis(source.X()),m_y_axis(source.Y()){

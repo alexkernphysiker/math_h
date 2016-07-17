@@ -17,11 +17,11 @@ namespace MathTemplates{
 	public:
 		RandomValueGenerator(const RandomValueGenerator &R):reverse_distr_func(R.reverse_distr_func),range(R.range){}
 		RandomValueGenerator(const SortedPoints<numt>&distribution_density)
-		:reverse_distr_func(SortedPoints<numt>(Int_Trapez_Table_PositiveStrict(distribution_density).Transponate()))
+		:reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).TransponateAndSort())
 		,range(reverse_distr_func.left().X(),reverse_distr_func.right().X()){}
-		RandomValueGenerator(const std::function<numt(numt)> distribution_density,const std::vector<numt>&chain)
+		RandomValueGenerator(const std::function<numt(numt)> distribution_density,const SortedChain<numt>&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
-		RandomValueGenerator(const std::function<numt(numt)> distribution_density,const std::vector<numt>&&chain)
+		RandomValueGenerator(const std::function<numt(numt)> distribution_density,const SortedChain<numt>&&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
 		RandomValueGenerator(const std::function<numt(numt)> distribution_density,const std::initializer_list<numt>&&chain)
 		:RandomValueGenerator(SortedPoints<numt>(distribution_density,chain)){}
