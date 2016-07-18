@@ -6,21 +6,6 @@
 #include "sigma.h"
 #include "error.h"
 namespace MathTemplates{
-	template<class numt>
-	const SortedChain<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
-		if(0>=step)throw Exception<SortedChain<value<numt>>>("wrong bin width");
-		if(to<=from)throw Exception<SortedChain<value<numt>>>("wrong range");
-		numt delta=step/numt(2);
-		SortedChain<value<numt>> res;
-		for(numt x=from+delta;x<to;x+=step)
-			res<<value<numt>(x,delta);
-		return res;
-	}
-	template<class numt>
-	const SortedChain<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
-		if(0==count)throw Exception<SortedChain<value<numt>>>("wrong bins count");
-		return BinsByStep(from,(to-from)/numt(count),to);
-	}
 	template<class numtX,class numtY=numtX>
 	class hist:public SortedPoints<value<numtX>,value<numtY>>{
 	public:
@@ -53,31 +38,23 @@ namespace MathTemplates{
 			SortedPoints<value<numtX>,value<numtY>>::operator=(points);
 			return *this;
 		}
-		//Simple transform
 		hist CloneEmptyBins()const{
 			std::vector<Point> initer;
 			for(const Point&P:*this)initer.push_back(P);
 			return hist(initer);
-		}
-		numtY Total()const{
-			numtY res=0;
-			for(const Point&P:*this)res+=P.Y().val();
-			return res;
 		}
 		value<numtY> TotalSum()const{
 			value<numtY> res=0;
 			for(const Point&P:*this)res+=P.Y();
 			return res;
 		}
-		const SortedPoints<numtX,numtY> Line()const{
+		const SortedPoints<numtX,numtY> toLine()const{
 			SortedPoints<numtX,numtY> res;
 			for(const Point&P:*this)
 				res<<point<numtX,numtY>(P.X().val(),P.Y().val());
 			return res;
 		}
-		//Advanced transrormations
 		const hist Scale(const size_t sc_x)const{
-			//uncertanties are set to standard sqrt
 			SortedChain<value<numtX>> new_x,sorted_x;
 			for(const auto&item:*this)
 				sorted_x<<item.X();
@@ -96,7 +73,6 @@ namespace MathTemplates{
 			return res;
 		}
 		hist&imbibe(const hist& second){
-			//Sum of histograms. the uncertanties are set to standard sqrt
 			for(int i=0,n=this->size();i<n;i++){
 				if(this->operator[](i).X()==second[i].X()){
 					this->Bin(i).varY()=value<numtY>::std_error(this->operator[](i).Y().val()+second[i].Y().val());
@@ -121,7 +97,6 @@ namespace MathTemplates{
 		virtual ~hist2d(){}
 		
 		const hist2d Scale(const size_t sc_x,const size_t sc_y)const{
-			//uncertanties are set to standard sqrt
 			SortedChain<value<numtX>> new_x;
 			for(size_t i=sc_x-1,n=this->X().size();i<n;i+=sc_x){
 				auto min=this->X()[i+1-sc_x].min();
@@ -145,7 +120,6 @@ namespace MathTemplates{
 			return res;
 		}
 		hist2d&imbibe(const hist2d& second){
-			//Sum of histograms. the uncertanties are set to standard sqrt
 			if((this->X().size()!=second.X().size())||(this->Y().size()!=second.Y().size()))
 				throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
 			for(int i=0,n=this->size();i<n;i++)for(int j=0,m=this->operator[](i).size();j<m;j++)
@@ -205,5 +179,21 @@ namespace MathTemplates{
 			return counter;
 		}
 	};
+
+	template<class numt>
+	const SortedChain<value<numt>> BinsByStep(const numt from,const numt step,const numt to){
+		if(0>=step)throw Exception<SortedChain<value<numt>>>("wrong bin width");
+		if(to<=from)throw Exception<SortedChain<value<numt>>>("wrong range");
+		numt delta=step/numt(2);
+		SortedChain<value<numt>> res;
+		for(numt x=from+delta;x<to;x+=step)
+			res<<value<numt>(x,delta);
+		return res;
+	}
+	template<class numt>
+	const SortedChain<value<numt>> BinsByCount(const size_t count,const numt from,const numt to){
+		if(0==count)throw Exception<SortedChain<value<numt>>>("wrong bins count");
+		return BinsByStep(from,(to-from)/numt(count),to);
+	}
 };
 #endif

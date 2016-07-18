@@ -107,6 +107,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
+		SortedPoints&operator+=(const SortedPoints&&second){return operator+=(second);}
 		SortedPoints&operator+=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()+=f(Bin(i).X());
@@ -130,6 +131,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
+		SortedPoints&operator-=(const SortedPoints&&second){return operator-=(second);}
 		SortedPoints&operator-=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()-=f(Bin(i).X());
@@ -153,6 +155,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
+		SortedPoints&operator*=(const SortedPoints&&second){return operator*=(second);}
 		SortedPoints&operator*=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()*=f(Bin(i).X());
@@ -176,6 +179,7 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
+		SortedPoints&operator/=(const SortedPoints&&second){return operator/=(second);}
 		SortedPoints&operator/=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()/=f(Bin(i).X());

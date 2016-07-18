@@ -22,15 +22,15 @@ namespace MathTemplates{
 			}
 			return end;
 		}
-	}
-	template<class comparable,class indexer, class Size, class Insert>
-	void InsertSorted(const comparable&x,indexer&X,const Size size,const Insert insert){
-		if(size()==0) insert(0,x);
-		else insert(details::WhereToInsert(0,size()-1,X,x),x);
-	}
-	template<class comparable,class indexer, class Size, class Insert>
-	void InsertSorted(const comparable&&x,indexer&X,const Size size,const Insert insert){
-		InsertSorted(x,X,size,insert);
+		template<class comparable,class indexer, class Size, class Insert>
+		void InsertSorted(const comparable&x,indexer&X,const Size size,const Insert insert){
+			if(size()==0) insert(0,x);
+			else insert(WhereToInsert(0,size()-1,X,x),x);
+		}
+		template<class comparable,class indexer, class Size, class Insert>
+		void InsertSorted(const comparable&&x,indexer&X,const Size size,const Insert insert){
+			InsertSorted(x,X,size,insert);
+		}
 	}
 	#define std_size(vector) [&vector](){return (vector).size();}
 	#define std_insert(vector,type) [&vector](int pos,type x){(vector).insert((vector).begin()+pos,x);}
@@ -49,7 +49,7 @@ namespace MathTemplates{
 		}
 		SortedChain(const SortedChain&&points):SortedChain(points){}
 		SortedChain&operator<<(const comparable&p){
-			InsertSorted(p,data,field_size(data),field_insert(data,comparable));
+			details::InsertSorted(p,data,field_size(data),field_insert(data,comparable));
 			return *this;
 		}
 		SortedChain&operator<<(const comparable&&p){
@@ -59,7 +59,6 @@ namespace MathTemplates{
 			for(const auto&p:points)
 				operator<<(p);
 		}
-		SortedChain(const std::initializer_list<comparable>&&points):SortedChain(points){}
 		virtual ~SortedChain(){}
 		SortedChain& operator=(const SortedChain&points){
 			data.clear();
