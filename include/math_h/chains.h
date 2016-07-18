@@ -48,6 +48,13 @@ namespace MathTemplates{
 				data.push_back(p);
 		}
 		SortedChain(const SortedChain&&points):SortedChain(points){}
+		const SortedChain IndexRange(const size_t from,const size_t count)const{
+			SortedChain result;
+			size_t final=from+count;
+			for(size_t i=from;(i<final)&&(i<data.size());i++)
+				result.data.push_back(data[i]);
+			return result;
+		}
 		SortedChain&operator<<(const comparable&p){
 			details::InsertSorted(p,data,field_size(data),field_insert(data,comparable));
 			return *this;
