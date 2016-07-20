@@ -43,7 +43,9 @@ namespace MathTemplates{
 			return *this;
 		}
 		
-		point_editable_y<numX,numY>&Bin(const size_t i){return SortedChain<point_editable_y<numX,numY>>::accessBin(i);}
+		point_editable_y<numX,numY>&Bin(const size_t i){
+			return SortedChain<point_editable_y<numX,numY>>::accessBin(i);
+		}
 
 		const  std::vector<point<numY,numX>> Transponate()const{
 			std::vector<point<numY,numX>> res;
@@ -58,32 +60,24 @@ namespace MathTemplates{
 			return res;
 		}
 		const SortedPoints XRange(const numX from,const numX to)const{
-			SortedPoints res;
-			for(const auto&P:*this)
-				if((P.X()>=from)&&(P.X()<=to))
-					res<<P;
-				return res;
+			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
+				return (P.X()>=from)&&(P.X()<=to);
+			});
 		}
 		const SortedPoints YRange(const numY from,const numY to)const{
-			SortedPoints res;
-			for(const auto&P:*this)
-				if((P.Y()>=from)&&(P.Y()<=to))
-					res<<P;
-				return res;
+			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
+				return (P.Y()>=from)&&(P.Y()<=to);
+			});
 		}
 		const SortedPoints XExclude(const numX from,const numX to)const{
-			SortedPoints res;
-			for(const auto&P:*this)
-				if((P.X()<from)||(P.X()>to))
-					res<<P;
-				return res;
+			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
+				return (P.X()<from)||(P.X()>to);
+			});
 		}
 		const SortedPoints YExclude(const numY from,const numY to)const{
-			SortedPoints res;
-			for(const auto&P:*this)
-				if((P.Y()<from)||(P.Y()>to))
-					res<<P;
-				return res;
+			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
+				return (P.Y()<from)||(P.Y()>to);
+			});
 		}
 		SortedPoints&FillWithValues(const numY&v){
 			for(size_t i=0,n=this->size();i<n;i++)

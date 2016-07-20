@@ -55,6 +55,13 @@ namespace MathTemplates{
 				result.data.push_back(data[i]);
 			return result;
 		}
+		const SortedChain SelectByCondition(const std::function<bool(const comparable&)> condition)const{
+			SortedChain result;
+			for(size_t i=0;i<data.size();i++)
+				if(condition(data[i]))
+					result.data.push_back(data[i]);
+			return result;
+		}
 		SortedChain&operator<<(const comparable&p){
 			details::InsertSorted(p,data,field_size(data),field_insert(data,comparable));
 			return *this;
