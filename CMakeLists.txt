@@ -10,12 +10,11 @@ if(has_parent)
 		PARENT_SCOPE)
 endif()
 
-file(GLOB SOURCES gnuplot_wrap/*.cpp)
-file(GLOB TESTS tests/*.cpp)
-file(GLOB EXAMPLES Example/*.cpp)
-
 include_directories(include)
+file(GLOB SOURCES gnuplot_wrap/*.cpp)
 add_library(gpwrap STATIC ${SOURCES})
+
+file(GLOB EXAMPLES Example/*.cpp)
 foreach(example ${EXAMPLES})
 	get_filename_component(ex_app ${example} NAME_WE)
 	add_executable(${ex_app} ${example})
@@ -24,6 +23,7 @@ endforeach()
 
 option(tests "Compile tests." OFF) 
 if(tests)
+	file(GLOB TESTS tests/*.cpp)
 	find_package(GTest REQUIRED)
 	include_directories(${GTEST_INCLUDE_DIRS})
 	add_executable(math_h_test.exe ${TESTS})

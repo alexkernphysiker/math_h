@@ -11,11 +11,11 @@ int main(){
 	};
 	test<<point<double>(-1,1)<<point<double>(-2,4)<<point<double>(-3,9);
 	
-	auto x_chain=ChainWithStep(-3.0,0.1,3.0);
+	auto x_chain_for_displaying=ChainWithStep(-3.0,0.1,3.0);
 	Plotter::Instance().SetOutput(".","interpolation");
 	Plot<double> output;
-	output.Line(SortedPoints<double>(test.func(),x_chain),"y");
-	output.Line(SortedPoints<double>(LinearInterpolation<double>(test*2.0).func(),x_chain),"y*2");
+	output.Line(SortedPoints<double>(test.func(),x_chain_for_displaying),"y (interpolated)");
+	output.Line(test*2.0,"y*2")<<"set key on";
 	
 	BiLinearInterpolation<double> test2({0.0,1.0,2.0,3.0,4.0},{0.0,1.0,2.0,3.0,4.0});
 	test2.FullCycleVar([](const double&x,const double&y,double&z){
