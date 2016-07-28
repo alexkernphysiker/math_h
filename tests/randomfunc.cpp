@@ -45,7 +45,7 @@ void TestRandomDistribution(function<double(double)> F,double from,double to,int
 	double S=0;
 	for(const auto&p:D){
 		double n_exp=step*double(N);
-		double d=p.Y().delta();
+		double d=p.Y().uncertainty();
 		double y=p.Y().val()/n_exp;
 		double f=F(p.X().val())/norm;
 		S+=pow((y-f)/d,2);

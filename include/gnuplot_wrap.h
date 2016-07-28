@@ -168,7 +168,7 @@ namespace GnuplotWrap{
 		Plot&Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>&data,const std::string&title){
 			Plot<numtX,numtY>::OutputPlot([&data](std::ofstream&str){
 				for(const auto p:data)
-					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().delta()<<" "<<p.Y().delta()<<std::endl;
+					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().uncertainty()<<" "<<p.Y().uncertainty()<<std::endl;
 			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
 			return *this;
 		}

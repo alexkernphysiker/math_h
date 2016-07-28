@@ -139,7 +139,7 @@ namespace MathTemplates{
 		Distribution1D&Fill(const numtX& v){
 			counter++;
 			for(size_t i=0,n=this->size();i<n;i++)
-				if(this->Bin(i).X().contains(v))
+				if(this->Bin(i).X().Contains(v))
 					this->Bin(i).varY()=value<numtY>::std_error(this->Bin(i).Y().val()+numtY(1));
 				return *this;
 		}
@@ -167,8 +167,8 @@ namespace MathTemplates{
 		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D&Fill(const numtX&x,const numtY&y){
 			counter++;
-			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].contains(x))
-				for(size_t j=0,J=this->Y().size();j<J;j++)if(this->Y()[j].contains(y))
+			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].Contains(x))
+				for(size_t j=0,J=this->Y().size();j<J;j++)if(this->Y()[j].Contains(y))
 					this->Bin(i,j)=value<numtZ>::std_error(this->operator[](i)[j].val()+numtZ(1));
 				return *this;
 		}

@@ -18,7 +18,7 @@ TEST(hist,scale_norm){
 	for(const auto&p:H2)s2+=p.Y().val();
 	EXPECT_TRUE(pow(s1-s2,2)<0.000001);
 	for(size_t x=0;x<H2.size();x++){
-		EXPECT_EQ(sqrt(H2[x].Y().val()),H2[x].Y().delta());
+		EXPECT_EQ(sqrt(H2[x].Y().val()),H2[x].Y().uncertainty());
 		EXPECT_EQ(H2[x].Y().val(),H[x*2].Y().val()+H[x*2+1].Y().val());
 	}
 }
@@ -35,7 +35,7 @@ TEST(hist2d,scale_norm){
 	EXPECT_TRUE(pow(s1-s2,2)<0.000001);
 	for(size_t x=0;x<H2.X().size();x++)
 		for(size_t y=0;y<H2.Y().size();y++){
-			EXPECT_EQ(sqrt(H2[x][y].val()),H2[x][y].delta());
+			EXPECT_EQ(sqrt(H2[x][y].val()),H2[x][y].uncertainty());
 			EXPECT_EQ(H2[x][y].val(),H[x*2][y*2].val()+H[x*2+1][y*2].val()+H[x*2][y*2+1].val()+H[x*2+1][y*2+1].val());
 		}
 }
@@ -45,43 +45,43 @@ TEST(Distribution1D,basetest){
 	ASSERT_EQ(-1,D[0].X().val());
 	ASSERT_EQ(0,D[1].X().val());
 	ASSERT_EQ(1,D[2].X().val());
-	ASSERT_EQ(0.5,D[0].X().delta());
-	ASSERT_EQ(0.5,D[1].X().delta());
-	ASSERT_EQ(0.5,D[2].X().delta());
+	ASSERT_EQ(0.5,D[0].X().uncertainty());
+	ASSERT_EQ(0.5,D[1].X().uncertainty());
+	ASSERT_EQ(0.5,D[2].X().uncertainty());
 	EXPECT_EQ(0,D[0].Y().val());
-	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[0].Y().uncertainty());
 	EXPECT_EQ(0,D[1].Y().val());
-	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[1].Y().uncertainty());
 	EXPECT_EQ(0,D[2].Y().val());
-	EXPECT_EQ(1,D[2].Y().delta());
+	EXPECT_EQ(1,D[2].Y().uncertainty());
 	D.Fill(0.0);
 	EXPECT_EQ(0,D[0].Y().val());
-	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[0].Y().uncertainty());
 	EXPECT_EQ(1,D[1].Y().val());
-	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[1].Y().uncertainty());
 	EXPECT_EQ(0,D[2].Y().val());
-	EXPECT_EQ(1,D[2].Y().delta());
+	EXPECT_EQ(1,D[2].Y().uncertainty());
 	D.Fill(1.0);
 	EXPECT_EQ(0,D[0].Y().val());
-	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[0].Y().uncertainty());
 	EXPECT_EQ(1,D[1].Y().val());
-	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[1].Y().uncertainty());
 	EXPECT_EQ(1,D[2].Y().val());
-	EXPECT_EQ(1,D[2].Y().delta());
+	EXPECT_EQ(1,D[2].Y().uncertainty());
 	D.Fill(-0.7);
 	EXPECT_EQ(1,D[0].Y().val());
-	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[0].Y().uncertainty());
 	EXPECT_EQ(1,D[1].Y().val());
-	EXPECT_EQ(1,D[1].Y().delta());
+	EXPECT_EQ(1,D[1].Y().uncertainty());
 	EXPECT_EQ(1,D[2].Y().val());
-	EXPECT_EQ(1,D[2].Y().delta());
+	EXPECT_EQ(1,D[2].Y().uncertainty());
 	D.Fill(-0.2);
 	EXPECT_EQ(1,D[0].Y().val());
-	EXPECT_EQ(1,D[0].Y().delta());
+	EXPECT_EQ(1,D[0].Y().uncertainty());
 	EXPECT_EQ(2,D[1].Y().val());
-	EXPECT_EQ(sqrt(2.0),D[1].Y().delta());
+	EXPECT_EQ(sqrt(2.0),D[1].Y().uncertainty());
 	EXPECT_EQ(1,D[2].Y().val());
-	EXPECT_EQ(1,D[2].Y().delta());
+	EXPECT_EQ(1,D[2].Y().uncertainty());
 }
 TEST(Distribution2D,BaseTest){
 	Distribution2D<double> D(

@@ -26,10 +26,10 @@ TEST(value,fromlist){
 	
 	v={1.0};
 	EXPECT_EQ(1.0,v.val());
-	EXPECT_EQ(0.0,v.delta());
+	EXPECT_EQ(0.0,v.uncertainty());
 	v={1.0,2.0};
 	EXPECT_EQ(1.0,v.val());
-	EXPECT_EQ(2.0,v.delta());
+	EXPECT_EQ(2.0,v.uncertainty());
 }
 TEST(value,base){
 	mt19937 gen;
@@ -38,7 +38,7 @@ TEST(value,base){
 		double x=G(gen);
 		value<double> V(x,0.1);
 		EXPECT_EQ(x,V.val());
-		EXPECT_EQ(0.1,V.delta());
+		EXPECT_EQ(0.1,V.uncertainty());
 		EXPECT_EQ(0.1/x,V.epsilon());
 		EXPECT_EQ(x-0.1,V.min());
 		EXPECT_EQ(x+0.1,V.max());
@@ -46,24 +46,24 @@ TEST(value,base){
 }
 TEST(value,contains){
 	value<double> V(0,0.1);
-	EXPECT_EQ(false,V.contains(-0.2));
-	EXPECT_EQ(true,V.contains(-0.05));
-	EXPECT_EQ(true,V.contains(0));
-	EXPECT_EQ(true,V.contains(0.05));
-	EXPECT_EQ(false,V.contains(0.2));
+	EXPECT_EQ(false,V.Contains(-0.2));
+	EXPECT_EQ(true,V.Contains(-0.05));
+	EXPECT_EQ(true,V.Contains(0));
+	EXPECT_EQ(true,V.Contains(0.05));
+	EXPECT_EQ(false,V.Contains(0.2));
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(value,func_val){
 	value<double> V(1,0.1);
 	auto V2=func_value<double>([](double x){return 2.0*x;},V);
 	EXPECT_EQ(2*V.val(),V2.val());
-	_EQ(2*V.delta(),V2.delta());
+	_EQ(2*V.uncertainty(),V2.uncertainty());
 }
 TEST(value,func_val2){
 	value<double> V(1,0.1);
 	auto F=value_func<double>([](double x){return 2.0*x;});
 	EXPECT_EQ(2*V.val(),F(V).val());
-	_EQ(2*V.delta(),F(V).delta());
+	_EQ(2*V.uncertainty(),F(V).uncertainty());
 }
 TEST(StandardDeviation,Throwing){
 	StandardDeviation<double> S;
@@ -75,7 +75,7 @@ TEST(StandardDeviation,Throwing){
 	EXPECT_EQ(&S,&(S<<0.0));
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0,S().val());
-	EXPECT_EQ(0,S().delta());
+	EXPECT_EQ(0,S().uncertainty());
 }
 TEST(StandardDeviation,Base){
 	StandardDeviation<double> S;
@@ -85,7 +85,7 @@ TEST(StandardDeviation,Base){
 	S<<1.0;
 	EXPECT_EQ(2,S.count());
 	EXPECT_EQ(0.5,S().val());
-	EXPECT_EQ(sqrt(0.5),S().delta());
+	EXPECT_EQ(sqrt(0.5),S().uncertainty());
 }
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(StandardDeviation,WithRandomValues){
@@ -95,7 +95,7 @@ TEST(StandardDeviation,WithRandomValues){
 	for(int i=0;i<2000;i++)
 		S<<distribution(generator);
 	_EQ2(1.0,S().val());
-	_EQ2(3.0,S().delta());
+	_EQ2(3.0,S().uncertainty());
 }
 TEST(StandardDeviation,WithRandomValues2){
 	StandardDeviation<double> S(2);
@@ -104,7 +104,7 @@ TEST(StandardDeviation,WithRandomValues2){
 	for(int i=0;i<2000;i++)
 		S<<distribution(generator);
 	_EQ2(1.0,S().val());
-	_EQ2(6.0,S().delta());
+	_EQ2(6.0,S().uncertainty());
 }
 
 TEST(WeightedAverage,Zeros){
@@ -113,13 +113,13 @@ TEST(WeightedAverage,Zeros){
 	EXPECT_THROW(W<<value<double>(0,0),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0,W().val());
-	_EQ(1,W().delta());
+	_EQ(1,W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0,W().val());
-	_EQ(1.0/sqrt(2.0),W().delta());
+	_EQ(1.0/sqrt(2.0),W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0,W().val());
-	_EQ(1.0/sqrt(3.0),W().delta());
+	_EQ(1.0/sqrt(3.0),W().uncertainty());
 }
 TEST(WeightedAverage,Ones){
 	WeightedAverage<double> W;
@@ -127,27 +127,27 @@ TEST(WeightedAverage,Ones){
 	EXPECT_THROW(W<<value<double>(1,0),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
-	_EQ(1,W().delta());
+	_EQ(1,W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
-	_EQ(1.0/sqrt(2.0),W().delta());
+	_EQ(1.0/sqrt(2.0),W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
-	_EQ(1.0/sqrt(3.0),W().delta());
+	_EQ(1.0/sqrt(3.0),W().uncertainty());
 }
 TEST(WeightedAverage,Zeros_plus_Ones){
 	WeightedAverage<double> W;
 	EXPECT_THROW(W(),Exception<WeightedAverage<double>>);
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(1,W().val());
-	_EQ(1,W().delta());
+	_EQ(1,W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0.5,W().val());
-	_EQ(1.0/sqrt(2.0),W().delta());
+	_EQ(1.0/sqrt(2.0),W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(1,1)));
 	_EQ(2.0/3.0,W().val());
-	_EQ(1.0/sqrt(3.0),W().delta());
+	_EQ(1.0/sqrt(3.0),W().uncertainty());
 	EXPECT_EQ(&W,&(W<<value<double>(0,1)));
 	_EQ(0.5,W().val());
-	_EQ(1.0/sqrt(4.0),W().delta());
+	_EQ(1.0/sqrt(4.0),W().uncertainty());
 }

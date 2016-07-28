@@ -22,17 +22,17 @@ TEST(point,basetest_value){
 	value<double> x(25),y(78);
 	point<value<double>> p(x,y);
 	EXPECT_EQ(x.val(),p.X().val());
-	EXPECT_EQ(x.delta(),p.X().delta());
+	EXPECT_EQ(x.uncertainty(),p.X().uncertainty());
 	EXPECT_EQ(y.val(),p.Y().val());
-	EXPECT_EQ(y.delta(),p.Y().delta());
+	EXPECT_EQ(y.uncertainty(),p.Y().uncertainty());
 }
 TEST(point3d,basetest_value){
 	value<double> x(25),y(78),z(55);
 	point3d<value<double>> p(x,y,z);
 	EXPECT_EQ(x.val(),p.X().val());
-	EXPECT_EQ(x.delta(),p.X().delta());
+	EXPECT_EQ(x.uncertainty(),p.X().uncertainty());
 	EXPECT_EQ(y.val(),p.Y().val());
-	EXPECT_EQ(y.delta(),p.Y().delta());
+	EXPECT_EQ(y.uncertainty(),p.Y().uncertainty());
 	EXPECT_EQ(z.val(),p.Z().val());
-	EXPECT_EQ(z.delta(),p.Z().delta());
+	EXPECT_EQ(z.uncertainty(),p.Z().uncertainty());
 }
