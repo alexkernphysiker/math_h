@@ -2,76 +2,133 @@
 // MIT license
 #ifndef ______MATRICES_H_______
 #	define ______MATRICES_H_______
+#include <list>
 #include <vector>
 #include <functional>
 #include "error.h"
 namespace MathTemplates{
 	template<class numt>
-	const bool MatrixValid(const std::vector<std::vector<numt>>&A){
-		if(A.size()==0)return false;
-		if(A.size()==1)return A[0].size()>0;
-		const size_t first_row_size=A[0].size();
-		if(first_row_size==0)return false;
-		for(const auto&row:A)
-			if(row.size()!=first_row_size)
-				return false;
-			return true;
-	}
+	class Matrix{
+	public:
+		typedef std::function<const numt(const size_t,const size_t)> function;
+		virtual ~Matrix(){}
+		virtual const size_t height()const=0;
+		virtual const size_t width()const=0;
+	protected:
+		virtual const numt get_element(const size_t i,const size_t j)const=0;
+	public:
+		const numt operator()(const size_t i,const size_t j)const{
+			if(i>=height())throw Exception<Matrix>("Range check error");
+			if(j>=width())throw Exception<Matrix>("Range check error");
+			return get_element(i,j);
+		}
+		inline const bool HasSizeAs(const Matrix&other)const{
+			return (height()==other.height())&&(width()==other.width());
+		}
+		const bool operator==(const Matrix&other)const{
+			if(!HasSizeAs(other))return false;
+			for(size_t i=0;i<height();i++)
+				for(size_t j=0;j<width();j++)
+					if(operator()(i,j)!=other(i,j))
+						return false;
+					return true;
+		}
+		inline const bool operator!=(const Matrix&other)const{return !operator==(other);}
+		inline const bool operator==(const numt&c)const{
+			return (width()==1)&&(height()==1)&&(operator()(0,0)==c);
+		}
+		inline const bool operator!=(const numt&c)const{return !operator==(c);}
+	};
 	template<class numt>
-	const bool MatrixSquare(const std::vector<std::vector<numt>>&A){
-		if(A.size()==0)return false;
-		if(A.size()==1)return A[0].size()==1;
-		const size_t first_row_size=A[0].size();
-		if(first_row_size!=A.size())return false;
-		for(const auto&row:A)
-			if(row.size()!=first_row_size)
-				return false;
-			return true;
-	}
-	template<class numt>
-	inline const bool MatrixSizeEqual(
-		const std::vector<std::vector<numt>>&A,
-		const std::vector<std::vector<numt>>&B
-	){
-		if(!MatrixValid<numt>(A))throw Exception<std::vector<std::vector<numt>>,0>("Multiplication: first operand is not valid");
-		if(!MatrixValid<numt>(B))throw Exception<std::vector<std::vector<numt>>,0>("Multiplication: second operand is not valid");
-		if(A.size()!=B.size())return false;
-		return (A[0].size()==B[0].size());
-	}
-	template<class numt>
-	inline const bool MatricesEqual(
-		const std::vector<std::vector<numt>>&A,
-		const std::vector<std::vector<numt>>&B
-	){
-		if(!MatrixSizeEqual<numt>(A,B))
-			return false;
-		for(size_t r=0;r<A.size();r++)
-			for(size_t c=0;c<A[0].size();c++)
-				if(A[r][c]!=B[r][c])
-					return false;
-		return true;
-	}
-	template<class numt>
-	const std::vector<std::vector<numt>>MulMatrices(
-		const std::vector<std::vector<numt>>&A,
-		const std::vector<std::vector<numt>>&B
-	){
-		if(!MatrixValid<numt>(A))throw Exception<std::vector<std::vector<numt>>,0>("Multiplication: first operand is not valid");
-		if(!MatrixValid<numt>(B))throw Exception<std::vector<std::vector<numt>>,0>("Multiplication: second operand is not valid");
-		if(A[0].size()!=B.size())throw Exception<std::vector<std::vector<numt>>,1>("Multiplication: matrices size mismatch");
-		std::vector<std::vector<numt>> result;
-		const auto mul_cycle_length=B.size();
-		const auto res_height=A.size();
-		const auto res_width=B[0].size();
-		for(size_t r=0;r<res_height;r++){
-			result.push_back(std::vector<numt>());
-			for(size_t c=0;c<res_width;c++){
-				result[r].push_back(0);
-				for(size_t m=0;m<mul_cycle_length;m++)
-					result[r][c]+=A[r][m]*B[m][c];
+	class MatrixData:public Matrix<numt>{
+	public:
+		typedef std::vector<std::vector<numt>> container;
+		typedef std::function<const numt(const size_t,const size_t,const numt&)> transform_function;
+	private:
+		container f_data;
+	protected:
+		virtual const numt get_element(const size_t i,const size_t j)const override{return f_data[i][j];}
+	public:
+		virtual const size_t height()const override{return f_data.size();}
+		virtual const size_t width()const override{return f_data[0].size();}
+		virtual ~MatrixData(){}
+		MatrixData(const container&A){
+			if(A.size()==0)
+				throw Exception<MatrixData,0>("invalid matrix size");
+			if((A.size()==1)&&(A[0].size()==0))
+				throw Exception<MatrixData,0>("invalid matrix size");
+			const size_t first_row_size=A[0].size();
+			if(first_row_size==0)
+				throw Exception<MatrixData,0>("invalid matrix size");
+			for(const auto&row:A){
+				if(row.size()!=first_row_size)
+					throw Exception<MatrixData,0>("invalid matrix size");
+				f_data.push_back(std::vector<numt>());
+				const auto row_index=f_data.size()-1;
+				for(const auto&item:row)
+					f_data[row_index].push_back(item);
 			}
 		}
-		return result;
+		MatrixData(const Matrix<numt>&source){
+			for(size_t i=0;i<source.height();i++){
+				f_data.push_back(std::vector<numt>());
+				for(size_t j=0;j<source.width();j++)
+					f_data[i].push_back(source(i,j));
+			}
+		}
+		MatrixData&Transform(const transform_function F){
+			for(size_t i=0;i<height();i++)
+				for(size_t j=0;j<width();j++)
+					f_data[i][j]=F(i,j,f_data[i][j]);
+			return *this;
+		}
+	};
+	template<class numt>
+	class MatrixByFormula:public Matrix<numt>{
+	private:
+		size_t f_N,f_M;
+		typename Matrix<numt>::function f_func;
+	public:
+		MatrixByFormula(const size_t N,const size_t M,const typename Matrix<numt>::function F):f_N(N),f_M(M),f_func(F){}
+		virtual ~MatrixByFormula(){}
+		virtual const size_t height()const override{return f_N;}
+		virtual const size_t width()const override{return f_M;}
+	protected:
+		virtual const numt get_element(const size_t i,const size_t j)const{return f_func(i,j);}
+	};
+	template<class numt>
+	const MatrixByFormula<numt> Unitary(const size_t N){
+		return MatrixByFormula<numt>(N,N,[](size_t i,size_t j)->numt{return (i==j)?1:0;});
 	}
+	template<class numt>
+	const MatrixByFormula<numt> Zeros(const size_t N,const size_t M){
+		return MatrixByFormula<numt>(N,M,[](size_t,size_t)->numt{return 0;});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> RVec(const size_t N,const size_t i){
+		if(i>=N)throw Exception<Matrix<numt>>("Invalid reference vector");
+		return MatrixByFormula<numt>(N,1,[i](size_t ii,size_t)->numt{return (ii==i)?1:0;});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> Transponate(const Matrix<numt>&source){
+		return MatrixByFormula<numt>(source.width(),source.height(),[&source](size_t i,size_t j)->numt{return source(j,i);});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> Diagonal(const std::vector<numt>&N){
+		return MatrixByFormula<numt>(N,N,[](size_t i,size_t j)->numt{return (i==j)?1:0;});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> Multiply(const Matrix<numt>&A,const Matrix<numt>&B){
+		if(A.width()!=B.height())
+			throw Exception<Matrix<numt>>("Matrix Multiplication: size mismatch");
+		size_t cycle_length=A.width();
+		return MatrixByFormula<numt>(A.height(),B.width(),[&A,&B,cycle_length](size_t i,size_t j)->numt{
+			numt result=0;
+			for(size_t k=0;k<cycle_length;k++)
+				result+=A(i,k)*B(k,j);
+			return result;
+		});
+	}
+
 }
 #endif
