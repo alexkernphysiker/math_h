@@ -88,3 +88,79 @@ TEST(Matrix,Multiply){
 	});
 	EXPECT_EQ(Multiply(A,B),C);
 }
+TEST(Matrix,Diagonal){
+	EXPECT_EQ(
+		Diagonal<double>({1,2,3,4}),
+		MatrixData<double>({
+		     {1,0,0,0},
+		     {0,2,0,0},
+		     {0,0,3,0},
+		     {0,0,0,4}
+		})
+	);
+}
+TEST(Matrix,Permutation){
+	EXPECT_THROW(Permutation<double>({3,3}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({0,3}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({3,0}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({1,3}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({2,2}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({0,2}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({2,0}),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Permutation<double>({1,2}),Exception<MatrixByFormula<double>>);
+	//ToDo: provide such control
+	//EXPECT_THROW(Permutation<double>({1,1}),Exception<MatrixByFormula<double>>);
+	//EXPECT_THROW(Permutation<double>({0,0}),Exception<MatrixByFormula<double>>);
+	//EXPECT_THROW(Permutation<double>({1,1,0}),Exception<MatrixByFormula<double>>);
+	//EXPECT_THROW(Permutation<double>({2,1,1}),Exception<MatrixByFormula<double>>);
+	//EXPECT_THROW(Permutation<double>({1,0,1}),Exception<MatrixByFormula<double>>);
+	EXPECT_EQ(Permutation<double>({0,1}),MatrixData<double>({{1,0},{0,1}}));
+	EXPECT_EQ(Permutation<double>({1,0}),MatrixData<double>({{0,1},{1,0}}));
+	EXPECT_EQ(Permutation<double>({0,1,2}),MatrixData<double>({{1,0,0},{0,1,0},{0,0,1}}));
+	EXPECT_EQ(Permutation<double>({1,0,2}),MatrixData<double>({{0,1,0},{1,0,0},{0,0,1}}));
+	EXPECT_EQ(Permutation<double>({2,0,1}),MatrixData<double>({{0,0,1},{1,0,0},{0,1,0}}));
+}
+TEST(Matrix,Minor){
+	auto A = MatrixData<double>({
+		{1,2,3},
+		{4,5,6},
+		{7,8,9}
+	});
+	EXPECT_THROW(Minor(A,3,3),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Minor(A,4,3),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Minor(A,3,4),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Minor(A,4,4),Exception<MatrixByFormula<double>>);
+	EXPECT_EQ(Minor(A,0,0),MatrixData<double>({{5,6},{8,9}}));
+	EXPECT_EQ(Minor(A,0,1),MatrixData<double>({{4,6},{7,9}}));
+	EXPECT_EQ(Minor(A,0,2),MatrixData<double>({{4,5},{7,8}}));
+	EXPECT_EQ(Minor(A,1,0),MatrixData<double>({{2,3},{8,9}}));
+	EXPECT_EQ(Minor(A,1,1),MatrixData<double>({{1,3},{7,9}}));
+	EXPECT_EQ(Minor(A,1,2),MatrixData<double>({{1,2},{7,8}}));
+	EXPECT_EQ(Minor(A,2,0),MatrixData<double>({{2,3},{5,6}}));
+	EXPECT_EQ(Minor(A,2,1),MatrixData<double>({{1,3},{4,6}}));
+	EXPECT_EQ(Minor(A,2,2),MatrixData<double>({{1,2},{4,5}}));
+	EXPECT_EQ(Minor(Minor(A,0,0),1,1),5.0);
+	EXPECT_EQ(Minor(Minor(A,0,0),0,0),9.0);
+	EXPECT_EQ(Minor(Minor(A,2,1),1,1),1.0);
+	EXPECT_EQ(Minor(Minor(A,2,1),0,0),6.0);
+	EXPECT_EQ(Minor(Minor(A,2,1),0,1),4.0);
+	EXPECT_EQ(Minor(Minor(A,1,1),1,1),1.0);
+	EXPECT_THROW(Minor(Minor(Minor(A,0,0),1,1),0,0),Exception<MatrixByFormula<double>>);
+}
+TEST(Matrix,Determinant){
+	EXPECT_THROW(Determinant(MatrixData<double>({{1,2}})),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(Determinant(MatrixData<double>({{1},{2}})),Exception<MatrixByFormula<double>>);
+	EXPECT_EQ(Determinant(MatrixData<double>(5)),5.0);
+	EXPECT_EQ(Determinant(MatrixData<double>({{1,2},{3,4}})),-2);
+	EXPECT_EQ(Determinant(MatrixData<double>({{1,2,3},{4,5,6},{7,8,9}})),0);
+	EXPECT_EQ(Determinant(Unitary<double>(1)),1);
+	EXPECT_EQ(Determinant(Unitary<double>(2)),1);
+	EXPECT_EQ(Determinant(Unitary<double>(3)),1);
+	EXPECT_EQ(Determinant(Unitary<double>(4)),1);
+	EXPECT_EQ(Determinant(Unitary<double>(5)),1);
+	EXPECT_EQ(Determinant(Zeros<double>(1,1)),0);
+	EXPECT_EQ(Determinant(Zeros<double>(2,2)),0);
+	EXPECT_EQ(Determinant(Zeros<double>(3,3)),0);
+	EXPECT_EQ(Determinant(Zeros<double>(4,4)),0);
+	EXPECT_EQ(Determinant(Zeros<double>(5,5)),0);
+}

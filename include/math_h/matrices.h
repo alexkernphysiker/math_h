@@ -52,8 +52,11 @@ namespace MathTemplates{
 		virtual const size_t height()const override{return f_data.size();}
 		virtual const size_t width()const override{return f_data[0].size();}
 		virtual ~MatrixData(){}
+		MatrixData(const numt&A){
+			f_data.push_back({A});
+		}
 		MatrixData(const container&A){
-			if(A.size()==0)
+				if(A.size()==0)
 				throw Exception<MatrixData,0>("invalid matrix size");
 			if((A.size()==1)&&(A[0].size()==0))
 				throw Exception<MatrixData,0>("invalid matrix size");
@@ -96,6 +99,7 @@ namespace MathTemplates{
 	protected:
 		virtual const numt get_element(const size_t i,const size_t j)const{return f_func(i,j);}
 	};
+	
 	template<class numt>
 	const MatrixByFormula<numt> Unitary(const size_t N){
 		return MatrixByFormula<numt>(N,N,[](size_t i,size_t j)->numt{return (i==j)?1:0;});
@@ -110,12 +114,42 @@ namespace MathTemplates{
 		return MatrixByFormula<numt>(N,1,[i](size_t ii,size_t)->numt{return (ii==i)?1:0;});
 	}
 	template<class numt>
+	const MatrixByFormula<numt> Diagonal(const std::vector<numt>&V){
+		return MatrixByFormula<numt>(V.size(),V.size(),[&V](size_t i,size_t j)->numt{return (i==j)?V[i]:0;});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> Permutation(const std::vector<size_t>&V){
+		for(const size_t i:V)if(i>=V.size())
+			throw Exception<MatrixByFormula<numt>>("invalid permutation matrix");
+		return MatrixByFormula<numt>(V.size(),V.size(),[&V](size_t i,size_t j)->numt{return j==V[i]?1:0;});
+	}
+	
+	
+	template<class numt>
 	const MatrixByFormula<numt> Transponate(const Matrix<numt>&source){
 		return MatrixByFormula<numt>(source.width(),source.height(),[&source](size_t i,size_t j)->numt{return source(j,i);});
 	}
 	template<class numt>
-	const MatrixByFormula<numt> Diagonal(const std::vector<numt>&N){
-		return MatrixByFormula<numt>(N,N,[](size_t i,size_t j)->numt{return (i==j)?1:0;});
+	const MatrixByFormula<numt> Minor(const Matrix<numt>&source,const size_t i,const size_t j){
+		if((source.height()<2)||(source.width()<2)||(i>=source.height())||(j>=source.width()))
+			throw Exception<MatrixByFormula<numt>>("Invalid minor");
+		return MatrixByFormula<numt>(source.height()-1,source.width()-1,[&source,i,j](size_t ii,size_t jj)->numt{
+			auto new_ii=ii,new_jj=jj;
+			if(ii>=i)new_ii++;if(jj>=j)new_jj++;
+			return source(new_ii,new_jj);
+		});
+	}
+	template<class numt>
+	const numt Determinant(const Matrix<numt>&source){
+		if((source.height()!=source.width())||(source.height()==0))
+			throw Exception<MatrixByFormula<numt>>("Cannot calculate the determinant");
+		if(source.height()==1)return source(0,0);
+		numt result=0,k=1;
+		for(size_t i=0;i<source.width();i++){
+			result+=k*source(0,i)*Determinant(Minor(source,0,i));
+			k=-k;
+		}
+		return result;
 	}
 	template<class numt>
 	const MatrixByFormula<numt> Multiply(const Matrix<numt>&A,const Matrix<numt>&B){
