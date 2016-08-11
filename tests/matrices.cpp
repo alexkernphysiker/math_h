@@ -64,6 +64,11 @@ TEST(Matrix,Multiply){
 	EXPECT_EQ(Multiply(Zeros<double>(3,3),Zeros<double>(3,3)),Zeros<double>(3,3));
 	EXPECT_EQ(Multiply(Zeros<double>(3,5),Zeros<double>(5,3)),Zeros<double>(3,3));
 	EXPECT_EQ(Multiply(Zeros<double>(2,3),Zeros<double>(3,4)),Zeros<double>(2,4));
+	EXPECT_EQ(Multiply(Unitary<double>(1),Unitary<double>(1)),Unitary<double>(1));
+	EXPECT_EQ(Multiply(Unitary<double>(2),Unitary<double>(2)),Unitary<double>(2));
+	EXPECT_EQ(Multiply(Unitary<double>(3),Unitary<double>(3)),Unitary<double>(3));
+	EXPECT_EQ(Multiply(Unitary<double>(4),Unitary<double>(4)),Unitary<double>(4));
+	EXPECT_EQ(Multiply(Unitary<double>(5),Unitary<double>(5)),Unitary<double>(5));
 	EXPECT_EQ(MatrixByFormula<double>(4,4,F),Multiply(MatrixByFormula<double>(4,4,F),Unitary<double>(4)));
 	EXPECT_EQ(MatrixByFormula<double>(4,4,F),Multiply(Unitary<double>(4),MatrixByFormula<double>(4,4,F)));
 	EXPECT_EQ(Zeros<double>(4,4),Multiply(MatrixByFormula<double>(4,4,F),Zeros<double>(4,4)));
@@ -163,4 +168,30 @@ TEST(Matrix,Determinant){
 	EXPECT_EQ(Determinant(Zeros<double>(3,3)),0);
 	EXPECT_EQ(Determinant(Zeros<double>(4,4)),0);
 	EXPECT_EQ(Determinant(Zeros<double>(5,5)),0);
+}
+TEST(Matrix,Inverse){
+	EXPECT_THROW(CalcInverseMatrix(Zeros<double>(1,3)),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(CalcInverseMatrix(Zeros<double>(1,2)),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(CalcInverseMatrix(Zeros<double>(2,2)),Exception<MatrixByFormula<double>>);
+	EXPECT_THROW(CalcInverseMatrix(Zeros<double>(3,3)),Exception<MatrixByFormula<double>>);
+	
+	EXPECT_EQ(CalcInverseMatrix(Unitary<double>(1)),Unitary<double>(1));
+	EXPECT_EQ(CalcInverseMatrix(Unitary<double>(2)),Unitary<double>(2));
+	EXPECT_EQ(CalcInverseMatrix(Unitary<double>(3)),Unitary<double>(3));
+	EXPECT_EQ(CalcInverseMatrix(Unitary<double>(4)),Unitary<double>(4));
+	
+	EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(2)),MatrixData<double>(0.5));
+	EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(10)),MatrixData<double>(0.1));
+	
+	auto A = MatrixData<double>({{1,2},{3,4}});
+	EXPECT_EQ(Multiply(A,CalcInverseMatrix(A)),Unitary<double>(A.height()));
+	EXPECT_EQ(Multiply(CalcInverseMatrix(A),A),Unitary<double>(A.height()));
+	
+	A = MatrixData<double>({
+		{2,5,7},
+		{6,3,4},
+		{5,-2,-3}
+	});
+	EXPECT_EQ(Multiply(A,CalcInverseMatrix(A)),Unitary<double>(A.height()));
+	EXPECT_EQ(Multiply(CalcInverseMatrix(A),A),Unitary<double>(A.height()));
 }

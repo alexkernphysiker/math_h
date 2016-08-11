@@ -126,6 +126,14 @@ namespace MathTemplates{
 	
 	
 	template<class numt>
+	const MatrixByFormula<numt> operator*(const Matrix<numt>&source,const numt&k){
+		return MatrixByFormula<numt>(source.height(),source.width(),[&source,&k](size_t i,size_t j)->numt{return source(i,j)*k;});
+	}
+	template<class numt>
+	const MatrixByFormula<numt> operator/(const Matrix<numt>&source,const numt&k){
+		return MatrixByFormula<numt>(source.height(),source.width(),[&source,&k](size_t i,size_t j)->numt{return source(i,j)/k;});
+	}
+	template<class numt>
 	const MatrixByFormula<numt> Transponate(const Matrix<numt>&source){
 		return MatrixByFormula<numt>(source.width(),source.height(),[&source](size_t i,size_t j)->numt{return source(j,i);});
 	}
@@ -140,16 +148,38 @@ namespace MathTemplates{
 		});
 	}
 	template<class numt>
+	const numt Suplement(const Matrix<numt>&source,const size_t i, const size_t j){
+		switch((i+j)%2){
+			case 0:
+				return Determinant(Minor(source,i,j));
+			case 1:
+				return -Determinant(Minor(source,i,j));
+		}
+		throw;
+	}
+	template<class numt>
+	const MatrixByFormula<numt> Suplements(const Matrix<numt>&source){
+		return MatrixByFormula<numt>(source.height(),source.width(),[&source](size_t i,size_t j)->numt{
+			return Suplement(source,i,j);
+		});
+	}
+	template<class numt>
 	const numt Determinant(const Matrix<numt>&source){
 		if((source.height()!=source.width())||(source.height()==0))
 			throw Exception<MatrixByFormula<numt>>("Cannot calculate the determinant");
 		if(source.height()==1)return source(0,0);
-		numt result=0,k=1;
-		for(size_t i=0;i<source.width();i++){
-			result+=k*source(0,i)*Determinant(Minor(source,0,i));
-			k=-k;
-		}
+		numt result=0;
+		for(size_t i=0;i<source.width();i++)
+			result+=source(0,i)*Suplement(source,0,i);
 		return result;
+	}
+	template<class numt>
+	const MatrixData<numt> CalcInverseMatrix(const Matrix<numt>&source){
+		numt D=Determinant(source);
+		if(D==0)throw Exception<MatrixByFormula<numt>>("Cannot calculate inverse matrix");
+		if(source.height()==1)
+			return MatrixData<numt>(1)/D;
+		return Transponate(Suplements(source))/D;
 	}
 	template<class numt>
 	const MatrixByFormula<numt> Multiply(const Matrix<numt>&A,const Matrix<numt>&B){
