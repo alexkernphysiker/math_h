@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <functional>
+#include <random>
 #include "error.h"
 namespace MathTemplates{
 	template<class numt>
@@ -159,9 +160,12 @@ namespace MathTemplates{
 	}
 	template<class numt>
 	const MatrixByFormula<numt> Suplements(const Matrix<numt>&source){
-		return MatrixByFormula<numt>(source.height(),source.width(),[&source](size_t i,size_t j)->numt{
-			return Suplement(source,i,j);
-		});
+		return MatrixByFormula<numt>(
+			source.height(),source.width(),
+			[&source](size_t i,size_t j)->numt{
+				return Suplement(source,i,j);
+			}
+		);
 	}
 	template<class numt>
 	const numt Determinant(const Matrix<numt>&source){
@@ -169,8 +173,11 @@ namespace MathTemplates{
 			throw Exception<MatrixByFormula<numt>>("Cannot calculate the determinant");
 		if(source.height()==1)return source(0,0);
 		numt result=0;
-		for(size_t i=0;i<source.width();i++)
-			result+=source(0,i)*Suplement(source,0,i);
+		for(size_t i=0;i<source.width();i++){
+			auto a=source(0,i);
+			if(a!=0)
+				result+=a*Suplement(source,0,i);
+		}
 		return result;
 	}
 	template<class numt>
@@ -193,6 +200,5 @@ namespace MathTemplates{
 			return result;
 		});
 	}
-
 }
 #endif
