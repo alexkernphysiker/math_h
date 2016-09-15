@@ -78,7 +78,7 @@ TEST(value,compare2){
 	EXPECT_FALSE(v);
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
-TEST(value,arithmetic_actions){
+TEST(value,arithmetic_actions1){
 	mt19937 G;
 	uniform_real_distribution<double> val(1,50),unc(0.1,10);
 	for(size_t cnt=0;cnt<1000;cnt++){
@@ -96,6 +96,10 @@ TEST(value,arithmetic_actions){
 		EXPECT_EQ(A.val()/B.val(),ratio.val());
 		_EQ(pow(A.uncertainty()/B.val(),2)+pow((A.val()*B.uncertainty())/pow(B.val(),2),2),pow(ratio.uncertainty(),2));
 	}
+}
+TEST(value,arithmetic_actions2){
+	mt19937 G;
+	uniform_real_distribution<double> val(1,50),unc(0.1,10);
 	for(size_t cnt=0;cnt<1000;cnt++){
 		value<double> A(val(G),unc(G));
 		double B=val(G);
