@@ -84,7 +84,11 @@ namespace MathTemplates{
 		const bool Above(const value&x)const{return min()>x.max();}
 		inline const bool Above(const numt&&x)const{return Above(x);}
 		inline const bool Above(const value&&x)const{return Above(x);}
-		
+		//chi-square-like numeric comparing of magnitudes
+		const numt NumCompare(const numt&x){return pow(Value-x,2)/pow(Error,2);}
+		const numt NumCompare(const value&x){return pow(Value-x.Value,2)/(pow(Error,2)+pow(x.Error,2));}
+		inline const bool NumCompare(const numt&&x)const{return NumCompare(x);}
+		inline const bool NumCompare(const value&&x)const{return NumCompare(x);}		
 		//Inheriting number-like comparing
 		const bool operator<(const value&other)const{return Value<other.Value;}
 		const bool operator<(const value&&other)const{return Value<other.Value;}
