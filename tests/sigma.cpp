@@ -44,13 +44,38 @@ TEST(value,base){
 		EXPECT_EQ(x+0.1,V.max());
 	}
 }
-TEST(value,contains){
+TEST(value,compare1){
 	value<double> V(0,0.1);
 	EXPECT_EQ(false,V.Contains(-0.2));
 	EXPECT_EQ(true,V.Contains(-0.05));
 	EXPECT_EQ(true,V.Contains(0));
 	EXPECT_EQ(true,V.Contains(0.05));
 	EXPECT_EQ(false,V.Contains(0.2));
+	
+	EXPECT_EQ(true,V.NotEqual(-0.2));
+	EXPECT_EQ(false,V.NotEqual(-0.05));
+	EXPECT_EQ(false,V.NotEqual(0));
+	EXPECT_EQ(false,V.NotEqual(0.05));
+	EXPECT_EQ(true,V.NotEqual(0.2));
+}
+TEST(value,compare2){
+	bool v=value<double>{2,1}.Above({0,0.9});
+	EXPECT_TRUE(v);
+	v=value<double>{2,1}.Above({0,1.1});
+	EXPECT_FALSE(v);
+	v=value<double>{0,1}.Below({2,0.9});
+	EXPECT_TRUE(v);
+	v=value<double>{0,1}.Below({2,1.1});
+	EXPECT_FALSE(v);
+	
+	v=value<double>{2,1}.Above(0.9);
+	EXPECT_TRUE(v);
+	v=value<double>{2,1}.Above(1.1);
+	EXPECT_FALSE(v);
+	v=value<double>{0,1}.Below(1.1);
+	EXPECT_TRUE(v);
+	v=value<double>{0,1}.Below(0.9);
+	EXPECT_FALSE(v);
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
 TEST(value,func_val){

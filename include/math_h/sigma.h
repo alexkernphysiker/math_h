@@ -67,11 +67,36 @@ namespace MathTemplates{
 		const numt&epsilon()const{calc();return f_cache->epsilon;}
 		const numt&min()const{calc();return f_cache->min;}
 		const numt&max()const{calc();return f_cache->max;}
+		//Physical comparing of magnitudes with uncertainties
 		const bool Contains(const numt& x)const{return (x>=min())&&(x<=max());}
 		const bool Contains(const value&x)const{return (x.max()>=min())&&(x.min()<=max());}
 		inline const bool Contains(const numt&&x)const{return Contains(x);}
 		inline const bool Contains(const value&&x)const{return Contains(x);}
-
+		const bool NotEqual(const numt& x)const{return (x<min())||(x>max());}
+		const bool NotEqual(const value&x)const{return (x.max()<min())||(x.min()>max());}
+		inline const bool NotEqual(const numt&&x)const{return NotEqual(x);}
+		inline const bool NotEqual(const value&&x)const{return NotEqual(x);}
+		const bool Below(const numt& x)const{return max()<x;}
+		const bool Below(const value&x)const{return max()<x.min();}
+		inline const bool Below(const numt&&x)const{return Below(x);}
+		inline const bool Below(const value&&x)const{return Below(x);}
+		const bool Above(const numt& x)const{return min()>x;}
+		const bool Above(const value&x)const{return min()>x.max();}
+		inline const bool Above(const numt&&x)const{return Above(x);}
+		inline const bool Above(const value&&x)const{return Above(x);}
+		
+		//Inheriting number-like comparing
+		const bool operator<(const value&other)const{return Value<other.Value;}
+		const bool operator<(const value&&other)const{return Value<other.Value;}
+		const bool operator>(const value&other)const{return Value>other.Value;}
+		const bool operator>(const value&&other)const{return Value>other.Value;}
+		const bool operator==(const value&other)const{return Value==other.Value;}
+		const bool operator==(const value&&other)const{return Value==other.Value;}
+		const bool operator>=(const value&other)const{return Value>=other.Value;}
+		const bool operator>=(const value&&other)const{return Value>=other.Value;}
+		const bool operator<=(const value&other)const{return Value<=other.Value;}
+		const bool operator<=(const value&&other)const{return Value<=other.Value;}
+		//arithmetic actions 
 		value&operator+=(const value&other){
 			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value+=other.Value;
@@ -113,24 +138,20 @@ namespace MathTemplates{
 			numt V=F(val());
 			return value(V,sqrt( (pow(F(min())-V,2)+pow(F(max())-V,2)) / numt(2) ));
 		}
-		
-		const bool operator<(const value&other)const{return Value<other.Value;}
-		const bool operator<(const value&&other)const{return Value<other.Value;}
-		const bool operator>(const value&other)const{return Value>other.Value;}
-		const bool operator>(const value&&other)const{return Value>other.Value;}
-		const bool operator==(const value&other)const{return Value==other.Value;}
-		const bool operator==(const value&&other)const{return Value==other.Value;}
-		const bool operator>=(const value&other)const{return Value>=other.Value;}
-		const bool operator>=(const value&&other)const{return Value>=other.Value;}
-		const bool operator<=(const value&other)const{return Value<=other.Value;}
-		const bool operator<=(const value&&other)const{return Value<=other.Value;}
 	};
 	template<typename numt>
-	std::ostream&operator<<(std::ostream&str,const value<numt>&P){
-		return str<<P.val()<<"+/-"<<P.uncertainty();
+	inline std::istream&operator>>(std::istream&str,value<numt>&P){
+		numt v,u;
+		str>>v>>u;
+		P={v,u};
+		return str;
 	}
 	template<typename numt>
-	std::ostream&operator<<(std::ostream&str,const value<numt>&&P){return str<<P;}
+	inline std::ostream&operator<<(std::ostream&str,const value<numt>&P){
+		return str<<P.val()<<" "<<P.uncertainty();
+	}
+	template<typename numt>
+	inline std::ostream&operator<<(std::ostream&str,const value<numt>&&P){return str<<P;}
 	template<typename numt>
 	const value<numt> func_value(const std::function<numt(const numt&)>F,const value<numt>&X){return X.Func(F);}
 	template<typename numt>
