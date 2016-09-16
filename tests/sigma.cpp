@@ -117,6 +117,72 @@ TEST(value,arithmetic_actions2){
 		EXPECT_EQ(A.uncertainty()/B,ratio.uncertainty());
 	}
 }
+TEST(value,NumCompare){
+	{
+		double v=value<double>(0,1).NumCompare(0);
+		EXPECT_EQ(v,0);
+	}
+	{
+		double v=value<double>(0,1).NumCompare(0.5);
+		EXPECT_EQ(v,0.25);
+	}
+	{
+		double v=value<double>(0,1).NumCompare(1);
+		EXPECT_EQ(v,1);
+	}
+	{
+		double v=value<double>(0,1).NumCompare(2);
+		EXPECT_EQ(v,4);
+	}
+	{
+		double v=value<double>(2,1).NumCompare(2);
+		EXPECT_EQ(v,0);
+	}
+	{
+		double v=value<double>(2,1).NumCompare(1.5);
+		EXPECT_EQ(v,0.25);
+	}
+	{
+		double v=value<double>(2,1).NumCompare(1);
+		EXPECT_EQ(v,1);
+	}
+	{
+		double v=value<double>(2,1).NumCompare(0);
+		EXPECT_EQ(v,4);
+	}
+	{
+		double v=value<double>(0,1).NumCompare({0,1});
+		EXPECT_EQ(v,0);
+	}
+	{
+		double v=value<double>(0,1).NumCompare({1,1});
+		EXPECT_EQ(v,0.25);
+	}
+	{
+		double v=value<double>(0,1).NumCompare({2,1});
+		EXPECT_EQ(v,1);
+	}
+	{
+		double v=value<double>(0,1).NumCompare({4,1});
+		EXPECT_EQ(v,4);
+	}
+	{
+		double v=value<double>(2,1).NumCompare({2,1});
+		EXPECT_EQ(v,0);
+	}
+	{
+		double v=value<double>(2,1).NumCompare({1,1});
+		EXPECT_EQ(v,0.25);
+	}
+	{
+		double v=value<double>(2,1).NumCompare({0,1});
+		EXPECT_EQ(v,1);
+	}
+	{
+		double v=value<double>(2,1).NumCompare({-2,1});
+		EXPECT_EQ(v,4);
+	}
+}
 TEST(value,func_val){
 	value<double> V(1,0.1);
 	auto V2=func_value<double>([](double x){return 2.0*x;},V);
