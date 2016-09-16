@@ -13,7 +13,7 @@ int main(){
 	normal_distribution<double> d2(5,1);
 	StandardDeviation<double> S1,S2,S_sum,S_mul,S_ratio,S_f1,S_f2;
 	auto F=[](double x){return log(x);};
-	for(size_t i=0;i<5000;i++){
+	for(size_t i=0;i<10000;i++){
 		double a=d1(engine),b=d2(engine);
 		S1<<a;S2<<b;
 		S_sum<<(a+b);
