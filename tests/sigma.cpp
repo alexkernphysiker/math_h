@@ -85,16 +85,16 @@ TEST(value,arithmetic_actions1){
 		value<double> A(val(G),unc(G)),B(val(G),unc(G));
 		auto sum=A+B;
 		EXPECT_EQ(A.val()+B.val(),sum.val());
-		_EQ(pow(A.uncertainty(),2)+pow(B.uncertainty(),2),pow(sum.uncertainty(),2));
+		_EQ(A.uncertainty()+B.uncertainty(),sum.uncertainty());
 		auto sub=A-B;
 		EXPECT_EQ(A.val()-B.val(),sub.val());
-		_EQ(pow(A.uncertainty(),2)+pow(B.uncertainty(),2),pow(sub.uncertainty(),2));
+		_EQ(A.uncertainty()+B.uncertainty(),sub.uncertainty());
 		auto prod=A*B;
 		EXPECT_EQ(A.val()*B.val(),prod.val());
-		_EQ(pow(A.uncertainty()*B.val(),2)+pow(A.val()*B.uncertainty(),2),pow(prod.uncertainty(),2));
+		_EQ(A.uncertainty()*B.val()+A.val()*B.uncertainty(),prod.uncertainty());
 		auto ratio=A/B;
 		EXPECT_EQ(A.val()/B.val(),ratio.val());
-		_EQ(pow(A.uncertainty()/B.val(),2)+pow((A.val()*B.uncertainty())/pow(B.val(),2),2),pow(ratio.uncertainty(),2));
+		_EQ(A.uncertainty()/B.val()+A.val()*B.uncertainty()/pow(B.val(),2),ratio.uncertainty());
 	}
 }
 TEST(value,arithmetic_actions2){
