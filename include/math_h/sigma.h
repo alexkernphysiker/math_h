@@ -102,28 +102,28 @@ namespace MathTemplates{
 		const bool operator<=(const value&&other)const{return Value<=other.Value;}
 		//arithmetic actions 
 		value&operator+=(const value&other){
+			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value+=other.Value;
-			Error+=other.Error;
 			invalidate();
 			return *this;
 		}
 		inline value&operator+=(const value&&other){return operator+=(other);}
 		value&operator-=(const value&other){
+			Error=sqrt(pow(Error,2)+pow(other.Error,2));
 			Value-=other.Value;
-			Error+=other.Error;
 			invalidate();
 			return *this;
 		}
 		inline value&operator-=(const value&&other){return operator-=(other);}
 		value&operator*=(const value&other){
-			Error=(Error*other.Value)+(other.Error*Value);
+			Error=sqrt(pow(Error*other.Value,2)+pow(other.Error*Value,2));
 			Value*=other.Value;
 			invalidate();
 			return *this;
 		}
 		inline value&operator*=(const value&&other){return operator*=(other);}
 		value&operator/=(const value&other){
-			Error=(Error/other.Value)+(other.Error*Value/pow(other.Value,2));
+			Error=sqrt(pow(Error/other.Value,2)+pow(other.Error*Value/pow(other.Value,2),2));
 			Value/=other.Value;
 			invalidate();
 			return *this;
