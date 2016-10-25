@@ -46,6 +46,7 @@ namespace GnuplotWrap{
 		Plot(){
 			operator<<(Plotter::Instance().GetTerminal());
 			operator<<("unset pm3d");
+			operator<<("unset title");
 			operator<<("unset key");
 			operator<<("unset surface");
 			operator<<("unset view");
@@ -248,14 +249,13 @@ namespace GnuplotWrap{
 		PlotHist2d&operator<<(const std::string&&line){return operator<<(line);}
 		PlotHist2d(const TypeOf3D type){
 			operator<<(Plotter::Instance().GetTerminal());
+			operator<<("unset title");
+			operator<<("unset key");
+			operator<<("unset surface");
 			if(sp2==type){
-				operator<<("unset key");
-				operator<<("unset surface");
 				operator<<("set view map");
 				operator<<("set pm3d at b");
 			}else{
-				operator<<("unset key");
-				operator<<("unset surface");
 				operator<<("unset view");
 				operator<<("set pm3d");
 			}
