@@ -112,10 +112,11 @@ namespace MathTemplates{
 			hist2d res(new_x,new_y);
 			for(size_t i=0;i<new_x.size();i++)for(size_t j=0;j<new_y.size();j++){
 				numtZ v=0;
-				for(size_t ii=0;ii<sc_x;ii++)
+				for(size_t ii=0;ii<sc_x;ii++){
 					for(size_t jj=0;jj<sc_y;jj++)
 						v+=this->operator[](i*sc_x+ii)[j*sc_y+jj].val();
-					res.Bin(i,j)=value<numtZ>::std_error(v);
+				}
+				res.Bin(i,j)=value<numtZ>::std_error(v);
 			}
 			return res;
 		}
@@ -138,10 +139,11 @@ namespace MathTemplates{
 		Distribution1D(const SortedChain<value<numtX>>&&data):hist<numtX,numtY>(data){this->FillWithValues(value<numtY>::std_error(0));counter=0;}
 		Distribution1D&Fill(const numtX& v){
 			counter++;
-			for(size_t i=0,n=this->size();i<n;i++)
+			for(size_t i=0,n=this->size();i<n;i++){
 				if(this->Bin(i).X().Contains(v))
 					this->Bin(i).varY()=value<numtY>::std_error(this->Bin(i).Y().val()+numtY(1));
-				return *this;
+			}
+			return *this;
 		}
 		Distribution1D&Fill(const numtX&&v){
 			return Fill(v);
@@ -167,10 +169,11 @@ namespace MathTemplates{
 		:hist2d<numtX,numtY,numtZ>(X,Y){init();}
 		Distribution2D&Fill(const numtX&x,const numtY&y){
 			counter++;
-			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].Contains(x))
+			for(size_t i=0,I=this->X().size();i<I;i++)if(this->X()[i].Contains(x)){
 				for(size_t j=0,J=this->Y().size();j<J;j++)if(this->Y()[j].Contains(y))
 					this->Bin(i,j)=value<numtZ>::std_error(this->operator[](i)[j].val()+numtZ(1));
-				return *this;
+			}
+			return *this;
 		}
 		Distribution2D&Fill(const numtX&x,const numtY&&y){return Fill(x,y);}
 		Distribution2D&Fill(const numtX&&x,const numtY&y){return Fill(x,y);}

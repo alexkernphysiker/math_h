@@ -28,11 +28,12 @@ namespace MathTemplates{
 		}
 		const bool operator==(const Matrix&other)const{
 			if(!HasSizeAs(other))return false;
-			for(size_t i=0;i<height();i++)
+			for(size_t i=0;i<height();i++){
 				for(size_t j=0;j<width();j++)
 					if(operator()(i,j)!=other(i,j))
 						return false;
-					return true;
+			}
+			return true;
 		}
 		inline const bool operator!=(const Matrix&other)const{return !operator==(other);}
 		inline const bool operator==(const numt&c)const{
@@ -57,7 +58,7 @@ namespace MathTemplates{
 			f_data.push_back({A});
 		}
 		MatrixData(const container&A){
-				if(A.size()==0)
+			if(A.size()==0)
 				throw Exception<MatrixData,0>("invalid matrix size");
 			if((A.size()==1)&&(A[0].size()==0))
 				throw Exception<MatrixData,0>("invalid matrix size");
@@ -81,9 +82,10 @@ namespace MathTemplates{
 			}
 		}
 		MatrixData&Transform(const transform_function F){
-			for(size_t i=0;i<height();i++)
+			for(size_t i=0;i<height();i++){
 				for(size_t j=0;j<width();j++)
 					f_data[i][j]=F(i,j,f_data[i][j]);
+			}
 			return *this;
 		}
 	};
@@ -144,7 +146,8 @@ namespace MathTemplates{
 			throw Exception<MatrixByFormula<numt>>("Invalid minor");
 		return MatrixByFormula<numt>(source.height()-1,source.width()-1,[&source,i,j](size_t ii,size_t jj)->numt{
 			auto new_ii=ii,new_jj=jj;
-			if(ii>=i)new_ii++;if(jj>=j)new_jj++;
+			if(ii>=i)new_ii++;
+			if(jj>=j)new_jj++;
 			return source(new_ii,new_jj);
 		});
 	}
