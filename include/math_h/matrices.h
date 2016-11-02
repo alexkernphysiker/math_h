@@ -100,7 +100,7 @@ namespace MathTemplates{
 		virtual const size_t height()const override{return f_N;}
 		virtual const size_t width()const override{return f_M;}
 	protected:
-		virtual const numt get_element(const size_t i,const size_t j)const{return f_func(i,j);}
+		virtual const numt get_element(const size_t i,const size_t j)const override{return f_func(i,j);}
 	};
 	
 	template<class numt>
