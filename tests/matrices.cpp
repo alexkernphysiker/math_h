@@ -182,16 +182,33 @@ TEST(Matrix,Inverse){
 	
 	EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(2)),MatrixData<double>(0.5));
 	EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(10)),MatrixData<double>(0.1));
-	
-	auto A = MatrixData<double>({{1,2},{3,4}});
+	{
+	MatrixData<double> A({{1,2},{3,4}});
 	EXPECT_EQ(Multiply(A,CalcInverseMatrix(A)),Unitary<double>(A.height()));
 	EXPECT_EQ(Multiply(CalcInverseMatrix(A),A),Unitary<double>(A.height()));
-	
-	A = MatrixData<double>({
-		{2,5,7},
-		{6,3,4},
-		{5,-2,-3}
+	}
+	{
+	MatrixData<double>A({
+	    {2,5,7},
+	    {6,3,4},
+	    {5,-2,-3}
 	});
 	EXPECT_EQ(Multiply(A,CalcInverseMatrix(A)),Unitary<double>(A.height()));
 	EXPECT_EQ(Multiply(CalcInverseMatrix(A),A),Unitary<double>(A.height()));
+	}
+}
+TEST(Matrix,Solve){
+    {
+	const MatrixData<double> A({{1,2,0},{3,4,4},{5,6,3}}),b({{3},{7},{8}}),
+	    x=Solve(A,b),b2=Multiply(A,x);
+	ASSERT_EQ(b.height(),b2.height());
+	for(size_t i=0;i<b.height();i++)
+	    EXPECT_TRUE(pow(b(i,0)-b2(i,0),2)<0.0000001);
+    }{
+	const MatrixData<double> A({{2,0,2,0.6},{3,3,4,-2},{5,5,4,2},{-1,-2,3.4,-1}}),
+	    b({{1},{2},{3},{1}}),x=Solve(A,b),b2=Multiply(A,x);
+	ASSERT_EQ(b.height(),b2.height());
+	for(size_t i=0;i<b.height();i++)
+	    EXPECT_TRUE(pow(b(i,0)-b2(i,0),2)<0.0000001);
+    }
 }
