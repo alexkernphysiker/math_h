@@ -17,16 +17,21 @@ namespace MathTemplates{
 		hist(const SortedChain<value<numtX>>&data){
 			for(const auto& v:data)this->append_item_from_sorted(Point(v));
 		}
-		hist(const SortedChain<value<numtX>>&&data):hist(data){}
+		hist(const SortedChain<value<numtX>>&&data)
+		:hist(data){}
 		hist(const SortedChain<point<numtX,numtY>>&data){
 			for(const auto& P:data)this->append_item_from_sorted(Point(P));
 		}
-		hist(const SortedChain<point<numtX,numtY>>&&data):hist(data){}
+		hist(const SortedChain<point<numtX,numtY>>&&data)
+		:hist(data){}
 		hist(const SortedChain<Point>&data){
 			for(const auto& P:data)this->append_item_from_sorted(P);
 		}
 		hist(const SortedChain<Point>&&data):hist(data){}
-		hist(const SortedPoints<value<numtX>,value<numtY>>&source):SortedPoints<value<numtX>,value<numtY>>(source){}
+		hist(const typename SortedPoints<value<numtX>,value<numtY>>::Func f,const SortedChain<value<numtX>>&chain)
+		:SortedPoints<value<numtX>,value<numtY>>(f,chain){}
+		hist(const SortedPoints<value<numtX>,value<numtY>>&source)
+		:SortedPoints<value<numtX>,value<numtY>>(source){}
 		hist(const std::initializer_list<point<numtX,numtY>>&data){
 			for(const auto& P:data)this->operator<<(Point(P));
 		}

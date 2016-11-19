@@ -18,8 +18,8 @@ namespace MathTemplates{
 		}
 		SortedPoints(const SortedChain<point<numX,numY>>&&chain):SortedPoints(chain){}
 		SortedPoints(const Func f,const SortedChain<numX>&chain){
-			for(numX x:chain)
-				SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(point<numX,numY>(x,f(x)));
+		    for(numX x:chain)
+			SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(point<numX,numY>(x,f(x)));
 		}
 		SortedPoints(const Func f,const SortedChain<numX>&&chain):SortedPoints(f,chain){}
 		SortedPoints&operator<<(const point<numX,numY>&p){
