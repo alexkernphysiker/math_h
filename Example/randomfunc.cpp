@@ -18,7 +18,7 @@ int main(){
 	Distribution1D<double> hist(BinsByStep(0.0,binwidth,4.0));
 	for(size_t i=0;i<count;i++)hist.Fill(distr(engine));
 	
-	Plotter::Instance().SetOutput(".","randomfunc");
+	Plotter::Instance().SetOutput(".","randomfunc1");
 	Plot<double>().Hist(hist).Line(SortedPoints<double>(F,x_values_chain)*(binwidth*count));
 	return 0;
 }
