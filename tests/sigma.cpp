@@ -6,10 +6,16 @@
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
-TEST(value,throwing){
-	EXPECT_THROW(value<double>(1,-0.1),Exception<value<double>>);
+TEST(value,error_handling){
+	EXPECT_NO_THROW(value<double>(1,-0.1));
 	EXPECT_NO_THROW(value<double>(1,0));
 	EXPECT_NO_THROW(value<double>(1,0.1));
+	EXPECT_EQ(value<double>(1,0).uncertainty(),0);
+	EXPECT_EQ(value<double>(1,0.1).uncertainty(),0.1);
+	EXPECT_FALSE(isfinite(value<double>(1,-0.1).uncertainty()));
+	EXPECT_NO_THROW(value<double>(1,-0.1)+value<double>(1,0.1));
+	EXPECT_EQ((value<double>(1,-0.1)+value<double>(1,0.1)).val(),2);
+	EXPECT_FALSE(isfinite((value<double>(1,-0.1)+value<double>(1,0.1)).uncertainty()));
 }
 TEST(value,fromlist){
 	initializer_list<double> l={};

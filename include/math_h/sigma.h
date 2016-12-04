@@ -21,7 +21,8 @@ namespace MathTemplates{
 		};
 		std::shared_ptr<cache> f_cache;
 		inline void invalidate(){
-			if(Error<0)throw Exception<value>("Error cannot be negative");
+			if(Error<0)
+			    Error=INFINITY;
 			f_cache=nullptr;
 		}
 		inline void calc()const{
