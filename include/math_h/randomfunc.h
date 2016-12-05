@@ -3,6 +3,7 @@
 #ifndef XRYPRAVJWTJCYPQI
 #define XRYPRAVJWTJCYPQI
 #include <random>
+#include <memory>
 #include <functional>
 #include <math.h>
 #include "tabledata.h"
@@ -36,25 +37,25 @@ namespace MathTemplates{
     template<class numt,class RG=std::mt19937>
     class RandomUniform:public IFunction<numt,RG&>{
     private:
-	std::uniform_real_distribution<numt> f_distr;
+	std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
     public:
-	RandomUniform(const numt x1,const numt x2):f_distr(x1,x2){}
+	RandomUniform(const numt x1,const numt x2):f_distr(std::make_shared<std::uniform_real_distribution<numt>>(x1,x2)){}
 	RandomUniform(const RandomUniform&source):f_distr(source.f_distr){}
 	virtual ~RandomUniform(){}
 	virtual numt operator ()(RG&generator)const override{
-	    return f_distr(generator);
+	    return f_distr->operator()(generator);
 	}
     };
     template<class numt,class RG=std::mt19937>
     class RandomGauss:public IFunction<numt,RG&>{
     private:
-	std::normal_distribution<numt> f_distr;
+	std::shared_ptr<std::normal_distribution<numt>> f_distr;
     public:
-	RandomGauss(const numt x1,const numt x2):f_distr(x1,x2){}
+	RandomGauss(const numt x1,const numt x2):f_distr(std::make_shared<std::normal_distribution<numt>>(x1,x2)){}
 	RandomGauss(const RandomGauss&source):f_distr(source.f_distr){}
 	virtual ~RandomGauss(){}
 	virtual numt operator ()(RG&generator)const override{
-	    return f_distr(generator);
+	    return f_distr->operator()(generator);
 	}
     };
 };

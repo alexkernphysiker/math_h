@@ -64,3 +64,16 @@ TEST(RandomValueTableDistr,Gauss3){TestRandomDistribution([](double x){return Ga
 TEST(RandomValueTableDistr,Gauss4){TestRandomDistribution([](double x){return Gaussian(x,3.0,1.0);},-2,10,50);}
 TEST(RandomValueTableDistr,Gauss5){TestRandomDistribution([](double x){return Gaussian(x,3.0,1.5);},-2,10,50);}
 TEST(RandomValueTableDistr,Gauss6){TestRandomDistribution([](double x){return Gaussian(x,3.0,2.0);},-2,10,50);}
+
+TEST(RandomUniform,BaseTest){
+	RandomUniform<double> R(0,1);
+	for(int i=0;i<100;i++){
+		double r=R(rnd);
+		EXPECT_TRUE((r>=0)&&(r<=1));
+	}
+	auto R2=R;
+	for(int i=0;i<100;i++){
+		double r=R2(rnd);
+		EXPECT_TRUE((r>=0)&&(r<=1));
+	}
+}
