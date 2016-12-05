@@ -12,7 +12,7 @@ int main(){
 	auto x_values_chain=ChainWithStep(0.0,0.01,4.0);
 	const double binwidth=0.1;
 	const size_t count =1000;
-	RandomValueGenerator<double,mt19937> distr(F,x_values_chain);
+	RandomValueTableDistr<double,mt19937> distr(F,x_values_chain);
 	
 	mt19937 engine;
 	Distribution1D<double> hist(BinsByStep(0.0,binwidth,4.0));
