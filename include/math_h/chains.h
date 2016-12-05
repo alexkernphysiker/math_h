@@ -112,7 +112,7 @@ namespace MathTemplates{
 		void append_item_from_sorted(const comparable&c){data.push_back(c);}
 	};
 	template<class numX>
-	const SortedChain<numX> ChainWithStep(const numX from,const numX step,const numX to){
+	const SortedChain<numX> ChainWithStep(const numX&from,const numX&step,const numX&to){
 		if(from>=to)throw Exception<SortedChain<numX>>("wrong binning ranges");
 		if(step<=0)throw Exception<SortedChain<numX>>("wrong binning step");
 		SortedChain<numX> res;
@@ -120,7 +120,7 @@ namespace MathTemplates{
 		return res;
 	}
 	template<class numX>
-	const SortedChain<numX> ChainWithCount(const size_t cont,const numX from,const numX to){
+	const SortedChain<numX> ChainWithCount(const size_t cont,const numX&from,const numX&to){
 		if(from>=to)throw Exception<SortedChain<numX>>("wrong binning ranges");
 		if(0==cont)throw Exception<SortedChain<numX>>("wrong bins count");
 		numX step=(to-from)/numX(cont);

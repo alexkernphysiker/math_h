@@ -7,7 +7,7 @@
 #include "error.h"
 namespace MathTemplates{
 	template<class numX,class numY=numX,class functype=std::function<numY(numX)>>
-	numY Sympson(const functype y,const numX a,const numX b,const numX step){
+	numY Sympson(const functype y,const numX&a,const numX&b,const numX&step){
 		numX stp=step;
 		if((stp*(b-a))<=0) stp=-stp;
 		numX halfstep=stp/2;
@@ -40,16 +40,8 @@ namespace MathTemplates{
 		}
 		return res;
 	}
-	template<class numX,class numY=numX>
-	const SortedPoints<numX,numY> Int_Trapez_Table_RV(const SortedPoints<numX,numY>&&source){
-		return Int_Trapez_Table(source);
-	}
-	template<class numX,class numY=numX>
-	const SortedPoints<numX,numY> Int_Trapez_Table_PositiveStrict_RV(const SortedPoints<numX,numY>&&source){
-		return Int_Trapez_Table_PositiveStrict(source);
-	}
-	template<class numX,class numY=numX,class func1=std::function<numY(numX)>,class func2=std::function<numY(numX)>>
-	class Convolution:public IFunction<numY,const numX>{
+	template<class numX,class numY=numX,class func1=std::function<numY(const numX&)>,class func2=std::function<numY(const numX&)>>
+	class Convolution:public IFunction<numY,const numX&>{
 	private:
 		func1 A;
 		func2 B;
@@ -60,10 +52,10 @@ namespace MathTemplates{
 		Convolution(){}
 		Convolution(const Convolution &C)
 		:A(C.A),B(C.B),Ksi1(C.Ksi1),Ksi2(C.Ksi2),Step(C.Step){}
-		Convolution(const func1 a,const func2 b,const numX ksi1,const numX ksi2,const numX step)
+		Convolution(const func1 a,const func2 b,const numX&ksi1,const numX&ksi2,const numX&step)
 		:A(a),B(b){Ksi1=ksi1;Ksi2=ksi2;Step=step;}
-		virtual numY operator()(const numX x)const override{
-			return Sympson<numX,numY>([this,x](numX ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
+		virtual numY operator()(const numX&x)const override{
+			return Sympson<numX,numY>([this,x](const numX&ksi){return A(ksi)*B(x-ksi);},Ksi1,Ksi2,Step);
 		}
 	};
 };

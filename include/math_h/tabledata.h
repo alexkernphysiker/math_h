@@ -16,28 +16,20 @@ namespace MathTemplates{
 			for(const auto&x:chain)
 				SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(x);
 		}
-		SortedPoints(const SortedChain<point<numX,numY>>&&chain):SortedPoints(chain){}
 		SortedPoints(const Func f,const SortedChain<numX>&chain){
 		    for(numX x:chain)
 			SortedChain<point_editable_y<numX,numY>>::append_item_from_sorted(point<numX,numY>(x,f(x)));
 		}
-		SortedPoints(const Func f,const SortedChain<numX>&&chain):SortedPoints(f,chain){}
 		SortedPoints&operator<<(const point<numX,numY>&p){
 			SortedChain<point_editable_y<numX,numY>>::operator<<(point_editable_y<numX,numY>(p));
 			return *this;
 		}
-		SortedPoints&operator<<(const point<numX,numY>&&p){return operator<<(p);}
 		SortedPoints(const std::initializer_list<point<numX,numY>>&points){
 			for(const auto&p:points)operator<<(p);
 		}
-		SortedPoints(const Func f,const std::initializer_list<numX>&&chain){
-			for(numX x:chain)operator<<(point<numX,numY>(x,f(x)));
-		}
-		
 		virtual ~SortedPoints(){}
 		
 		SortedPoints(const SortedChain<point_editable_y<numX,numY>>&points):SortedChain<point_editable_y<numX,numY>>(points){}
-		SortedPoints(const SortedChain<point_editable_y<numX,numY>>&&points):SortedPoints(points){}
 		SortedPoints& operator=(const SortedChain<point_editable_y<numX,numY>>&points){
 			SortedChain<point_editable_y<numX,numY>>::operator=(points);
 			return *this;
@@ -59,22 +51,22 @@ namespace MathTemplates{
 				res<<point<numX,numY>(p.Y(),p.X());
 			return res;
 		}
-		const SortedPoints XRange(const numX from,const numX to)const{
+		const SortedPoints XRange(const numX&from,const numX&to)const{
 			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
 				return (P.X()>=from)&&(P.X()<=to);
 			});
 		}
-		const SortedPoints YRange(const numY from,const numY to)const{
+		const SortedPoints YRange(const numY&from,const numY&to)const{
 			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
 				return (P.Y()>=from)&&(P.Y()<=to);
 			});
 		}
-		const SortedPoints XExclude(const numX from,const numX to)const{
+		const SortedPoints XExclude(const numX&from,const numX&to)const{
 			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
 				return (P.X()<from)||(P.X()>to);
 			});
 		}
-		const SortedPoints YExclude(const numY from,const numY to)const{
+		const SortedPoints YExclude(const numY&from,const numY&to)const{
 			return SortedChain<point_editable_y<numX,numY>>::SelectByCondition([from,to](const point_editable_y<numX,numY>&P){
 				return (P.Y()<from)||(P.Y()>to);
 			});
@@ -83,9 +75,6 @@ namespace MathTemplates{
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()=v;
 			return *this;
-		}
-		SortedPoints&FillWithValues(const numY&&v){
-			return FillWithValues(v);
 		}
 		SortedPoints&Transform(const std::function<numY(const numX&,const numY&)>&F){
 			for(size_t i=0,n=this->size();i<n;i++)
@@ -101,7 +90,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator+=(const SortedPoints&&second){return operator+=(second);}
 		SortedPoints&operator+=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()+=f(Bin(i).X());
@@ -111,9 +99,6 @@ namespace MathTemplates{
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()+=c;
 			return *this;
-		}
-		SortedPoints&operator+=(const numY&&c){
-			return operator+=(c);
 		}
 		
 		SortedPoints&operator-=(const SortedPoints& second){
@@ -125,7 +110,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator-=(const SortedPoints&&second){return operator-=(second);}
 		SortedPoints&operator-=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()-=f(Bin(i).X());
@@ -135,9 +119,6 @@ namespace MathTemplates{
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()-=c;
 			return *this;
-		}
-		SortedPoints&operator-=(const numY&&c){
-			return operator-=(c);
 		}
 		
 		SortedPoints&operator*=(const SortedPoints& second){
@@ -149,7 +130,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator*=(const SortedPoints&&second){return operator*=(second);}
 		SortedPoints&operator*=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()*=f(Bin(i).X());
@@ -159,9 +139,6 @@ namespace MathTemplates{
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()*=c;
 			return *this;
-		}
-		SortedPoints&operator*=(const numY&&c){
-			return operator*=(c);
 		}
 		
 		SortedPoints&operator/=(const SortedPoints& second){
@@ -173,7 +150,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		SortedPoints&operator/=(const SortedPoints&&second){return operator/=(second);}
 		SortedPoints&operator/=(const Func f){
 			for(size_t i=0,n=this->size();i<n;i++)
 				Bin(i).varY()/=f(Bin(i).X());
@@ -184,27 +160,16 @@ namespace MathTemplates{
 				Bin(i).varY()/=c;
 			return *this;
 		}
-		SortedPoints&operator/=(const numY&&c){
-			return operator/=(c);
-		}
 		
 		const SortedPoints operator+(const SortedPoints&other)const{return SortedPoints(*this)+=other;}
-		const SortedPoints operator+(const SortedPoints&&other)const{return SortedPoints(*this)+=other;}
 		const SortedPoints operator-(const SortedPoints&other)const{return SortedPoints(*this)-=other;}
-		const SortedPoints operator-(const SortedPoints&&other)const{return SortedPoints(*this)-=other;}
 		const SortedPoints operator*(const SortedPoints&other)const{return SortedPoints(*this)*=other;}
-		const SortedPoints operator*(const SortedPoints&&other)const{return SortedPoints(*this)*=other;}
 		const SortedPoints operator/(const SortedPoints&other)const{return SortedPoints(*this)/=other;}
-		const SortedPoints operator/(const SortedPoints&&other)const{return SortedPoints(*this)/=other;}
 		
 		const SortedPoints operator+(const numY&other)const{return SortedPoints(*this)+=other;}
-		const SortedPoints operator+(const numY&&other)const{return SortedPoints(*this)+=other;}
 		const SortedPoints operator-(const numY&other)const{return SortedPoints(*this)-=other;}
-		const SortedPoints operator-(const numY&&other)const{return SortedPoints(*this)-=other;}
 		const SortedPoints operator*(const numY&other)const{return SortedPoints(*this)*=other;}
-		const SortedPoints operator*(const numY&&other)const{return SortedPoints(*this)*=other;}
 		const SortedPoints operator/(const numY&other)const{return SortedPoints(*this)/=other;}
-		const SortedPoints operator/(const numY&&other)const{return SortedPoints(*this)/=other;}
 
 		const SortedPoints operator+(const Func other)const{return SortedPoints(*this)+=other;}
 		const SortedPoints operator-(const Func other)const{return SortedPoints(*this)-=other;}
@@ -231,11 +196,7 @@ namespace MathTemplates{
 		const SortedChain<numtY>&Y()const{return m_y_axis;}
 		BiSortedPoints(const std::initializer_list<numtX>&X,const std::initializer_list<numtY>&Y)
 		:m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const std::initializer_list<numtX>&&X,const std::initializer_list<numtY>&&Y)
-		:m_x_axis(X),m_y_axis(Y){init();}
 		BiSortedPoints(const SortedChain<numtX>&X,const SortedChain<numtY>&Y)
-		:m_x_axis(X),m_y_axis(Y){init();}
-		BiSortedPoints(const SortedChain<numtX>&&X,const SortedChain<numtY>&&Y)
 		:m_x_axis(X),m_y_axis(Y){init();}
 		BiSortedPoints():BiSortedPoints({},{}){}
 		BiSortedPoints(const BiSortedPoints&source):m_x_axis(source.X()),m_y_axis(source.Y()){

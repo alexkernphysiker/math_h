@@ -17,19 +17,19 @@ namespace MathTemplates{
 	template<class numt=double>
 	inline numt PI(){return 3.1415926;}
 	template<class numt=double>
-	numt Gaussian(const numt x,const numt X_max,const numt sigma){
+	numt Gaussian(const numt&x,const numt&X_max,const numt&sigma){
 		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*PI<numt>()));
 	}
 	template<class numt=double>
-	numt Lorentzian(const numt x,const numt X_max,const numt gamma){
+	numt Lorentzian(const numt&x,const numt&X_max,const numt&gamma){
 		return pow(gamma,2)/(PI<numt>()*gamma*(pow(gamma,2)+pow(x-X_max,2)));
 	}
 	template<class numt=double>
-	numt BreitWigner(const numt x,const numt pos,const numt gamma){
+	numt BreitWigner(const numt&x,const numt&pos,const numt&gamma){
 		return gamma/(2*PI<numt>()*(pow(x-pos,2)+pow(gamma/2,2)));
 	}
 	template<class numt=double>
-	numt Novosibirsk(const numt x,const numt pos,const numt sigma,const numt asym){
+	numt Novosibirsk(const numt&x,const numt&pos,const numt&sigma,const numt&asym){
 		if(pow(asym/sigma,2)<=0.000001)
 			return Gaussian<numt>(x,pos,sigma);
 		numt Lsqlog4=asym*sqrt(log(4));
@@ -43,17 +43,17 @@ namespace MathTemplates{
 	
 	
 	template<class numt=double>
-	numt FermiFunc(const numt x,const numt X_border,const numt diffuse){
+	numt FermiFunc(const numt&x,const numt&X_border,const numt&diffuse){
 		return 1.0/(1.0+exp((x-X_border)/diffuse));
 	}
 	template<class numt, class indexer>
-	numt Polynom(const numt x,const indexer  p,const unsigned int P,const int index_offset=0){
+	numt Polynom(const numt&x,const indexer p,const unsigned int P,const int index_offset=0){
 		numt res=0;numt c=1;
 		for(unsigned int i=0; i<=P;i++){res+=c*p[index_offset+i];if(i<P)c*=x;}
 		return res;
 	}
 	template<unsigned int P,class numt, class indexer, int index_offset=0>
-	inline numt Polynom(const numt x,const indexer  p){
+	inline numt Polynom(const numt&x,const indexer p){
 		return Polynom<numt,indexer>(x,p,P,index_offset);
 	}
 };
