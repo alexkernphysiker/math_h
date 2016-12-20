@@ -24,4 +24,9 @@ TEST(Vector3,vector_prod){
 	EXPECT_EQ(Vector3<double>::basis_x().VecP(Vector3<double>::basis_x()),Vector3<double>::zero());
 	EXPECT_EQ(Vector3<double>::basis_y().VecP(Vector3<double>::basis_x()),-Vector3<double>::basis_z());
 	EXPECT_EQ(Vector3<double>::basis_x().VecP(-Vector3<double>::basis_x()),Vector3<double>::zero());
+
+	EXPECT_EQ(1,Vector3<double>::basis_x().VecP(Vector3<double>::basis_y())*Vector3<double>::basis_z());
+	EXPECT_EQ(1,Vector3<double>::basis_y().VecP(Vector3<double>::basis_z())*Vector3<double>::basis_x());
+	EXPECT_EQ(1,Vector3<double>::basis_z().VecP(Vector3<double>::basis_x())*Vector3<double>::basis_y());
+
 }
