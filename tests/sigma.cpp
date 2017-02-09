@@ -287,3 +287,17 @@ TEST(WeightedAverage,Zeros_plus_Ones){
 	_EQ(0.5,W().val());
 	_EQ(1.0/sqrt(4.0),W().uncertainty());
 }
+TEST(CorrelationLinear,simple){
+    mt19937 gen;
+    normal_distribution<double> G;
+    CorrelationLinear<double> A,B,C;
+    for(size_t i=0;i<10000;i++){
+	double v1=G(gen),v2=G(gen);
+	A<<make_pair(v1,v1);
+	B<<make_pair(v1,-v1);
+	C<<make_pair(v1,v2);
+    }
+    EXPECT_TRUE(pow(A.R()-1,2)<0.001);
+    EXPECT_TRUE(pow(B.R()+1,2)<0.001);
+    EXPECT_TRUE(pow(C.R()  ,2)<0.001);
+}
