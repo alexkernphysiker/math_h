@@ -201,6 +201,30 @@ TEST(value,func_val2){
 	EXPECT_EQ(2*V.val(),F(V).val());
 	_EQ(2*V.uncertainty(),F(V).uncertainty());
 }
+TEST(value,wider){
+	value<double> V1(1,0.1),V2(2,0.1),V3(1,0.5);
+	EXPECT_EQ(V1,V1.make_wider(1));
+	EXPECT_EQ(V2,V2.make_wider(1));
+	EXPECT_EQ(V3,V3.make_wider(1));
+	auto V11=V1.make_wider(0.5);
+	auto V12=V2.make_wider(0.5);
+	auto V13=V3.make_wider(0.5);
+	EXPECT_EQ(V11.val(),V1.val());
+	EXPECT_EQ(V12.val(),V2.val());
+	EXPECT_EQ(V13.val(),V3.val());
+	EXPECT_EQ(V11.uncertainty(),V1.uncertainty()*0.5);
+	EXPECT_EQ(V12.uncertainty(),V2.uncertainty()*0.5);
+	EXPECT_EQ(V13.uncertainty(),V3.uncertainty()*0.5);
+	auto V21=V1.make_wider(2.5);
+	auto V22=V2.make_wider(2.5);
+	auto V23=V3.make_wider(2.5);
+	EXPECT_EQ(V21.val(),V1.val());
+	EXPECT_EQ(V22.val(),V2.val());
+	EXPECT_EQ(V23.val(),V3.val());
+	EXPECT_EQ(V21.uncertainty(),V1.uncertainty()*2.5);
+	EXPECT_EQ(V22.uncertainty(),V2.uncertainty()*2.5);
+	EXPECT_EQ(V23.uncertainty(),V3.uncertainty()*2.5);
+}
 TEST(StandardDeviation,Throwing){
 	StandardDeviation<double> S;
 	EXPECT_EQ(0,S.count());

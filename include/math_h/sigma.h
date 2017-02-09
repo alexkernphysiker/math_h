@@ -62,6 +62,9 @@ namespace MathTemplates{
 	    invalidate();
 	    return *this;
 	}
+	const value make_wider(const numt&scale)const{
+	    return value(Value,scale*Error);
+	}
 	const numt&val()const{return Value;}
 	const numt&uncertainty()const{return Error;}
 	const numt&epsilon()const{calc();return f_cache->epsilon;}
