@@ -293,7 +293,7 @@ TEST(CorrelationLinear,simple1){
     CorrelationLinear<double> A,B,C;
     for(size_t i=0;i<10000;i++){
 	double v1=G(gen),v2=G(gen);
-	A<<make_pair(v1,v1);
+	EXPECT_EQ(&A,&(A<<make_pair(v1,v1)));
 	B<<make_pair(v1,-v1);
 	C<<make_pair(v1,v2);
     }
