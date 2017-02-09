@@ -297,9 +297,9 @@ TEST(CorrelationLinear,simple1){
 	B<<make_pair(v1,-v1);
 	C<<make_pair(v1,v2);
     }
-    EXPECT_TRUE(pow(A.R()-1,2)<0.0001);
-    EXPECT_TRUE(pow(B.R()+1,2)<0.0001);
-    EXPECT_TRUE(pow(C.R()  ,2)<0.001);
+    _EQ(A.R(), 1);
+    _EQ(B.R(),-1);
+    _EQ(C.R(), 0);
 }
 TEST(CorrelationLinear,simple2){
     mt19937 gen;
@@ -311,9 +311,9 @@ TEST(CorrelationLinear,simple2){
 	B<<make_pair(v1*2.,v2   );
 	C<<make_pair(v1   ,v2*2.);
     }
-    EXPECT_TRUE(pow(A.R(),2)<0.001);
-    EXPECT_TRUE(pow(B.R(),2)<0.001);
-    EXPECT_TRUE(pow(C.R(),2)<0.001);
+    _EQ(A.R(), 0);
+    _EQ(B.R(), 0);
+    _EQ(C.R(), 0);
 }
 TEST(CorrelationLinear,simple3){
     mt19937 gen;
@@ -336,9 +336,9 @@ TEST(CorrelationLinear,simple4){
 	B<<make_pair(v1*2.,v1);
 	C<<make_pair(v1,v1*3.);
     }
-    EXPECT_TRUE(pow(A.R()-1,2)<0.0001);
-    EXPECT_TRUE(pow(B.R()-1,2)<0.0001);
-    EXPECT_TRUE(pow(C.R()-1,2)<0.0001);
+    _EQ(A.R(), 1);
+    _EQ(B.R(), 1);
+    _EQ(C.R(), 1);
 }
 TEST(CorrelationLinear,simple5){
     mt19937 gen;
@@ -350,7 +350,7 @@ TEST(CorrelationLinear,simple5){
 	B<<make_pair(-v1*2.,v1);
 	C<<make_pair(v1,-v1*3.);
     }
-    EXPECT_TRUE(pow(A.R()+1,2)<0.0001);
-    EXPECT_TRUE(pow(B.R()+1,2)<0.0001);
-    EXPECT_TRUE(pow(C.R()+1,2)<0.0001);
+    _EQ(A.R(),-1);
+    _EQ(B.R(),-1);
+    _EQ(C.R(),-1);
 }
