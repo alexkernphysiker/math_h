@@ -287,7 +287,7 @@ TEST(WeightedAverage,Zeros_plus_Ones){
 	_EQ(0.5,W().val());
 	_EQ(1.0/sqrt(4.0),W().uncertainty());
 }
-TEST(CorrelationLinear,simple){
+TEST(CorrelationLinear,simple1){
     mt19937 gen;
     normal_distribution<double> G;
     CorrelationLinear<double> A,B,C;
@@ -297,7 +297,60 @@ TEST(CorrelationLinear,simple){
 	B<<make_pair(v1,-v1);
 	C<<make_pair(v1,v2);
     }
-    EXPECT_TRUE(pow(A.R()-1,2)<0.001);
-    EXPECT_TRUE(pow(B.R()+1,2)<0.001);
+    EXPECT_TRUE(pow(A.R()-1,2)<0.0001);
+    EXPECT_TRUE(pow(B.R()+1,2)<0.0001);
     EXPECT_TRUE(pow(C.R()  ,2)<0.001);
+}
+TEST(CorrelationLinear,simple2){
+    mt19937 gen;
+    normal_distribution<double> G;
+    CorrelationLinear<double> A,B,C;
+    for(size_t i=0;i<10000;i++){
+	double v1=G(gen),v2=G(gen);
+	A<<make_pair(v1   ,v2   );
+	B<<make_pair(v1*2.,v2   );
+	C<<make_pair(v1   ,v2*2.);
+    }
+    EXPECT_TRUE(pow(A.R(),2)<0.001);
+    EXPECT_TRUE(pow(B.R(),2)<0.001);
+    EXPECT_TRUE(pow(C.R(),2)<0.001);
+}
+TEST(CorrelationLinear,simple3){
+    mt19937 gen;
+    normal_distribution<double> G;
+    CorrelationLinear<double> A,B;
+    for(size_t i=0;i<10000;i++){
+	double v1=G(gen),v2=G(gen);
+	A<<make_pair(v1,v2);
+	B<<make_pair(v2,v1);
+    }
+    EXPECT_EQ(A.R(),B.R());
+}
+TEST(CorrelationLinear,simple4){
+    mt19937 gen;
+    normal_distribution<double> G;
+    CorrelationLinear<double> A,B,C;
+    for(size_t i=0;i<10000;i++){
+	double v1=G(gen);
+	A<<make_pair(v1,v1);
+	B<<make_pair(v1*2.,v1);
+	C<<make_pair(v1,v1*3.);
+    }
+    EXPECT_TRUE(pow(A.R()-1,2)<0.0001);
+    EXPECT_TRUE(pow(B.R()-1,2)<0.0001);
+    EXPECT_TRUE(pow(C.R()-1,2)<0.0001);
+}
+TEST(CorrelationLinear,simple5){
+    mt19937 gen;
+    normal_distribution<double> G;
+    CorrelationLinear<double> A,B,C;
+    for(size_t i=0;i<10000;i++){
+	double v1=G(gen);
+	A<<make_pair(v1,-v1);
+	B<<make_pair(-v1*2.,v1);
+	C<<make_pair(v1,-v1*3.);
+    }
+    EXPECT_TRUE(pow(A.R()+1,2)<0.0001);
+    EXPECT_TRUE(pow(B.R()+1,2)<0.0001);
+    EXPECT_TRUE(pow(C.R()+1,2)<0.0001);
 }
