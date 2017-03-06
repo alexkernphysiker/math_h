@@ -8,13 +8,12 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main(){
     LinearInterpolation<value<double>> test{
-	point<value<double>>(-0.43,{ 1.3,12.0}),
-	point<value<double>>( 0.04,{160.,13.6}),
-	point<value<double>>( 0.75,{390.,16.8}),
-	point<value<double>>( 2.58,{412.,16.5}),
-	point<value<double>>( 5.00,{410.,18.1}),
-	point<value<double>>( 8.01,{390.,19.0}),
-	point<value<double>>(11.01,{385.,19.9}),
+	point<value<double>>(-1.,{ 1.3,12.}),
+	point<value<double>>( 0.,{160.,13.}),
+	point<value<double>>( 2.,{412.,16.}),
+	point<value<double>>( 5.,{410.,18.}),
+	point<value<double>>( 8.,{390.,19.}),
+	point<value<double>>(11.,{385.,19.}),
 	point<value<double>>(20.,{320.,20.}),
 	point<value<double>>(40.,{420.,20.})
     };
@@ -22,6 +21,6 @@ int main(){
     Plotter::Instance().SetOutput(".","interpolation2");
     Plot<double> output;
     output.Hist(hist<double>(test.func(),x_chain_for_interpolating),"interpolation");
-    output.Hist(test,"points")<<"set key on";
+    output.Hist(test,"points")<<"set key on"<<"set xrange [-5:45]";
     return 0;
 }
