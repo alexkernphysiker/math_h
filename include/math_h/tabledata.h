@@ -222,6 +222,22 @@ namespace MathTemplates{
 			if(m_data[i].size()<=j)throw Exception<BiSortedPoints>("range check error");
 			return m_data[i][j];
 		}
+		const SortedPoints<numtX,numtZ>CutX(const size_t j){
+		    if(m_y_axis.size()<=j)throw Exception<BiSortedPoints>("range check error");
+		    SortedPoints<numtX,numtZ> res;
+		    for(size_t i=0,I=m_x_axis.size();i<I;i++){
+			res<<point<numtX,numtZ>(m_x_axis[i],Bin(i,j));
+		    }
+		    return res;
+		}
+		const SortedPoints<numtY,numtZ>CutY(const size_t i){
+		    if(m_x_axis.size()<=i)throw Exception<BiSortedPoints>("range check error");
+		    SortedPoints<numtY,numtZ> res;
+		    for(size_t j=0,J=m_y_axis.size();j<J;j++){
+			res<<point<numtY,numtZ>(m_y_axis[j],Bin(i,j));
+		    }
+		    return res;
+		}
 		const point3d<numtX,numtY,numtZ> operator()(const size_t i,const size_t j)const{
 			if(size()<=i)throw Exception<BiSortedPoints>("range check error");
 			if(m_y_axis.size()<=j)throw Exception<BiSortedPoints>("range check error");

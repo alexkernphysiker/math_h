@@ -39,6 +39,24 @@ TEST(hist2d,scale_norm){
 			EXPECT_EQ(H2[x][y].val(),H[x*2][y*2].val()+H[x*2+1][y*2].val()+H[x*2][y*2+1].val()+H[x*2+1][y*2+1].val());
 		}
 }
+TEST(hist2d,cut){
+	hist2d<double> H(BinsByCount(10,0.0,1.0),BinsByCount(20,0.0,1.0));
+	H.FullCycleVar([](const value<double>&x,const value<double>&y,value<double>&z){
+		z=value<double>(10.0+4.0*sin(x.val()+y.val()));
+	});
+	for(size_t x=0;x<H.X().size();x++){
+	    const auto Y=H.CutY(x);
+	    EXPECT_EQ(Y.size(),H.Y().size());
+	    for(size_t y=0;y<H.Y().size();y++)
+		EXPECT_EQ(H.Bin(x,y),Y[y].Y());
+	}
+	for(size_t y=0;y<H.Y().size();y++){
+	    const auto X=H.CutX(y);
+	    EXPECT_EQ(X.size(),H.X().size());
+	    for(size_t x=0;x<H.X().size();x++)
+		EXPECT_EQ(H.Bin(x,y),X[x].Y());
+	}
+}
 TEST(Distribution1D,basetest){
 	Distribution1D<double> D{value<double>(-1.0,0.5),value<double>(-0.0,0.5),value<double>(1.0,0.5)};
 	ASSERT_EQ(3,D.size());
