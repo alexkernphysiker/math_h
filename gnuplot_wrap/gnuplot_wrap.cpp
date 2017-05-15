@@ -12,7 +12,7 @@ namespace GnuplotWrap{
 	}
 	Plotter::~Plotter(){
 		ofstream script;
-		string name=m_prefix+".gnuplot.script";
+		string name=m_prefix+"-gnuplot-script";
 		script.open((outpath+"/"+name).c_str());
 		if(script.is_open()){
 			for(string line:lines)
@@ -51,13 +51,13 @@ namespace GnuplotWrap{
 		string cnt=to_string(terminal_counter);
 		while(cnt.length()<5)cnt="0"+cnt;
 		return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\n")+
-		"set output '"+m_prefix+".plot."+cnt+".png'";
+		"set output '"+m_prefix+"-plot-"+cnt+".png'";
 	}
 	const string Plotter::GetFileName(){
 		filename_counter++;
 		string cnt=to_string(filename_counter);
 		while(cnt.length()<6)cnt="0"+cnt;
-		return m_prefix+".numeric."+cnt+".txt";
+		return m_prefix+"-numeric-"+cnt+".txt";
 	}
 	Plotter &Plotter::operator<<(const string&line){
 		lines.push_back(line);
