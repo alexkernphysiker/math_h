@@ -4,8 +4,10 @@
 #	define ___________VECTORS_H_____
 #include <math.h>
 #include "error.h"
+#include "functions.h"
+#include "randomfunc.h"
 namespace MathTemplates{
-	template<class numt>
+	template<class numt,class RG=std::mt19937>
 	class Vector3{
 	private:
 		numt m_x,m_y,m_z;
@@ -19,7 +21,17 @@ namespace MathTemplates{
 		static const Vector3 Polar(const numt&mag,const numt&theta,const numt&phi){
 			return Vector3(mag*cos(phi)*sin(theta),mag*sin(phi)*sin(theta),mag*cos(theta));
 		}
-		static inline const Vector3 Direction(const numt&theta,const numt&phi){return Polar(numt(1),theta,phi);}
+		static inline const Vector3 Direction(const numt&theta,const numt&phi){
+		    return Polar(numt(1),theta,phi);
+		}
+		static inline const Vector3 RandomIsotropicDirection(RG&generator){
+		    RandomUniform<numt> Z(-1,1);
+		    RandomUniform<numt> Phi(0,PI<numt>()*2.0);
+		    const numt z=Z(generator);
+		    const numt x_y=sqrt(1.0-pow(z,2));
+		    const numt phi=Phi(generator);
+		    return Vector3(cos(phi)*x_y,sin(phi)*x_y,z);
+		}
 		const numt&x()const{return m_x;}
 		const numt&y()const{return m_y;}
 		const numt&z()const{return m_z;}
