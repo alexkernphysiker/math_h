@@ -195,6 +195,9 @@ namespace MathTemplates{
 		    }
 		    return Vector4(dest[0],Vector3<numt>::DesCartes(dest[1],dest[2],dest[3]));
 		}
+		const Vector3<numt> Beta()const{//valid only if it's a 4-momentum
+		    return space_component()/time_component();
+		}
 	};
 };
 #endif
