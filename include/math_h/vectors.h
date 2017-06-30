@@ -3,6 +3,7 @@
 #ifndef ___________VECTORS_H_____
 #	define ___________VECTORS_H_____
 #include <math.h>
+#include <vector>
 #include "error.h"
 #include "functions.h"
 #include "randomfunc.h"
@@ -102,7 +103,7 @@ namespace MathTemplates{
 			);
 		}
 		
-		bool operator==(const Vector3&second)const{
+		const bool operator==(const Vector3&second)const{
 			return (m_x==second.m_x)&&(m_y==second.m_y)&&(m_z==second.m_z);
 		}
 	};
@@ -134,7 +135,10 @@ namespace MathTemplates{
 		const numt length4()const{
 			return sqrt((m_time*m_time)-m_space.mag_sqr());
 		}
-		
+		const bool operator==(const Vector4&second)const{
+			return (m_time==second.m_time)&&(m_space==second.m_space);
+		}
+
 		Vector4&operator+=(const Vector4&second){
 			m_time+=second.m_time;
 			m_space+=second.m_space;
@@ -164,6 +168,32 @@ namespace MathTemplates{
 		static const Vector4 TimeDirLength4(const numt&t,const numt&theta,const numt&phi,const numt&l4){
 			numt Sp=sqrt(t*t-l4*l4);
 			return Vector4(t,Space::Direction(theta,phi)*Sp);
+		}
+		const Vector4 Lorentz(const Vector3<numt>&Beta)const{
+		    const numt beta=Beta.mag();
+		    if(beta==0.0)return *this;
+		    if(beta>=numt(1))throw Exception<Vector4>("Bad Loretntz transformation");
+		    const Vector3<numt> n=Beta/beta;
+		    const numt gamma=numt(1)/sqrt(numt(1)-beta*beta);
+		    const std::vector<numt> source={
+			time_component(),
+			space_component().x(),
+			space_component().y(),
+			space_component().z()
+		    };
+		    std::vector<std::vector<numt>> M={
+			{ gamma           ,-gamma*Beta.x(),-gamma*Beta.y(),-gamma*Beta.z()},
+			{-gamma*Beta.x()  ,numt(1)+(gamma-numt(1))*n.x()*n.x(),numt(0)+(gamma-numt(1))*n.x()*n.y(),numt(0)+(gamma-numt(1))*n.x()*n.z()},
+			{-gamma*Beta.y()  ,numt(0)+(gamma-numt(1))*n.y()*n.x(),numt(1)+(gamma-numt(1))*n.y()*n.y(),numt(0)+(gamma-numt(1))*n.y()*n.z()},
+			{-gamma*Beta.z()  ,numt(0)+(gamma-numt(1))*n.z()*n.x(),numt(0)+(gamma-numt(1))*n.z()*n.y(),numt(1)+(gamma-numt(1))*n.z()*n.z()}
+		    };
+		    std::vector<numt> dest;
+		    for(size_t i=0;i<4;i++){
+			numt v=0;
+			for(size_t j=0;j<4;j++)v+=M[i][j]*source[j];
+			dest.push_back(v);
+		    }
+		    return Vector4(dest[0],Vector3<numt>::DesCartes(dest[1],dest[2],dest[3]));
 		}
 	};
 };
