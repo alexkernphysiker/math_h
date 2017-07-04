@@ -10,7 +10,8 @@
 #include "interpolate.h"
 #include "integrate.h"
 namespace MathTemplates{
-    template<class numt=double,class RG=std::mt19937>
+    typedef std::mt19937 RANDOM;
+    template<class numt=double,class RG=RANDOM>
     class RandomValueTableDistr:public IFunction<numt,RG&>{
     private:
 	LinearInterpolation<numt,numt> reverse_distr_func;
@@ -34,7 +35,7 @@ namespace MathTemplates{
 	    return reverse_distr_func(uniform(generator));
 	}
     };
-    template<class numt=double,class RG=std::mt19937>
+    template<class numt=double,class RG=RANDOM>
     class RandomUniform:public IFunction<numt,RG&>{
     private:
 	std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
@@ -46,7 +47,7 @@ namespace MathTemplates{
 	    return f_distr->operator()(generator);
 	}
     };
-    template<class numt=double,class RG=std::mt19937>
+    template<class numt=double,class RG=RANDOM>
     class RandomGauss:public IFunction<numt,RG&>{
     private:
 	std::shared_ptr<std::normal_distribution<numt>> f_distr;

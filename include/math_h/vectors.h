@@ -25,7 +25,7 @@ namespace MathTemplates{
 		static inline const Vector3 Direction(const numt&theta,const numt&phi){
 		    return Polar(numt(1),theta,phi);
 		}
-		template<class RG=std::mt19937>
+		template<class RG=RANDOM>
 		static inline const Vector3 RandomIsotropicDirection(RG&generator){
 		    static RandomUniform<numt> Z(-1,1);
 		    static RandomUniform<numt> Phi(0,PI<numt>()*2.0);
