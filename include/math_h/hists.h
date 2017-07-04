@@ -6,7 +6,7 @@
 #include "sigma.h"
 #include "error.h"
 namespace MathTemplates{
-	template<class numtX,class numtY=numtX>
+	template<class numtX=double,class numtY=numtX>
 	class hist:public SortedPoints<value<numtX>,value<numtY>>{
 	public:
 		typedef point<value<numtX>,value<numtY>> Point;
@@ -87,7 +87,7 @@ namespace MathTemplates{
 			return *this;
 		}
 	};
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class hist2d:public BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>{
 	public:
 		hist2d(const std::initializer_list<value<numtX>>&X,const std::initializer_list<value<numtY>>&Y)
@@ -134,7 +134,7 @@ namespace MathTemplates{
 		}
 	};
 	
-	template<class numtX,class numtY=numtX>
+	template<class numtX=double,class numtY=numtX>
 	class Distribution1D:public hist<numtX,numtY>{
 	private:
 		unsigned long long counter;
@@ -157,7 +157,7 @@ namespace MathTemplates{
 			return counter;
 		}
 	};
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class Distribution2D:public hist2d<numtX,numtY,numtZ>{
 	private:
 		unsigned long long counter;

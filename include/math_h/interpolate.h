@@ -8,7 +8,7 @@
 #include "functions.h"
 #include "tabledata.h"
 namespace MathTemplates{
-	template<class numX, class numY=numX>
+	template<class numX=double, class numY=numX>
 	class LinearInterpolation:public SortedPoints<numX,numY>,public IFunction<numY,const numX&>{
 	public:
 	    typedef typename SortedPoints<numX,numY>::Func Func;
@@ -55,7 +55,7 @@ namespace MathTemplates{
 	    }
 	};
 
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class BiLinearInterpolation:public BiSortedPoints<numtX,numtY,numtZ>,public IFunction<numtZ,const numtX&,const numtY&>{
 	public:
 		BiLinearInterpolation(const std::initializer_list<numtX>&X,const std::initializer_list<numtY>&Y)

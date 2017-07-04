@@ -15,7 +15,7 @@ namespace MathTemplates{
 		}
 	};
 	template<class numt=double>
-	inline numt PI(){return 3.1415926;}
+	inline const numt PI(){return 3.1415926;}
 	template<class numt=double>
 	numt Gaussian(const numt&x,const numt&X_max,const numt&sigma){
 		return exp(-pow((X_max-x)/sigma,2)/2)/(sigma*sqrt(2*PI<numt>()));

@@ -31,7 +31,7 @@ namespace GnuplotWrap{
 		std::string outpath;
 		std::string m_prefix;
 	};
-	template<class numtX,class numtY=numtX>class Plot{
+	template<class numtX=double,class numtY=numtX>class Plot{
 	private:
 		std::vector<std::string> lines;
 		std::vector<std::string> plots;
@@ -178,7 +178,7 @@ namespace GnuplotWrap{
 	};
 	
 	enum TypeOf3D{normal,sp2};
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class PlotHist2d{
 	private:
 		std::vector<std::string> lines;

@@ -37,7 +37,7 @@ namespace MathTemplates{
 	#define field_size(vector)  [this](){return (vector).size();}
 	#define field_insert(vector,type)  [this](int pos,type x){(vector).insert((vector).begin()+pos,x);}
 	
-	template<class comparable>
+	template<class comparable=double>
 	class SortedChain{
 	private:
 		std::vector<comparable> data;

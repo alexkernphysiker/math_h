@@ -8,7 +8,7 @@
 #include "functions.h"
 #include "randomfunc.h"
 namespace MathTemplates{
-	template<class numt,class RG=std::mt19937>
+	template<class numt=double>
 	class Vector3{
 	private:
 		numt m_x,m_y,m_z;
@@ -25,9 +25,10 @@ namespace MathTemplates{
 		static inline const Vector3 Direction(const numt&theta,const numt&phi){
 		    return Polar(numt(1),theta,phi);
 		}
+		template<class RG=std::mt19937>
 		static inline const Vector3 RandomIsotropicDirection(RG&generator){
-		    RandomUniform<numt> Z(-1,1);
-		    RandomUniform<numt> Phi(0,PI<numt>()*2.0);
+		    static RandomUniform<numt> Z(-1,1);
+		    static RandomUniform<numt> Phi(0,PI<numt>()*2.0);
 		    const numt z=Z(generator);
 		    const numt x_y=sqrt(1.0-pow(z,2));
 		    const numt phi=Phi(generator);
@@ -115,15 +116,15 @@ namespace MathTemplates{
 	}
 	
 	
-	template<class numt>
+	template<class numt=double>
 	class Vector4{
 	public:
 		typedef Vector3<numt> Space;
 	private:
 		numt m_time;
 		Space m_space;
-	public:
 		Vector4(const numt&t,const Space&S):m_time(t),m_space(S){}
+	public:
 		Vector4(const Vector4&source):Vector4(source.m_time,source.m_space){}
 		Vector4&operator=(const Vector4&source){
 			m_space=source.m_space;
@@ -138,7 +139,6 @@ namespace MathTemplates{
 		const bool operator==(const Vector4&second)const{
 			return (m_time==second.m_time)&&(m_space==second.m_space);
 		}
-
 		Vector4&operator+=(const Vector4&second){
 			m_time+=second.m_time;
 			m_space+=second.m_space;
@@ -155,25 +155,32 @@ namespace MathTemplates{
 		const Vector4 operator-(const Vector4&second)const{
 			return Vector4(m_time-second.m_time,m_space-second.m_space);
 		}
-		
-		
 		const numt operator*(const Vector4&second)const{
-			return (m_time*second.m_time)-m_space*second.m_space;
+			return (m_time*second.m_time)-(m_space*second.m_space);
 		}
-		
 		static const Vector4 zero(){return Vector4(numt(0),Space::zero());}
-		static const Vector4 SpaceLength4(const Space&s,const numt&l4){
+		static const Vector4 byComponents(const numt&t,const numt&x,const numt&y,const numt&z){
+			return Vector4(t,Space::DesCartes(x,y,z));
+		}
+		static const Vector4 byComponents(const numt&t,const Space&s){
+			return Vector4(t,s);
+		}
+		Vector4(const numt&t):Vector4(t,Space::zero()){}
+		static const Vector4 byOnlyTimeC(const numt&t){
+			return Vector4(t);
+		}
+		static const Vector4 bySpaceC_and_Length4(const Space&s,const numt&l4){
 			return Vector4(sqrt(s.mag_sqr()+l4*l4),s);
 		}
-		static const Vector4 TimeDirLength4(const numt&t,const numt&theta,const numt&phi,const numt&l4){
+		static const Vector4 byTime_Dir_and_Length4(const numt&t,const numt&theta,const numt&phi,const numt&l4){
 			numt Sp=sqrt(t*t-l4*l4);
 			return Vector4(t,Space::Direction(theta,phi)*Sp);
 		}
-		const Vector4 Lorentz(const Vector3<numt>&Beta)const{
+		const Vector4 Lorentz(const Space&Beta)const{
 		    const numt beta=Beta.mag();
 		    if(beta==0.0)return *this;
-		    if(beta>=numt(1))throw Exception<Vector4>("Bad Loretntz transformation");
-		    const Vector3<numt> n=Beta/beta;
+		    if(beta>=numt(1))throw Exception<Vector4>("Bad Lorentz transformation");
+		    const Space n=Beta/beta;
 		    const numt gamma=numt(1)/sqrt(numt(1)-beta*beta);
 		    const std::vector<numt> source={
 			time_component(),
@@ -193,9 +200,9 @@ namespace MathTemplates{
 			for(size_t j=0;j<4;j++)v+=M[i][j]*source[j];
 			dest.push_back(v);
 		    }
-		    return Vector4(dest[0],Vector3<numt>::DesCartes(dest[1],dest[2],dest[3]));
+		    return Vector4(dest[0],Space::DesCartes(dest[1],dest[2],dest[3]));
 		}
-		const Vector3<numt> Beta()const{//valid only if it's a 4-momentum
+		const Space Beta()const{//Makes physical sense only if it's a 4-momentum
 		    return space_component()/time_component();
 		}
 	};

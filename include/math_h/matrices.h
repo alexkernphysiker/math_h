@@ -9,7 +9,7 @@
 #include <random>
 #include "error.h"
 namespace MathTemplates{
-	template<class numt>
+	template<class numt=double>
 	class Matrix{
 	public:
 		typedef std::function<const numt(const size_t,const size_t)> function;
@@ -52,7 +52,7 @@ namespace MathTemplates{
 	    return str;
 	}
 
-	template<class numt>
+	template<class numt=double>
 	class MatrixData:public Matrix<numt>{
 	public:
 		typedef std::vector<std::vector<numt>> container;
@@ -109,7 +109,7 @@ namespace MathTemplates{
 			return *this;
 		}
 	};
-	template<class numt>
+	template<class numt=double>
 	class MatrixByFormula:public Matrix<numt>{
 	private:
 		size_t f_N,f_M;

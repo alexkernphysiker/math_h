@@ -17,9 +17,9 @@ TEST(WhereToInsert,BorderConditions){
 				EXPECT_EQ(beg,index);
 			}
 			index=details::WhereToInsert(beg,beg,TestArray,V);
-			if(V<TestArray[beg])EXPECT_EQ(beg,index);
-			if(V>TestArray[beg])EXPECT_EQ(beg+1,index);
-			if(V==TestArray[beg])EXPECT_TRUE((index==beg)||(index==(beg+1)));
+			if(V<TestArray[beg]){EXPECT_EQ(beg,index);}
+			if(V>TestArray[beg]){EXPECT_EQ(beg+1,index);}
+			if(V==TestArray[beg]){EXPECT_TRUE((index==beg)||(index==(beg+1)));}
 		}
 }
 TEST(WhereToInsert,NormalConditions){

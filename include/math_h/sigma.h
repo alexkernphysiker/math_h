@@ -11,7 +11,7 @@
 #include <math.h>
 #include "error.h"
 namespace MathTemplates{
-    template<typename numt>
+    template<typename numt=double>
     class value{
     private:
 	numt Value,Error;
@@ -187,7 +187,7 @@ namespace MathTemplates{
 	return [F](const value<numt>&X)->value<numt>{return X.Func(F);};
     }
 	
-    template<typename numt>
+    template<typename numt=double>
     class StandardDeviation{
     private:
 	std::list<numt> m_list;
@@ -225,7 +225,7 @@ namespace MathTemplates{
 	    return *m_cache;
 	}
     };
-    template<typename numt>
+    template<typename numt=double>
     class WeightedAverage{
     private:
 	numt Sum;
@@ -254,7 +254,7 @@ namespace MathTemplates{
 	    return *m_cache;
 	}
     };
-    template<typename numt>
+    template<typename numt=double>
     class CorrelationLinear{
     private:
 	StandardDeviation<numt> X,Y,XY;

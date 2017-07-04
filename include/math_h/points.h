@@ -6,7 +6,8 @@
 #include <functional>
 #include "error.h"
 namespace MathTemplates{
-	template<class numtX,class numtY=numtX>class point{
+	template<class numtX=double,class numtY=numtX>
+	class point{
 	private:
 		numtX x;
 		numtY y;
@@ -22,23 +23,26 @@ namespace MathTemplates{
 		numtX&__X(){return x;}
 		numtY&__Y(){return y;}
 	};
-	template<class numtX,class numtY=numtX> class point_editable_x:public point<numtX,numtY>{
+	template<class numtX=double,class numtY=numtX> 
+	class point_editable_x:public point<numtX,numtY>{
 	public:
 		point_editable_x(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
 		numtX&varX(){return point<numtX,numtY>::__X();}
 	};
-	template<class numtX,class numtY=numtX> class point_editable_y:public point<numtX,numtY>{
+	template<class numtX=double,class numtY=numtX> 
+	class point_editable_y:public point<numtX,numtY>{
 	public:
 		point_editable_y(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
 		numtY&varY(){return point<numtX,numtY>::__Y();}
 	};
-	template<class numtX,class numtY=numtX> class point_editable:public point<numtX,numtY>{
+	template<class numtX=double,class numtY=numtX> 
+	class point_editable:public point<numtX,numtY>{
 	public:
 		point_editable(const point<numtX,numtY>&source):point<numtX,numtY>(source){}
 		numtX&varX(){return point<numtX,numtY>::__X();}
 		numtY&varY(){return point<numtX,numtY>::__Y();}
 	};
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class point3d{
 	private:
 		numtX x;

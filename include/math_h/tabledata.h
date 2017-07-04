@@ -7,7 +7,7 @@
 #include "chains.h"
 #include "error.h"
 namespace MathTemplates{
-	template<class numX, class numY=numX>
+	template<class numX=double, class numY=numX>
 	class SortedPoints:public SortedChain<point_editable_y<numX,numY>>{
 	public:
 		typedef std::function<numY(const numX&)> Func;
@@ -177,7 +177,7 @@ namespace MathTemplates{
 		const SortedPoints operator/(const Func other)const{return SortedPoints(*this)/=other;}
 		
 	};
-	template<class numtX,class numtY=numtX,class numtZ=numtY>
+	template<class numtX=double,class numtY=numtX,class numtZ=numtY>
 	class BiSortedPoints{
 	private:
 		SortedChain<numtX> m_x_axis;

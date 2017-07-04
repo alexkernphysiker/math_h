@@ -40,7 +40,7 @@ namespace MathTemplates{
 		}
 		return res;
 	}
-	template<class numX,class numY=numX,class func1=std::function<numY(const numX&)>,class func2=std::function<numY(const numX&)>>
+	template<class numX=double,class numY=numX,class func1=std::function<numY(const numX&)>,class func2=std::function<numY(const numX&)>>
 	class Convolution:public IFunction<numY,const numX&>{
 	private:
 		func1 A;
