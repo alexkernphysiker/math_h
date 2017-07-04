@@ -6,7 +6,7 @@
 using namespace std;
 using namespace MathTemplates;
 template<class numt>
-void Test_Peak_Shape(function<numt(numt)> f,numt from,numt peak,numt to){
+void Test_Peak_Shape(const function<numt(numt)> f,const numt&from,const numt&peak,const numt&to){
 	for(numt x=from;x<=to;x+=0.05){
 		EXPECT_TRUE(f(x)>=0);
 		if(x<=peak)
@@ -15,20 +15,32 @@ void Test_Peak_Shape(function<numt(numt)> f,numt from,numt peak,numt to){
 			EXPECT_TRUE(f(x)>=f(x+0.01));
 	}
 }
+template<class numt>
+void Test_Norm(const function<numt(numt)> f){
+    const auto S=Sympson(f,-300.,+300.,0.001);
+    EXPECT_TRUE(pow(S-1.,2)<0.0001);
+}
+
 TEST(Gaussian,Shape){
-	for(double sigma=0.5;sigma<10;sigma+=0.5)
-		for(double X=-5;X<=5;X+=1)
+	for(double sigma=0.5;sigma<5;sigma+=0.5)
+		for(double X=-5;X<=5;X+=1){
 			Test_Peak_Shape<double>([sigma,X](double x){return Gaussian(x,X,sigma);},X-sigma*5,X,X+sigma*5);
+			Test_Norm<double>([sigma,X](double x){return Gaussian(x,X,sigma);});
+		}
 }
 TEST(Lorentzian,Shape){
-	for(double gamma=0.5;gamma<10;gamma+=0.5)
-		for(double X=-5;X<=5;X+=1)
+	for(double gamma=0.5;gamma<5;gamma+=0.5)
+		for(double X=-5;X<=5;X+=1){
 			Test_Peak_Shape<double>([gamma,X](double x){return Lorentzian(x,X,gamma);},X-gamma*5,X,X+gamma*5);
+			Test_Norm<double>([gamma,X](double x){return Lorentzian(x,X,gamma);});
+		}
 }
 TEST(BreitWigner,Shape){
-	for(double sigma=0.5;sigma<10;sigma+=0.5)
-		for(double X=-5;X<=5;X+=1)
-			Test_Peak_Shape<double>([sigma,X](double x){return BreitWigner(x,X,sigma);},X-sigma*2,X,X+sigma*2);
+	for(double gamma=0.5;gamma<5;gamma+=0.5)
+		for(double X=-5;X<=5;X+=1){
+			Test_Peak_Shape<double>([gamma,X](double x){return BreitWigner(x,X,gamma);},X-gamma*2,X,X+gamma*2);
+			Test_Norm<double>([gamma,X](double x){return BreitWigner(x,X,gamma);});
+		}
 }
 TEST(Novosibirsk,Shape){
 	for(double sigma=0.5;sigma<10;sigma+=0.5)

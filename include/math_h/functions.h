@@ -22,11 +22,11 @@ namespace MathTemplates{
 	}
 	template<class numt=double>
 	numt Lorentzian(const numt&x,const numt&X_max,const numt&gamma){
-		return pow(gamma,2)/(PI<numt>()*gamma*(pow(gamma,2)+pow(x-X_max,2)));
+		return gamma/(PI<numt>()*(pow(x-X_max,2)+pow(gamma,2)));
 	}
 	template<class numt=double>
 	numt BreitWigner(const numt&x,const numt&pos,const numt&gamma){
-		return gamma/(2*PI<numt>()*(pow(x-pos,2)+pow(gamma/2,2)));
+		return Lorentzian<numt>(x,pos,gamma/numt(2));
 	}
 	template<class numt=double>
 	numt Novosibirsk(const numt&x,const numt&pos,const numt&sigma,const numt&asym){
