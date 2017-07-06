@@ -133,8 +133,11 @@ namespace MathTemplates{
 		}
 		const numt&time_component()const{return m_time;}
 		const Space&space_component()const{return m_space;}
+		const numt Sqr4()const{
+			return (m_time*m_time)-m_space.mag_sqr();
+		}
 		const numt length4()const{
-			return sqrt((m_time*m_time)-m_space.mag_sqr());
+		    return sqrt(Sqr4());
 		}
 		const bool operator==(const Vector4&second)const{
 			return (m_time==second.m_time)&&(m_space==second.m_space);
