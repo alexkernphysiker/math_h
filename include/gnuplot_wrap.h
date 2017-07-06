@@ -346,5 +346,19 @@ namespace GnuplotWrap{
 		}
 		
 	};
+	template<class numt=double>
+	class PlotDistr1D:public MathTemplates::Distribution1D<numt>{
+	private:
+	    std::string m_title,m_axis;
+	public:
+	    PlotDistr1D(
+		    const std::string&title,const std::string&axis,
+		    const MathTemplates::SortedChain<MathTemplates::value<numt>>&data
+	    ):MathTemplates::Distribution1D<numt>(data),m_title(title),m_axis(axis){}
+	    virtual ~PlotDistr1D(){
+		Plot<numt>().Hist(*this)<<"set title '"+m_title+"'"
+		<<"set xlabel '"+m_axis+"'"<<"set ylabel 'counts'";
+	    }
+	};
 };
 #endif
