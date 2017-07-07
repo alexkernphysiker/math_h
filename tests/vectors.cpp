@@ -2,6 +2,7 @@
 // MIT license
 #include <gtest/gtest.h>
 #include <math_h/vectors.h>
+#include <math_h/hists.h>
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
@@ -32,20 +33,115 @@ TEST(Vector3,vector_prod){
 
 }
 TEST(Vector3,Isotropic){
-    mt19937 RG;
-    StandardDeviation<> X,Y,Z;
-    for(size_t i=0;i<100;i++){
+    RANDOM RG;
+    const auto c=BinsByStep(-1.0,0.1,1.0);
+    Distribution1D<> X(c),Y(c),Z(c);
+    for(size_t i=0;i<100000;i++){
 	const auto V=Vector3<>::RandomIsotropicDirection(RG);
-	X<<V.x();Y<<V.y();Z<<V.z();
+	X.Fill(V.x());Y.Fill(V.y());Z.Fill(V.z());
+    }
+    const auto x=X.TotalSum().val()/X.size();
+    for(const auto&p:X)EXPECT_TRUE(p.Y().make_wider(2.5).Contains(x));
+    for(const auto&p:Y)EXPECT_TRUE(p.Y().make_wider(2.5).Contains(x));
+    for(const auto&p:Z)EXPECT_TRUE(p.Y().make_wider(2.5).Contains(x));
+}
+TEST(Vector3,IsotropicXY){
+    RANDOM RG;
+    const auto c=BinsByStep(-1.0,0.1,1.0);
+    StandardDeviation<> X,Y;
+    for(size_t i=0;i<100000;i++){
+	const auto V=Vector3<>::RandomIsotropicXYDirection(RG);
+	X<<(V.x());Y<<(V.y());
+	EXPECT_EQ(V.z(),0);
     }
     EXPECT_TRUE(X().Contains(0));
     EXPECT_TRUE(Y().Contains(0));
+}
+TEST(Vector3,IsotropicYZ){
+    RANDOM RG;
+    const auto c=BinsByStep(-1.0,0.1,1.0);
+    StandardDeviation<> Y,Z;
+    for(size_t i=0;i<100000;i++){
+	const auto V=Vector3<>::RandomIsotropicYZDirection(RG);
+	Y<<(V.y());Z<<(V.z());
+	EXPECT_EQ(V.x(),0);
+    }
     EXPECT_TRUE(Z().Contains(0));
-    //ToDo: check if all coordinates have uniform distribution
+    EXPECT_TRUE(Y().Contains(0));
+}
+TEST(Vector3,IsotropicXZ){
+    RANDOM RG;
+    const auto c=BinsByStep(-1.0,0.1,1.0);
+    StandardDeviation<> X,Z;
+    for(size_t i=0;i<100000;i++){
+	const auto V=Vector3<>::RandomIsotropicXZDirection(RG);
+	X<<(V.x());Z<<(V.z());
+	EXPECT_EQ(V.y(),0);
+    }
+    EXPECT_TRUE(X().Contains(0));
+    EXPECT_TRUE(Z().Contains(0));
+}
+TEST(Vector2,Rotation){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> Phi(0,PI<>()*2.0);
+    for(size_t i=0;i<10000;i++){
+	const auto I=Vector2<>::RandomIsotropicDirection(RG);
+	const auto ang=Phi(RG);
+	const auto F=I.Rotate(ang);
+	const auto p=I*F;
+	EXPECT_TRUE(pow(p-cos(ang),2)<epsilon);
+    }
+}
+
+TEST(Vector3,RotationX){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> Phi(0,PI<>()*2.0);
+    for(size_t i=0;i<10000;i++){
+	const auto I=Vector3<>::RandomIsotropicYZDirection(RG);
+	const auto axis=Vector3<>::basis_x();
+	const auto ang=Phi(RG);
+	const auto F=I.Rotate(axis,ang);
+	EXPECT_EQ(axis*I,0);
+	EXPECT_EQ(axis*F,0);
+	const auto p=I*F;
+	EXPECT_TRUE(pow(p-cos(ang),2)<epsilon);
+    }
+}
+TEST(Vector3,RotationY){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> Phi(0,PI<>()*2.0);
+    for(size_t i=0;i<10000;i++){
+	const auto I=Vector3<>::RandomIsotropicXZDirection(RG);
+	const auto axis=Vector3<>::basis_y();
+	const auto ang=Phi(RG);
+	const auto F=I.Rotate(axis,ang);
+	EXPECT_EQ(axis*I,0);
+	EXPECT_EQ(axis*F,0);
+	const auto p=I*F;
+	EXPECT_TRUE(pow(p-cos(ang),2)<epsilon);
+    }
+}
+TEST(Vector3,RotationZ){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> Phi(0,PI<>()*2.0);
+    for(size_t i=0;i<10000;i++){
+	const auto I=Vector3<>::RandomIsotropicXYDirection(RG);
+	const auto axis=Vector3<>::basis_z();
+	const auto ang=Phi(RG);
+	const auto F=I.Rotate(axis,ang);
+	EXPECT_EQ(axis*I,0);
+	EXPECT_EQ(axis*F,0);
+	const auto p=I*F;
+	EXPECT_TRUE(pow(p-cos(ang),2)<epsilon);
+    }
 }
 
 TEST(Vector4,Lorentz){
-    mt19937 RG;
+    RANDOM RG;
     const double epsilon=0.0000000000001;
     RandomUniform<> mr(0,1.0-epsilon),metrr(-5,5);
     for(size_t i=0;i<10000;i++){
