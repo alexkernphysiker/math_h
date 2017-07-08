@@ -40,14 +40,14 @@ namespace MathTemplates{
 	    return *this;
 	}
 	const Vector2 operator+(const Vector2&second)const{
-	    return Vector3(m_x+second.m_x,m_y+second.m_y);
+	    return Vector2(m_x+second.m_x,m_y+second.m_y);
 	}
 	Vector2&operator-=(const Vector2&second){
 	    m_x-=second.m_x;m_y-=second.m_y;
 	    return *this;
 	}
 	const Vector2 operator-(const Vector2&second)const{
-	    return Vector3(m_x-second.m_x,m_y-second.m_y);
+	    return Vector2(m_x-second.m_x,m_y-second.m_y);
 	}
 		
 	Vector2&operator*=(const numt&second){
@@ -55,14 +55,14 @@ namespace MathTemplates{
 	    return *this;
 	}
 	const Vector2 operator*(const numt&second)const{
-	    return Vector3(m_x*second,m_y*second);
+	    return Vector2(m_x*second,m_y*second);
 	}
 	Vector2&operator/=(const numt&second){
 	    m_x/=second;m_y/=second;
 	    return *this;
 	}
 	const Vector2 operator/(const numt&second)const{
-	    return Vector3(m_x/second,m_y/second);
+	    return Vector2(m_x/second,m_y/second);
 	}
 	const numt operator*(const Vector2&second)const{
 	    return (m_x*second.m_x)+(m_y*second.m_y);

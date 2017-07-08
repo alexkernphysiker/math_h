@@ -6,6 +6,22 @@
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
+TEST(Vector2,scalar_prod){
+	EXPECT_EQ(0,Vector2<>::basis_x()*Vector2<>::basis_y());
+	EXPECT_EQ(0,Vector2<>::basis_y()*Vector2<>::basis_x());
+	EXPECT_EQ(1,Vector2<>::basis_x()*Vector2<>::basis_x());
+	EXPECT_EQ(1,Vector2<>::basis_y()*Vector2<>::basis_y());
+
+	EXPECT_EQ(0,Vector2<>::basis_x()*(-Vector2<>::basis_y()));
+	EXPECT_EQ(0,Vector2<>::basis_y()*(-Vector2<>::basis_x()));
+	EXPECT_EQ(0,-Vector2<>::basis_x()*(Vector2<>::basis_y()));
+	EXPECT_EQ(0,-Vector2<>::basis_y()*(Vector2<>::basis_x()));
+	
+	EXPECT_EQ(-1,(-Vector2<>::basis_x())*Vector2<>::basis_x());
+	EXPECT_EQ(-1,Vector2<>::basis_y()*(-Vector2<>::basis_y()));
+	EXPECT_EQ(-1,Vector2<>::basis_x()*(-Vector2<>::basis_x()));
+	EXPECT_EQ(-1,(-Vector2<>::basis_y())*Vector2<>::basis_y());
+}
 TEST(Vector3,scalar_prod){
 	EXPECT_EQ(0,Vector3<>::basis_x()*Vector3<>::basis_y());
 	EXPECT_EQ(0,Vector3<>::basis_y()*Vector3<>::basis_z());
@@ -47,7 +63,6 @@ TEST(Vector3,Isotropic){
 }
 TEST(Vector3,IsotropicXY){
     RANDOM RG;
-    const auto c=BinsByStep(-1.0,0.1,1.0);
     StandardDeviation<> X,Y;
     for(size_t i=0;i<100000;i++){
 	const auto V=Vector3<>::RandomIsotropicXYDirection(RG);
@@ -59,7 +74,6 @@ TEST(Vector3,IsotropicXY){
 }
 TEST(Vector3,IsotropicYZ){
     RANDOM RG;
-    const auto c=BinsByStep(-1.0,0.1,1.0);
     StandardDeviation<> Y,Z;
     for(size_t i=0;i<100000;i++){
 	const auto V=Vector3<>::RandomIsotropicYZDirection(RG);
@@ -71,7 +85,6 @@ TEST(Vector3,IsotropicYZ){
 }
 TEST(Vector3,IsotropicXZ){
     RANDOM RG;
-    const auto c=BinsByStep(-1.0,0.1,1.0);
     StandardDeviation<> X,Z;
     for(size_t i=0;i<100000;i++){
 	const auto V=Vector3<>::RandomIsotropicXZDirection(RG);
