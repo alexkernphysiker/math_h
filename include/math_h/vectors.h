@@ -12,12 +12,18 @@ namespace MathTemplates{
     class Vector2{
     private:
 	numt m_x,m_y;
-	Vector2(const numt&x,const numt&y):m_x(x),m_y(y){}
     public:
+	typedef numt NumberType;
+	Vector2(const numt&x,const numt&y):m_x(x),m_y(y){}
+	const std::vector<numt> to_vector()const{return {m_x,m_y};}
+	Vector2(const std::vector<numt>&v){
+	    if(v.size()!=2)throw Exception<Vector2>("Bad Vector2 initializing by vector");
+	    m_x=v[0];m_y=v[1];
+	}
 	static inline const Vector2 zero(){return Vector2(numt(0),numt(0));}
 	static inline const Vector2 basis_x(){return Vector2(numt(1),numt(0));}
 	static inline const Vector2 basis_y(){return Vector2(numt(0),numt(1));}
-	static inline const Vector2 DesCartes(const numt&x,const numt&y){return Vector3(x,y);}
+	static inline const Vector2 DesCartes(const numt&x,const numt&y){return Vector2(x,y);}
 	static const Vector2 Polar(const numt&mag,const numt&phi){
 	    return Vector2(mag*cos(phi),mag*sin(phi));
 	}
@@ -104,8 +110,14 @@ namespace MathTemplates{
     class Vector3{
     private:
 	numt m_x,m_y,m_z;
-	Vector3(const numt&x,const numt&y,const numt&z):m_x(x),m_y(y),m_z(z){}
     public:
+	Vector3(const numt&x,const numt&y,const numt&z):m_x(x),m_y(y),m_z(z){}
+	typedef numt NumberType;
+	const std::vector<numt> to_vector()const{return {m_x,m_y,m_z};}
+	Vector3(const std::vector<numt>&v){
+	    if(v.size()!=3)throw Exception<Vector3>("Bad Vector3 initializing by vector");
+	    m_x=v[0];m_y=v[1];m_z=v[2];
+	}
 	static inline const Vector3 zero(){return Vector3(numt(0),numt(0),numt(0));}
 	static inline const Vector3 basis_x(){return Vector3(numt(1),numt(0),numt(0));}
 	static inline const Vector3 basis_y(){return Vector3(numt(0),numt(1),numt(0));}
@@ -240,17 +252,18 @@ namespace MathTemplates{
     std::ostream&operator<<(std::ostream&str,const Vector3<numt>&V){
 	return str<<V.x()<<" "<<V.y()<<" "<<V.z()<<" ";
     }
-    template<class numt=double>
-    class Vector4{
-    public:
-	typedef Vector3<numt> Space;
+
+    template<class Space=Vector3<double>,class numt=typename Space::NumberType>
+    class LorentzVector{
     private:
 	numt m_time;
 	Space m_space;
-	Vector4(const numt&t,const Space&S):m_time(t),m_space(S){}
     public:
-	Vector4(const Vector4&source):Vector4(source.m_time,source.m_space){}
-	Vector4&operator=(const Vector4&source){
+	LorentzVector(const numt&t,const Space&S):m_time(t),m_space(S){}
+	typedef Space SpaceVectorType;
+	typedef numt TimeCoordinateType;
+	LorentzVector(const LorentzVector&source):LorentzVector(source.m_time,source.m_space){}
+	LorentzVector&operator=(const LorentzVector&source){
 	    m_space=source.m_space;
 	    m_time=source.m_time;
 	    return *this;
@@ -263,74 +276,90 @@ namespace MathTemplates{
 	const numt length4()const{
 	    return sqrt(Sqr4());
 	}
-	const bool operator==(const Vector4&second)const{
+	const bool operator==(const LorentzVector&second)const{
 	    return (m_time==second.m_time)&&(m_space==second.m_space);
 	}
-	Vector4&operator+=(const Vector4&second){
+	LorentzVector&operator+=(const LorentzVector&second){
 	    m_time+=second.m_time;
 	    m_space+=second.m_space;
 	    return *this;
 	}
-	const Vector4 operator+(const Vector4&second)const{
-	    return Vector4(m_time+second.m_time,m_space+second.m_space);
+	const LorentzVector operator+(const LorentzVector&second)const{
+	    return LorentzVector(m_time+second.m_time,m_space+second.m_space);
 	}
-	Vector4&operator-=(const Vector4&second){
+	LorentzVector&operator-=(const LorentzVector&second){
 	    m_time-=second.m_time;
 	    m_space-=second.m_space;
 	    return *this;
 	}
-	const Vector4 operator-(const Vector4&second)const{
-	    return Vector4(m_time-second.m_time,m_space-second.m_space);
+	const LorentzVector operator-(const LorentzVector&second)const{
+	    return LorentzVector(m_time-second.m_time,m_space-second.m_space);
 	}
-	const numt operator*(const Vector4&second)const{
+	const numt operator*(const LorentzVector&second)const{
 	    return (m_time*second.m_time)-(m_space*second.m_space);
 	}
-	static const Vector4 zero(){return Vector4(numt(0),Space::zero());}
-	static const Vector4 byComponents(const numt&t,const numt&x,const numt&y,const numt&z){
-	    return Vector4(t,Space::DesCartes(x,y,z));
+	static const LorentzVector zero(){return LorentzVector(numt(0),Space::zero());}
+	static const LorentzVector byComponents(const numt&t,const numt&x,const numt&y,const numt&z){
+	    return LorentzVector(t,Space::DesCartes(x,y,z));
 	}
-	static const Vector4 byComponents(const numt&t,const Space&s){
-	    return Vector4(t,s);
+	static const LorentzVector byComponents(const numt&t,const Space&s){
+	    return LorentzVector(t,s);
 	}
-	Vector4(const numt&t):Vector4(t,Space::zero()){}
-	static const Vector4 byOnlyTimeC(const numt&t){
-	    return Vector4(t);
+	LorentzVector(const numt&t):LorentzVector(t,Space::zero()){}
+	static const LorentzVector byOnlyTimeC(const numt&t){
+	    return LorentzVector(t);
 	}
-	static const Vector4 bySpaceC_and_Length4(const Space&s,const numt&l4){
-	    return Vector4(sqrt(s.mag_sqr()+l4*l4),s);
+	static const LorentzVector bySpaceC_and_Length4(const Space&s,const numt&l4){
+	    return LorentzVector(sqrt(s.mag_sqr()+l4*l4),s);
 	}
-	static const Vector4 byTime_Dir_and_Length4(const numt&t,const numt&theta,const numt&phi,const numt&l4){
+	static const LorentzVector byTime_Dir_and_Length4(const numt&t,const numt&theta,const numt&phi,const numt&l4){
 	    numt Sp=sqrt(t*t-l4*l4);
-	    return Vector4(t,Space::Direction(theta,phi)*Sp);
+	    return LorentzVector(t,Space::Direction(theta,phi)*Sp);
 	}
-	const Vector4 Rotate(const Space&axis,const numt&theta)const{
-	    return Vector4(time_component(),space_component().Rotate(axis,theta));
+	const LorentzVector Rotate(const Space&axis,const numt&theta)const{
+	    return LorentzVector(time_component(),space_component().Rotate(axis,theta));
 	}
-	const Vector4 Lorentz(const Space&Beta)const{
+	const LorentzVector Lorentz(const Space&Beta)const{
 	    const numt beta=Beta.mag();
 	    if(beta==0.0)return *this;
-	    if(beta>=numt(1))throw Exception<Vector4>("Bad Lorentz transformation");
-	    const Space n=Beta/beta;
+	    if(beta>=numt(1))throw Exception<LorentzVector>("Bad Lorentz transformation");
+	    const auto n=(Beta/beta).to_vector();
 	    const numt gamma=numt(1)/sqrt(numt(1)-beta*beta);
-	    const std::vector<numt> source={
-		time_component(),
-		space_component().x(),
-		space_component().y(),
-		space_component().z()
-	    };
-	    std::vector<std::vector<numt>> M={
-		{ gamma           ,-gamma*Beta.x(),-gamma*Beta.y(),-gamma*Beta.z()},
-		{-gamma*Beta.x()  ,numt(1)+(gamma-numt(1))*n.x()*n.x(),numt(0)+(gamma-numt(1))*n.x()*n.y(),numt(0)+(gamma-numt(1))*n.x()*n.z()},
-		{-gamma*Beta.y()  ,numt(0)+(gamma-numt(1))*n.y()*n.x(),numt(1)+(gamma-numt(1))*n.y()*n.y(),numt(0)+(gamma-numt(1))*n.y()*n.z()},
-		{-gamma*Beta.z()  ,numt(0)+(gamma-numt(1))*n.z()*n.x(),numt(0)+(gamma-numt(1))*n.z()*n.y(),numt(1)+(gamma-numt(1))*n.z()*n.z()}
-	    };
+	    auto source=space_component().to_vector();
+	    source.insert(source.begin(),time_component());
+	    std::vector<std::vector<numt>> M;
+	    for(size_t i=0;i<source.size();i++){
+		std::vector<numt> V;
+		for(size_t j=0;j<source.size();j++){
+		    if((0==i)&&(0==j)){
+			V.push_back(gamma);
+		    }else{
+			if(0==i){
+			    V.push_back(-gamma*beta*n[j-1]);
+			}else{
+			    if(0==j){
+				V.push_back(-gamma*beta*n[i-1]);
+			    }else{
+				if(i==j){
+				    V.push_back(numt(1)+(gamma-numt(1))*n[i-1]*n[j-1]);
+				}else{
+				    V.push_back((gamma-numt(1))*n[i-1]*n[j-1]);
+				}
+			    }
+			}
+		    }
+		}
+		M.push_back(V);
+	    }
 	    std::vector<numt> dest;
-	    for(size_t i=0;i<4;i++){
+	    for(size_t i=0;i<source.size();i++){
 		numt v=0;
-		for(size_t j=0;j<4;j++)v+=M[i][j]*source[j];
+		for(size_t j=0;j<source.size();j++)v+=M[i][j]*source[j];
 		dest.push_back(v);
 	    }
-	    return Vector4(dest[0],Space::DesCartes(dest[1],dest[2],dest[3]));
+	    const auto T=dest[0];
+	    dest.erase(dest.begin());
+	    return LorentzVector(T,dest);
 	}
 	const Space Beta()const{//Makes physical sense only if it's a 4-momentum
 	    return space_component()/time_component();

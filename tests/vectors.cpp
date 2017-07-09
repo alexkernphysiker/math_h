@@ -153,12 +153,12 @@ TEST(Vector3,RotationZ){
     }
 }
 
-TEST(Vector4,Lorentz){
+TEST(LorentzVector,LorentzTransform){
     RANDOM RG;
     const double epsilon=0.0000000000001;
     RandomUniform<> mr(0,1.0-epsilon),metrr(-5,5);
     for(size_t i=0;i<10000;i++){
-	const auto V0=Vector4<>::bySpaceC_and_Length4(Vector3<>::RandomIsotropicDirection(RG),metrr(RG));
+	const auto V0=LorentzVector<>::bySpaceC_and_Length4(Vector3<>::RandomIsotropicDirection(RG),metrr(RG));
 	const auto V1=V0.Lorentz(Vector3<>::zero());
 	EXPECT_TRUE(V1==V0);
 	const auto beta=Vector3<>::RandomIsotropicDirection(RG)*mr(RG);
@@ -167,15 +167,47 @@ TEST(Vector4,Lorentz){
 	EXPECT_TRUE(pow(V2.space_component().x()-V0.space_component().x(),2)<epsilon);
 	EXPECT_TRUE(pow(V2.space_component().y()-V0.space_component().y(),2)<epsilon);
 	EXPECT_TRUE(pow(V2.space_component().z()-V0.space_component().z(),2)<epsilon);
-	EXPECT_THROW(V0.Lorentz(Vector3<>::RandomIsotropicDirection(RG)*(1.0+mr(RG))),Exception<Vector4<>>);
-	const auto L0=V0.length4(),L1=V0.Lorentz(beta).length4(),L2=V0.Lorentz(beta).Lorentz(Vector3<>::RandomIsotropicDirection(RG)*0.2).length4();
+	EXPECT_THROW(V0.Lorentz(
+	    Vector3<>::RandomIsotropicDirection(RG)*(1.0+mr(RG))),
+	    Exception<LorentzVector<>>
+	);
+	const auto L0=V0.length4(),L1=V0.Lorentz(beta).length4(),
+	L2=V0.Lorentz(beta).Lorentz(Vector3<>::RandomIsotropicDirection(RG)*0.2).length4();
 	EXPECT_TRUE(pow(L0-L1,2)<epsilon);
 	EXPECT_TRUE(pow(L2-L1,2)<epsilon);
 	EXPECT_TRUE(pow(L0-L2,2)<epsilon);
-	const auto V00=Vector4<>(V0.length4()).Lorentz(-V0.Beta());
+	const auto V00=LorentzVector<>(V0.length4()).Lorentz(-V0.Beta());
 	EXPECT_TRUE(pow(V00.time_component()-V0.time_component(),2)<epsilon);
 	EXPECT_TRUE(pow(V00.space_component().x()-V0.space_component().x(),2)<epsilon);
 	EXPECT_TRUE(pow(V00.space_component().y()-V0.space_component().y(),2)<epsilon);
 	EXPECT_TRUE(pow(V00.space_component().z()-V0.space_component().z(),2)<epsilon);
+    }
+}
+TEST(LorentzVector,LorentzTransform2d){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> mr(0,1.0-epsilon),metrr(-5,5);
+    for(size_t i=0;i<10000;i++){
+	const auto V0=LorentzVector<Vector2<>>::bySpaceC_and_Length4(Vector2<>::RandomIsotropicDirection(RG),metrr(RG));
+	const auto V1=V0.Lorentz(Vector2<>::zero());
+	EXPECT_TRUE(V1==V0);
+	const auto beta=Vector2<>::RandomIsotropicDirection(RG)*mr(RG);
+	const auto V2=V0.Lorentz(beta).Lorentz(-beta);
+	EXPECT_TRUE(pow(V2.time_component()-V0.time_component(),2)<epsilon);
+	EXPECT_TRUE(pow(V2.space_component().x()-V0.space_component().x(),2)<epsilon);
+	EXPECT_TRUE(pow(V2.space_component().y()-V0.space_component().y(),2)<epsilon);
+	EXPECT_THROW(V0.Lorentz(
+	    Vector2<>::RandomIsotropicDirection(RG)*(1.0+mr(RG))),
+	    Exception<LorentzVector<Vector2<>>>
+	);
+	const auto L0=V0.length4(),L1=V0.Lorentz(beta).length4(),
+	L2=V0.Lorentz(beta).Lorentz(Vector2<>::RandomIsotropicDirection(RG)*0.2).length4();
+	EXPECT_TRUE(pow(L0-L1,2)<epsilon);
+	EXPECT_TRUE(pow(L2-L1,2)<epsilon);
+	EXPECT_TRUE(pow(L0-L2,2)<epsilon);
+	const auto V00=LorentzVector<Vector2<>>(V0.length4()).Lorentz(-V0.Beta());
+	EXPECT_TRUE(pow(V00.time_component()-V0.time_component(),2)<epsilon);
+	EXPECT_TRUE(pow(V00.space_component().x()-V0.space_component().x(),2)<epsilon);
+	EXPECT_TRUE(pow(V00.space_component().y()-V0.space_component().y(),2)<epsilon);
     }
 }
