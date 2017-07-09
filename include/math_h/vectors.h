@@ -80,8 +80,8 @@ namespace MathTemplates{
 	    const std::vector<numt> source={x(),y()};
 	    const numt cost=cos(theta),sint=sin(theta);
 	    std::vector<std::vector<numt>> M={
-		{cost,sint},
-		{-sint,cost}
+		{cost,-sint},
+		{sint,cost}
 	    };
 	    std::vector<numt> dest;
 	    for(size_t i=0;i<2;i++){
@@ -365,5 +365,7 @@ namespace MathTemplates{
 	    return space_component()/time_component();
 	}
     };
+    template<class numt=double>
+    using Vector4=LorentzVector<Vector3<numt>,numt>;
 };
 #endif
