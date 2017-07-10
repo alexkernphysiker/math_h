@@ -5,19 +5,19 @@ This repository also contains a small static library which is an interface betwe
 
 
 
-Compiling
-=========
+How to use it
+=============
 If you have your own git repository with cmake project you can add this repo as a submodule:
 
 	git submodule add https://github.com/alexkernphysiker/math_h.git
-	git submodule update --init
+	git submodule update --init --recursive
 	
 Then add to your CMakeLists.txt
 
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
 	
-Then commit your changes :)
+Then commit your changes
 
 CMake Options
 =============
