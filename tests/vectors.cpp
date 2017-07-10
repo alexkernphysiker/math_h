@@ -211,3 +211,82 @@ TEST(LorentzVector,LorentzTransform2d){
 	EXPECT_TRUE(pow(V00.space_component().y()-V0.space_component().y(),2)<epsilon);
     }
 }
+TEST(Plane3D,SimplePlanes){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> mr(0,10),th(0,2.0*PI());
+    for(size_t i=0;i<10000;i++){
+	const auto v1=Vector2<>::RandomIsotropicDirection(RG)*mr(RG),v2=Vector2<>::RandomIsotropicDirection(RG)*mr(RG);
+	const auto p1=v1*v2;
+	{
+	    const auto plane=Plane3D<>::XY();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).x());
+	    EXPECT_EQ(v1.y(),plane(v1).y());
+	    EXPECT_EQ(0,plane(v1).z());
+	}
+	{
+	    const auto plane=Plane3D<>::YX();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).y());
+	    EXPECT_EQ(v1.y(),plane(v1).x());
+	    EXPECT_EQ(0,plane(v1).z());
+	}
+	{
+	    const auto plane=Plane3D<>::XZ();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).x());
+	    EXPECT_EQ(v1.y(),plane(v1).z());
+	    EXPECT_EQ(0,plane(v1).y());
+	}
+	{
+	    const auto plane=Plane3D<>::ZX();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).z());
+	    EXPECT_EQ(v1.y(),plane(v1).x());
+	    EXPECT_EQ(0,plane(v1).y());
+	}
+	{
+	    const auto plane=Plane3D<>::YZ();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).y());
+	    EXPECT_EQ(v1.y(),plane(v1).z());
+	    EXPECT_EQ(0,plane(v1).x());
+	}
+	{
+	    const auto plane=Plane3D<>::ZY();
+	    const auto p2=plane(v1)*plane(v2);
+	    EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+	    EXPECT_EQ(v1.x(),plane(v1).z());
+	    EXPECT_EQ(v1.y(),plane(v1).y());
+	    EXPECT_EQ(0,plane(v1).x());
+	}
+    }
+}
+TEST(Plane3D,scalarProductInvariance){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> mr(0,10),th(0,2.0*PI());
+    for(size_t i=0;i<10000;i++){
+	const auto v1=Vector2<>::RandomIsotropicDirection(RG)*mr(RG),v2=Vector2<>::RandomIsotropicDirection(RG)*mr(RG);
+	const auto p1=v1*v2;
+	const auto plane=Plane3D<>::ByNormalVectorAndTheta(Vector3<>::RandomIsotropicDirection(RG),th(RG));
+	const auto p2=plane(v1)*plane(v2);
+	EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+    }
+}
+TEST(Plane3D,LorentzInvariance){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> mr(0,10),th(0,2.0*PI());
+    for(size_t i=0;i<10000;i++){
+	const auto v=LorentzVector<Vector2<>>::bySpaceC_and_Length4(Vector2<>::RandomIsotropicDirection(RG)*mr(RG),mr(RG));
+	const auto plane=Plane3D<>::ByNormalVectorAndTheta(Vector3<>::RandomIsotropicDirection(RG),th(RG));
+	EXPECT_TRUE(pow(v.length4()-plane(v).length4(),2)<epsilon);
+    }
+}

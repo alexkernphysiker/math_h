@@ -14,6 +14,7 @@ namespace MathTemplates{
 	numt m_x,m_y;
     public:
 	typedef numt NumberType;
+	virtual ~Vector2(){}
 	Vector2(const numt&x,const numt&y):m_x(x),m_y(y){}
 	const std::vector<numt> to_vector()const{return {m_x,m_y};}
 	Vector2(const std::vector<numt>&v){
@@ -111,6 +112,7 @@ namespace MathTemplates{
     private:
 	numt m_x,m_y,m_z;
     public:
+	virtual ~Vector3(){}
 	Vector3(const numt&x,const numt&y,const numt&z):m_x(x),m_y(y),m_z(z){}
 	typedef numt NumberType;
 	const std::vector<numt> to_vector()const{return {m_x,m_y,m_z};}
@@ -252,13 +254,13 @@ namespace MathTemplates{
     std::ostream&operator<<(std::ostream&str,const Vector3<numt>&V){
 	return str<<V.x()<<" "<<V.y()<<" "<<V.z()<<" ";
     }
-
     template<class Space=Vector3<double>,class numt=typename Space::NumberType>
     class LorentzVector{
     private:
 	numt m_time;
 	Space m_space;
     public:
+	virtual ~LorentzVector(){}
 	LorentzVector(const numt&t,const Space&S):m_time(t),m_space(S){}
 	typedef Space SpaceVectorType;
 	typedef numt TimeCoordinateType;
@@ -367,5 +369,44 @@ namespace MathTemplates{
     };
     template<class numt=double>
     using Vector4=LorentzVector<Vector3<numt>,numt>;
+
+    template<class numt=double>
+    class Plane3D{
+    public:
+	typedef Vector3<numt> Space;
+	typedef Vector2<numt> Plane;
+    private:
+	Space basis_x,basis_y;
+    public:
+	const Space operator()(const Plane&v)const{
+	    return basis_x*v.x()+basis_y*v.y();
+	}
+	const LorentzVector<Space> operator()(const LorentzVector<Plane>&v)const{
+	    return LorentzVector<Space>(v.time_component(),basis_x*v.space_component().x()+basis_y*v.space_component().y());
+	}
+	virtual ~Plane3D(){}
+	Plane3D(const Space&x,const Space&y):basis_x(x),basis_y(y){
+	    if(x.VecP(y).mag_sqr()==numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
+	}
+	static const Plane3D XY(){return Plane3D(Space::basis_x(),Space::basis_y());}
+	static const Plane3D YX(){return Plane3D(Space::basis_y(),Space::basis_x());}
+	static const Plane3D XZ(){return Plane3D(Space::basis_x(),Space::basis_z());}
+	static const Plane3D ZX(){return Plane3D(Space::basis_z(),Space::basis_x());}
+	static const Plane3D YZ(){return Plane3D(Space::basis_y(),Space::basis_z());}
+	static const Plane3D ZY(){return Plane3D(Space::basis_z(),Space::basis_y());}
+	static const Plane3D ByNormalVectorAndTheta(const Space&N,const numt&theta){
+	    if(N.mag()==0)throw Exception<Plane3D>("Invalid normale vector");
+	    const auto n=N/N.mag();
+	    if(n.VecP(Space::basis_z()).mag_sqr()==0){
+		const auto X=Space::basis_x().Rotate(n,theta);
+		return Plane3D(X,n.VecP(X));
+	    }else{
+		const auto X=n.VecP(Space::basis_z());
+		return Plane3D(X/X.mag(),n.VecP(X/X.mag()));
+	    }
+	    throw Exception<Plane3D>("This line should not be reached");
+	}
+    };
+
 };
 #endif
