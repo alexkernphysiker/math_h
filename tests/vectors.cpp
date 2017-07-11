@@ -280,6 +280,18 @@ TEST(Plane3D,scalarProductInvariance){
 	EXPECT_TRUE(pow(p1-p2,2)<epsilon);
     }
 }
+TEST(Plane3D,vectorProductInvariance){
+    RANDOM RG;
+    const double epsilon=0.0000000000001;
+    RandomUniform<> mr(0,10),th(0,2.0*PI());
+    for(size_t i=0;i<10000;i++){
+	const auto v1=Vector2<>::RandomIsotropicDirection(RG)*mr(RG),v2=Vector2<>::RandomIsotropicDirection(RG)*mr(RG);
+	const auto p1=pow(v1.VecP(v2),2);
+	const auto plane=Plane3D<>::ByNormalVectorAndTheta(Vector3<>::RandomIsotropicDirection(RG),th(RG));
+	const auto p2=plane(v1).VecP(plane(v2)).mag_sqr();
+	EXPECT_TRUE(pow(p1-p2,2)<epsilon);
+    }
+}
 TEST(Plane3D,LorentzInvariance){
     RANDOM RG;
     const double epsilon=0.0000000000001;

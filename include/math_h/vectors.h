@@ -77,6 +77,9 @@ namespace MathTemplates{
 	const bool operator==(const Vector2&second)const{
 	    return (m_x==second.m_x)&&(m_y==second.m_y);
 	}
+	const numt VecP(const Vector2&second)const{
+	    return (x()*second.y())-(second.x()*y());
+	}
 	const Vector2 Rotate(const numt&theta)const{
 	    const std::vector<numt> source={x(),y()};
 	    const numt cost=cos(theta),sint=sin(theta);

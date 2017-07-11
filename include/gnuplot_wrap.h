@@ -360,5 +360,19 @@ namespace GnuplotWrap{
 		<<"set xlabel '"+m_axis+"'"<<"set ylabel 'counts'";
 	    }
 	};
+	template<class numt=double>
+	class PlotDistr2D:public MathTemplates::Distribution2D<numt>{
+	private:
+	    std::string m_title;
+	public:
+	    PlotDistr2D(
+		const std::string&title,
+		const MathTemplates::SortedChain<MathTemplates::value<numt>>&X,
+		const MathTemplates::SortedChain<MathTemplates::value<numt>>&Y
+	    ):MathTemplates::Distribution2D<numt>(X,Y),m_title(title){}
+	    virtual ~PlotDistr2D(){
+		PlotHist2d<numt>(sp2).Hist2d(*this)<<"set title '"+m_title+"'";
+	    }
+	};
 };
 #endif

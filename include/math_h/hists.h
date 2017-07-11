@@ -150,9 +150,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		Distribution1D&Fill(const numtX&&v){
-			return Fill(v);
-		}
 		const unsigned long long Entries()const{
 			return counter;
 		}
@@ -180,9 +177,6 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		Distribution2D&Fill(const numtX&x,const numtY&&y){return Fill(x,y);}
-		Distribution2D&Fill(const numtX&&x,const numtY&y){return Fill(x,y);}
-		Distribution2D&Fill(const numtX&&x,const numtY&&y){return Fill(x,y);}
 		const unsigned long long Entries()const{
 			return counter;
 		}
