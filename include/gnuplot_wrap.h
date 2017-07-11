@@ -371,7 +371,7 @@ namespace GnuplotWrap{
 		const MathTemplates::SortedChain<MathTemplates::value<numt>>&Y
 	    ):MathTemplates::Distribution2D<numt>(X,Y),m_title(title){}
 	    virtual ~PlotDistr2D(){
-		PlotHist2d<numt>(sp2).Hist2d(*this)<<"set title '"+m_title+"'";
+		PlotHist2d<numt>(sp2).Distr(*this)<<"set title '"+m_title+"'";
 	    }
 	};
 };
