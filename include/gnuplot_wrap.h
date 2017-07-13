@@ -356,7 +356,7 @@ namespace GnuplotWrap{
 		    const MathTemplates::SortedChain<MathTemplates::value<numt>>&data
 	    ):MathTemplates::Distribution1D<numt>(data),m_title(title),m_axis(axis){}
 	    virtual ~PlotDistr1D(){
-		Plot<numt>().Hist(*this)<<"set title '"+m_title+"'"
+		Plot<numt>().Hist(*this)<<"set title '"+m_title+"'"<<"set yrange [0:]"
 		<<"set xlabel '"+m_axis+"'"<<"set ylabel 'counts'";
 	    }
 	};
