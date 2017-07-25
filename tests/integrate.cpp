@@ -52,3 +52,11 @@ TEST(Convolution,BasicTest){
 	double test_value=Sympson([x,F1,F2](double k){return F1(k)*F2(x-k);},0.0,1.0,0.01);
 	EXPECT_EQ(test_value,C(x));
 }
+TEST(Convolution,BasicTest2){
+	auto F1=[](const double&x){return x;};
+	auto F2=[](const double&x){return x*x;};
+	auto C=make_convolution(F1,F2,0.,1.,0.01);
+	double x=0.1;
+	double test_value=Sympson([x,F1,F2](double k){return F1(k)*F2(x-k);},0.0,1.0,0.01);
+	EXPECT_EQ(test_value,C(x));
+}
