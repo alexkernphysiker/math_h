@@ -19,6 +19,13 @@ TEST(RandomValueTableDistr,BaseTest){
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
 }
+TEST(RandomValueTableDistr,initFromList){
+	RandomValueTableDistr<> R={{0.0,0.25},{0.5,0.75},{1.0,0.25}};
+	for(int i=0;i<100;i++){
+		double r=R(rnd);
+		EXPECT_TRUE((r>=0)&&(r<=1));
+	}
+}
 TEST(RandomValueTableDistr,Throwing){
 	auto f=[](double){return 1;};
 	auto z=[](double){return 0;};

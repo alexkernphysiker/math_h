@@ -17,18 +17,15 @@ namespace MathTemplates{
 	LinearInterpolation<numt,numt> reverse_distr_func;
 	std::pair<numt,numt> range;
     public:
-	RandomValueTableDistr(const RandomValueTableDistr &R):reverse_distr_func(R.reverse_distr_func),range(R.range){}
+	RandomValueTableDistr(const RandomValueTableDistr &R):
+	    reverse_distr_func(R.reverse_distr_func),range(R.range){}
 	RandomValueTableDistr(const SortedPoints<numt>&distribution_density)
 	    :reverse_distr_func(Int_Trapez_Table_PositiveStrict(distribution_density).TransponateAndSort())
 	    ,range(reverse_distr_func.left().X(),reverse_distr_func.right().X()){}
-	RandomValueTableDistr(const std::function<numt(numt)> distribution_density,const SortedChain<numt>&chain)
-	    :RandomValueTableDistr(SortedPoints<numt>(distribution_density,chain)){}
-	RandomValueTableDistr(const std::function<numt(numt)> distribution_density,const SortedChain<numt>&&chain)
-	    :RandomValueTableDistr(SortedPoints<numt>(distribution_density,chain)){}
-	RandomValueTableDistr(const std::function<numt(numt)> distribution_density,const std::initializer_list<numt>&&chain)
-	    :RandomValueTableDistr(SortedPoints<numt>(distribution_density,chain)){}
-	RandomValueTableDistr(const numt x1,const numt x2)
-	    :RandomValueTableDistr({point<numt>(x1,numt(1)),point<numt>(x2,numt(1))}){}
+	RandomValueTableDistr(const std::initializer_list<point<numt>>&source):
+	    RandomValueTableDistr(SortedPoints<numt>(source)){}
+	RandomValueTableDistr(const std::function<numt(numt)> distribution_density,const SortedChain<numt>&chain):
+	    RandomValueTableDistr(SortedPoints<numt>(distribution_density,chain)){}
 	virtual ~RandomValueTableDistr(){}
 	virtual numt operator ()(RG&generator)const override{
 	    std::uniform_real_distribution<numt> uniform(range.first,range.second);

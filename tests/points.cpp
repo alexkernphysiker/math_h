@@ -10,6 +10,22 @@ TEST(point,basetest){
 	EXPECT_EQ(x,p.X());
 	EXPECT_EQ(y,p.Y());
 }
+TEST(point,basetest1){
+	double x(25),y(78);
+	point<> p={x,y};
+	EXPECT_EQ(x,p.X());
+	EXPECT_EQ(y,p.Y());
+}
+TEST(point,basetest2){
+	int x(25);
+	double y(78);
+	point<int,double> p={25,78};
+	EXPECT_EQ(x,p.X());
+	EXPECT_EQ(y,p.Y());
+	point<int,double> p2={25.,78.};
+	EXPECT_EQ(x,p.X());
+	EXPECT_EQ(y,p.Y());
+}
 TEST(point3d,basetest){
 	double x(25),y(78),z(55);
 	point3d<double> p(x,y,z);

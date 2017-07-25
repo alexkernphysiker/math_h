@@ -15,6 +15,16 @@ namespace MathTemplates{
 		point(const numtX&pos):x(pos),y(numtY(0)){}
 		point(const numtX&pos,const numtY&val):x(pos),y(val){}
 		point(const point&source):x(source.x),y(source.y){}
+		template<class numt=numtY>
+		point(const std::initializer_list<numt>&source){
+		    if(source.size()==0)
+			throw Exception<point>("wrong initialization of point from emply list");
+		    if(source.size()>2)
+			throw Exception<point>("wrong initialization of value from list with more than two numbers");
+		    std::vector<numt> v;for(const numt&x:source)v.push_back(x);
+		    x=numtX(v[0]);
+		    y=numtY(v[1]);
+		}
 		const numtX&X()const{return x;}
 		const numtY&Y()const{return y;}
 		bool operator<(const point&b)const{return x<b.x;}
