@@ -6,9 +6,9 @@
 #include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
-mt19937 rnd;
-TEST(RandomValueTableDistr,BaseTest){
-	RandomValueTableDistr<double> R([](double)->double{return 1;},ChainWithCount(10,0.0,1.0));
+RANDOM rnd;
+TEST(RandomValueTableDistr,initFromList_n_copy){
+	RandomValueTableDistr<> R={{0.0,0.25},{0.5,0.75},{1.0,0.25}};
 	for(int i=0;i<100;i++){
 		double r=R(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -19,8 +19,8 @@ TEST(RandomValueTableDistr,BaseTest){
 		EXPECT_TRUE((r>=0)&&(r<=1));
 	}
 }
-TEST(RandomValueTableDistr,initFromList){
-	RandomValueTableDistr<> R={{0.0,0.25},{0.5,0.75},{1.0,0.25}};
+TEST(RandomValueTableDistr,initfromfunc){
+	RandomValueTableDistr<double> R([](const double&)->const double{return 1;},ChainWithCount(10,0.0,1.0));
 	for(int i=0;i<100;i++){
 		double r=R(rnd);
 		EXPECT_TRUE((r>=0)&&(r<=1));
@@ -36,7 +36,7 @@ TEST(RandomValueTableDistr,Throwing){
 	EXPECT_NO_THROW(RandomValueTableDistr<double>(f,ChainWithCount(2,0.0,1.0)));
 	EXPECT_NO_THROW(RandomValueTableDistr<double>(z,ChainWithCount(2,0.0,1.0)));
 	EXPECT_NO_THROW(RandomValueTableDistr<double>(f,{0.0,1.0}));
-	EXPECT_NO_THROW(RandomValueTableDistr<double>({point<double>(0.0,1.0),point<double>(1.0,1.0)}));
+	EXPECT_NO_THROW(RandomValueTableDistr<double>({{0.0,1.0},{1.0,1.0}}));
 	EXPECT_THROW(RandomValueTableDistr<double>(z,ChainWithCount(0,0.0,0.0)),Exception<SortedChain<double>>);
 	auto n=[](double x){return sin(10*x);};
 	EXPECT_THROW(RandomValueTableDistr<double>(n,ChainWithCount(100,0.0,1.0)),Exception<SortedPoints<double>>);
