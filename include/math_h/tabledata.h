@@ -215,12 +215,12 @@ namespace MathTemplates{
 		const_iterator cend() const{return m_data.cend();}
 		size_t size()const{return m_data.size();}
 		const std::vector<numtZ>&operator[](const size_t i)const{
-			if(size()<=i)throw Exception<BiSortedPoints>("range check error");
+			if(size()<=i)throw Exception<BiSortedPoints>("X-range check error");
 			return m_data[i];
 		}
 		numtZ&Bin(const size_t i,const size_t j){
-			if(size()<=i)throw Exception<BiSortedPoints>("range check error");
-			if(m_data[i].size()<=j)throw Exception<BiSortedPoints>("range check error");
+			if(size()<=i)throw Exception<BiSortedPoints>("X-range check error "+std::to_string(i)+":"+std::to_string(j));
+			if(m_data[i].size()<=j)throw Exception<BiSortedPoints>("Y-range check error "+std::to_string(i)+":"+std::to_string(j));
 			return m_data[i][j];
 		}
 		const SortedPoints<numtX,numtZ>CutX(const size_t j)const{
