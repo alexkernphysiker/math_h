@@ -38,7 +38,7 @@ namespace MathTemplates{
 		hist(const std::initializer_list<Point>&data){
 			for(const auto& P:data)this->operator<<(P);
 		}
-		hist Clone(){return hist(*this);}
+		hist Clone()const{return hist(*this);}
 		virtual ~hist(){}
 		hist& operator=(const SortedPoints<value<numtX>,value<numtY>>&points){
 			SortedPoints<value<numtX>,value<numtY>>::operator=(points);
@@ -100,7 +100,7 @@ namespace MathTemplates{
 		hist2d():hist2d({},{}){}
 		hist2d(const BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>&source)
 		:BiSortedPoints<value<numtX>,value<numtY>,value<numtZ>>(source){}
-		hist2d Clone(){return hist2d(*this);}
+		hist2d Clone()const{return hist2d(*this);}
 
 		virtual ~hist2d(){}
 		

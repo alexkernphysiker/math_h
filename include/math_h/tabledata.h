@@ -34,7 +34,7 @@ namespace MathTemplates{
 			SortedChain<point_editable_y<numX,numY>>::operator=(points);
 			return *this;
 		}
-		SortedPoints Clone(){return SortedPoints(*this);}
+		SortedPoints Clone()const{return SortedPoints(*this);}
 		point_editable_y<numX,numY>&Bin(const size_t i){
 			return SortedChain<point_editable_y<numX,numY>>::accessBin(i);
 		}
@@ -206,7 +206,7 @@ namespace MathTemplates{
 					m_data[i].push_back(item);
 			}
 		}
-		BiSortedPoints Clone(){return BiSortedPoints(*this);}
+		BiSortedPoints Clone()const{return BiSortedPoints(*this);}
 		virtual ~BiSortedPoints(){}
 		typedef typename std::vector<std::vector<numtZ>>::const_iterator const_iterator;
 		const_iterator begin()const{return m_data.cbegin();}
