@@ -256,10 +256,12 @@ namespace MathTemplates{
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
 		}
-		void FullCycleVar(const std::function<void(const numtX&,const numtY&,numtZ&)>f){
-			for(size_t i=0,I=m_x_axis.size();i<I;i++)
+		BiSortedPoints&FullCycleVar(const std::function<void(const numtX&,const numtY&,numtZ&)>f){
+			for(size_t i=0,I=m_x_axis.size();i<I;i++){
 				for(size_t j=0,J=m_y_axis.size();j<J;j++)
 					f(m_x_axis[i],m_y_axis[j],m_data[i][j]);
+			}
+			return *this;
 		}
 		
 	};
