@@ -263,7 +263,13 @@ namespace MathTemplates{
 			}
 			return *this;
 		}
-		
+		BiSortedPoints&FullCycleVar(const std::function<void(numtZ&)>f){
+			for(size_t i=0,I=m_x_axis.size();i<I;i++){
+				for(size_t j=0,J=m_y_axis.size();j<J;j++)
+					f(m_data[i][j]);
+			}
+			return *this;
+		}
 	};
 };
 #endif
