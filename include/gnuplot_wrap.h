@@ -52,6 +52,8 @@ namespace GnuplotWrap{
 			operator<<("unset view");
 			operator<<("unset xrange");
 			operator<<("unset yrange");
+			operator<<("unset xlabel");
+			operator<<("unset ylabel");
 		}
 		virtual ~Plot(){
 			for(const std::string&line:lines)
@@ -261,6 +263,10 @@ namespace GnuplotWrap{
 			}
 			operator<<("unset xrange");
 			operator<<("unset yrange");
+			operator<<("unset zrange");
+			operator<<("unset xlabel");
+			operator<<("unset ylabel");
+			operator<<("unset zlabel");
 		}
 		virtual ~PlotHist2d(){
 			for(const std::string&line:lines)Plotter::Instance()<<line;
