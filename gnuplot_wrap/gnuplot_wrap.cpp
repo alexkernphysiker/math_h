@@ -11,7 +11,7 @@ namespace GnuplotWrap{
 		outpath="*";
 	}
 	Plotter::~Plotter(){
-		string name="!"+m_prefix+".gnuplot-script";
+		string name=m_prefix+".gnuplot-script";
 		ofstream str(string(outpath+"/"+name).c_str(),ofstream::out);
 		for(string line:lines)
 		    str<<line<<"\n";
@@ -52,7 +52,7 @@ namespace GnuplotWrap{
 		filename_counter++;
 		string cnt=to_string(filename_counter);
 		while(cnt.length()<6)cnt="0"+cnt;
-		return string(".")+m_prefix+"-numeric-"+cnt+".txt";
+		return m_prefix+".numeric-data."+cnt+".txt";
 	    }else{
 		return name+".txt";
 	    }
