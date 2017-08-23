@@ -44,7 +44,7 @@ namespace GnuplotWrap{
 		terminal_counter++;
 		string cnt=to_string(terminal_counter);
 		while(cnt.length()<5)cnt="0"+cnt;
-		return firstline+"set output '"+m_prefix+"-plot-"+cnt+".png'";
+		return firstline+"set output 'debugimg-"+m_prefix+"-plot-"+cnt+".png'";
 	    }else{
 		return firstline+"set output '"+name+".png'";
 	    }
@@ -56,7 +56,7 @@ namespace GnuplotWrap{
 		filename_counter++;
 		string cnt=to_string(filename_counter);
 		while(cnt.length()<6)cnt="0"+cnt;
-		return m_prefix+"-numeric-"+cnt+".txt";
+		return string(".")+m_prefix+"-numeric-"+cnt+".txt";
 	    }else{
 		return name+".txt";
 	    }
