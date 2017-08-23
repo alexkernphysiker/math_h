@@ -20,7 +20,7 @@ namespace GnuplotWrap{
 		~Plotter();
 		static Plotter&Instance();
 		void SetOutput(const std::string&out,const std::string&prefix="");
-		const std::string GetTerminal();
+		const std::string GetTerminal(const std::string&name="");
 		std::pair<const std::string,std::ofstream> File(const std::string&name="");
 		std::ifstream GetInput(const std::string&name);
 		template<class numt=double>
@@ -64,9 +64,8 @@ namespace GnuplotWrap{
 			lines.push_back(line);
 			return *this;
 		}
-		Plot&operator<<(const std::string&&line){return operator<<(line);}
-		Plot(){
-			operator<<(Plotter::Instance().GetTerminal());
+		Plot(const std::string&name=""){
+			operator<<(Plotter::Instance().GetTerminal(name));
 			operator<<("unset pm3d");
 			operator<<("unset title");
 			operator<<("unset key");
@@ -210,8 +209,8 @@ namespace GnuplotWrap{
 			lines.push_back(line);
 			return *this;
 		}
-		PlotHist2d(const TypeOf3D type){
-			operator<<(Plotter::Instance().GetTerminal());
+		PlotHist2d(const TypeOf3D type,const std::string&name=""){
+			operator<<(Plotter::Instance().GetTerminal(name));
 			operator<<("unset title");
 			operator<<("unset key");
 			operator<<("unset surface");

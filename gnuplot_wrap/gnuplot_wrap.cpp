@@ -36,15 +36,18 @@ namespace GnuplotWrap{
 		outpath=out;
 		m_prefix=prefix;
 	}
-	const string Plotter::GetTerminal(){
+	const string Plotter::GetTerminal(const string&name){
 	    if(outpath=="*")
 		throw Exception<Plotter>("Attempt to use Plotter without initializing");
-
-	    terminal_counter++;
-	    string cnt=to_string(terminal_counter);
-	    while(cnt.length()<5)cnt="0"+cnt;
-	    return string("set terminal pngcairo size 1024,868 font 'Verdana,18'\n")+
-	    "set output '"+m_prefix+"-plot-"+cnt+".png'";
+	    const string firstline="set terminal pngcairo size 1024,868 font 'Verdana,18'\n";
+	    if(name==""){
+		terminal_counter++;
+		string cnt=to_string(terminal_counter);
+		while(cnt.length()<5)cnt="0"+cnt;
+		return firstline+"set output '"+m_prefix+"-plot-"+cnt+".png'";
+	    }else{
+		return firstline+"set output '"+name+".png'";
+	    }
 	}
 	const string Plotter::GetFileName( const std::string& name ){
 	    if(outpath=="*")
