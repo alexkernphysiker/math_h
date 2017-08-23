@@ -6,6 +6,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <utility>
 #include <sstream>
 #include <memory>
 #include <unistd.h>
@@ -18,14 +19,35 @@ namespace GnuplotWrap{
 		Plotter();
 		~Plotter();
 		static Plotter&Instance();
-		void SetOutput(const std::string&&out,const std::string&&prefix="");
-		const std::string&OutPath()const;
-		const std::string&Prefix()const;
+		void SetOutput(const std::string&out,const std::string&prefix="");
 		const std::string GetTerminal();
-		const std::string GetFileName();
+		std::pair<const std::string,std::ofstream> File(const std::string&name="");
+		std::ifstream GetInput(const std::string&name);
+		template<class numt=double>
+		const MathTemplates::SortedPoints<numt> GetPoints2(const std::string&name=""){
+		    MathTemplates::SortedPoints<numt> res;
+		    auto str=GetInput(name);
+		    numt x,y;
+		    while(str){
+			str>>x>>y;
+			res<<MathTemplates::point<numt>(x,y);
+		    }
+		    return res;
+		}
+		template<class numt=double>
+		const MathTemplates::SortedPoints<MathTemplates::value<numt>> GetPoints4(const std::string&name=""){
+		    MathTemplates::SortedPoints<MathTemplates::value<numt>> res;
+		    auto str=GetInput(name);
+		    numt x,y,dx,dy;
+		    while(str){
+			str>>x>>y>>dx>>dy;
+			res<<MathTemplates::point<MathTemplates::value<numt>>({x,dx},{y,dy});
+		    }
+		    return res;
+		}
 		Plotter &operator<<(const std::string&line);
-		Plotter &operator<<(const std::string&&line);
 	private:
+		const std::string GetFileName(const std::string&name);
 		std::vector<std::string> lines;
 		unsigned int terminal_counter,filename_counter;
 		std::string outpath;
@@ -71,9 +93,6 @@ namespace GnuplotWrap{
 			plots.push_back(plot);
 			return *this;
 		}
-		Plot& Object(const std::string&&plot){
-			return Object(plot);
-		}
 		Plot& File(const std::string&name,const std::string&options,const std::string&title){
 			std::string line="\""+name+"\" ";
 			line+=options;
@@ -82,101 +101,51 @@ namespace GnuplotWrap{
 			line+="\"";
 			return Object(line);
 		}
-		Plot& File(const std::string&&name,const std::string&&options,const std::string&&title=""){
-			return File(name,options,title);
-		}
-		Plot&OutputPlot(const PLOTOUTPUT delegate,const std::string&options,const std::string&title){
-			std::ofstream data;
-			std::string filename=Plotter::Instance().GetFileName();
-			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
-			if(data.is_open()){
-				delegate(data);
-				File(filename,options,title);
-				data.close();
+		Plot&OutputPlot(const PLOTOUTPUT delegate,const std::string&options,const std::string&title="",const std::string&name=""){
+			auto data=Plotter::Instance().File(name);
+			if(data.second){
+				delegate(data.second);
+				File(data.first,options,title);
+				data.second.close();
 			}
 			return *this;
 		}
-		Plot&OutputPlot(const PLOTOUTPUT delegate,const std::string&&options,const std::string&title){
-			return OutputPlot(delegate,options,title);
-		}
-		Plot&OutputPlot(const PLOTOUTPUT delegate,const std::string&&options,const std::string&&title=""){
-			return OutputPlot(delegate,options,title);
-		}
-		Plot&Line(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&title){
+		Plot&Line(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&title="",const std::string&name=""){
 			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
 				for(const auto&p:points)
 					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"w l",title);
+			},"w l",title,name);
 			return *this;
 		}
-		Plot&Line(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&&title=""){
-			return Line(points,title);
-		}
-		Plot&Line(const std::vector<MathTemplates::point<numtX,numtY>>&&points,const std::string&&title=""){
-			return Line(points,title);
-		}
-		Plot&Line(const std::initializer_list<MathTemplates::point<numtX,numtY>>&&points,const std::string&&title=""){
+		Plot&Line(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&title="",const std::string&name=""){
 			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
 				for(const auto&p:points)
 					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"w l",title);
+			},"w l",title,name);
 			return *this;
 		}
-		Plot&Line(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&title){
+		Plot&Points(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&title="",const std::string&name=""){
 			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
 				for(const auto&p:points)
 					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"w l",title);
+			},"using 1:2",title,name);
 			return *this;
 		}
-		Plot&Line(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&&title=""){
-			return Line(points,title);
-		}
-		Plot&Line(const MathTemplates::SortedPoints<numtX,numtY>&&points,const std::string&&title=""){
-			return Line(points,title);
-		}
-		Plot&Points(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&title){
+		Plot&Points(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&title="",const std::string&name=""){
 			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
 				for(const auto&p:points)
 					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"using 1:2",title);
+			},"using 1:2",title,name);
 			return *this;
 		}
-		Plot&Points(const std::vector<MathTemplates::point<numtX,numtY>>&points,const std::string&&title=""){
-			return Points(points,title);
-		}
-		Plot&Points(const std::vector<MathTemplates::point<numtX,numtY>>&&points,const std::string&&title=""){
-			return Points(points,title);
-		}
-		Plot&Points(const std::initializer_list<MathTemplates::point<numtX,numtY>>&&points,const std::string&&title=""){
-			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
-				for(const auto&p:points)
-					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"using 1:2",title);
-			return *this;
-		}
-		Plot&Points(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&title){
-			Plot<numtX,numtY>::OutputPlot([&points](std::ofstream&data){
-				for(const auto&p:points)
-					data<<p.X()<<" "<<p.Y()<<std::endl;
-			},"using 1:2",title);
-			return *this;
-		}
-		Plot&Points(const MathTemplates::SortedPoints<numtX,numtY>&points,const std::string&&title=""){
-			return Points(points,title);
-		}
-		Plot&Points(const MathTemplates::SortedPoints<numtX,numtY>&&points,const std::string&&title=""){
-			return Points(points,title);
-		}
-		Plot&Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>&data,const std::string&title){
+		Plot&Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>&data,
+			  const std::string&title="",const std::string&name=""){
 			Plot<numtX,numtY>::OutputPlot([&data](std::ofstream&str){
 				for(const auto p:data)
 					str<<p.X().val()<<" "<<p.Y().val()<<" "<<p.X().uncertainty()<<" "<<p.Y().uncertainty()<<std::endl;
-			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title);
+			},"using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars",title,name);
 			return *this;
 		}
-		Plot&Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>&data,const std::string&&title=""){return Hist(data,title);}
-		Plot&Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>&&data,const std::string&&title=""){return Hist(data,title);}
 	};
 	
 	enum TypeOf3D{normal,sp2};
@@ -185,70 +154,62 @@ namespace GnuplotWrap{
 	private:
 		std::vector<std::string> lines;
 		std::vector<std::string> plots;
-		std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&D)const{
-			std::string filename=Plotter::Instance().GetFileName();
-			std::ofstream data;
-			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
-			if(data.is_open()){
-				data<<D.X().size()<<" ";
+		std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&D,const std::string&name="")const{
+			auto data=Plotter::Instance().File(name);
+			if(data.second){
+				data.second<<D.X().size()<<" ";
 				for(const auto&x:D.X())
-					data<<x<<" ";
+					data.second<<x<<" ";
 				for(size_t i=0,I=D.Y().size();i<I;i++){
-					data<<std::endl<<D.Y()[i];
+					data.second<<std::endl<<D.Y()[i];
 					for(size_t j=0,J=D.X().size();j<J;j++)
-						data<<" "<<D[j][i];
+						data.second<<" "<<D[j][i];
 				}
-				data.close();
+				data.second.close();
 			}
-			return filename;
+			return data.first;
 		}
-		std::string Points2File(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points){
-			std::string filename=Plotter::Instance().GetFileName();
-			std::ofstream data;
-			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
-			if(data.is_open()){
+		std::string Points2File(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&name=""){
+			auto data=Plotter::Instance().File(name);
+			if(data.second){
 				for(const auto&p:points)
-					data<<p.X()<<" "<<p.Y()<<" "<<p.Z()<<std::endl;
-				data.close();
+					data.second<<p.X()<<" "<<p.Y()<<" "<<p.Z()<<std::endl;
+				data.second.close();
 			}
-			return filename;
+			return data.first;
 		}
-		std::string Distr2File(const MathTemplates::hist2d<numtX,numtY,numtZ>&D)const{
-			std::string filename=Plotter::Instance().GetFileName();
-			std::ofstream data;
-			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
-			if(data.is_open()){
-				data<<D.X().size()<<" ";
+		std::string Distr2File(const MathTemplates::hist2d<numtX,numtY,numtZ>&D,const std::string&name="")const{
+			auto data=Plotter::Instance().File(name);
+			if(data.second){
+				data.second<<D.X().size()<<" ";
 				for(const auto&x:D.X())
-					data<<x.val()<<" ";
+					data.second<<x.val()<<" ";
 				for(size_t i=0,I=D.Y().size();i<I;i++){
-					data<<std::endl<<D.Y()[i].val();
+					data.second<<std::endl<<D.Y()[i].val();
 					for(size_t j=0,J=D.X().size();j<J;j++)
-						data<<" "<<D[j][i].val();
+						data.second<<" "<<D[j][i].val();
 				}
-				data.close();
+				data.second.close();
 			}
-			return filename;
+			return data.first;
 		}
 		std::string Points2File(const std::vector<
 		MathTemplates::point3d<MathTemplates::value<numtX>,
-		MathTemplates::value<numtY>,MathTemplates::value<numtZ>>>&points){
-			std::string filename=Plotter::Instance().GetFileName();
-			std::ofstream data;
-			data.open((Plotter::Instance().OutPath()+"/"+filename).c_str());
-			if(data.is_open()){
+		MathTemplates::value<numtY>,MathTemplates::value<numtZ>>>&points,
+		const std::string&name=""){
+			auto data=Plotter::Instance().File(name);
+			if(data.second){
 				for(const auto&p:points)
-					data<<p.X().val()<<" "<<p.Y().val()<<" "<<p.Z().val()<<std::endl;
-				data.close();
+					data.second<<p.X().val()<<" "<<p.Y().val()<<" "<<p.Z().val()<<std::endl;
+				data.second.close();
 			}
-			return filename;
+			return data.first;
 		}
 	public:
 		PlotHist2d&operator<<(const std::string&line){
 			lines.push_back(line);
 			return *this;
 		}
-		PlotHist2d&operator<<(const std::string&&line){return operator<<(line);}
 		PlotHist2d(const TypeOf3D type){
 			operator<<(Plotter::Instance().GetTerminal());
 			operator<<("unset title");
@@ -283,32 +244,21 @@ namespace GnuplotWrap{
 			plots.push_back(plot);
 			return *this;
 		}
-		PlotHist2d&Surface(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&D,const std::string&title){
+		PlotHist2d&Surface(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&D,const std::string&title=""){
 			return Object(std::string("'")+Surf2File(D)+"' matrix nonuniform title'"+title+"'");
 		}
-		PlotHist2d&Surface(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&D,const std::string&&title=""){return Surface(D,title);}
-		PlotHist2d&Surface(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ>&&D,const std::string&&title=""){return Surface(D,title);}
 		
-		PlotHist2d&Distr(const MathTemplates::hist2d<numtX,numtY,numtZ>&D,const std::string&title){
+		PlotHist2d&Distr(const MathTemplates::hist2d<numtX,numtY,numtZ>&D,const std::string&title=""){
 			return Object(std::string("'")+Distr2File(D)+"' matrix nonuniform title'"+title+"'");
 		}
-		PlotHist2d&Distr(const MathTemplates::hist2d<numtX,numtY,numtZ>&D,const std::string&&title=""){return Distr(D,title);}
-		PlotHist2d&Distr(const MathTemplates::hist2d<numtX,numtY,numtZ>&&D,const std::string&&title=""){return Distr(D,title);}
-		
 		PlotHist2d&Points(const std::vector<MathTemplates::point3d<
 		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
 		MathTemplates::value<numtZ>>>&points,const std::string&title=""){
 			return Object(std::string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
 		}
-		PlotHist2d&Points(const std::vector<MathTemplates::point3d<
-		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&points,const std::string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const std::vector<MathTemplates::point3d<
-		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&&points,const std::string&&title=""){return Points(points,title);}
 		PlotHist2d&Points(const std::initializer_list<
 		MathTemplates::point3d<MathTemplates::value<numtX>,
-		MathTemplates::value<numtY>,MathTemplates::value<numtZ>>>&points,const std::string&&title=""){
+		MathTemplates::value<numtY>,MathTemplates::value<numtZ>>>&points,const std::string&title=""){
 			return Points(std::vector<MathTemplates::point3d<
 			MathTemplates::value<numtX>,MathTemplates::value<numtY>,
 			MathTemplates::value<numtZ>>>(points),title);
@@ -316,39 +266,19 @@ namespace GnuplotWrap{
 		
 		PlotHist2d&Line(const std::vector<MathTemplates::point3d<
 		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&points,const std::string&title){
+		MathTemplates::value<numtZ>>>&points,const std::string&title=""){
 			return Object(std::string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
-		}
-		PlotHist2d&Line(const std::vector<MathTemplates::point3d<
-		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&points,const std::string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const std::vector<MathTemplates::point3d<
-		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&&points,const std::string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const std::initializer_list<MathTemplates::point3d<
-		MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-		MathTemplates::value<numtZ>>>&&points,const std::string&&title=""){
-			return Line(std::vector<MathTemplates::point3d<
-			MathTemplates::value<numtX>,MathTemplates::value<numtY>,
-			MathTemplates::value<numtZ>>>(points),title);
 		}
 
 		PlotHist2d&Points(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&title=""){
 			return Object(std::string("'")+Points2File(points)+"' u 1:2:3 w points title'"+title+"'");
 		}
-		PlotHist2d&Points(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&&points,const std::string&&title=""){return Points(points,title);}
-		PlotHist2d&Points(const std::initializer_list<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&&title=""){
+		PlotHist2d&Points(const std::initializer_list<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&title=""){
 			return Points(std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>(points),title);
 		}
 		
-		PlotHist2d&Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&title){
+		PlotHist2d&Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&title=""){
 			return Object(std::string("'")+Points2File(points)+"' u 1:2:3 w line title'"+title+"'");
-		}
-		PlotHist2d&Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&points,const std::string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>&&points,const std::string&&title=""){return Line(points,title);}
-		PlotHist2d&Line(const std::initializer_list<MathTemplates::point3d<numtX,numtY,numtZ>>&&points,const std::string&&title=""){
-			return Line(std::vector<MathTemplates::point3d<numtX,numtY,numtZ>>(points),title);
 		}
 		
 	};
