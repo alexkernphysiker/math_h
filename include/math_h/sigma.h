@@ -55,6 +55,10 @@ namespace MathTemplates{
 	    if(res.Error<numt(1))res.Error=numt(1);
 	    return res;
 	}
+	static const value interval(const numt&a,const numt&b){
+	    if(b<a)throw Exception<value>("Bad interval");
+	    return value((b+a)/numt(2),(b-a)/numt(2));
+	}
 	value(const value&source):Value(source.Value),Error(source.Error){invalidate();}
 	value&operator=(const value&source){
 	    Value=source.Value;

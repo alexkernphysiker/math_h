@@ -52,7 +52,7 @@ namespace GnuplotWrap{
 		filename_counter++;
 		string cnt=to_string(filename_counter);
 		while(cnt.length()<6)cnt="0"+cnt;
-		return m_prefix+".numeric-data."+cnt+".txt";
+		return "."+m_prefix+".numeric-data."+cnt+".txt";
 	    }else{
 		return name+".txt";
 	    }
