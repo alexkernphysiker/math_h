@@ -11,20 +11,16 @@ namespace GnuplotWrap{
 		outpath="*";
 	}
 	Plotter::~Plotter(){
-		ofstream script;
-		string name=m_prefix+"-gnuplot-script";
-		script.open((outpath+"/"+name).c_str());
-		if(script.is_open()){
-			for(string line:lines)
-				script<<line<<"\n";
-			script.close();
-			name=string("gnuplot ")+name;
-			string old=getcwd(NULL,0);
-			chdir(outpath.c_str());
-			system(name.c_str());
-			chdir(old.c_str());
-		}
-		
+		string name="!"+m_prefix+".gnuplot-script";
+		ofstream str(string(outpath+"/"+name).c_str(),ofstream::out);
+		for(string line:lines)
+		    str<<line<<"\n";
+		str.close();
+		name="gnuplot "+name;
+		string old=getcwd(NULL,0);
+		chdir(outpath.c_str());
+		system(name.c_str());
+		chdir(old.c_str());
 	}
 	Plotter &Plotter::Instance(){
 		static Plotter m_instance;
@@ -44,7 +40,7 @@ namespace GnuplotWrap{
 		terminal_counter++;
 		string cnt=to_string(terminal_counter);
 		while(cnt.length()<5)cnt="0"+cnt;
-		return firstline+"set output 'debugimg-"+m_prefix+"-plot-"+cnt+".png'";
+		return firstline+"set output '!"+m_prefix+"-plot-"+cnt+".png'";
 	    }else{
 		return firstline+"set output '"+name+".png'";
 	    }
