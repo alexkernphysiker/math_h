@@ -26,8 +26,8 @@ TEST(point, basetest2)
     EXPECT_EQ(x, p.X());
     EXPECT_EQ(y, p.Y());
     point<int, double> p2 = {25., 78.};
-    EXPECT_EQ(x, p.X());
-    EXPECT_EQ(y, p.Y());
+    EXPECT_EQ(x, p2.X());
+    EXPECT_EQ(y, p2.Y());
 }
 TEST(point3d, basetest)
 {
