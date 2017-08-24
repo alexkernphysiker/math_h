@@ -19,7 +19,7 @@ int main()
         point<value<>>(40., {420., 20.})
     };
     const auto x_chain_for_interpolating = BinsByStep(0., 2.5, 30.0);
-    Plotter::Instance().SetOutput(".", "interpolation2");
+    Plotter<>::Instance().SetOutput(".", "interpolation2");
     Plot<double> output;
     output.Hist(hist<double>(test.func(), x_chain_for_interpolating), "interpolation");
     output.Hist(test, "points") << "set key on" << "set xrange [-5:45]";

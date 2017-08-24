@@ -17,6 +17,6 @@ int main()
     SortedPoints<double> density([](double x) {
         return Gaussian(x, 0.0, 1.0);
     }, ChainWithStep(-5.0, 0.1, 5.0));
-    Plotter::Instance().SetOutput(".", "integrate");
+    Plotter<>::Instance().SetOutput(".", "integrate");
     Plot<double>().Points(density, "density").Points(Int_Trapez_Table(density), "integrated");
 }

@@ -11,14 +11,11 @@ if(NOT DEFINED MATH_H_INC)
     endif()
 
     include_directories(include)
-    file(GLOB SOURCES gnuplot_wrap/*.cpp)
-    add_library(gpwrap STATIC ${SOURCES})
 
     file(GLOB EXAMPLES Example/*.cpp)
     foreach(example ${EXAMPLES})
 	get_filename_component(ex_app ${example} NAME_WE)
 	add_executable(${ex_app} ${example})
-	target_link_libraries(${ex_app} gpwrap)
     endforeach()
 
     option(tests "Compile tests." OFF) 

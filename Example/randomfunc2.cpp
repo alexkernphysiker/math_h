@@ -20,7 +20,7 @@ int main()
     Distribution2D<double> hist(BinsByCount(40, 0.0, 4.0), BinsByCount(40, 0.0, 4.0));
     for (size_t i = 0; i < 10000; i++)hist.Fill(X(engine), Y(engine));
 
-    Plotter::Instance().SetOutput(".", "randomfunc2");
+    Plotter<>::Instance().SetOutput(".", "randomfunc2");
     PlotHist2d<double>(sp2).Distr(hist);
     return 0;
 }
