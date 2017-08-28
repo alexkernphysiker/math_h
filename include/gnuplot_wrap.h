@@ -84,10 +84,11 @@ public:
             return firstline + "set output '" + name + ".png'";
         }
     }
-    std::pair<std::string, std::ofstream> File(const std::string &name = "")
+    const std::string File(std::ofstream&str,const std::string &name = "")
     {
         const auto n = GetFileName(name);
-        return std::make_pair(n, std::ofstream((outpath + "/" + n).c_str(), std::ofstream::out));
+	str.open((outpath + "/" + n).c_str());
+        return n;
     }
     std::ifstream GetInput(const std::string &name)
     {
@@ -172,11 +173,12 @@ public:
     }
     Plot &OutputPlot(const PLOTOUTPUT delegate, const std::string &options, const std::string &title = "", const std::string &name = "")
     {
-        auto data = Plotter<numt>::Instance().File(name);
-        if (data.second) {
-            delegate(data.second);
-            File(data.first, options, title);
-            data.second.close();
+	std::ofstream str;
+        auto n = Plotter<numt>::Instance().File(str,name);
+        if (str) {
+            delegate(str);
+            File(n, options, title);
+            str.close();
         }
         return *this;
     }
@@ -232,58 +234,62 @@ private:
     std::vector<std::string> plots;
     std::string Surf2File(const MathTemplates::BiSortedPoints<numt> &D, const std::string &name = "")const
     {
-        auto data = Plotter<numt>::Instance().File(name);
-        if (data.second) {
-            data.second << D.X().size() << " ";
+        std::ofstream str;
+        auto n = Plotter<numt>::Instance().File(str,name);
+        if (str) {
+            str << D.X().size() << " ";
             for (const auto &x : D.X())
-                data.second << x << " ";
+                str << x << " ";
             for (size_t i = 0, I = D.Y().size(); i < I; i++) {
-                data.second << std::endl << D.Y()[i];
+                str << std::endl << D.Y()[i];
                 for (size_t j = 0, J = D.X().size(); j < J; j++)
-                    data.second << " " << D[j][i];
+                    str << " " << D[j][i];
             }
-            data.second.close();
+            str.close();
         }
-        return data.first;
+        return n;
     }
     std::string Points2File(const std::vector<MathTemplates::point3d<numt>> &points, const std::string &name = "")
     {
-        auto data = Plotter<numt>::Instance().File(name);
-        if (data.second) {
+        std::ofstream str;
+        auto n = Plotter<numt>::Instance().File(str,name);
+        if (str) {
             for (const auto &p : points)
-                data.second << p.X() << " " << p.Y() << " " << p.Z() << std::endl;
-            data.second.close();
+                str << p.X() << " " << p.Y() << " " << p.Z() << std::endl;
+            str.close();
         }
-        return data.first;
+        return n;
     }
     std::string Distr2File(const MathTemplates::hist2d<numt> &D, const std::string &name = "")const
     {
-        auto data = Plotter<numt>::Instance().File(name);
-        if (data.second) {
-            data.second << D.X().size() << " ";
+        std::ofstream str;
+        auto n = Plotter<numt>::Instance().File(str,name);
+        if (str) {
+            str << D.X().size() << " ";
             for (const auto &x : D.X())
-                data.second << x.val() << " ";
+                str << x.val() << " ";
             for (size_t i = 0, I = D.Y().size(); i < I; i++) {
-                data.second << std::endl << D.Y()[i].val();
+                str << std::endl << D.Y()[i].val();
                 for (size_t j = 0, J = D.X().size(); j < J; j++)
-                    data.second << " " << D[j][i].val();
+                    str << " " << D[j][i].val();
             }
-            data.second.close();
+            str.close();
         }
-        return data.first;
+        return n;
     }
     std::string Points2File(const std::vector <
                             MathTemplates::point3d<MathTemplates::value<numt>,
                             MathTemplates::value<numt>, MathTemplates::value<numt> >> &points,
                             const std::string &name = "")
     {
-        auto data = Plotter<numt>::Instance().File(name);
-        if (data.second) {
+        std::ofstream str;
+        auto n = Plotter<numt>::Instance().File(str,name);
+        if (str) {
             for (const auto &p : points)
-                data.second << p.X().val() << " " << p.Y().val() << " " << p.Z().val() << std::endl;
-            data.second.close();
+                str << p.X().val() << " " << p.Y().val() << " " << p.Z().val() << std::endl;
+            str.close();
         }
-        return data.first;
+        return n;
     }
 public:
     PlotHist2d &operator<<(const std::string &line)
