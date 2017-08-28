@@ -84,7 +84,7 @@ public:
             return firstline + "set output '" + name + ".png'";
         }
     }
-    std::pair<const std::string, std::ofstream> File(const std::string &name = "")
+    std::pair<std::string, std::ofstream> File(const std::string &name = "")
     {
         const auto n = GetFileName(name);
         return std::make_pair(n, std::ofstream((outpath + "/" + n).c_str(), std::ofstream::out));
