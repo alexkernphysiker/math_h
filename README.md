@@ -53,7 +53,7 @@ calculating numeric integrals: Sympson formula for function and trapezium formul
 template class for generating random values distributed by given function.
 
 	gnuplot_wrap.h
-header for gnuplot interface library (libgpwrap)
+template classes for gnuplot interface.
 
 
 Examples
