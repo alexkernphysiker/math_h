@@ -9,11 +9,9 @@ using namespace std;
 using namespace MathTemplates;
 TEST(hist, scale_norm)
 {
-    hist<double> H(BinsByCount(10, 0.0, 1.0));
-    for (size_t i = 0; i < H.size(); i++)
-        H.Bin(i).varY() = value<double>(10.0 + 4.0 * sin(H[i].X().val()));
+    hist<> H([](const value<>&x)->const value<>{return 10.0 + 4.0 * sin(x.val());},BinsByCount(10, 0.0, 1.0));
     double s1 = 0;
-    for (const auto &p : H)s1 += p.Y().val();
+    for (const auto &p : H) s1+= p.Y().val();
     double s2 = 0;
     auto H2 = H.Scale(2);
     for (const auto &p : H2)s2 += p.Y().val();

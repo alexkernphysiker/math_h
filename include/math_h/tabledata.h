@@ -9,7 +9,7 @@
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>
-class SortedPoints: public SortedChain<point_editable_y<numX, numY>>
+class SortedPoints: public SortedChain<point<numX, numY>>
 {
 public:
     typedef std::function<numY(const numX &)> Func;
@@ -17,39 +17,24 @@ public:
     SortedPoints(const SortedChain<point<numX, numY>> &chain)
     {
         for (const auto &x : chain)
-            SortedChain<point_editable_y<numX, numY>>::append_item_from_sorted(x);
+            SortedChain<point<numX, numY>>::append_item_from_sorted(x);
     }
     SortedPoints(const Func f, const SortedChain<numX> &chain)
     {
         for (numX x : chain)
-            SortedChain<point_editable_y<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
-    }
-    SortedPoints &operator<<(const point<numX, numY> &p)
-    {
-        SortedChain<point_editable_y<numX, numY>>::operator<<(point_editable_y<numX, numY>(p));
-        return *this;
-    }
-    SortedPoints(const std::initializer_list<point<numX, numY>> &points)
-    {
-        for (const auto &p : points)operator<<(p);
+            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
     }
     virtual ~SortedPoints() {}
-
-    SortedPoints(const SortedChain<point_editable_y<numX, numY>> &points): SortedChain<point_editable_y<numX, numY>>(points) {}
-    SortedPoints &operator=(const SortedChain<point_editable_y<numX, numY>> &points)
-    {
-        SortedChain<point_editable_y<numX, numY>>::operator=(points);
-        return *this;
-    }
     SortedPoints Clone()const
     {
         return SortedPoints(*this);
     }
-    point_editable_y<numX, numY> &Bin(const size_t i)
+protected:
+    point<numX, numY> &Bin(const size_t i)
     {
-        return SortedChain<point_editable_y<numX, numY>>::accessBin(i);
+        return SortedChain<point<numX, numY>>::accessBin(i);
     }
-
+public:
     const  std::vector<point<numY, numX>> Transponate()const
     {
         std::vector<point<numY, numX>> res;
@@ -66,129 +51,125 @@ public:
     }
     const SortedPoints XRange(const numX &from, const numX &to)const
     {
-        return SortedChain<point_editable_y<numX, numY>>::SelectByCondition([from, to](const point_editable_y<numX, numY> &P) {
+        return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.X() >= from) && (P.X() <= to);
         });
     }
     const SortedPoints YRange(const numY &from, const numY &to)const
     {
-        return SortedChain<point_editable_y<numX, numY>>::SelectByCondition([from, to](const point_editable_y<numX, numY> &P) {
+        return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.Y() >= from) && (P.Y() <= to);
         });
     }
     const SortedPoints XExclude(const numX &from, const numX &to)const
     {
-        return SortedChain<point_editable_y<numX, numY>>::SelectByCondition([from, to](const point_editable_y<numX, numY> &P) {
+        return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.X() < from) || (P.X() > to);
         });
     }
     const SortedPoints YExclude(const numY &from, const numY &to)const
     {
-        return SortedChain<point_editable_y<numX, numY>>::SelectByCondition([from, to](const point_editable_y<numX, numY> &P) {
+        return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.Y() < from) || (P.Y() > to);
         });
     }
     SortedPoints &FillWithValues(const numY &v)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() = v;
+            Bin(i) = {Bin(i).X(),v};
         return *this;
     }
     SortedPoints &Transform(const std::function<numY(const numX &, const numY &)> &F)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() = F(Bin(i).X(), Bin(i).Y());
+            Bin(i) = {Bin(i).X(),F(Bin(i).X(), Bin(i).Y())};
         return *this;
     }
     SortedPoints &operator+=(const SortedPoints &second)
     {
+	if(second.size()!=this->size())
+	    throw Exception<SortedPoints>("Cannot perform arithmetic operation for two sets of points with different size");
         for (size_t i = 0, n = this->size(); i < n; i++) {
-            if (Bin(i).X() == second[i].X())
-                Bin(i).varY() += second[i].Y();
-            else
-                throw Exception<SortedPoints>("Cannot perform arithmetic actions two chains. X coordinates differ");
+	    Bin(i)=Bin(i)+second[i];
         }
         return *this;
     }
     SortedPoints &operator+=(const Func f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() += f(Bin(i).X());
+            Bin(i)=Bin(i)+f(Bin(i).X());
         return *this;
     }
     SortedPoints &operator+=(const numY &c)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() += c;
+            Bin(i)=Bin(i)+ c;
         return *this;
     }
 
     SortedPoints &operator-=(const SortedPoints &second)
     {
+	if(second.size()!=this->size())
+	    throw Exception<SortedPoints>("Cannot perform arithmetic operation for two sets of points with different size");
         for (size_t i = 0, n = this->size(); i < n; i++) {
-            if (Bin(i).X() == second[i].X())
-                Bin(i).varY() -= second[i].Y();
-            else
-                throw Exception<SortedPoints>("Cannot perform arithmetic actions two chains. X coordinates differ");
+	    Bin(i)=Bin(i)-second[i];
         }
         return *this;
     }
     SortedPoints &operator-=(const Func f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() -= f(Bin(i).X());
+            Bin(i)=Bin(i)-f(Bin(i).X());
         return *this;
     }
     SortedPoints &operator-=(const numY &c)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() -= c;
+            Bin(i)=Bin(i)-c;
         return *this;
     }
 
     SortedPoints &operator*=(const SortedPoints &second)
     {
+	if(second.size()!=this->size())
+	    throw Exception<SortedPoints>("Cannot perform arithmetic operation for two sets of points with different size");
         for (size_t i = 0, n = this->size(); i < n; i++) {
-            if (Bin(i).X() == second[i].X())
-                Bin(i).varY() *= second[i].Y();
-            else
-                throw Exception<SortedPoints>("Cannot perform arithmetic actions two chains. X coordinates differ");
+	    Bin(i)=Bin(i)*second[i];
         }
         return *this;
     }
     SortedPoints &operator*=(const Func f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() *= f(Bin(i).X());
+            Bin(i)=Bin(i)*f(Bin(i).X());
         return *this;
     }
     SortedPoints &operator*=(const numY &c)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() *= c;
+            Bin(i)=Bin(i)*c;
         return *this;
     }
 
     SortedPoints &operator/=(const SortedPoints &second)
     {
+	if(second.size()!=this->size())
+	    throw Exception<SortedPoints>("Cannot perform arithmetic operation for two sets of points with different size");
         for (size_t i = 0, n = this->size(); i < n; i++) {
-            if (Bin(i).X() == second[i].X())
-                Bin(i).varY() /= second[i].Y();
-            else
-                throw Exception<SortedPoints>("Cannot perform arithmetic actions two chains. X coordinates differ");
+	    Bin(i)=Bin(i)/second[i];
         }
         return *this;
     }
     SortedPoints &operator/=(const Func f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() /= f(Bin(i).X());
+            Bin(i)=Bin(i)*f(Bin(i).X());
         return *this;
     }
     SortedPoints &operator/=(const numY &c)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i).varY() /= c;
+            Bin(i)=Bin(i)*c;
         return *this;
     }
 

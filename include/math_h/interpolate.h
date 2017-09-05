@@ -27,8 +27,6 @@ public:
         : SortedPoints<numX, numY>(f, chain) {}
     LinearInterpolation(const Func f, const std::initializer_list<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
-    LinearInterpolation(const SortedChain<point_editable_y<numX, numY>> &source)
-        : SortedPoints<numX, numY>(source) {}
     LinearInterpolation(const SortedPoints<numX, numY> &source)
         : SortedPoints<numX, numY>(source) {}
     virtual ~LinearInterpolation() {}

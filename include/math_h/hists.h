@@ -33,7 +33,6 @@ public:
     {
         for (const auto &P : data)this->append_item_from_sorted(P);
     }
-    hist(const SortedChain<Point> &&data): hist(data) {}
     hist(const typename SortedPoints<value<numtX>, value<numtY>>::Func f, const SortedChain<value<numtX>> &chain)
         : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
     hist(const SortedPoints<value<numtX>, value<numtY>> &source)
@@ -90,7 +89,7 @@ public:
             numtY v = 0;
             for (size_t ii = 0; ii < sc_x; ii++)
                 v += this->operator[](i * sc_x + ii).Y().val();
-            res.Bin(i).varY() = value<numtY>::std_error(v);
+            res.Bin(i) = {res.Bin(i).X(),value<numtY>::std_error(v)};
         }
         return res;
     }
@@ -98,7 +97,7 @@ public:
     {
         for (int i = 0, n = this->size(); i < n; i++) {
             if (this->operator[](i).X() == second[i].X()) {
-                this->Bin(i).varY() = value<numtY>::std_error(this->operator[](i).Y().val() + second[i].Y().val());
+                this->Bin(i) = {this->Bin(i).X(),value<numtY>::std_error(this->operator[](i).Y().val() + second[i].Y().val())};
             } else
                 throw Exception<hist>("Cannot imbibe histogram. bins differ");
         }
@@ -186,7 +185,7 @@ public:
         counter++;
         for (size_t i = 0, n = this->size(); i < n; i++) {
             if (this->Bin(i).X().Contains(v))
-                this->Bin(i).varY() = value<numtY>::std_error(this->Bin(i).Y().val() + numtY(1));
+                this->Bin(i) = {this->Bin(i).X(),value<numtY>::std_error(this->Bin(i).Y().val() + numtY(1))};
         }
         return *this;
     }

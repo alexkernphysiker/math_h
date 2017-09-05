@@ -45,6 +45,50 @@ public:
     {
         return x > b.x;
     }
+    const point operator+(const numtY&val)const
+    {
+	return point(X(),Y()+val);
+    }
+    const point operator-(const numtY&val)const
+    {
+	return point(X(),Y()-val);
+    }
+    const point operator*(const numtY&val)const
+    {
+	return point(X(),Y()*val);
+    }
+    const point operator/(const numtY&val)const
+    {
+	return point(X(),Y()/val);
+    }
+    const point operator+(const point&other)const
+    {
+	if(other.X()==X())
+	    return operator+(other.Y());
+	else
+	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    const point operator-(const point&other)const
+    {
+	if(other.X()==X())
+	    return operator-(other.Y());
+	else
+	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    const point operator*(const point&other)const
+    {
+	if(other.X()==X())
+	    return operator*(other.Y());
+	else
+	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    const point operator/(const point&other)const
+    {
+	if(other.X()==X())
+	    return operator/(other.Y());
+	else
+	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
 protected:
     numtX &__X()
     {
@@ -63,30 +107,6 @@ public:
     numtX &varX()
     {
         return point<numtX, numtY>::__X();
-    }
-};
-template<class numtX = double, class numtY = numtX>
-class point_editable_y: public point<numtX, numtY>
-{
-public:
-    point_editable_y(const point<numtX, numtY> &source): point<numtX, numtY>(source) {}
-    numtY &varY()
-    {
-        return point<numtX, numtY>::__Y();
-    }
-};
-template<class numtX = double, class numtY = numtX>
-class point_editable: public point<numtX, numtY>
-{
-public:
-    point_editable(const point<numtX, numtY> &source): point<numtX, numtY>(source) {}
-    numtX &varX()
-    {
-        return point<numtX, numtY>::__X();
-    }
-    numtY &varY()
-    {
-        return point<numtX, numtY>::__Y();
     }
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>

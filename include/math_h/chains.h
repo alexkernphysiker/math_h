@@ -53,7 +53,6 @@ public:
         for (const auto &p : points.data)
             data.push_back(p);
     }
-    SortedChain(const SortedChain &&points): SortedChain(points) {}
     const SortedChain IndexRange(const size_t from, const size_t count)const
     {
         SortedChain result;
@@ -74,10 +73,6 @@ public:
     {
         details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
         return *this;
-    }
-    SortedChain &operator<<(const comparable&&p)
-    {
-        return operator<<(p);
     }
     SortedChain(const std::initializer_list<comparable> &points)
     {
