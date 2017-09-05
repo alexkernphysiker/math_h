@@ -40,7 +40,7 @@ public:
     {
         terminal_counter = 0;
         filename_counter = 0;
-        outpath = "*";
+        outpath = ".";
     }
     Plotter &operator<<(const std::string &line)
     {
@@ -79,7 +79,7 @@ public:
             terminal_counter++;
             auto cnt = std::to_string(terminal_counter);
             while (cnt.length() < 5)cnt = "0" + cnt;
-            return firstline + "set output '!" + m_prefix + "-plot-" + cnt + ".png'";
+            return firstline + "set output 'z_" + m_prefix + "-plot-" + cnt + ".png'";
         } else {
             return firstline + "set output '" + name + ".png'";
         }

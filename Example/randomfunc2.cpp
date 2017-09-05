@@ -9,18 +9,18 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main()
 {
-    RandomValueTableDistr<double, mt19937> X([](double x) {
+    RandomValueTableDistr<> X([](double x) {
         return FermiFunc(x, 2.0, 0.2);
     }, ChainWithStep(0.0, 0.01, 4.0));
-    RandomValueTableDistr<double, mt19937> Y([](double y) {
+    RandomValueTableDistr<> Y([](double y) {
         return FermiFunc(y, 2.0, 0.5);
     }, ChainWithStep(0.0, 0.01, 4.0));
 
     mt19937 engine;
-    Distribution2D<double> hist(BinsByCount(40, 0.0, 4.0), BinsByCount(40, 0.0, 4.0));
-    for (size_t i = 0; i < 10000; i++)hist.Fill(X(engine), Y(engine));
+    Distribution2D<> H(BinsByCount(40, 0.0, 4.0), BinsByCount(40, 0.0, 4.0));
+    for (size_t i = 0; i < 10000; i++)H.Fill(X(engine), Y(engine));
 
     Plotter<>::Instance().SetOutput(".", "randomfunc2");
-    PlotHist2d<double>(sp2).Distr(hist);
+    PlotHist2d<>(sp2).Distr(H);
     return 0;
 }
