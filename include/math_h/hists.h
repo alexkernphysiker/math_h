@@ -89,7 +89,7 @@ public:
             numtY v = 0;
             for (size_t ii = 0; ii < sc_x; ii++)
                 v += this->operator[](i * sc_x + ii).Y().val();
-            res.Bin(i) = {res.Bin(i).X(),value<numtY>::std_error(v)};
+            res.Bin(i) = value<numtY>::std_error(v);
         }
         return res;
     }
@@ -97,7 +97,7 @@ public:
     {
         for (int i = 0, n = this->size(); i < n; i++) {
             if (this->operator[](i).X() == second[i].X()) {
-                this->Bin(i) = {this->Bin(i).X(),value<numtY>::std_error(this->operator[](i).Y().val() + second[i].Y().val())};
+                this->Bin(i) = value<numtY>::std_error(this->operator[](i).Y().val() + second[i].Y().val());
             } else
                 throw Exception<hist>("Cannot imbibe histogram. bins differ");
         }
@@ -185,7 +185,7 @@ public:
         counter++;
         for (size_t i = 0, n = this->size(); i < n; i++) {
             if (this->Bin(i).X().Contains(v))
-                this->Bin(i) = {this->Bin(i).X(),value<numtY>::std_error(this->Bin(i).Y().val() + numtY(1))};
+                this->Bin(i) = value<numtY>::std_error(this->Bin(i).Y().val() + numtY(1));
         }
         return *this;
     }

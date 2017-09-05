@@ -76,13 +76,13 @@ public:
     SortedPoints &FillWithValues(const numY &v)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i) = {Bin(i).X(),v};
+            Bin(i) = v;
         return *this;
     }
     SortedPoints &Transform(const std::function<numY(const numX &, const numY &)> &F)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i) = {Bin(i).X(),F(Bin(i).X(), Bin(i).Y())};
+            Bin(i) = F(Bin(i).X(), Bin(i).Y());
         return *this;
     }
     SortedPoints &operator+=(const SortedPoints &second)

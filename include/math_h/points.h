@@ -37,6 +37,17 @@ public:
     {
         return y;
     }
+    point &operator=(const point &source)
+    {
+        x = source.x;
+        y = source.y;
+	return *this;
+    }
+    point &operator=(const numtY &s)
+    {
+        y = s;
+	return *this;
+    }
     bool operator<(const point &b)const
     {
         return x < b.x;
@@ -45,49 +56,49 @@ public:
     {
         return x > b.x;
     }
-    const point operator+(const numtY&val)const
+    const point operator+(const numtY &val)const
     {
-	return point(X(),Y()+val);
+        return {X(), Y() + val};
     }
-    const point operator-(const numtY&val)const
+    const point operator-(const numtY &val)const
     {
-	return point(X(),Y()-val);
+        return {X(), Y() - val};
     }
-    const point operator*(const numtY&val)const
+    const point operator*(const numtY &val)const
     {
-	return point(X(),Y()*val);
+        return {X(), Y() *val};
     }
-    const point operator/(const numtY&val)const
+    const point operator/(const numtY &val)const
     {
-	return point(X(),Y()/val);
+        return {X(), Y() / val};
     }
-    const point operator+(const point&other)const
+    const point operator+(const point &other)const
     {
-	if(other.X()==X())
-	    return operator+(other.Y());
-	else
-	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+        if (other.X() == X())
+            return operator+(other.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
-    const point operator-(const point&other)const
+    const point operator-(const point &other)const
     {
-	if(other.X()==X())
-	    return operator-(other.Y());
-	else
-	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+        if (other.X() == X())
+            return operator-(other.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
-    const point operator*(const point&other)const
+    const point operator*(const point &other)const
     {
-	if(other.X()==X())
-	    return operator*(other.Y());
-	else
-	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+        if (other.X() == X())
+            return operator*(other.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
-    const point operator/(const point&other)const
+    const point operator/(const point &other)const
     {
-	if(other.X()==X())
-	    return operator/(other.Y());
-	else
-	    throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+        if (other.X() == X())
+            return operator/(other.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
 protected:
     numtX &__X()
@@ -97,16 +108,6 @@ protected:
     numtY &__Y()
     {
         return y;
-    }
-};
-template<class numtX = double, class numtY = numtX>
-class point_editable_x: public point<numtX, numtY>
-{
-public:
-    point_editable_x(const point<numtX, numtY> &source): point<numtX, numtY>(source) {}
-    numtX &varX()
-    {
-        return point<numtX, numtY>::__X();
     }
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
