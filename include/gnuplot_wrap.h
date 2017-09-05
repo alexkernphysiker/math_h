@@ -100,8 +100,7 @@ public:
         MathTemplates::SortedPoints<numt> res;
         auto str = GetInput(name);
         numt x, y;
-        while (str) {
-            str >> x >> y;
+        while (str >> x >> y) {
             res << MathTemplates::point<numt>(x, y);
         }
         return res;
@@ -111,8 +110,7 @@ public:
         MathTemplates::SortedPoints<MathTemplates::value<numt>> res;
         auto str = GetInput(name);
         numt x, y, dx, dy;
-        while (str) {
-            str >> x >> y >> dx >> dy;
+        while (str >> x >> y >> dx >> dy) {
             res << MathTemplates::point<MathTemplates::value<numt>>({x, dx}, {y, dy});
         }
         return res;
