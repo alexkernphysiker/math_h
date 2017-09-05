@@ -382,15 +382,16 @@ template<class numt = double>
 class PlotDistr1D: public MathTemplates::Distribution1D<numt>
 {
 private:
-    std::string m_title, m_axis;
+    std::string m_title, m_axis,m_imgname;
 public:
     PlotDistr1D(
-        const std::string &title, const std::string &axis,
-        const MathTemplates::SortedChain<MathTemplates::value<numt>> &data
-    ): MathTemplates::Distribution1D<numt>(data), m_title(title), m_axis(axis) {}
+	const std::string &title, const std::string &axis,
+	const MathTemplates::SortedChain<MathTemplates::value<numt>> &data,
+	const std::string&imgname=""
+    ): MathTemplates::Distribution1D<numt>(data), m_title(title), m_axis(axis),m_imgname(imgname) {}
     virtual ~PlotDistr1D()
     {
-        Plot<numt>().Hist(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
+        Plot<numt>(m_imgname).Hist(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
                                  << "set xlabel '" + m_axis + "'" << "set ylabel 'counts'";
     }
 };
@@ -398,16 +399,17 @@ template<class numt = double>
 class PlotDistr2D: public MathTemplates::Distribution2D<numt>
 {
 private:
-    std::string m_title;
+    std::string m_title,m_imgname;
 public:
     PlotDistr2D(
-        const std::string &title,
-        const MathTemplates::SortedChain<MathTemplates::value<numt>> &X,
-        const MathTemplates::SortedChain<MathTemplates::value<numt>> &Y
-    ): MathTemplates::Distribution2D<numt>(X, Y), m_title(title) {}
+	const std::string &title,
+	const MathTemplates::SortedChain<MathTemplates::value<numt>> &X,
+	const MathTemplates::SortedChain<MathTemplates::value<numt>> &Y,
+	const std::string&imgname=""
+    ): MathTemplates::Distribution2D<numt>(X, Y), m_title(title),m_imgname(imgname){}
     virtual ~PlotDistr2D()
     {
-        PlotHist2d<numt>(sp2).Distr(*this) << "set title '" + m_title + "'";
+        PlotHist2d<numt>(sp2,m_imgname).Distr(*this) << "set title '" + m_title + "'";
     }
 };
 };
