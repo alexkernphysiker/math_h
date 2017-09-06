@@ -163,13 +163,13 @@ public:
     SortedPoints &operator/=(const Func f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i)=Bin(i)*f(Bin(i).X());
+            Bin(i)=Bin(i)/f(Bin(i).X());
         return *this;
     }
     SortedPoints &operator/=(const numY &c)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
-            Bin(i)=Bin(i)*c;
+            Bin(i)=Bin(i)/c;
         return *this;
     }
 

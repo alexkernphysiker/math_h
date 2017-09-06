@@ -66,7 +66,7 @@ public:
     }
     const point operator*(const numtY &val)const
     {
-        return {X(), Y() *val};
+        return {X(), Y() * val};
     }
     const point operator/(const numtY &val)const
     {
@@ -99,15 +99,6 @@ public:
             return operator/(other.Y());
         else
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-protected:
-    numtX &__X()
-    {
-        return x;
-    }
-    numtY &__Y()
-    {
-        return y;
     }
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
