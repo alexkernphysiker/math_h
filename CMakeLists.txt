@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(math_h)
 if(NOT DEFINED MATH_H_INC)
-    add_definitions(-std=c++11 -Wall -Wunused-parameter)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -fPIC")
+    add_definitions(-std=c++11)
     get_directory_property(has_parent PARENT_DIRECTORY)
     if(has_parent)
 	set(MATH_H_INC 
@@ -18,7 +17,7 @@ if(NOT DEFINED MATH_H_INC)
 	add_executable(${ex_app} ${example})
     endforeach()
 
-    option(tests "Compile tests." OFF) 
+    option(tests "Compile tests.")
     if(tests)
 	file(GLOB TESTS tests/*.cpp)
 	find_package(GTest REQUIRED)
