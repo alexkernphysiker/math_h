@@ -14,9 +14,18 @@ private:
     numtX x;
     numtY y;
 public:
+    const numtX &X()const
+    {
+        return x;
+    }
+    const numtY &Y()const
+    {
+        return y;
+    }
     point(const numtX &pos): x(pos), y(numtY(0)) {}
     point(const numtX &pos, const numtY &val): x(pos), y(val) {}
-    point(const point &source): x(source.x), y(source.y) {}
+    template<class numtX2 = numtX, class numtY2 = numtY>
+    point(const point<numtX2,numtY2> &source): x(source.X()), y(source.Y()) {}
     template<class numt = numtY>
     point(const std::initializer_list<numt> &source)
     {
@@ -29,18 +38,11 @@ public:
         x = numtX(v[0]);
         y = numtY(v[1]);
     }
-    const numtX &X()const
+    template<class numtX2 = numtX, class numtY2 = numtY>
+    point &operator=(const point<numtX2,numtY2> &source)
     {
-        return x;
-    }
-    const numtY &Y()const
-    {
-        return y;
-    }
-    point &operator=(const point &source)
-    {
-        x = source.x;
-        y = source.y;
+        x = source.X();
+        y = source.Y();
 	return *this;
     }
     point &operator=(const numtY &s)
@@ -101,6 +103,8 @@ public:
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
 };
+template<class numtX = double, class numtY = numtX>
+inline const point<numtX,numtY>make_point(const numtX&x,const numtY&y){return point<numtX,numtY>(x,y);}
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class point3d
 {
@@ -124,7 +128,14 @@ public:
     {
         return z;
     }
+    template<class numtX2 = numtX, class numtY2 = numtY,class numtZ2=numtZ>
+    point3d(const point3d<numtX2,numtY2,numtZ2>&source)
+	: x(source.X()), y(source.Y()), z(source.Z()){}
 };
+template<class numtX = double, class numtY = numtX,class numtZ=numtY>
+inline const point3d<numtX,numtY,numtZ>make_point(const numtX&x,const numtY&y,const numtZ&z){
+    return point3d<numtX,numtY,numtZ>(x,y,z);
+}
 
 };
 #endif

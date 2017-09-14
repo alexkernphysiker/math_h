@@ -9,6 +9,8 @@
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>
+using Points=std::vector<point<numX, numY>>;
+template<class numX = double, class numY = numX>
 class SortedPoints: public SortedChain<point<numX, numY>>
 {
 public:

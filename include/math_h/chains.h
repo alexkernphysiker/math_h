@@ -47,6 +47,7 @@ class SortedChain
 private:
     std::vector<comparable> data;
 public:
+    const std::vector<comparable>&operator()()const{return data;}
     SortedChain() {}
     SortedChain(const SortedChain &points)
     {
