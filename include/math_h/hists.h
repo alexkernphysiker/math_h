@@ -13,22 +13,14 @@ class hist: public SortedPoints<value<numtX>, value<numtY>>
 public:
     typedef point<value<numtX>, value<numtY>> Point;
     hist() {}
-    hist(const std::initializer_list<value<numtX>> &data)
-    {
-        for (const auto &v : data)this->operator<<(Point(v));
-    }
     hist(const SortedChain<value<numtX>> &data)
     {
-        for (const auto &v : data)this->append_item_from_sorted(Point(v));
+        for (const auto &v : data)this->append_item_from_sorted(Point(v,numtY(0)));
     }
-    hist(const SortedChain<value<numtX>> &&data)
-        : hist(data) {}
     hist(const SortedChain<point<numtX, numtY>> &data)
     {
         for (const auto &P : data)this->append_item_from_sorted(Point(P));
     }
-    hist(const SortedChain<point<numtX, numtY>> &&data)
-        : hist(data) {}
     hist(const SortedChain<Point> &data)
     {
         for (const auto &P : data)this->append_item_from_sorted(P);
@@ -37,11 +29,11 @@ public:
         : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
     hist(const SortedPoints<value<numtX>, value<numtY>> &source)
         : SortedPoints<value<numtX>, value<numtY>>(source) {}
-    hist(const std::initializer_list<point<numtX, numtY>> &data)
+    hist(const std::vector<point<numtX, numtY>> &data)
     {
         for (const auto &P : data)this->operator<<(Point(P));
     }
-    hist(const std::initializer_list<Point> &data)
+    hist(const std::vector<Point> &data)
     {
         for (const auto &P : data)this->operator<<(P);
     }
@@ -108,12 +100,8 @@ template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class hist2d: public BiSortedPoints<value<numtX>, value<numtY>, value<numtZ>>
 {
 public:
-    hist2d(const std::initializer_list<value<numtX>> &X, const std::initializer_list<value<numtY>> &Y)
-        : BiSortedPoints<value<numtX>, value<numtY>, value<numtZ>>(X, Y) {}
-    hist2d(const std::initializer_list<value<numtX>> &&X, const std::initializer_list<value<numtY>> &&Y): hist2d(X, Y) {}
     hist2d(const SortedChain<value<numtX>> &X, const SortedChain<value<numtY>> &Y)
         : BiSortedPoints<value<numtX>, value<numtY>, value<numtZ>>(X, Y) {}
-    hist2d(const SortedChain<value<numtX>> &&X, const SortedChain<value<numtY>> &&Y): hist2d(X, Y) {}
     hist2d(): hist2d({}, {}) {}
     hist2d(const BiSortedPoints<value<numtX>, value<numtY>, value<numtZ>> &source)
         : BiSortedPoints<value<numtX>, value<numtY>, value<numtZ>>(source) {}
@@ -165,17 +153,7 @@ class Distribution1D: public hist<numtX, numtY>
 private:
     unsigned long long counter;
 public:
-    Distribution1D(const std::initializer_list<value<numtX>> &data): hist<numtX, numtY>(data)
-    {
-        this->FillWithValues(value<numtY>::std_error(0));
-        counter = 0;
-    }
     Distribution1D(const SortedChain<value<numtX>> &data): hist<numtX, numtY>(data)
-    {
-        this->FillWithValues(value<numtY>::std_error(0));
-        counter = 0;
-    }
-    Distribution1D(const SortedChain<value<numtX>> &&data): hist<numtX, numtY>(data)
     {
         this->FillWithValues(value<numtY>::std_error(0));
         counter = 0;
@@ -207,17 +185,7 @@ private:
         });
     }
 public:
-    Distribution2D(const std::initializer_list<value<numtX>> &X, const std::initializer_list<value<numtY>> &Y)
-        : hist2d<numtX, numtY, numtZ>(X, Y)
-    {
-        init();
-    }
     Distribution2D(const SortedChain<value<numtX>> &X, const SortedChain<value<numtY>> &Y)
-        : hist2d<numtX, numtY, numtZ>(X, Y)
-    {
-        init();
-    }
-    Distribution2D(const SortedChain<value<numtX>> &&X, SortedChain<value<numtY>> &&Y)
         : hist2d<numtX, numtY, numtZ>(X, Y)
     {
         init();

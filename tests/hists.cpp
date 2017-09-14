@@ -64,7 +64,7 @@ TEST(hist2d, cut)
 }
 TEST(Distribution1D, basetest)
 {
-    Distribution1D<double> D {value<double>(-1.0, 0.5), value<double>(-0.0, 0.5), value<double>(1.0, 0.5)};
+    Distribution1D<> D({value<>(-1.0, 0.5), value<>(-0.0, 0.5), value<>(1.0, 0.5)});
     ASSERT_EQ(3, D.size());
     ASSERT_EQ(-1, D[0].X().val());
     ASSERT_EQ(0, D[1].X().val());
