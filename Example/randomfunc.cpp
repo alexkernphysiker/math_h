@@ -15,7 +15,7 @@ int main()
     RANDOM engine;
     Plotter<>::Instance().SetOutput(".", "randomfunc1");
     PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.01, 4.0));
-    for (size_t i = 0; i < 1000000; i++) {
+    for (size_t i = 0; i < 10000; i++) {
         dist.Fill(generator(engine));
     }
     return 0;

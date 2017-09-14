@@ -16,9 +16,11 @@
 #include <math_h/error.h>
 namespace GnuplotWrap
 {
+template<size_t number = 0>class PlotHist2d;
 template<size_t number = 0>
 class Plotter
 {
+    friend class PlotHist2d<number>;
 private:
     std::vector<std::string> lines;
     unsigned int terminal_counter, filename_counter;
@@ -34,6 +36,18 @@ private:
         } else {
             return name + ".txt";
         }
+    }
+protected:
+    const std::string File(std::ofstream&str,const std::string &name = "")
+    {
+        const auto n = GetFileName(name);
+	str.open((outpath + "/" + n).c_str());
+        return n;
+    }
+    std::ifstream GetInput(const std::string &name)
+    {
+        if (name == "")throw MathTemplates::Exception<Plotter>("Cannot get input without name");
+        return std::ifstream((outpath + "/" + GetFileName(name)).c_str());
     }
 public:
     Plotter()
@@ -84,19 +98,8 @@ public:
             return firstline + "set output '" + name + ".png'";
         }
     }
-    const std::string File(std::ofstream&str,const std::string &name = "")
-    {
-        const auto n = GetFileName(name);
-	str.open((outpath + "/" + n).c_str());
-        return n;
-    }
-    std::ifstream GetInput(const std::string &name)
-    {
-        if (name == "")throw MathTemplates::Exception<Plotter>("Cannot get input without name");
-        return std::ifstream((outpath + "/" + GetFileName(name)).c_str());
-    }
     template<class numtX = double,class numtY = double>
-    const MathTemplates::SortedPoints<numtX,numtY> GetPoints2(const std::string &name = "")
+    const MathTemplates::SortedPoints<numtX,numtY> GetPoints(const std::string &name)
     {
         MathTemplates::SortedPoints<numtX,numtY> res;
         auto str = GetInput(name);
@@ -107,27 +110,25 @@ public:
         return res;
     }
     template<class numtX = double,class numtY = double>
-    const MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>> 
-    GetPoints4(const std::string &name = "")
+    const std::string SavePoints(const MathTemplates::SortedPoints<numtX,numtY>&data,const std::string &name = "")
     {
-        MathTemplates::SortedPoints<MathTemplates::value<numtX>,MathTemplates::value<numtY>>  res;
-        auto str = GetInput(name);
-        numtX x,dx;numtY y,dy;
-        while (str >> x >> y >> dx >> dy) {
-            res << MathTemplates::point<MathTemplates::value<numtX>,MathTemplates::value<numtY>>({x, dx}, {y, dy});
+	std::ofstream str;
+        auto n = Plotter::Instance().File(str,name);
+        if (str) {
+            for(const auto&P:data)
+		str<<P.X()<<"\t"<<P.Y()<<std::endl;
+            str.close();
         }
-        return res;
+        return n;
     }
 };
-template<class numtX = double,class numtY = double,size_t number = 0>
+template<size_t number = 0>
 class Plot
 {
 private:
     std::vector<std::string> lines;
     std::vector<std::string> plots;
 public:
-    typedef std::function<numtY(numtX)> FUNC;
-    typedef std::function<void(std::ofstream &)> PLOTOUTPUT;
     Plot &operator<<(const std::string &line)
     {
         lines.push_back(line);
@@ -173,67 +174,40 @@ public:
         line += "\"";
         return Object(line);
     }
-    Plot &OutputPlot(const PLOTOUTPUT delegate, const std::string &options, const std::string &title = "", const std::string &name = "")
+    template<class numtX = double,class numtY = double>
+    Plot &OutputPlot(const MathTemplates::SortedPoints<numtX,numtY>&data,const std::string &options, const std::string &title = "", const std::string &name = "")
     {
-	std::ofstream str;
-        auto n = Plotter<number>::Instance().File(str,name);
-        if (str) {
-            delegate(str);
-            File(n, options, title);
-            str.close();
-        }
+        File(Plotter<number>::Instance().template SavePoints<numtX,numtY>(data,name), options, title);
         return *this;
     }
-    Plot &Line(const std::vector<MathTemplates::point<numtX,numtY>> &points, const std::string &title = "", const std::string &name = "")
-    {
-        Plot::OutputPlot([&points](std::ofstream & data) {
-            for (const auto &p : points)
-                data << p.X() << " " << p.Y() << std::endl;
-        }, "w l", title, name);
-        return *this;
-    }
+    template<class numtX = double,class numtY = double>
     Plot &Line(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
     {
-        Plot::OutputPlot([&points](std::ofstream & data) {
-            for (const auto &p : points)
-                data << p.X() << " " << p.Y() << std::endl;
-        }, "w l", title, name);
-        return *this;
+        return OutputPlot<numtX,numtY>(points,"w l",title,name);
     }
-    Plot &Points(const std::vector<MathTemplates::point<numtX,numtY>> &points, const std::string &title = "", const std::string &name = "")
-    {
-        Plot::OutputPlot([&points](std::ofstream & data) {
-            for (const auto &p : points)
-                data << p.X() << " " << p.Y() << std::endl;
-        }, "using 1:2", title, name);
-        return *this;
-    }
+    template<class numtX = double,class numtY = double>
     Plot &Points(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
     {
-        Plot::OutputPlot([&points](std::ofstream & data) {
-            for (const auto &p : points)
-                data << p.X() << " " << p.Y() << std::endl;
-        }, "using 1:2", title, name);
-        return *this;
+        return OutputPlot<numtX,numtY>(points,"using 1:2",title,name);
     }
+    template<class numtX = double,class numtY = double>
     Plot &Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::value<numtY>> &data,
                const std::string &title = "", const std::string &name = "")
     {
-        Plot::OutputPlot([&data](std::ofstream & str) {
-            for (const auto p : data)
-                str << p.X().val() << " " << p.Y().val() << " " << p.X().uncertainty() << " " << p.Y().uncertainty() << std::endl;
-        }, "using 1:2:($1-$3):($1+$3):($2-$4):($2+$4) with xyerrorbars", title, name);
-        return *this;
+        return OutputPlot<MathTemplates::value<numtX>,MathTemplates::value<numtY>>(
+	    data,"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars", title, name
+	);
     }
 };
 
 enum TypeOf3D {normal, sp2};
-template<class numtX = double,class numtY = double,class numtZ=double,size_t number = 0>
+template<size_t number>
 class PlotHist2d
 {
 private:
     std::vector<std::string> lines;
     std::vector<std::string> plots;
+    template<class numtX = double,class numtY = double,class numtZ=double>
     std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
         std::ofstream str;
@@ -251,6 +225,7 @@ private:
         }
         return n;
     }
+    template<class numtX = double,class numtY = double,class numtZ=double>
     std::string Points2File(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &name = "")
     {
         std::ofstream str;
@@ -262,6 +237,7 @@ private:
         }
         return n;
     }
+    template<class numtX = double,class numtY = double,class numtZ=double>
     std::string Distr2File(const MathTemplates::hist2d<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
         std::ofstream str;
@@ -279,6 +255,7 @@ private:
         }
         return n;
     }
+    template<class numtX = double,class numtY = double,class numtZ=double>
     std::string Points2File(const std::vector <
                             MathTemplates::point3d<MathTemplates::value<numtX>,
                             MathTemplates::value<numtY>, MathTemplates::value<numtZ> >> &points,
@@ -336,42 +313,36 @@ public:
         plots.push_back(plot);
         return *this;
     }
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Surface(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ> &D, const std::string &title = "")
     {
         return Object(std::string("'") + Surf2File(D) + "' matrix nonuniform title'" + title + "'");
     }
-
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Distr(const MathTemplates::hist2d<numtX,numtY,numtZ> &D, const std::string &title = "")
     {
         return Object(std::string("'") + Distr2File(D) + "' matrix nonuniform title'" + title + "'");
     }
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Points(const std::vector<MathTemplates::point3d<
                        MathTemplates::value<numtX>, MathTemplates::value<numtY>,
                        MathTemplates::value<numtZ>>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w points title'" + title + "'");
     }
-    PlotHist2d &Points(const std::initializer_list <
-                       MathTemplates::point3d<MathTemplates::value<numtX>,
-                       MathTemplates::value<numtY>, MathTemplates::value<numtZ> >> &points, const std::string &title = "")
-    {
-        return Points(std::vector<MathTemplates::point3d<
-                      MathTemplates::value<numtX>, MathTemplates::value<numtY>,
-                      MathTemplates::value<numtZ>>>(points), title);
-    }
-
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Line(const std::vector<MathTemplates::point3d<
                      MathTemplates::value<numtX>, MathTemplates::value<numtY>,
                      MathTemplates::value<numtZ>>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w line title'" + title + "'");
     }
-
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Points(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w points title'" + title + "'");
     }
-
+    template<class numtX = double,class numtY = double,class numtZ=double>
     PlotHist2d &Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w line title'" + title + "'");
@@ -391,7 +362,7 @@ public:
     ): MathTemplates::Distribution1D<numtX,numtY>(data), m_title(title), m_axis(axis),m_imgname(imgname) {}
     virtual ~PlotDistr1D()
     {
-        Plot<numtX,numtY,number>(m_imgname).Hist(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
+        Plot<number>(m_imgname).template Hist<numtX,numtY>(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
                                  << "set xlabel '" + m_axis + "'" << "set ylabel 'counts'";
     }
 };
@@ -409,7 +380,7 @@ public:
     ): MathTemplates::Distribution2D<numtX,numtY,numtZ>(X, Y), m_title(title),m_imgname(imgname){}
     virtual ~PlotDistr2D()
     {
-        PlotHist2d<numtX,numtY,numtZ,number>(sp2,m_imgname).Distr(*this) << "set title '" + m_title + "'";
+        PlotHist2d<number>(sp2,m_imgname).template Distr<numtX,numtY,numtZ>(*this) << "set title '" + m_title + "'";
     }
 };
 };
