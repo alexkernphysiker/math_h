@@ -275,11 +275,20 @@ template<typename numt = double>
 class StandardDeviation
 {
 private:
-    std::list<numt> m_list;
+    std::vector<numt> m_list;
     numt m_sum;
     std::shared_ptr<value<numt>>m_cache;
     numt m_scale;
 public:
+    typedef typename std::vector<numt>::const_iterator const_iterator;
+    const_iterator begin()const{return m_list.begin();}
+    const_iterator end() const{return m_list.end();}
+    const numt&operator[](const size_t index){return m_list[index];}
+    const size_t size()const
+    {
+        return m_list.size();
+    }
+
     StandardDeviation(const numt &scale = 1)
     {
         if (scale <= 0)throw Exception<StandardDeviation>("Uncertainty scaling factor must be greater than zero");
@@ -358,26 +367,28 @@ template<typename numt = double>
 class CorrelationLinear
 {
 private:
-    StandardDeviation<numt> X, Y, XY;
+    StandardDeviation<numt> _X, _Y, _XY;
 public:
     CorrelationLinear(const numt &scale = 1):
-        X(scale), Y(scale), XY(scale) {}
+        _X(scale), _Y(scale), _XY(scale) {}
     virtual ~CorrelationLinear() {}
     CorrelationLinear &operator<<(const std::pair<numt, numt> &P)
     {
-        X << P.first;
-        Y << P.second;
-        XY << P.first *P.second;
+        _X << P.first;
+        _Y << P.second;
+        _XY << P.first *P.second;
         return *this;
     }
     const numt Covariance()const
     {
-        return XY().val() - X().val() * Y().val();
+        return _XY().val() - _X().val() * _Y().val();
     }
     const numt R()const
     {
-        return Covariance() / (X().uncertainty() * Y().uncertainty());
+        return Covariance() / (_X().uncertainty() * _Y().uncertainty());
     }
+    const StandardDeviation<numt>&X()const{return _X;}
+    const StandardDeviation<numt>&Y()const{return _Y;}
 };
 };
 #endif

@@ -264,6 +264,19 @@ TEST(StandardDeviation, Base)
     EXPECT_EQ(0.5, S().val());
     EXPECT_EQ(sqrt(0.5), S().uncertainty());
 }
+TEST(StandardDeviation, Base2)
+{
+    StandardDeviation<double> S;
+    S << 0.0 << 1.0;
+    size_t cnt=0;
+    for(const auto&x:S)cnt++;
+    EXPECT_EQ(2,cnt);
+    EXPECT_EQ(2,S.size());
+    EXPECT_EQ(2,S.count());
+    EXPECT_EQ(0.0,S[0]);
+    EXPECT_EQ(1.0,S[1]);
+    EXPECT_ANY_THROW(S[2]);
+}
 #define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
 TEST(StandardDeviation, WithRandomValues)
 {
