@@ -19,8 +19,6 @@ int main()
     mt19937 engine;
     Distribution2D<> H(BinsByCount(40, 0.0, 4.0), BinsByCount(40, 0.0, 4.0));
     for (size_t i = 0; i < 10000; i++)H.Fill(X(engine), Y(engine));
-
-    Plotter<>::Instance().SetOutput(".", "randomfunc2");
-    PlotHist2d<>(sp2).Distr(H);
+   PlotHist2d<>(sp2,"randomfunc2").Distr(H);
     return 0;
 }

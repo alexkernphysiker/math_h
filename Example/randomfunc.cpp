@@ -13,8 +13,7 @@ int main()
         return Lorentzian(x, 2.0, 0.2);
     }, ChainWithStep(0.0, 0.1, 4.0));
     RANDOM engine;
-    Plotter<>::Instance().SetOutput(".", "randomfunc1");
-    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.01, 4.0));
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.01, 4.0),"randomfunc1");
     for (size_t i = 0; i < 10000; i++) {
         dist.Fill(generator(engine));
     }

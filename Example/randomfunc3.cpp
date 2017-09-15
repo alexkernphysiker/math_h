@@ -16,8 +16,7 @@ int main()
     const ReverseIntegratedLinearInterpolation<> RI = P;
     const RandomValueTableDistr<> generator = P;
     RANDOM engine;
-    Plotter<>::Instance().SetOutput(".", "randomfunc3");
-    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0));
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0),"randomfunc3");
     for (size_t i = 0; i < 100000; i++) {
         dist.Fill(generator(engine));
     }
