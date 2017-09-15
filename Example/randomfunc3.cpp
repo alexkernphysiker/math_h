@@ -17,9 +17,8 @@ int main()
     const RandomValueTableDistr<> generator = P;
     RANDOM engine;
     Plotter<>::Instance().SetOutput(".", "randomfunc3");
-    Plot<>().Line(SortedPoints<>(RI.func(), ChainWithStep(RI.left().X(), 0.01, RI.right().X()))).Points(RI);
     PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0));
-    for (size_t i = 0; i < 10000; i++) {
+    for (size_t i = 0; i < 100000; i++) {
         dist.Fill(generator(engine));
     }
     return 0;

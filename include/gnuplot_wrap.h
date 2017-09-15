@@ -16,13 +16,15 @@
 #include <math_h/error.h>
 namespace GnuplotWrap
 {
-template<size_t number = 0>class PlotHist2d;
-template<size_t number = 0>class Plot;
-template<size_t number = 0>
-class Plotter
+#define TDecl_init size_t width = 1024,size_t height=868
+#define TDecl size_t width,size_t height
+#define TUse width,height
+template<TDecl_init> class PlotHist2d;
+template<TDecl_init> class Plot;
+template<TDecl_init> class Plotter
 {
-    friend class Plot<number>;
-    friend class PlotHist2d<number>;
+    friend class Plot<TUse>;
+    friend class PlotHist2d<TUse>;
 private:
     std::vector<std::string> lines;
     unsigned int terminal_counter, filename_counter;
@@ -34,7 +36,8 @@ private:
             filename_counter++;
             auto cnt = std::to_string(filename_counter);
             while (cnt.length() < 6)cnt = "0" + cnt;
-            return "." + m_prefix + ".numeric-data." + cnt + ".txt";
+            return "." + m_prefix + ".numeric-data."
+	+std::to_string(width)+"."+std::to_string(height)+"." + cnt + ".txt";
         } else {
             return name + ".txt";
         }
@@ -58,12 +61,15 @@ protected:
     }
     const std::string GetTerminal(const std::string &name = "")
     {
-        const std::string firstline = "set terminal pngcairo size 1024,868 font 'Verdana,18'\n";
+        const std::string firstline = "set terminal pngcairo size "
+	+std::to_string(width)+","+std::to_string(height)+" font 'Verdana,18'\n";
         if (name == "") {
             terminal_counter++;
             auto cnt = std::to_string(terminal_counter);
             while (cnt.length() < 5)cnt = "0" + cnt;
-            return firstline + "set output 'z_" + m_prefix + "-plot-" + cnt + ".png'";
+            return firstline + "set output 'z."
+	+std::to_string(width)+"."+std::to_string(height)+"."+
+	m_prefix + "-plot-" + cnt + ".png'";
         } else {
             return firstline + "set output '" + name + ".png'";
         }
@@ -124,8 +130,7 @@ public:
         return n;
     }
 };
-template<size_t number>
-class Plot
+template<TDecl> class Plot
 {
 private:
     std::vector<std::string> lines;
@@ -143,7 +148,7 @@ public:
     }
     Plot(const std::string &name = "")
     {
-        operator<<(Plotter<number>::Instance().GetTerminal(name));
+        operator<<(Plotter<TUse>::Instance().GetTerminal(name));
         operator<<("unset pm3d");
         operator<<("unset title");
         operator<<("unset key");
@@ -157,14 +162,14 @@ public:
     virtual ~Plot()
     {
         for (const std::string &line : lines)
-            Plotter<number>::Instance() << line;
+            Plotter<TUse>::Instance() << line;
         for (int i = 0, n = plots.size(); i < n; i++) {
             std::string line = plots[i];
             if (i == 0)
                 line = "plot " + line;
             if (i < (n - 1))
                 line += ",\\";
-            Plotter<number>::Instance() << line;
+            Plotter<TUse>::Instance() << line;
         }
     }
     Plot &File(const std::string &name, const std::string &options, const std::string &title)
@@ -179,7 +184,7 @@ public:
     template<class numtX = double,class numtY = numtX>
     inline Plot &Output(const MathTemplates::Points<numtX,numtY>&data,const std::string &options, const std::string &title = "", const std::string &name = "")
     {
-        File(Plotter<number>::Instance().SavePoints(data,name), options, title);
+        File(Plotter<TUse>::Instance().SavePoints(data,name), options, title);
         return *this;
     }
     template<class numtX = double,class numtY = numtX>
@@ -230,8 +235,7 @@ public:
 };
 
 enum TypeOf3D {normal, sp2};
-template<size_t number>
-class PlotHist2d
+template<TDecl>class PlotHist2d
 {
 private:
     std::vector<std::string> lines;
@@ -240,7 +244,7 @@ private:
     std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
         std::ofstream str;
-        auto n = Plotter<number>::Instance().File(str,name);
+        auto n = Plotter<TUse>::Instance().File(str,name);
         if (str) {
             str << D.X().size() << " ";
             for (const auto &x : D.X())
@@ -258,7 +262,7 @@ private:
     std::string Points2File(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &name = "")
     {
         std::ofstream str;
-        auto n = Plotter<number>::Instance().File(str,name);
+        auto n = Plotter<TUse>::Instance().File(str,name);
         if (str) {
             for (const auto &p : points)
                 str << p.X() << " " << p.Y() << " " << p.Z() << std::endl;
@@ -270,7 +274,7 @@ private:
     std::string Distr2File(const MathTemplates::hist2d<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
         std::ofstream str;
-        auto n = Plotter<number>::Instance().File(str,name);
+        auto n = Plotter<TUse>::Instance().File(str,name);
         if (str) {
             str << D.X().size() << " ";
             for (const auto &x : D.X())
@@ -291,7 +295,7 @@ private:
                             const std::string &name = "")
     {
         std::ofstream str;
-        auto n = Plotter<number>::Instance().File(str,name);
+        auto n = Plotter<TUse>::Instance().File(str,name);
         if (str) {
             for (const auto &p : points)
                 str << p.X().val() << " " << p.Y().val() << " " << p.Z().val() << std::endl;
@@ -307,7 +311,7 @@ public:
     }
     PlotHist2d(const TypeOf3D type, const std::string &name = "")
     {
-        operator<<(Plotter<number>::Instance().GetTerminal(name));
+        operator<<(Plotter<TUse>::Instance().GetTerminal(name));
         operator<<("unset title");
         operator<<("unset key");
         operator<<("unset surface");
@@ -327,14 +331,14 @@ public:
     }
     virtual ~PlotHist2d()
     {
-        for (const std::string &line : lines)Plotter<number>::Instance() << line;
+        for (const std::string &line : lines)Plotter<TUse>::Instance() << line;
         for (int i = 0, n = plots.size(); i < n; i++) {
             std::string line = plots[i];
             if (i == 0)
                 line = "splot " + line;
             if (i < (n - 1))
                 line += ",\\";
-            Plotter<number>::Instance() << line;
+            Plotter<TUse>::Instance() << line;
         }
     }
     PlotHist2d &Object(const std::string&plot)
@@ -378,7 +382,7 @@ public:
     }
 
 };
-template<class numtX = double,class numtY = numtX,size_t number = 0>
+template<class numtX = double,class numtY = numtX,TDecl_init>
 class PlotDistr1D: public MathTemplates::Distribution1D<numtX,numtY>
 {
 private:
@@ -391,11 +395,11 @@ public:
     ): MathTemplates::Distribution1D<numtX,numtY>(data), m_title(title), m_axis(axis),m_imgname(imgname) {}
     virtual ~PlotDistr1D()
     {
-        Plot<number>(m_imgname).template Hist<numtX,numtY>(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
+        Plot<TUse>(m_imgname).template Hist<numtX,numtY>(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
                                  << "set xlabel '" + m_axis + "'" << "set ylabel 'counts'";
     }
 };
-template<class numtX = double,class numtY = numtX,class numtZ = numtY,size_t number = 0>
+template<class numtX = double,class numtY = numtX,class numtZ = numtY,TDecl_init>
 class PlotDistr2D: public MathTemplates::Distribution2D<numtX,numtY,numtZ>
 {
 private:
@@ -409,8 +413,11 @@ public:
     ): MathTemplates::Distribution2D<numtX,numtY,numtZ>(X, Y), m_title(title),m_imgname(imgname){}
     virtual ~PlotDistr2D()
     {
-        PlotHist2d<number>(sp2,m_imgname).template Distr<numtX,numtY,numtZ>(*this) << "set title '" + m_title + "'";
+        PlotHist2d<TUse>(sp2,m_imgname).template Distr<numtX,numtY,numtZ>(*this) << "set title '" + m_title + "'";
     }
 };
+#undef TDecl_init
+#undef TDecl
+#undef TUse
 };
 #endif
