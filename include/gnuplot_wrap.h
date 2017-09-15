@@ -67,8 +67,8 @@ protected:
             terminal_counter++;
             auto cnt = std::to_string(terminal_counter);
             while (cnt.length() < 5)cnt = "0" + cnt;
-            return firstline + "set output z-"
-	+std::to_string(width)+"-"+std::to_string(height)+"-"+
+            return firstline + "set output 'z."
+	+std::to_string(width)+"-"+std::to_string(height)+"."+
 	m_prefix + "-plot-" + cnt + ".png'";
         } else {
             return firstline + "set output '" + name + ".png'";
