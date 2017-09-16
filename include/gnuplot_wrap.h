@@ -54,11 +54,6 @@ protected:
 	str.open((outpath + "/" + n).c_str());
         return n;
     }
-    std::ifstream GetInput(const std::string &name)
-    {
-        if (name == "")throw MathTemplates::Exception<Plotter>("Cannot get input without name");
-        return std::ifstream((outpath + "/" + GetFileName(name)).c_str());
-    }
     const std::string GetTerminal(const std::string &name = "")
     {
         const std::string firstline = "set terminal pngcairo size "
@@ -110,7 +105,7 @@ public:
     const MathTemplates::Points<numtX,numtY> GetPoints(const std::string &name)
     {
         MathTemplates::Points<numtX,numtY> res;
-        auto str = GetInput(name);
+	std::ifstream str((outpath + "/" + GetFileName(name)).c_str());
         numtX x;numtY y;
         while (str >> x >> y) {
             res.push_back(make_point(x, y));
