@@ -9,320 +9,276 @@
 #include "randomfunc.h"
 namespace MathTemplates
 {
-template<class numt = double>
-class Vector2
-{
-private:
-    numt m_x, m_y;
+template<class numt,class... Args>
+const numt&MakeException(){
+    throw Exception<numt>("Vector components indexing error");
+    static numt x=0;
+    return x;
+}
+template<size_t size=3,class numt=double>class Vector;
+template<class numt>
+class Vector<1,numt>{
 public:
+    enum{Dimensions=1};
     typedef numt NumberType;
-    virtual ~Vector2() {}
-    Vector2(const numt &x, const numt &y): m_x(x), m_y(y) {}
-    const std::vector<numt> to_vector()const
+private:
+    numt m_x;
+public:
+    virtual ~Vector(){}
+    Vector(const numt &x): m_x(x) {}
+    Vector(const std::vector<numt> &v,const size_t i=0):m_x(v[i]){}
+    static inline const Vector zero()
     {
-        return {m_x, m_y};
+        return Vector(numt(0));
     }
-    Vector2(const std::vector<numt> &v)
+    template<size_t index>
+    static inline const Vector basis_vector()
     {
-        if (v.size() != 2)throw Exception<Vector2>("Bad Vector2 initializing by vector");
-        m_x = v[0];
-        m_y = v[1];
+        return (index==1)?numt(1):MakeException<numt>();
     }
-    static inline const Vector2 zero()
+    template<size_t index>
+    const numt &component()const
     {
-        return Vector2(numt(0), numt(0));
+        return (index==1)?m_x:MakeException<numt>();
     }
-    static inline const Vector2 basis_x()
-    {
-        return Vector2(numt(1), numt(0));
-    }
-    static inline const Vector2 basis_y()
-    {
-        return Vector2(numt(0), numt(1));
-    }
-    static inline const Vector2 DesCartes(const numt &x, const numt &y)
-    {
-        return Vector2(x, y);
-    }
-    static const Vector2 Polar(const numt &mag, const numt &phi)
-    {
-        return Vector2(mag * cos(phi), mag * sin(phi));
-    }
-    static inline const Vector2 Direction(const numt &phi)
-    {
-        return Polar(numt(1), phi);
-    }
-    const numt &x()const
-    {
-        return m_x;
-    }
-    const numt &y()const
-    {
-        return m_y;
-    }
+    const numt &x()const{return component<1>();}
     const numt mag_sqr()const
     {
-        return (m_x * m_x) + (m_y * m_y);
+        return (m_x * m_x);
     }
-    const numt mag()const
+    inline const numt mag()const
     {
         return sqrt(mag_sqr());
     }
-    Vector2(const Vector2 &source): m_x(source.m_x), m_y(source.m_y) {}
-    Vector2 &operator=(const Vector2 &source)
+    Vector(const Vector &source): m_x(source.m_x) {}
+    Vector &operator=(const Vector &source)
     {
         m_x = source.m_x;
-        m_y = source.m_y;
         return *this;
     }
-    Vector2 &operator+=(const Vector2 &second)
+    Vector &operator+=(const Vector &second)
     {
         m_x += second.m_x;
-        m_y += second.m_y;
         return *this;
     }
-    const Vector2 operator+(const Vector2 &second)const
+    const Vector operator+(const Vector &second)const
     {
-        return Vector2(m_x + second.m_x, m_y + second.m_y);
+        return Vector(m_x + second.m_x);
     }
-    Vector2 &operator-=(const Vector2 &second)
+    Vector &operator-=(const Vector &second)
     {
         m_x -= second.m_x;
-        m_y -= second.m_y;
         return *this;
     }
-    const Vector2 operator-(const Vector2 &second)const
+    const Vector operator-(const Vector &second)const
     {
-        return Vector2(m_x - second.m_x, m_y - second.m_y);
+        return Vector(m_x - second.m_x);
     }
 
-    Vector2 &operator*=(const numt &second)
+    Vector &operator*=(const numt &second)
     {
         m_x *= second;
-        m_y *= second;
         return *this;
     }
-    const Vector2 operator*(const numt &second)const
+    const Vector operator*(const numt &second)const
     {
-        return Vector2(m_x * second, m_y * second);
+        return Vector(m_x * second);
     }
-    Vector2 &operator/=(const numt &second)
+    Vector &operator/=(const numt &second)
     {
         m_x /= second;
-        m_y /= second;
         return *this;
     }
-    const Vector2 operator/(const numt &second)const
+    const Vector operator/(const numt &second)const
     {
-        return Vector2(m_x / second, m_y / second);
+        return Vector(m_x / second);
     }
-    const numt operator*(const Vector2 &second)const
+    const numt operator*(const Vector &second)const
     {
-        return (m_x * second.m_x) + (m_y * second.m_y);
+        return (m_x * second.m_x);
     }
-    const bool operator==(const Vector2 &second)const
+    const bool operator==(const Vector &second)const
     {
-        return (m_x == second.m_x) && (m_y == second.m_y);
+        return (m_x == second.m_x);
     }
-    const numt VecP(const Vector2 &second)const
+    const std::vector<numt> to_vector()const
     {
-        return (x() * second.y()) - (second.x() * y());
-    }
-    const Vector2 Rotate(const numt &theta)const
-    {
-        const std::vector<numt> source = {x(), y()};
-        const numt cost = cos(theta), sint = sin(theta);
-        std::vector<std::vector<numt>> M = {
-            {cost, -sint},
-            {sint, cost}
-        };
-        std::vector<numt> dest;
-        for (size_t i = 0; i < 2; i++) {
-            numt v = 0;
-            for (size_t j = 0; j < 2; j++)v += M[i][j] * source[j];
-            dest.push_back(v);
-        }
-        return Vector2(dest[0], dest[1]);
-
-    }
-
-    template<class RG = RANDOM>
-    static inline const Vector2 RandomIsotropicDirection(RG &generator)
-    {
-        static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
-        const numt phi = Phi(generator);
-        return Vector2(cos(phi), sin(phi));
+	return {m_x};
     }
 };
-template<class numt>
-inline const Vector2<numt> operator-(const Vector2<numt> &V)
+template<size_t size,class numt>
+class Vector{
+public:
+    enum{Dimensions=size};
+    typedef numt NumberType;
+    typedef Vector<size-1,numt> VectorN;
+private:
+    numt m_x;
+    VectorN m_other;
+    Vector(const numt &x,const VectorN&other): m_x(x),m_other(other) {}
+public:
+    const VectorN&__last_coordinates()const
+    {
+	return m_other;
+    }
+    virtual ~Vector(){}
+    template<class... Args>
+    Vector(const numt &x,Args... other): m_x(x),m_other(other...) {}
+    Vector(const std::vector<numt> &v,const size_t i=0):m_x(v[i]),m_other(v,i+1){}
+    static inline const Vector zero()
+    {
+        return Vector(numt(0),Vector<size-1>::zero());
+    }
+    template<size_t index>
+    static inline const Vector basis_vector()
+    {
+        return (index==1)?Vector(numt(1),VectorN::zero()):Vector(numt(0),VectorN::template basis_vector<index-1>());
+    }
+    template<size_t index>
+    const numt &component()const
+    {
+        return (index==1)?m_x:m_other.template component<index-1>();
+    }
+    const numt &x()const{return component<1>();}
+    const numt &y()const{return component<2>();}
+    const numt &z()const{return component<3>();}
+    const numt mag_sqr()const
+    {
+        return (m_x * m_x)+m_other.mag_sqr();
+    }
+    inline const numt mag()const
+    {
+        return sqrt(mag_sqr());
+    }
+    Vector(const Vector &source): m_x(source.m_x),m_other(source.m_other) {}
+    Vector &operator=(const Vector &source)
+    {
+        m_x = source.m_x;
+	m_other=source.m_other;
+        return *this;
+    }
+    Vector &operator+=(const Vector &second)
+    {
+        m_x += second.m_x;
+	m_other += second.m_other;
+        return *this;
+    }
+    const Vector operator+(const Vector &second)const
+    {
+        return Vector(m_x + second.m_x,m_other + second.m_other);
+    }
+    Vector &operator-=(const Vector &second)
+    {
+        m_x -= second.m_x;
+	m_other -= second.m_other;
+        return *this;
+    }
+    const Vector operator-(const Vector &second)const
+    {
+        return Vector(m_x - second.m_x,m_other - second.m_other);
+    }
+
+    Vector &operator*=(const numt &second)
+    {
+        m_x *= second;
+	m_other *= second.m_other;
+        return *this;
+    }
+    const Vector operator*(const numt &second)const
+    {
+        return Vector(m_x * second,m_other * second);
+    }
+    Vector &operator/=(const numt &second)
+    {
+        m_x /= second;
+	m_other /= second.m_other;
+        return *this;
+    }
+    const Vector operator/(const numt &second)const
+    {
+        return Vector(m_x / second,m_other / second);
+    }
+    const numt operator*(const Vector &second)const
+    {
+        return (m_x * second.m_x)+(m_other * second.m_other);
+    }
+    const bool operator==(const Vector &second)const
+    {
+        return (m_x == second.m_x)&&(m_other == second.m_other);
+    }
+    const std::vector<numt> to_vector()const
+    {
+	std::vector<numt> res=m_other.to_vector();
+	res.insert(res.begin(),m_x);
+	return res;
+    }
+};
+template<class numt=double,class... Args>
+const Vector<1+sizeof...(Args),numt> DesCartes(const numt &x,Args... other)
+{
+    return Vector<1+sizeof...(Args),numt>(x,other...);
+}
+template<class numt=double>
+const Vector<2,numt> I(){return DesCartes(numt(1),numt(0));}
+template<class numt=double>
+const Vector<2,numt> J(){return DesCartes(numt(0),numt(1));}
+template<class numt=double>
+const Vector<2,numt> zero(){return DesCartes(numt(0),numt(0));}
+
+template<class numt=double>
+const Vector<3,numt> X(){return DesCartes(numt(1),numt(0),numt(0));}
+template<class numt=double>
+const Vector<3,numt> Y(){return DesCartes(numt(0),numt(1),numt(0));}
+template<class numt=double>
+const Vector<3,numt> Z(){return DesCartes(numt(0),numt(0),numt(1));}
+template<class numt=double>
+const Vector<3,numt> Zero(){return DesCartes(numt(0),numt(0),numt(0));}
+
+template<size_t i,class numt=double>
+inline const Vector<i,numt> operator-(const Vector<i,numt> &V)
 {
     return V * numt(-1);
 }
-template<typename numt>
-std::ostream &operator<<(std::ostream &str, const Vector2<numt> &V)
+template<size_t i,class numt=double>
+std::ostream &operator<<(std::ostream &str, const Vector<i,numt> &V)
 {
-    return str << V.x() << " " << V.y() << " ";
+    return str << V.x() << " " << V.__last_coordinates();
 }
-template<class numt = double>
-class Vector3
+template<class numt=double>
+std::ostream &operator<<(std::ostream &str, const Vector<1,numt> &V)
 {
-private:
-    numt m_x, m_y, m_z;
-public:
-    virtual ~Vector3() {}
-    Vector3(const numt &x, const numt &y, const numt &z): m_x(x), m_y(y), m_z(z) {}
-    typedef numt NumberType;
-    const std::vector<numt> to_vector()const
-    {
-        return {m_x, m_y, m_z};
-    }
-    Vector3(const std::vector<numt> &v)
-    {
-        if (v.size() != 3)throw Exception<Vector3>("Bad Vector3 initializing by vector");
-        m_x = v[0];
-        m_y = v[1];
-        m_z = v[2];
-    }
-    static inline const Vector3 zero()
-    {
-        return Vector3(numt(0), numt(0), numt(0));
-    }
-    static inline const Vector3 basis_x()
-    {
-        return Vector3(numt(1), numt(0), numt(0));
-    }
-    static inline const Vector3 basis_y()
-    {
-        return Vector3(numt(0), numt(1), numt(0));
-    }
-    static inline const Vector3 basis_z()
-    {
-        return Vector3(numt(0), numt(0), numt(1));
-    }
-    static inline const Vector3 DesCartes(const numt &x, const numt &y, const numt &z)
-    {
-        return Vector3(x, y, z);
-    }
-    static const Vector3 Polar(const numt &mag, const numt &theta, const numt &phi)
-    {
-        return Vector3(mag * cos(phi) * sin(theta), mag * sin(phi) * sin(theta), mag * cos(theta));
-    }
-    static inline const Vector3 Direction(const numt &theta, const numt &phi)
-    {
-        return Polar(numt(1), theta, phi);
-    }
-    const numt &x()const
-    {
-        return m_x;
-    }
-    const numt &y()const
-    {
-        return m_y;
-    }
-    const numt &z()const
-    {
-        return m_z;
-    }
-    const numt mag_sqr()const
-    {
-        return (m_x * m_x) + (m_y * m_y) + (m_z * m_z);
-    }
-    const numt mag()const
-    {
-        return sqrt(mag_sqr());
-    }
-    const numt cos_theta()const
-    {
-        return m_z / mag();
-    }
-    const numt sin_theta()const
-    {
-        return sqrt((m_x * m_x) + (m_y * m_y)) / mag();
-    }
-    const numt cos_phi()const
-    {
-        return m_x / sqrt((m_x * m_x) + (m_y * m_y));
-    }
-    const numt sin_phi()const
-    {
-        return m_x / sqrt((m_x * m_x) + (m_y * m_y));
-    }
+    return str << V.x() << " ";
+}
 
-    Vector3(const Vector3 &source): m_x(source.m_x), m_y(source.m_y), m_z(source.m_z) {}
-    Vector3 &operator=(const Vector3 &source)
-    {
-        m_x = source.m_x;
-        m_y = source.m_y;
-        m_z = source.m_z;
-        return *this;
-    }
-    Vector3 &operator+=(const Vector3 &second)
-    {
-        m_x += second.m_x;
-        m_y += second.m_y;
-        m_z += second.m_z;
-        return *this;
-    }
-    const Vector3 operator+(const Vector3 &second)const
-    {
-        return Vector3(m_x + second.m_x, m_y + second.m_y, m_z + second.m_z);
-    }
-    Vector3 &operator-=(const Vector3 &second)
-    {
-        m_x -= second.m_x;
-        m_y -= second.m_y;
-        m_z -= second.m_z;
-        return *this;
-    }
-    const Vector3 operator-(const Vector3 &second)const
-    {
-        return Vector3(m_x - second.m_x, m_y - second.m_y, m_z - second.m_z);
-    }
+template<class numt=double>
+static const Vector<2,numt> Direction(const numt &phi)
+{
+    return Vector<2,numt>(cos(phi), sin(phi));
+}
+template<class numt=double>
+static const Vector<3,numt> Direction(const numt &theta,const numt &phi)
+{
+    return Vector3(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+}
+template<class numt=double,class... Args>
+static inline const Vector<1+sizeof...(Args),numt> PolarCoordinates(const numt &x,Args... other)
+{
+    return Direction(other...)*x;
+}
 
-    Vector3 &operator*=(const numt &second)
-    {
-        m_x *= second;
-        m_y *= second;
-        m_z *= second;
-        return *this;
-    }
-    const Vector3 operator*(const numt &second)const
-    {
-        return Vector3(m_x * second, m_y * second, m_z * second);
-    }
-    Vector3 &operator/=(const numt &second)
-    {
-        m_x /= second;
-        m_y /= second;
-        m_z /= second;
-        return *this;
-    }
-    const Vector3 operator/(const numt &second)const
-    {
-        return Vector3(m_x / second, m_y / second, m_z / second);
-    }
-    const numt operator*(const Vector3 &second)const
-    {
-        return (m_x * second.m_x) + (m_y * second.m_y) + (m_z * second.m_z);
-    }
-
-    const Vector3 VecP(const Vector3 &second)const
-    {
-        return Vector3<numt>::DesCartes(
-                   (y() * second.z()) - (second.y() * z()),
-                   (z() * second.x()) - (second.z() * x()),
-                   (x() * second.y()) - (second.x() * y())
-               );
-    }
-    const bool operator==(const Vector3 &second)const
-    {
-        return (m_x == second.m_x) && (m_y == second.m_y) && (m_z == second.m_z);
-    }
-    const Vector3 Rotate(const Vector3 &axis, const numt &theta)const
-    {
+template<class numt=double>
+const Vector<3,numt> operator^(const Vector<3,numt> &first,const Vector<3,numt> &second){
+    return Vector<3,numt>(
+	(first.y()*second.z()) - (second.y()*first.z()),
+	(first.z()*second.x()) - (second.z()*first.x()),
+	(first.x()*second.y()) - (second.x()*first.y())
+    );
+}
+template<class numt=double>
+const Vector<3,numt> Rotate(const Vector<3,numt> &src,const Vector<3,numt> &axis, const numt &theta)
+{
         const auto n = axis / axis.mag();
-        const std::vector<numt> source = {x(), y(), z()};
+        const std::vector<numt> source = {src.x(), src.y(), src.z()};
         const numt cost = cos(theta), sint = sin(theta), one = 1;
         std::vector<std::vector<numt>> M = {
             {    cost + (one - cost) *n.x() *n.x(),	(one - cost) *n.x() *n.y() - sint * n.z(),	(one - cost) *n.x() *n.z() + sint * n.y()},
@@ -335,53 +291,51 @@ public:
             for (size_t j = 0; j < 3; j++)v += M[i][j] * source[j];
             dest.push_back(v);
         }
-        return Vector3(dest[0], dest[1], dest[2]);
-
-    }
-
-    template<class RG = RANDOM>
-    static inline const Vector3 RandomIsotropicDirection(RG &generator)
-    {
-        static RandomUniform<numt> Z(-1, 1);
-        static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
-        const numt z = Z(generator);
-        const numt x_y = sqrt(1.0 - pow(z, 2));
-        const numt phi = Phi(generator);
-        return Vector3(cos(phi) * x_y, sin(phi) * x_y, z);
-    }
-    template<class RG = RANDOM>
-    static inline const Vector3 RandomIsotropicXYDirection(RG &generator)
-    {
-        static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
-        const numt phi = Phi(generator);
-        return Vector3(cos(phi), sin(phi), 0);
-    }
-    template<class RG = RANDOM>
-    static inline const Vector3 RandomIsotropicYZDirection(RG &generator)
-    {
-        static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
-        const numt phi = Phi(generator);
-        return Vector3(0, cos(phi), sin(phi));
-    }
-    template<class RG = RANDOM>
-    static inline const Vector3 RandomIsotropicXZDirection(RG &generator)
-    {
-        static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
-        const numt phi = Phi(generator);
-        return Vector3(cos(phi), 0, sin(phi));
-    }
-};
-template<class numt>
-inline const Vector3<numt> operator-(const Vector3<numt> &V)
-{
-    return V * numt(-1);
+        return DesCartes(dest[0], dest[1], dest[2]);
 }
-template<typename numt>
-std::ostream &operator<<(std::ostream &str, const Vector3<numt> &V)
+template<class numt=double,class RG = RANDOM>
+static const Vector<3,numt> RandomIsotropicDirection3(RG &generator)
 {
-    return str << V.x() << " " << V.y() << " " << V.z() << " ";
+    static RandomUniform<numt> Z(-1, 1);
+    static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
+    const numt z = Z(generator);
+    const numt x_y = sqrt(1.0 - pow(z, 2));
+    const numt phi = Phi(generator);
+    return DesCartes(cos(phi) * x_y, sin(phi) * x_y, z);
 }
-template<class Space = Vector3<double>, class numt = typename Space::NumberType>
+
+template<class numt=double>
+const numt operator^(const Vector<2,numt> &first,const Vector<2,numt> &second){
+    return (first.x()*second.y()) - (second.x()*first.y());
+}
+template<class numt=double>
+const Vector<2,numt> Rotate(const Vector<2,numt>&v,const numt &theta)
+{
+    const std::vector<numt> source = {v.x(), v.y()};
+    const numt cost = cos(theta), sint = sin(theta);
+    std::vector<std::vector<numt>> M = {
+	{cost, -sint},
+	{sint, cost}
+    };
+    std::vector<numt> dest;
+    for (size_t i = 0; i < 2; i++) {
+	numt v = 0;
+	for (size_t j = 0; j < 2; j++)v += M[i][j] * source[j];
+	dest.push_back(v);
+    }
+    return Vector<2,numt>(dest[0], dest[1]);
+}
+template<class numt=double,class RG = RANDOM>
+const Vector<2,numt> RandomIsotropicDirection2(RG &generator)
+{
+    static RandomUniform<numt> Phi(0, PI<numt>() * 2.0);
+    const numt phi = Phi(generator);
+    return Vector<2,numt>(cos(phi), sin(phi));
+}
+
+
+
+template<class numt = double,class Space = Vector<3,numt>>
 class LorentzVector
 {
 private:
@@ -407,13 +361,13 @@ public:
     {
         return m_space;
     }
-    const numt Sqr4()const
+    const numt length4_sqr()const
     {
         return (m_time * m_time) - m_space.mag_sqr();
     }
     const numt length4()const
     {
-        return sqrt(Sqr4());
+        return sqrt(length4_sqr());
     }
     const bool operator==(const LorentzVector &second)const
     {
@@ -447,31 +401,11 @@ public:
     {
         return LorentzVector(numt(0), Space::zero());
     }
-    static const LorentzVector byComponents(const numt &t, const numt &x, const numt &y, const numt &z)
-    {
-        return LorentzVector(t, Space::DesCartes(x, y, z));
-    }
-    static const LorentzVector byComponents(const numt &t, const Space &s)
-    {
-        return LorentzVector(t, s);
-    }
     LorentzVector(const numt &t): LorentzVector(t, Space::zero()) {}
-    static const LorentzVector byOnlyTimeC(const numt &t)
+    template<class...Args>
+    const LorentzVector Rotate(Args...args)const
     {
-        return LorentzVector(t);
-    }
-    static const LorentzVector bySpaceC_and_Length4(const Space &s, const numt &l4)
-    {
-        return LorentzVector(sqrt(s.mag_sqr() + l4 * l4), s);
-    }
-    static const LorentzVector byTime_Dir_and_Length4(const numt &t, const numt &theta, const numt &phi, const numt &l4)
-    {
-        numt Sp = sqrt(t * t - l4 * l4);
-        return LorentzVector(t, Space::Direction(theta, phi) * Sp);
-    }
-    const LorentzVector Rotate(const Space &axis, const numt &theta)const
-    {
-        return LorentzVector(time_component(), space_component().Rotate(axis, theta));
+        return LorentzVector(time_component(),MathTemplates::Rotate(space_component(),args...));
     }
     const LorentzVector Lorentz(const Space &Beta)const
     {
@@ -521,15 +455,29 @@ public:
         return space_component() / time_component();
     }
 };
-template<class numt = double>
-using Vector4 = LorentzVector<Vector3<numt>, numt>;
+template<class numt = double,class Space = Vector<3,numt>>
+const LorentzVector<numt,Space> lorentzVector(const numt &t, const Space &s)
+{
+    return LorentzVector<numt,Space>(t, s);
+}
+template<class numt = double,class Space = Vector<3,numt>>
+const LorentzVector<numt,Space> lorentz_byPM(const Space &s, const numt &l4)
+{
+    return LorentzVector<numt,Space>(sqrt(s.mag_sqr() + l4 * l4), s);
+}
+template<class numt = double,class Space = Vector<3,numt>,class...Args>
+const LorentzVector<numt,Space> lorentz_byEM(const numt &t, const numt &l4,Args...args)
+{
+    numt Sp = sqrt(t * t - l4 * l4);
+    return LorentzVector<numt,Space>(t, Direction(args...) * Sp);
+}
 
 template<class numt = double>
 class Plane3D
 {
 public:
-    typedef Vector3<numt> Space;
-    typedef Vector2<numt> Plane;
+    typedef Vector<3,numt> Space;
+    typedef Vector<2,numt> Plane;
 private:
     Space basis_x, basis_y;
 public:
@@ -537,49 +485,26 @@ public:
     {
         return basis_x * v.x() + basis_y * v.y();
     }
-    const LorentzVector<Space> operator()(const LorentzVector<Plane> &v)const
-    {
-        return LorentzVector<Space>(v.time_component(), basis_x * v.space_component().x() + basis_y * v.space_component().y());
-    }
     virtual ~Plane3D() {}
     Plane3D(const Space &x, const Space &y): basis_x(x), basis_y(y)
     {
-        if (x.VecP(y).mag_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
+        if ((x^y).mag_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
     }
-    static const Plane3D XY()
+    template<size_t i,size_t j>
+    static const Plane3D basis()
     {
-        return Plane3D(Space::basis_x(), Space::basis_y());
-    }
-    static const Plane3D YX()
-    {
-        return Plane3D(Space::basis_y(), Space::basis_x());
-    }
-    static const Plane3D XZ()
-    {
-        return Plane3D(Space::basis_x(), Space::basis_z());
-    }
-    static const Plane3D ZX()
-    {
-        return Plane3D(Space::basis_z(), Space::basis_x());
-    }
-    static const Plane3D YZ()
-    {
-        return Plane3D(Space::basis_y(), Space::basis_z());
-    }
-    static const Plane3D ZY()
-    {
-        return Plane3D(Space::basis_z(), Space::basis_y());
+        return Plane3D(Space::template basis_vector<i>(), Space::template basis_vector<j>());
     }
     static const Plane3D ByNormalVectorAndTheta(const Space &N, const numt &theta)
     {
         if (N.mag() == 0)throw Exception<Plane3D>("Invalid normale vector");
         const auto n = N / N.mag();
-        if (n.VecP(Space::basis_z()).mag_sqr() == 0) {
-            const auto X = Space::basis_x().Rotate(n, theta);
-            return Plane3D(X, n.VecP(X));
+        if ((n^Space::template basis_vector<3>()).mag_sqr() == 0) {
+            const auto X = Rotate(Space::template basis_vector<1>(),n, theta);
+            return Plane3D(X, n^X);
         } else {
-            const auto X = n.VecP(Space::basis_z());
-            return Plane3D(X / X.mag(), n.VecP(X / X.mag()));
+            const auto X = (n^Space::template basis_vector<3>());
+            return Plane3D(X / X.mag(), (n^(X / X.mag())));
         }
         throw Exception<Plane3D>("This line should not be reached");
     }
