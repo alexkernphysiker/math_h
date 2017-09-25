@@ -258,7 +258,7 @@ static const Vector<2,numt> Direction(const numt &phi)
 template<class numt=double>
 static const Vector<3,numt> Direction(const numt &theta,const numt &phi)
 {
-    return Vector3(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+    return Vector<3,numt>(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
 }
 template<class numt=double,class... Args>
 static inline const Vector<1+sizeof...(Args),numt> PolarCoordinates(const numt &x,Args... other)
