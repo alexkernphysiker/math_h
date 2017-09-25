@@ -146,6 +146,20 @@ TEST(LorentzVector, LorentzTransform)
         EXPECT_TRUE(pow(V00.space_component().z() - V0.space_component().z(), 2) < epsilon);
     }
 }
+TEST(LorentzVector, LorentzTransform2)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> M(0, 5),P(0, 5);
+    for (size_t i = 0; i < 10000; i++) {
+        const auto V0 = lorentz_byPM(RandomIsotropicDirection3<>(RG)*P(RG), M(RG));
+	const auto V1=V0.Lorentz(V0.Beta());
+        EXPECT_TRUE(pow(V1.space_component().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.space_component().y(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.space_component().z(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.length4()-V0.length4(), 2) < epsilon);
+    }
+}
 TEST(LorentzVector, LorentzTransform2d)
 {
     RANDOM RG;
