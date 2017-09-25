@@ -294,4 +294,23 @@ TEST(LorentzVector, decays)
 	EXPECT_TRUE((C3.first.space_component()+C3.second.space_component()).mag_sqr()<epsilon);
     }
 }
+TEST(LorentzVector, decays2)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> IM(2,3),M1(0,1),M2(0,1),THETA(0,PI()),PHI(0, 2.0 * PI());
+    for (size_t i = 0; i < 10000; i++) {
+	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
+	const auto C2=binaryDecay(im,m1,m2,RandomIsotropicDirection2<>(RG));
+	EXPECT_TRUE(pow((C2.first+C2.second).length4()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C2.first).length4()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C2.second).length4()-m2,2)<epsilon);
+	EXPECT_TRUE((C2.first.space_component()+C2.second.space_component()).mag_sqr()<epsilon);
+	const auto C3=binaryDecay(im,m1,m2,RandomIsotropicDirection3<>(RG));
+	EXPECT_TRUE(pow((C3.first+C3.second).length4()-im,2)<epsilon);
+	EXPECT_TRUE(pow(C3.first.length4()-m1,2)<epsilon);
+	EXPECT_TRUE(pow(C3.second.length4()-m2,2)<epsilon);
+	EXPECT_TRUE((C3.first.space_component()+C3.second.space_component()).mag_sqr()<epsilon);
+    }
+}
 

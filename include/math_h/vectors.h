@@ -288,6 +288,11 @@ std::ostream &operator<<(std::ostream &str, const Vector<1, numt> &V)
     return str << V.x() << " ";
 }
 
+template<size_t i,class numt = double>
+static const Vector<i,numt> Direction(const Vector<i,numt>&v)
+{
+    return v/v.mag();
+}
 template<class numt = double>
 static const Vector<1, numt> Direction()
 {
@@ -517,8 +522,7 @@ const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, Arg
     return LorentzVector<numt, Space>(t, Direction(args...) * Sp);
 }
 template<class numt = double, class...Args>
-const std::pair<LorentzVector<numt,Vector<sizeof...(Args)+1,numt>>,LorentzVector<numt,Vector<sizeof...(Args)+1,numt>>>
-binaryDecay(const numt &IM, const numt &m1, const numt &m2, Args...args)
+const auto binaryDecay(const numt &IM, const numt &m1, const numt &m2, Args...args)->decltype(std::make_pair(lorentz_byPM(Direction(args...),IM),lorentz_byPM(Direction(args...),IM)))
 {
     if (m1 < 0)throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Negative mass error");
     if (m2 < 0)throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Negative mass error");
