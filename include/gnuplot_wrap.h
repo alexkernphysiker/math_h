@@ -104,7 +104,7 @@ public:
 	std::ifstream str((outpath + "/" + GetFileName(name)).c_str());
         numtX x;numtY y;
         while (str >> x >> y) {
-            res.push_back(make_point(x, y));
+            res.push_back(MathTemplates::make_point(x, y));
         }
         return res;
     }
