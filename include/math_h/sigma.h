@@ -281,7 +281,10 @@ public:
     typedef typename Chain<numt>::const_iterator const_iterator;
     const_iterator begin()const{return m_list.begin();}
     const_iterator end() const{return m_list.end();}
-    const numt&operator[](const size_t index){return m_list[index];}
+    const numt&operator[](const size_t index){
+	if(index>=m_list.size())throw Exception<StandardDeviation>("range check error");
+	return m_list[index];
+    }
     const size_t size()const
     {
         return m_list.size();
