@@ -48,13 +48,13 @@ public:
     {
         return component<1>();
     }
-    const numt mag_sqr()const
+    const numt M_sqr()const
     {
         return (m_x * m_x);
     }
-    inline const numt mag()const
+    inline const numt M()const
     {
-        return sqrt(mag_sqr());
+        return sqrt(M_sqr());
     }
     Vector(const Vector &source): m_x(source.m_x) {}
     Vector &operator=(const Vector &source)
@@ -159,13 +159,13 @@ public:
     {
         return component<3>();
     }
-    const numt mag_sqr()const
+    const numt M_sqr()const
     {
-        return (m_x * m_x) + m_other.mag_sqr();
+        return (m_x * m_x) + m_other.M_sqr();
     }
-    inline const numt mag()const
+    inline const numt M()const
     {
-        return sqrt(mag_sqr());
+        return sqrt(M_sqr());
     }
     Vector(const Vector &source): m_x(source.m_x), m_other(source.m_other) {}
     Vector &operator=(const Vector &source)
@@ -291,7 +291,7 @@ std::ostream &operator<<(std::ostream &str, const Vector<1, numt> &V)
 template<size_t i,class numt = double>
 static const Vector<i,numt> Direction(const Vector<i,numt>&v)
 {
-    return v/v.mag();
+    return v/v.M();
 }
 template<class numt = double>
 static const Vector<1, numt> Direction()
@@ -331,7 +331,7 @@ const Vector<3, numt> operator^(const Vector<3, numt> &first, const Vector<3, nu
 template<class numt = double>
 const Vector<3, numt> Rotate(const Vector<3, numt> &src, const Vector<3, numt> &axis, const numt &theta)
 {
-    const auto n = axis / axis.mag();
+    const auto n = axis / axis.M();
     const Chain<numt> source = {src.x(), src.y(), src.z()};
     const numt cost = cos(theta), sint = sin(theta), one = 1;
     Chain<Chain<numt>> M = {
@@ -393,7 +393,7 @@ const double Angle(const Vector<2,numt>&V){
 }
 template<class numt=double>
 const std::pair<double,double> Angles(const Vector<3,numt>&V){
-    return std::make_pair(acos(V.z()/V.mag()),atan2(V.y(),V.x()));
+    return std::make_pair(acos(V.z()/V.M()),atan2(V.y(),V.x()));
 }
 
 
@@ -415,21 +415,21 @@ public:
         m_time = source.m_time;
         return *this;
     }
-    const numt &time_component()const
+    const numt &T()const
     {
         return m_time;
     }
-    const Space &space_component()const
+    const Space &S()const
     {
         return m_space;
     }
-    const numt length4_sqr()const
+    const numt M_sqr()const
     {
-        return (m_time * m_time) - m_space.mag_sqr();
+        return (m_time * m_time) - m_space.M_sqr();
     }
-    const numt length4()const
+    const numt M()const
     {
-        return sqrt(length4_sqr());
+        return sqrt(M_sqr());
     }
     const bool operator==(const LorentzVector &second)const
     {
@@ -467,17 +467,17 @@ public:
     template<class...Args>
     const LorentzVector Rotate(Args...args)const
     {
-        return LorentzVector(time_component(), MathTemplates::Rotate(space_component(), args...));
+        return LorentzVector(T(), MathTemplates::Rotate(S(), args...));
     }
-    const LorentzVector Lorentz(const Space &Beta)const
+    const LorentzVector Transform(const Space &Beta)const
     {
-        const numt beta = Beta.mag();
+        const numt beta = Beta.M();
         if (beta == 0.0)return *this;
         if (beta >= numt(1))throw Exception<LorentzVector>("Bad Lorentz transformation");
         const auto n = (Beta / beta).to_vector();
         const numt gamma = numt(1) / sqrt(numt(1) - beta * beta);
-        auto source = space_component().to_vector();
-        source.insert(source.begin(), time_component());
+        auto source = S().to_vector();
+        source.insert(source.begin(),T());
         Chain<Chain<numt>> M;
         for (size_t i = 0; i < source.size(); i++) {
             Chain<numt> V;
@@ -514,7 +514,7 @@ public:
     }
     const Space Beta()const //Makes physical sense only if it's a lorentz-momentum
     {
-        return space_component() / time_component();
+        return S()/T();
     }
 };
 template<class numt = double, class Space = Vector<3, numt>>
@@ -525,7 +525,7 @@ const LorentzVector<numt, Space> lorentzVector(const numt &t, const Space &s)
 template<class numt = double, class Space = Vector<3, numt>>
 const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {
-    return LorentzVector<numt, Space>(sqrt(s.mag_sqr() + l4 * l4), s);
+    return LorentzVector<numt, Space>(sqrt(s.M_sqr() + l4 * l4), s);
 }
 template<class numt = double, class Space = Vector<3, numt>, class...Args>
 const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, Args...args)
@@ -561,7 +561,7 @@ public:
     virtual ~Plane3D() {}
     Plane3D(const Space &x, const Space &y): basis_x(x), basis_y(y)
     {
-        if ((x ^ y).mag_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
+        if ((x ^ y).M_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
     }
     template<size_t i, size_t j>
     static const Plane3D basis()
@@ -570,14 +570,14 @@ public:
     }
     static const Plane3D ByNormalVectorAndTheta(const Space &N, const numt &theta)
     {
-        if (N.mag() == 0)throw Exception<Plane3D>("Invalid normale vector");
-        const auto n = N / N.mag();
-        if ((n ^ Space::template basis_vector<3>()).mag_sqr() == 0) {
+        if (N.M() == 0)throw Exception<Plane3D>("Invalid normale vector");
+        const auto n = N / N.M();
+        if ((n ^ Space::template basis_vector<3>()).M_sqr() == 0) {
             const auto X = Rotate(Space::template basis_vector<1>(), n, theta);
             return Plane3D(X, n ^ X);
         } else {
             const auto X = (n ^ Space::template basis_vector<3>());
-            return Plane3D(X / X.mag(), (n ^ (X / X.mag())));
+            return Plane3D(X / X.M(), (n ^ (X / X.M())));
         }
         throw Exception<Plane3D>("This line should not be reached");
     }

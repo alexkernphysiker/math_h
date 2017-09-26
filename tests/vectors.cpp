@@ -122,28 +122,25 @@ TEST(LorentzVector, LorentzTransform)
     RandomUniform<> mr(0, 1.0 - epsilon), metrr(-5, 5);
     for (size_t i = 0; i < 10000; i++) {
         const auto V0 = lorentz_byPM(RandomIsotropicDirection3<>(RG), metrr(RG));
-        const auto V1 = V0.Lorentz(Zero<>());
+        const auto V1 = V0.Transform(Zero<>());
         EXPECT_TRUE(V1 == V0);
         const auto beta = RandomIsotropicDirection3<>(RG) * mr(RG);
-        const auto V2 = V0.Lorentz(beta).Lorentz(-beta);
-        EXPECT_TRUE(pow(V2.time_component() - V0.time_component(), 2) < epsilon);
-        EXPECT_TRUE(pow(V2.space_component().x() - V0.space_component().x(), 2) < epsilon);
-        EXPECT_TRUE(pow(V2.space_component().y() - V0.space_component().y(), 2) < epsilon);
-        EXPECT_TRUE(pow(V2.space_component().z() - V0.space_component().z(), 2) < epsilon);
-        EXPECT_THROW(V0.Lorentz(
-                         RandomIsotropicDirection3<>(RG) * (1.0 + mr(RG))),
-                     Exception<LorentzVector<>>
-                    );
-        const auto L0 = V0.length4(), L1 = V0.Lorentz(beta).length4(),
-                   L2 = V0.Lorentz(beta).Lorentz(RandomIsotropicDirection3<>(RG) * 0.2).length4();
+        const auto V2 = V0.Transform(beta).Transform(-beta);
+        EXPECT_TRUE(pow(V2.T() - V0.T(), 2) < epsilon);
+        EXPECT_TRUE(pow(V2.S().x() - V0.S().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V2.S().y() - V0.S().y(), 2) < epsilon);
+        EXPECT_TRUE(pow(V2.S().z() - V0.S().z(), 2) < epsilon);
+        EXPECT_THROW(V0.Transform(RandomIsotropicDirection3<>(RG) * (1.0 + mr(RG))),Exception<LorentzVector<>>);
+        const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
+                   L2 = V0.Transform(beta).Transform(RandomIsotropicDirection3<>(RG) * 0.2).M();
         EXPECT_TRUE(pow(L0 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L2 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L0 - L2, 2) < epsilon);
-        const auto V00 = LorentzVector<>(V0.length4()).Lorentz(-V0.Beta());
-        EXPECT_TRUE(pow(V00.time_component() - V0.time_component(), 2) < epsilon);
-        EXPECT_TRUE(pow(V00.space_component().x() - V0.space_component().x(), 2) < epsilon);
-        EXPECT_TRUE(pow(V00.space_component().y() - V0.space_component().y(), 2) < epsilon);
-        EXPECT_TRUE(pow(V00.space_component().z() - V0.space_component().z(), 2) < epsilon);
+        const auto V00 = LorentzVector<>(V0.M()).Transform(-V0.Beta());
+        EXPECT_TRUE(pow(V00.T() - V0.T(), 2) < epsilon);
+        EXPECT_TRUE(pow(V00.S().x() - V0.S().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V00.S().y() - V0.S().y(), 2) < epsilon);
+        EXPECT_TRUE(pow(V00.S().z() - V0.S().z(), 2) < epsilon);
     }
 }
 TEST(LorentzVector, LorentzTransform2)
@@ -153,11 +150,11 @@ TEST(LorentzVector, LorentzTransform2)
     RandomUniform<> M(0, 5),P(0, 5);
     for (size_t i = 0; i < 10000; i++) {
         const auto V0 = lorentz_byPM(RandomIsotropicDirection3<>(RG)*P(RG), M(RG));
-	const auto V1=V0.Lorentz(V0.Beta());
-        EXPECT_TRUE(pow(V1.space_component().x(), 2) < epsilon);
-        EXPECT_TRUE(pow(V1.space_component().y(), 2) < epsilon);
-        EXPECT_TRUE(pow(V1.space_component().z(), 2) < epsilon);
-        EXPECT_TRUE(pow(V1.length4()-V0.length4(), 2) < epsilon);
+	const auto V1=V0.Transform(V0.Beta());
+        EXPECT_TRUE(pow(V1.S().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.S().y(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.S().z(), 2) < epsilon);
+        EXPECT_TRUE(pow(V1.M()-V0.M(), 2) < epsilon);
     }
 }
 TEST(LorentzVector, LorentzTransform2d)
@@ -167,25 +164,24 @@ TEST(LorentzVector, LorentzTransform2d)
     RandomUniform<> mr(0, 1.0 - epsilon), metrr(-5, 5);
     for (size_t i = 0; i < 10000; i++) {
         const auto V0 = lorentz_byPM(RandomIsotropicDirection2<>(RG), metrr(RG));
-        const auto V1 = V0.Lorentz(zero<>());
+        const auto V1 = V0.Transform(zero<>());
         EXPECT_TRUE(V1 == V0);
         const auto beta = RandomIsotropicDirection2<>(RG) * mr(RG);
-        const auto V2 = V0.Lorentz(beta).Lorentz(-beta);
-        EXPECT_TRUE(pow(V2.time_component() - V0.time_component(), 2) < epsilon);
-        EXPECT_TRUE(pow(V2.space_component().x() - V0.space_component().x(), 2) < epsilon);
-        EXPECT_TRUE(pow(V2.space_component().y() - V0.space_component().y(), 2) < epsilon);
+        const auto V2 = V0.Transform(beta).Transform(-beta);
+        EXPECT_TRUE(pow(V2.T() - V0.T(), 2) < epsilon);
+        EXPECT_TRUE(pow(V2.S().x() - V0.S().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V2.S().y() - V0.S().y(), 2) < epsilon);
         typedef LorentzVector<double, Vector<2>> LVtype;
-        EXPECT_THROW(V0.Lorentz(RandomIsotropicDirection2<>(RG) * (1.0 + mr(RG))),
-                     Exception<LVtype>);
-        const auto L0 = V0.length4(), L1 = V0.Lorentz(beta).length4(),
-                   L2 = V0.Lorentz(beta).Lorentz(RandomIsotropicDirection2<>(RG) * 0.2).length4();
+        EXPECT_THROW(V0.Transform(RandomIsotropicDirection2<>(RG) * (1.0 + mr(RG))),Exception<LVtype>);
+        const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
+                   L2 = V0.Transform(beta).Transform(RandomIsotropicDirection2<>(RG) * 0.2).M();
         EXPECT_TRUE(pow(L0 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L2 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L0 - L2, 2) < epsilon);
-        const auto V00 = LorentzVector<double, Vector<2>>(V0.length4()).Lorentz(-V0.Beta());
-        EXPECT_TRUE(pow(V00.time_component() - V0.time_component(), 2) < epsilon);
-        EXPECT_TRUE(pow(V00.space_component().x() - V0.space_component().x(), 2) < epsilon);
-        EXPECT_TRUE(pow(V00.space_component().y() - V0.space_component().y(), 2) < epsilon);
+        const auto V00 = LorentzVector<double, Vector<2>>(V0.M()).Transform(-V0.Beta());
+        EXPECT_TRUE(pow(V00.T() - V0.T(), 2) < epsilon);
+        EXPECT_TRUE(pow(V00.S().x() - V0.S().x(), 2) < epsilon);
+        EXPECT_TRUE(pow(V00.S().y() - V0.S().y(), 2) < epsilon);
     }
 }
 TEST(Plane3D, SimplePlanes)
@@ -268,7 +264,7 @@ TEST(Plane3D, vectorProductInvariance)
         const auto v1 = RandomIsotropicDirection2<>(RG) * mr(RG), v2 = RandomIsotropicDirection2<>(RG) * mr(RG);
         const auto p1 = pow(v1 ^ v2, 2);
         const auto plane = Plane3D<>::ByNormalVectorAndTheta(RandomIsotropicDirection3<>(RG), th(RG));
-        const auto p2 = (plane(v1)^plane(v2)).mag_sqr();
+        const auto p2 = (plane(v1)^plane(v2)).M_sqr();
         EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
     }
 }
@@ -280,8 +276,8 @@ TEST(Plane3D, LorentzInvariance)
     for (size_t i = 0; i < 10000; i++) {
         const auto v = lorentz_byPM(RandomIsotropicDirection2<>(RG) * mr(RG), mr(RG));
         const auto plane = Plane3D<>::ByNormalVectorAndTheta(RandomIsotropicDirection3<>(RG), th(RG));
-        const auto v2 = lorentzVector(v.time_component(), plane(v.space_component()));
-        EXPECT_TRUE(pow(v.length4() - v2.length4(), 2) < epsilon);
+        const auto v2 = lorentzVector(v.T(), plane(v.S()));
+        EXPECT_TRUE(pow(v.M() - v2.M(), 2) < epsilon);
     }
 }
 TEST(LorentzVector, decays)
@@ -292,20 +288,20 @@ TEST(LorentzVector, decays)
     for (size_t i = 0; i < 10000; i++) {
 	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
 	const auto C1=binaryDecay(im,m1,m2);
-	EXPECT_TRUE(pow((C1.first+C1.second).length4()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C1.first).length4()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C1.second).length4()-m2,2)<epsilon);
-	EXPECT_TRUE((C1.first.space_component()+C1.second.space_component()).mag_sqr()<epsilon);
+	EXPECT_TRUE(pow((C1.first+C1.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C1.first).M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C1.second).M()-m2,2)<epsilon);
+	EXPECT_TRUE((C1.first.S()+C1.second.S()).M_sqr()<epsilon);
 	const auto C2=binaryDecay(im,m1,m2,PHI(RG));
-	EXPECT_TRUE(pow((C2.first+C2.second).length4()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C2.first).length4()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C2.second).length4()-m2,2)<epsilon);
-	EXPECT_TRUE((C2.first.space_component()+C2.second.space_component()).mag_sqr()<epsilon);
+	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
+	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
 	const auto C3=binaryDecay(im,m1,m2,THETA(RG),PHI(RG));
-	EXPECT_TRUE(pow((C3.first+C3.second).length4()-im,2)<epsilon);
-	EXPECT_TRUE(pow(C3.first.length4()-m1,2)<epsilon);
-	EXPECT_TRUE(pow(C3.second.length4()-m2,2)<epsilon);
-	EXPECT_TRUE((C3.first.space_component()+C3.second.space_component()).mag_sqr()<epsilon);
+	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
+	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
     }
 }
 TEST(LorentzVector, decays2)
@@ -316,15 +312,15 @@ TEST(LorentzVector, decays2)
     for (size_t i = 0; i < 10000; i++) {
 	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
 	const auto C2=binaryDecay(im,m1,m2,RandomIsotropicDirection2<>(RG));
-	EXPECT_TRUE(pow((C2.first+C2.second).length4()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C2.first).length4()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C2.second).length4()-m2,2)<epsilon);
-	EXPECT_TRUE((C2.first.space_component()+C2.second.space_component()).mag_sqr()<epsilon);
+	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
+	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
 	const auto C3=binaryDecay(im,m1,m2,RandomIsotropicDirection3<>(RG));
-	EXPECT_TRUE(pow((C3.first+C3.second).length4()-im,2)<epsilon);
-	EXPECT_TRUE(pow(C3.first.length4()-m1,2)<epsilon);
-	EXPECT_TRUE(pow(C3.second.length4()-m2,2)<epsilon);
-	EXPECT_TRUE((C3.first.space_component()+C3.second.space_component()).mag_sqr()<epsilon);
+	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
+	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
     }
 }
 TEST(Vector,angle2d)
