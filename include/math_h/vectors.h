@@ -3,8 +3,8 @@
 #ifndef ___________VECTORS_H_____
 #	define ___________VECTORS_H_____
 #include <math.h>
-#include <vector>
 #include "error.h"
+#include "chains.h"
 #include "functions.h"
 #include "randomfunc.h"
 namespace MathTemplates
@@ -28,8 +28,8 @@ private:
 public:
     virtual ~Vector() {}
     Vector(const numt &x): m_x(x) {}
-    Vector(const std::vector<numt> &v, const size_t i): m_x(v[i]) {}
-    Vector(const std::vector<numt> &v): Vector(v,0) {}
+    Vector(const Chain<numt> &v, const size_t i): m_x(v[i]) {}
+    Vector(const Chain<numt> &v): Vector(v,0) {}
     static inline const Vector zero()
     {
         return Vector(numt(0));
@@ -107,7 +107,7 @@ public:
     {
         return (m_x == second.m_x);
     }
-    const std::vector<numt> to_vector()const
+    const Chain<numt> to_vector()const
     {
         return {m_x};
     }
@@ -131,8 +131,8 @@ public:
     virtual ~Vector() {}
     template<class... Args>
     Vector(const numt &x, Args... other): m_x(x), m_other(other...) {}
-    Vector(const std::vector<numt> &v, const size_t i): m_x(v[i]), m_other(v, i + 1) {}
-    Vector(const std::vector<numt> &v): Vector(v,0) {}
+    Vector(const Chain<numt> &v, const size_t i): m_x(v[i]), m_other(v, i + 1) {}
+    Vector(const Chain<numt> &v): Vector(v,0) {}
     static inline const Vector zero()
     {
         return Vector(numt(0), Vector < size - 1 >::zero());
@@ -223,9 +223,9 @@ public:
     {
         return (m_x == second.m_x) && (m_other == second.m_other);
     }
-    const std::vector<numt> to_vector()const
+    const Chain<numt> to_vector()const
     {
-        std::vector<numt> res = m_other.to_vector();
+        Chain<numt> res = m_other.to_vector();
         res.insert(res.begin(), m_x);
         return res;
     }
@@ -327,14 +327,14 @@ template<class numt = double>
 const Vector<3, numt> Rotate(const Vector<3, numt> &src, const Vector<3, numt> &axis, const numt &theta)
 {
     const auto n = axis / axis.mag();
-    const std::vector<numt> source = {src.x(), src.y(), src.z()};
+    const Chain<numt> source = {src.x(), src.y(), src.z()};
     const numt cost = cos(theta), sint = sin(theta), one = 1;
-    std::vector<std::vector<numt>> M = {
+    Chain<Chain<numt>> M = {
         {    cost + (one - cost) *n.x() *n.x(),	(one - cost) *n.x() *n.y() - sint * n.z(),	(one - cost) *n.x() *n.z() + sint * n.y()},
         {(one - cost) *n.y() *n.x() + sint * n.z(),	    cost + (one - cost) *n.y() *n.y(),	(one - cost) *n.y() *n.z() - sint * n.x()},
         {(one - cost) *n.z() *n.x() - sint * n.y(),	(one - cost) *n.z() *n.y() + sint * n.x(),	    cost + (one - cost) *n.z() *n.z()}
     };
-    std::vector<numt> dest;
+    Chain<numt> dest;
     for (size_t i = 0; i < 3; i++) {
         numt v = 0;
         for (size_t j = 0; j < 3; j++)v += M[i][j] * source[j];
@@ -361,13 +361,13 @@ const numt operator^(const Vector<2, numt> &first, const Vector<2, numt> &second
 template<class numt = double>
 const Vector<2, numt> Rotate(const Vector<2, numt> &v, const numt &theta)
 {
-    const std::vector<numt> source = {v.x(), v.y()};
+    const Chain<numt> source = {v.x(), v.y()};
     const numt cost = cos(theta), sint = sin(theta);
-    std::vector<std::vector<numt>> M = {
+    Chain<Chain<numt>> M = {
         {cost, -sint},
         {sint, cost}
     };
-    std::vector<numt> dest;
+    Chain<numt> dest;
     for (size_t i = 0; i < 2; i++) {
         numt v = 0;
         for (size_t j = 0; j < 2; j++)v += M[i][j] * source[j];
@@ -466,9 +466,9 @@ public:
         const numt gamma = numt(1) / sqrt(numt(1) - beta * beta);
         auto source = space_component().to_vector();
         source.insert(source.begin(), time_component());
-        std::vector<std::vector<numt>> M;
+        Chain<Chain<numt>> M;
         for (size_t i = 0; i < source.size(); i++) {
-            std::vector<numt> V;
+            Chain<numt> V;
             for (size_t j = 0; j < source.size(); j++) {
                 if ((0 == i) && (0 == j)) {
                     V.push_back(gamma);
@@ -490,7 +490,7 @@ public:
             }
             M.push_back(V);
         }
-        std::vector<numt> dest;
+        Chain<numt> dest;
         for (size_t i = 0; i < source.size(); i++) {
             numt v = 0;
             for (size_t j = 0; j < source.size(); j++)v += M[i][j] * source[j];

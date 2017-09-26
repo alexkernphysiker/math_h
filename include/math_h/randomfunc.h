@@ -4,7 +4,6 @@
 #define XRYPRAVJWTJCYPQI
 #include <random>
 #include <memory>
-#include <math.h>
 #include "functions.h"
 #include "interpolate.h"
 #include "integrate.h"
@@ -31,7 +30,7 @@ public:
         ) {}
     RandomValueTableDistr(const LinearInterpolation<numt> &source):
         RandomValueTableDistr(ReverseIntegratedLinearInterpolation<numt>(source)) {}
-    RandomValueTableDistr(const std::initializer_list<point<numt>> &source):
+    RandomValueTableDistr(const Points<numt>&source):
         RandomValueTableDistr(LinearInterpolation<numt>(source)) {}
     RandomValueTableDistr(const std::function<numt(numt)> distribution_density, const SortedChain<numt> &chain):
         RandomValueTableDistr(LinearInterpolation<numt>(distribution_density, chain)) {}

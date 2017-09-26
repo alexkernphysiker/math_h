@@ -1,7 +1,6 @@
 // this file is distributed under
 // MIT license
 #include <gtest/gtest.h>
-#include <vector>
 #include <math.h>
 #include <random>
 #include <math_h/hists.h>
@@ -64,7 +63,7 @@ TEST(hist2d, cut)
 }
 TEST(Distribution1D, basetest)
 {
-    Distribution1D<> D({value<>(-1.0, 0.5), value<>(-0.0, 0.5), value<>(1.0, 0.5)});
+    Distribution1D<> D=Chain<value<>>{{-1.0, 0.5},{-0.0, 0.5},{1.0, 0.5}};
     ASSERT_EQ(3, D.size());
     ASSERT_EQ(-1, D[0].X().val());
     ASSERT_EQ(0, D[1].X().val());
@@ -109,7 +108,7 @@ TEST(Distribution1D, basetest)
 }
 TEST(Distribution2D, BaseTest)
 {
-    Distribution2D<double> D(
+    Distribution2D<> D(
     {value<double>(-1.0, 0.5), value<double>(-0.0, 0.5), value<double>(1.0, 0.5)},
     {value<double>(-0.0, 0.5), value<double>(1.0, 0.5)}
     );
@@ -132,7 +131,7 @@ TEST(Distribution2D, BaseTest)
     EXPECT_EQ(0, D[1][1].val());
     EXPECT_EQ(1, D[2][0].val());
     EXPECT_EQ(2, D[2][1].val());
-    vector<point3d<value<double>>> dbg;
+    Chain<point3d<value<double>>> dbg;
     D.FullCycle([&dbg](const point3d<value<double>> &p) {
         dbg.push_back(p);
     });

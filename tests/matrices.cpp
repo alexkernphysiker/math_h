@@ -1,13 +1,12 @@
 // this file is distributed under
 // MIT license
 #include <gtest/gtest.h>
-#include <vector>
 #include <math.h>
 #include <math_h/matrices.h>
 using namespace std;
 using namespace MathTemplates;
-typedef Exception<vector<vector<double>>, 0> invalid_matr;
-typedef Exception<vector<vector<double>>, 1> size_mismatch;
+typedef Exception<Chain<Chain<>>, 0> invalid_matr;
+typedef Exception<Chain<Chain<>>, 1> size_mismatch;
 TEST(Matrix, SimpleObjects)
 {
     auto A = Unitary<double>(3);

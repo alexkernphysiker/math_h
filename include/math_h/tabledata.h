@@ -9,13 +9,18 @@
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>
-using Points=std::vector<point<numX, numY>>;
+using Points=Chain<point<numX, numY>>;
 template<class numX = double, class numY = numX>
 class SortedPoints: public SortedChain<point<numX, numY>>
 {
 public:
     typedef std::function<numY(const numX &)> Func;
     SortedPoints() {}
+    SortedPoints(const Points<numX, numY> &chain)
+    {
+        for (const auto &x : chain)
+            SortedChain<point<numX, numY>>::operator<<(x);
+    }
     SortedPoints(const SortedChain<point<numX, numY>> &chain)
     {
         for (const auto &x : chain)
@@ -37,9 +42,9 @@ protected:
         return SortedChain<point<numX, numY>>::accessBin(i);
     }
 public:
-    const  std::vector<point<numY, numX>> Transponate()const
+    const  Points<numY, numX> Transponate()const
     {
-        std::vector<point<numY, numX>> res;
+        Points<numY, numX> res;
         for (const auto &p : *this)
             res.push_back(point<numX, numY>(p.Y(), p.X()));
         return res;
@@ -233,12 +238,12 @@ class BiSortedPoints
 private:
     SortedChain<numtX> m_x_axis;
     SortedChain<numtY> m_y_axis;
-    std::vector<std::vector<numtZ>> m_data;
+    Chain<Chain<numtZ>> m_data;
     void init()
     {
         m_data.clear();
         for (size_t i = 0, I = m_x_axis.size(); i < I; i++) {
-            m_data.push_back(std::vector<numtZ>());
+            m_data.push_back(Chain<numtZ>());
             for (size_t j = 0, J = m_y_axis.size(); j < J; j++)
                 m_data[m_data.size() - 1].push_back(numtZ(0));
         }
@@ -252,7 +257,7 @@ public:
     {
         return m_y_axis;
     }
-    BiSortedPoints(const std::initializer_list<numtX> &X, const std::initializer_list<numtY> &Y)
+    BiSortedPoints(const Chain<numtX> &X, const Chain<numtY> &Y)
         : m_x_axis(X), m_y_axis(Y)
     {
         init();
@@ -266,7 +271,7 @@ public:
     BiSortedPoints(const BiSortedPoints &source): m_x_axis(source.X()), m_y_axis(source.Y())
     {
         for (size_t i = 0, I = source.m_data.size(); i < I; i++) {
-            m_data.push_back(std::vector<numtZ>());
+            m_data.push_back(Chain<numtZ>());
             for (const auto &item : source.m_data[i])
                 m_data[i].push_back(item);
         }
@@ -276,7 +281,7 @@ public:
         return BiSortedPoints(*this);
     }
     virtual ~BiSortedPoints() {}
-    typedef typename std::vector<std::vector<numtZ>>::const_iterator const_iterator;
+    typedef typename Chain<Chain<numtZ>>::const_iterator const_iterator;
     const_iterator begin()const
     {
         return m_data.cbegin();
@@ -297,7 +302,7 @@ public:
     {
         return m_data.size();
     }
-    const std::vector<numtZ> &operator[](const size_t i)const
+    const Chain<numtZ> &operator[](const size_t i)const
     {
         if (size() <= i)throw Exception<BiSortedPoints>("X-range check error");
         return m_data[i];

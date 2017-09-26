@@ -3,10 +3,8 @@
 #ifndef ______MATRICES_H_______
 #	define ______MATRICES_H_______
 #include <iostream>
-#include <list>
-#include <vector>
-#include <functional>
-#include <random>
+#include <math.h>
+#include "chains.h"
 #include "error.h"
 namespace MathTemplates
 {
@@ -69,7 +67,7 @@ template<class numt = double>
 class MatrixData: public Matrix<numt>
 {
 public:
-    typedef std::vector<std::vector<numt>> container;
+    typedef Chain<Chain<numt>> container;
     typedef std::function<const numt(const size_t, const size_t, const numt &)> transform_function;
     typedef std::function<const numt(const numt &)> transform_func;
 private:
@@ -109,7 +107,7 @@ public:
         for (const auto &row : A) {
             if (row.size() != first_row_size)
                 throw Exception<MatrixData, 0>("invalid matrix size");
-            f_data.push_back(std::vector<numt>());
+            f_data.push_back(Chain<numt>());
             const auto row_index = f_data.size() - 1;
             for (const auto &item : row)
                 f_data[row_index].push_back(item);
@@ -118,7 +116,7 @@ public:
     MatrixData(const Matrix<numt> &source)
     {
         for (size_t i = 0; i < source.height(); i++) {
-            f_data.push_back(std::vector<numt>());
+            f_data.push_back(Chain<numt>());
             for (size_t j = 0; j < source.width(); j++)
                 f_data[i].push_back(source(i, j));
         }
@@ -181,12 +179,12 @@ const MatrixByFormula<numt> RVec(const size_t N, const size_t i)
     return MatrixByFormula<numt>(N, 1, [i](size_t ii, size_t)->numt {return (ii == i) ? 1 : 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> Diagonal(const std::vector<numt> &V)
+const MatrixByFormula<numt> Diagonal(const Chain<numt> &V)
 {
     return MatrixByFormula<numt>(V.size(), V.size(), [V](size_t i, size_t j)->numt {return (i == j) ? V[i] : 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> Permutation(const std::vector<size_t> &V)
+const MatrixByFormula<numt> Permutation(const Chain<size_t> &V)
 {
     for (const size_t i : V)if (i >= V.size())
             throw Exception<MatrixByFormula<numt>>("invalid permutation matrix");
@@ -298,7 +296,7 @@ const lup<numt> LUP(const Matrix<numt> &A_)
         throw Exception<Matrix<numt>>("LUP decomposition is possible only for squared matrix");
     MatrixData<numt> A = A_;
     const size_t n = A.width();
-    std::vector<size_t>pi;
+    Chain<size_t>pi;
     for (size_t i = 0; i < n; i++)pi.push_back(i);
     for (size_t k = 0; k < n; k++) {
         size_t new_k = k;
@@ -352,7 +350,7 @@ const MatrixData<numt> Solve(const Matrix<numt> &A, const Matrix<numt> &B)
     const MatrixData<numt> b = Multiply(D.P, B);
     if (b.width() > 1)
         throw Exception<Matrix<numt>>("Pizdariki");
-    std::vector<numt> y;
+    Chain<numt> y;
     for (size_t i = 0; i < n; i++) {
         numt v = b(i, 0);
         for (size_t j = 0; j < i; j++)

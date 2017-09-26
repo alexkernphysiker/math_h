@@ -7,9 +7,11 @@
 #include "error.h"
 namespace MathTemplates
 {
+template<class comparable = double>
+using Chain=std::vector<comparable>;
 namespace details
 {
-template<class comparable, class indexer = std::vector<comparable>>
+template<class comparable, class indexer = Chain<comparable>>
 size_t  WhereToInsert(const size_t from, const size_t to, const indexer &X, const comparable &x)
 {
     if (from > to) return from;
@@ -40,14 +42,13 @@ void InsertSorted(const comparable &&x, indexer &X, const Size size, const Inser
 #define std_insert(vector,type) [&vector](int pos,type x){(vector).insert((vector).begin()+pos,x);}
 #define field_size(vector)  [this](){return (vector).size();}
 #define field_insert(vector,type)  [this](int pos,type x){(vector).insert((vector).begin()+pos,x);}
-
 template<class comparable = double>
 class SortedChain
 {
 private:
-    std::vector<comparable> data;
+    Chain<comparable> data;
 public:
-    const std::vector<comparable>&operator()()const{return data;}
+    const Chain<comparable>&operator()()const{return data;}
     SortedChain() {}
     SortedChain(const SortedChain &points)
     {
@@ -75,12 +76,7 @@ public:
         details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
         return *this;
     }
-//    SortedChain(const std::vector<comparable> &points)
-//    {
-//        for (const auto &p : points)
-//            operator<<(p);
-//    }
-    SortedChain(const std::initializer_list<comparable> &points)
+    SortedChain(const std::vector<comparable> &points)
     {
         for (const auto &p : points)
             operator<<(p);
@@ -150,22 +146,22 @@ protected:
     }
 };
 template<class numX>
-const SortedChain<numX> ChainWithStep(const numX &from, const numX &step, const numX &to)
+const Chain<numX> ChainWithStep(const numX &from, const numX &step, const numX &to)
 {
-    if (from >= to)throw Exception<SortedChain<numX>>("wrong binning ranges");
-    if (step <= 0)throw Exception<SortedChain<numX>>("wrong binning step");
-    SortedChain<numX> res;
-    for (numX x = from; x <= to; x += step)res << x;
+    if (from >= to)throw Exception<Chain<numX>>("wrong binning ranges");
+    if (step <= 0)throw Exception<Chain<numX>>("wrong binning step");
+    Chain<numX> res;
+    for (numX x = from; x <= to; x += step)res.push_back(x);
     return res;
 }
 template<class numX>
-const SortedChain<numX> ChainWithCount(const size_t cont, const numX &from, const numX &to)
+const Chain<numX> ChainWithCount(const size_t cont, const numX &from, const numX &to)
 {
-    if (from >= to)throw Exception<SortedChain<numX>>("wrong binning ranges");
-    if (0 == cont)throw Exception<SortedChain<numX>>("wrong bins count");
+    if (from >= to)throw Exception<Chain<numX>>("wrong binning ranges");
+    if (0 == cont)throw Exception<Chain<numX>>("wrong bins count");
     numX step = (to - from) / numX(cont);
-    SortedChain<numX> res;
-    for (numX x = from; x <= to; x += step)res << x;
+    Chain<numX> res;
+    for (numX x = from; x <= to; x += step)res.push_back(x);
     return res;
 }
 };

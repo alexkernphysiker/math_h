@@ -2,9 +2,6 @@
 // MIT license
 #ifndef PPRNSANGJGXVGERD
 #define PPRNSANGJGXVGERD
-#include <vector>
-#include <utility>
-#include <functional>
 #include "functions.h"
 #include "integrate.h"
 #include "tabledata.h"
@@ -19,13 +16,13 @@ public:
 
 public:
     LinearInterpolation() {}
-    LinearInterpolation(const std::initializer_list<point<numX, numY>> &points)
+    LinearInterpolation(const Points<numX, numY> &points)
         : SortedPoints<numX, numY>(points) {}
     LinearInterpolation(const SortedChain<point<numX, numY>> &points)
         : SortedPoints<numX, numY>(points) {}
     LinearInterpolation(const Func f, const SortedChain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
-    LinearInterpolation(const Func f, const std::initializer_list<numX> &chain)
+    LinearInterpolation(const Func f, const Chain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
     LinearInterpolation(const SortedPoints<numX, numY> &source)
         : SortedPoints<numX, numY>(source) {}
@@ -123,7 +120,7 @@ template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class BiLinearInterpolation: public BiSortedPoints<numtX, numtY, numtZ>, public IFunction<numtZ, const numtX &, const numtY &>
 {
 public:
-    BiLinearInterpolation(const std::initializer_list<numtX> &X, const std::initializer_list<numtY> &Y)
+    BiLinearInterpolation(const Chain<numtX> &X, const Chain<numtY> &Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
     BiLinearInterpolation(const SortedChain<numtX> &X, const SortedChain<numtY> &Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}

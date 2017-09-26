@@ -9,7 +9,7 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main()
 {
-    const LinearInterpolation<> P = {
+    const LinearInterpolation<> P = Points<>{
         {0.7, 0.4}, {1.0, 0.0}, {1.8, 1.0}, {2.2, 1.0},
         {3.0, 0.5}, {3.5, 0.3}, {4.0, 0.3}
     };

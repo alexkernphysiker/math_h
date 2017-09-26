@@ -29,11 +29,11 @@ public:
         : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
     hist(const SortedPoints<value<numtX>, value<numtY>> &source)
         : SortedPoints<value<numtX>, value<numtY>>(source) {}
-    hist(const std::vector<point<numtX, numtY>> &data)
+    hist(const Points<numtX, numtY> &data)
     {
         for (const auto &P : data)this->operator<<(Point(P));
     }
-    hist(const std::vector<Point> &data)
+    hist(const Chain<Point> &data)
     {
         for (const auto &P : data)this->operator<<(P);
     }
@@ -49,7 +49,7 @@ public:
     }
     hist CloneEmptyBins()const
     {
-        std::vector<Point> initer;
+        Chain<Point> initer;
         for (const Point &P : *this)initer.push_back(P);
         return hist(initer);
     }
@@ -153,6 +153,11 @@ class Distribution1D: public hist<numtX, numtY>
 private:
     unsigned long long counter;
 public:
+    Distribution1D(const Chain<value<numtX>> &data): hist<numtX, numtY>(data)
+    {
+        this->FillWithValues(value<numtY>::std_error(0));
+        counter = 0;
+    }
     Distribution1D(const SortedChain<value<numtX>> &data): hist<numtX, numtY>(data)
     {
         this->FillWithValues(value<numtY>::std_error(0));
@@ -185,6 +190,11 @@ private:
         });
     }
 public:
+    Distribution2D(const Chain<value<numtX>> &X, const Chain<value<numtY>> &Y)
+        : hist2d<numtX, numtY, numtZ>(X, Y)
+    {
+        init();
+    }
     Distribution2D(const SortedChain<value<numtX>> &X, const SortedChain<value<numtY>> &Y)
         : hist2d<numtX, numtY, numtZ>(X, Y)
     {

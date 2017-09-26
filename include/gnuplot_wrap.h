@@ -2,16 +2,12 @@
 // MIT license
 #ifndef VIJVUSSC
 #define VIJVUSSC
-#include <vector>
 #include <fstream>
 #include <stdlib.h>
 #include <string>
-#include <utility>
 #include <sstream>
-#include <memory>
 #include <unistd.h>
 #include <math.h>
-#include <exception>
 #include <math_h/hists.h>
 #include <math_h/error.h>
 namespace GnuplotWrap
@@ -26,7 +22,7 @@ template<TDecl_init> class Plotter
     friend class Plot<TUse>;
     friend class PlotHist2d<TUse>;
 private:
-    std::vector<std::string> lines;
+    MathTemplates::Chain<std::string> lines;
     unsigned int terminal_counter, filename_counter;
     std::string outpath;
     std::string m_prefix;
@@ -128,8 +124,8 @@ public:
 template<TDecl> class Plot
 {
 private:
-    std::vector<std::string> lines;
-    std::vector<std::string> plots;
+    MathTemplates::Chain<std::string> lines;
+    MathTemplates::Chain<std::string> plots;
     Plot &Object(const std::string &plot)
     {
         plots.push_back(plot);
@@ -233,8 +229,8 @@ enum TypeOf3D {normal, sp2};
 template<TDecl>class PlotHist2d
 {
 private:
-    std::vector<std::string> lines;
-    std::vector<std::string> plots;
+    MathTemplates::Chain<std::string> lines;
+    MathTemplates::Chain<std::string> plots;
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
     std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
@@ -254,7 +250,7 @@ private:
         return n;
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    std::string Points2File(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &name = "")
+    std::string Points2File(const MathTemplates::Chain<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &name = "")
     {
         std::ofstream str;
         auto n = Plotter<TUse>::Instance().File(str,name);
@@ -284,7 +280,7 @@ private:
         return n;
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    std::string Points2File(const std::vector <
+    std::string Points2File(const MathTemplates::Chain <
                             MathTemplates::point3d<MathTemplates::value<numtX>,
                             MathTemplates::value<numtY>, MathTemplates::value<numtZ> >> &points,
                             const std::string &name = "")
@@ -352,26 +348,26 @@ public:
         return Object(std::string("'") + Distr2File(D) + "' matrix nonuniform title'" + title + "'");
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    inline PlotHist2d &Points(const std::vector<MathTemplates::point3d<
+    inline PlotHist2d &Points(const MathTemplates::Chain<MathTemplates::point3d<
                        MathTemplates::value<numtX>, MathTemplates::value<numtY>,
                        MathTemplates::value<numtZ>>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w points title'" + title + "'");
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    inline PlotHist2d &Line(const std::vector<MathTemplates::point3d<
+    inline PlotHist2d &Line(const MathTemplates::Chain<MathTemplates::point3d<
                      MathTemplates::value<numtX>, MathTemplates::value<numtY>,
                      MathTemplates::value<numtZ>>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w line title'" + title + "'");
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    inline PlotHist2d &Points(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
+    inline PlotHist2d &Points(const MathTemplates::Chain<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w points title'" + title + "'");
     }
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
-    inline PlotHist2d &Line(const std::vector<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
+    inline PlotHist2d &Line(const MathTemplates::Chain<MathTemplates::point3d<numtX,numtY,numtZ>> &points, const std::string &title = "")
     {
         return Object(std::string("'") + Points2File(points) + "' u 1:2:3 w line title'" + title + "'");
     }

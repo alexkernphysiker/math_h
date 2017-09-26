@@ -3,12 +3,10 @@
 #ifndef YJIOGPKSIIYJVKND
 #define YJIOGPKSIIYJVKND
 #include <iostream>
-#include <list>
-#include <vector>
-#include <functional>
 #include <memory>
-#include <utility>
+#include <list>
 #include <math.h>
+#include "chains.h"
 #include "error.h"
 namespace MathTemplates
 {
@@ -57,7 +55,7 @@ public:
             throw Exception<value>("wrong initialization of value from emply list");
         if (source.size() > 2)
             throw Exception<value>("wrong initialization of value from list with more than two numbers");
-        std::vector<numt> v;
+        Chain<numt> v;
         for (const numt &x : source)v.push_back(x);
         Value = v[0];
         if (v.size() == 1)Error = numt(0);
@@ -275,12 +273,12 @@ template<typename numt = double>
 class StandardDeviation
 {
 private:
-    std::vector<numt> m_list;
+    Chain<numt> m_list;
     numt m_sum;
     std::shared_ptr<value<numt>>m_cache;
     numt m_scale;
 public:
-    typedef typename std::vector<numt>::const_iterator const_iterator;
+    typedef typename Chain<numt>::const_iterator const_iterator;
     const_iterator begin()const{return m_list.begin();}
     const_iterator end() const{return m_list.end();}
     const numt&operator[](const size_t index){return m_list[index];}

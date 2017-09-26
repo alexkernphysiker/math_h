@@ -1,7 +1,6 @@
 // this file is distributed under
 // MIT license
 #include <gtest/gtest.h>
-#include <vector>
 #include <math.h>
 #include <random>
 #include <math_h/chains.h>
@@ -41,7 +40,7 @@ TEST(WhereToInsert, NormalConditions)
 }
 TEST(InsertSorted, BasicTest)
 {
-    vector<int> X;
+    Chain<int> X;
     for (int i = 0; i < 50; i++) {
         details::InsertSorted(rand() % 10, X, std_size(X), std_insert(X, int));
         for (int j = 0; j < i; j++)

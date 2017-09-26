@@ -1,7 +1,6 @@
 // this file is distributed under
 // MIT license
 #include <gtest/gtest.h>
-#include <vector>
 #include <math.h>
 #include <random>
 #include <math_h/tabledata.h>
@@ -32,7 +31,7 @@ TEST(SortedPoints, size1)
 }
 TEST(SortedPoints, range)
 {
-    SortedPoints<double> chain({point<double>(0, 1), point<double>(2, 1.1), point<double>(3, 1.2), point<double>(4, 1.3), point<double>(5, 1.4)});
+    SortedPoints<> chain=Points<>{{0, 1},{2, 1.1},{3, 1.2},{4, 1.3},{5, 1.4}};
     auto xcut = chain.XRange(0.5, 4.5);
     EXPECT_EQ(3, xcut.size());
     EXPECT_EQ(2, xcut.left().X());

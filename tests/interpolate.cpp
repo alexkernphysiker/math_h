@@ -1,7 +1,6 @@
 // this file is distributed under
 // MIT license
 #include <gtest/gtest.h>
-#include <vector>
 #include <math.h>
 #include <math_h/interpolate.h>
 using namespace std;
