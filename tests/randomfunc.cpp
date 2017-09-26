@@ -37,15 +37,15 @@ TEST(RandomValueTableDistr, Throwing)
     auto z = [](double) {
         return 0;
     };
-    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(0, 0.0, 1.0)), Exception<SortedChain<>>);
+    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(0, 0.0, 1.0)), Exception<Chain<>>);
     EXPECT_NO_THROW(RandomValueTableDistr<>(f, ChainWithCount(1, 0.0, 1.0)));
-    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(2, 0.0, -1.0)), Exception<SortedChain<>>);
-    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(2, 0.0, 0.0)), Exception<SortedChain<>>);
+    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(2, 0.0, -1.0)), Exception<Chain<>>);
+    EXPECT_THROW(RandomValueTableDistr<>(f, ChainWithCount(2, 0.0, 0.0)), Exception<Chain<>>);
     EXPECT_NO_THROW(RandomValueTableDistr<>(f, ChainWithCount(2, 0.0, 1.0)));
     EXPECT_NO_THROW(RandomValueTableDistr<>(z, ChainWithCount(2, 0.0, 1.0)));
     EXPECT_NO_THROW(RandomValueTableDistr<>(f, Chain<>{0.0, 1.0}));
     EXPECT_NO_THROW(RandomValueTableDistr<>({{0.0, 1.0}, {1.0, 1.0}}));
-    EXPECT_THROW(RandomValueTableDistr<>(z, ChainWithCount(0, 0.0, 0.0)), Exception<SortedChain<>>);
+    EXPECT_THROW(RandomValueTableDistr<>(z, ChainWithCount(0, 0.0, 0.0)), Exception<Chain<>>);
     auto n = [](double x) {
         return sin(10 * x);
     };
