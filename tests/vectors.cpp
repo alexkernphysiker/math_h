@@ -327,4 +327,26 @@ TEST(LorentzVector, decays2)
 	EXPECT_TRUE((C3.first.space_component()+C3.second.space_component()).mag_sqr()<epsilon);
     }
 }
-
+TEST(Vector,angle2d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10000; i++) {
+	const auto phi=PHI(RG);
+	const auto phi2=Angle(PolarCoordinates(M(RG),phi));
+	EXPECT_TRUE(pow(phi-phi2,2)<epsilon);
+    }
+}
+TEST(Vector,angle3d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> THETA(0.0,PI()),PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10000; i++) {
+	const auto angles=make_pair(THETA(RG),PHI(RG));
+	const auto angles2=Angles(PolarCoordinates(M(RG),angles));
+	EXPECT_TRUE(pow(angles.first-angles2.first,2)<epsilon);
+	EXPECT_TRUE(pow(angles.second-angles2.second,2)<epsilon);
+    }
+}

@@ -308,8 +308,13 @@ static const Vector<3, numt> Direction(const numt &theta, const numt &phi)
 {
     return Vector<3, numt>(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
 }
+template<class numt = double>
+static const Vector<3, numt> Direction(const std::pair<numt,numt> &angles)
+{
+    return Direction(angles.first,angles.second);
+}
 template<class numt = double, class... Args>
-static inline const Vector < 1 + sizeof...(Args), numt > PolarCoordinates(const numt &x, Args... other)
+static inline const auto PolarCoordinates(const numt &x, Args... other)->decltype(Direction(other...))
 {
     return Direction(other...) * x;
 }
@@ -382,7 +387,14 @@ const Vector<2, numt> RandomIsotropicDirection2(RG &generator)
     const numt phi = Phi(generator);
     return Vector<2, numt>(cos(phi), sin(phi));
 }
-
+template<class numt=double>
+const double Angle(const Vector<2,numt>&V){
+    return atan2(V.y(),V.x());
+}
+template<class numt=double>
+const std::pair<double,double> Angles(const Vector<3,numt>&V){
+    return std::make_pair(acos(V.z()/V.mag()),atan2(V.y(),V.x()));
+}
 
 
 template<class numt = double, class Space = Vector<3, numt>>
