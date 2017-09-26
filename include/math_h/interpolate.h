@@ -125,11 +125,7 @@ class BiLinearInterpolation: public BiSortedPoints<numtX, numtY, numtZ>, public 
 public:
     BiLinearInterpolation(const std::initializer_list<numtX> &X, const std::initializer_list<numtY> &Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
-    BiLinearInterpolation(const std::initializer_list<numtX> &&X, const std::initializer_list<numtY> &&Y)
-        : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
     BiLinearInterpolation(const SortedChain<numtX> &X, const SortedChain<numtY> &Y)
-        : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
-    BiLinearInterpolation(const SortedChain<numtX> &&X, const SortedChain<numtY> &&Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
     BiLinearInterpolation()
         : BiLinearInterpolation({}, {}) {}
