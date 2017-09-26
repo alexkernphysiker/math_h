@@ -75,11 +75,11 @@ public:
         details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
         return *this;
     }
-    SortedChain(const std::vector<comparable> &points)
-    {
-        for (const auto &p : points)
-            operator<<(p);
-    }
+//    SortedChain(const std::vector<comparable> &points)
+//    {
+//        for (const auto &p : points)
+//            operator<<(p);
+//    }
     SortedChain(const std::initializer_list<comparable> &points)
     {
         for (const auto &p : points)
