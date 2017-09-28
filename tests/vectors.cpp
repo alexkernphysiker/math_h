@@ -6,24 +6,24 @@
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
-TEST(Vector2, scalar_prod)
+TEST(Vector, scalar_prod2)
 {
-    EXPECT_EQ(0, I<>()*J<>());
-    EXPECT_EQ(0, J<>()*I<>());
-    EXPECT_EQ(1, I<>()*I<>());
-    EXPECT_EQ(1, J<>()*J<>());
+    EXPECT_EQ(0, x<>()*y<>());
+    EXPECT_EQ(0, y<>()*x<>());
+    EXPECT_EQ(1, x<>()*x<>());
+    EXPECT_EQ(1, y<>()*y<>());
 
-    EXPECT_EQ(0, I<>() * (-J<>()));
-    EXPECT_EQ(0, J<>() * (-I<>()));
-    EXPECT_EQ(0, (-I<>())*J<>());
-    EXPECT_EQ(0, (-J<>())*I<>());
+    EXPECT_EQ(0, x<>() * (-y<>()));
+    EXPECT_EQ(0, y<>() * (-x<>()));
+    EXPECT_EQ(0, (-x<>())*y<>());
+    EXPECT_EQ(0, (-y<>())*x<>());
 
-    EXPECT_EQ(-1, I<>() * (-I<>()));
-    EXPECT_EQ(-1, J<>() * (-J<>()));
-    EXPECT_EQ(-1, (-I<>())*I<>());
-    EXPECT_EQ(-1, (-J<>())*J<>());
+    EXPECT_EQ(-1, x<>() * (-x<>()));
+    EXPECT_EQ(-1, y<>() * (-y<>()));
+    EXPECT_EQ(-1, (-x<>())*x<>());
+    EXPECT_EQ(-1, (-y<>())*y<>());
 }
-TEST(Vector3, scalar_prod)
+TEST(Vector, scalar_prod3)
 {
     EXPECT_EQ(0, X<>()*Y<>());
     EXPECT_EQ(0, Y<>()*Z<>());
@@ -39,7 +39,7 @@ TEST(Vector3, scalar_prod)
     EXPECT_EQ(-1, Y<>() * (-Y<>()));
     EXPECT_EQ(1, (-Z<>()) * (-Z<>()));
 }
-TEST(Vector3, vector_prod)
+TEST(Vector, vector_prod3)
 {
     EXPECT_EQ(X<>()^Y<>(), Z<>());
     EXPECT_EQ(X<>()^X<>(), Zero<>());
@@ -51,13 +51,169 @@ TEST(Vector3, vector_prod)
     EXPECT_EQ(1, (Z<>()^X<>())*Y<>());
 
 }
-TEST(Vector3, Isotropic)
+TEST(Vector,baseAllD){
+    EXPECT_TRUE(desCartes(1.0)==Vector<1>({1.0}));
+    EXPECT_TRUE(desCartes(1.0,2.0)==Vector<2>({1.0,2.0}));
+    EXPECT_TRUE(desCartes(1.0,2.0,3.0)==Vector<3>({1.0,2.0,3.0}));
+    EXPECT_TRUE(desCartes(1.0,2.0,3.0,4.0)==Vector<4>({1.0,2.0,3.0,4.0}));
+    EXPECT_TRUE(desCartes(1.0)==Vector<1>(desCartes(1.0).chain()));
+    EXPECT_TRUE(desCartes(1.0,2.0)==Vector<2>(desCartes(1.0,2.0).chain()));
+    EXPECT_TRUE(desCartes(1.0,2.0,3.0)==Vector<3>(desCartes(1.0,2.0,3.0).chain()));
+    EXPECT_TRUE(desCartes(1.0,2.0,3.0,4.0)==Vector<4>(desCartes(1.0,2.0,3.0,4.0).chain()));
+    EXPECT_EQ(desCartes(1.0).chain()[0],1.0);
+    EXPECT_EQ(desCartes(1.0,2.0).chain()[0],1.0);
+    EXPECT_EQ(desCartes(1.0,2.0,3.0).chain()[0],1.0);
+    EXPECT_EQ(desCartes(1.0,2.0,3.0,4.0).chain()[0],1.0);
+    EXPECT_EQ(desCartes(1.0,2.0).chain()[1],2.0);
+    EXPECT_EQ(desCartes(1.0,2.0,3.0).chain()[1],2.0);
+    EXPECT_EQ(desCartes(1.0,2.0,3.0,4.0).chain()[1],2.0);
+}
+TEST(Vector,base1d){
+    RANDOM RG;
+    RandomUniform<> X(-50.,50);
+    for (size_t i = 0; i < 10; i++) {
+        const auto x=X(RG);
+	const auto V=desCartes(x);
+	EXPECT_EQ(x,V.x());
+	EXPECT_EQ(x,V.component<1>());
+	const auto v=V.chain();
+	EXPECT_EQ(V.Dimensions,v.size());
+	EXPECT_EQ(x,v[0]);
+	const Vector<1> V2=v;
+	EXPECT_EQ(x,V2.x());
+	EXPECT_TRUE(V==V2);
+    }
+}
+TEST(Vector,base2d){
+    RANDOM RG;
+    RandomUniform<> X(-50.,50);
+    for (size_t i = 0; i < 10; i++) {
+        const auto x=X(RG),y=X(RG);
+	const auto V=desCartes(x,y);
+	EXPECT_EQ(x,V.x());
+	EXPECT_EQ(x,V.component<1>());
+	EXPECT_EQ(y,V.y());
+	EXPECT_EQ(y,V.component<2>());
+	const auto v=V.chain();
+	EXPECT_EQ(V.Dimensions,v.size());
+	EXPECT_EQ(x,v[0]);
+	EXPECT_EQ(y,v[1]);
+	const Vector<2> V2=v;
+	EXPECT_EQ(x,V2.x());
+	EXPECT_EQ(y,V2.y());
+	EXPECT_TRUE(V==V2);
+    }
+}
+TEST(Vector,base3d){
+    RANDOM RG;
+    RandomUniform<> X(-50.,50);
+    for (size_t i = 0; i < 10; i++) {
+        const auto x=X(RG),y=X(RG),z=X(RG);
+	const auto V=desCartes(x,y,z);
+	EXPECT_EQ(x,V.x());
+	EXPECT_EQ(x,V.component<1>());
+	EXPECT_EQ(y,V.y());
+	EXPECT_EQ(y,V.component<2>());
+	EXPECT_EQ(z,V.z());
+	EXPECT_EQ(z,V.component<3>());
+	const auto v=V.chain();
+	EXPECT_EQ(V.Dimensions,v.size());
+	EXPECT_EQ(x,v[0]);
+	EXPECT_EQ(y,v[1]);
+	EXPECT_EQ(z,v[2]);
+	const Vector<3> V2=v;
+	EXPECT_EQ(x,V2.x());
+	EXPECT_EQ(y,V2.y());
+	EXPECT_EQ(z,V2.z());
+	EXPECT_TRUE(V==V2);
+    }
+}
+TEST(Vector,base4d){
+    RANDOM RG;
+    RandomUniform<> X(-50.,50);
+    for (size_t i = 0; i < 10; i++) {
+        const auto x=X(RG),y=X(RG),z=X(RG),zz=X(RG);
+	const auto V=desCartes(x,y,z,zz);
+	EXPECT_EQ(x,V.x());
+	EXPECT_EQ(x,V.component<1>());
+	EXPECT_EQ(y,V.y());
+	EXPECT_EQ(y,V.component<2>());
+	EXPECT_EQ(z,V.z());
+	EXPECT_EQ(z,V.component<3>());
+	EXPECT_EQ(zz,V.component<4>());
+	const auto v=V.chain();
+	EXPECT_EQ(V.Dimensions,v.size());
+	EXPECT_EQ(x,v[0]);
+	EXPECT_EQ(y,v[1]);
+	EXPECT_EQ(z,v[2]);
+	EXPECT_EQ(zz,v[3]);
+	const Vector<4> V2=v;
+	EXPECT_EQ(x,V2.x());
+	EXPECT_EQ(y,V2.y());
+	EXPECT_EQ(z,V2.z());
+	EXPECT_EQ(zz,V2.component<4>());
+	EXPECT_TRUE(V==V2);
+    }
+}
+
+TEST(Direction,base2d){
+    RANDOM RG;
+    RandomUniform<> Phi(-PI<>(), PI<>());
+    for (size_t i = 0; i < 10; i++) {
+        const auto phi=Phi(RG);
+	const auto D=direction(phi);
+	EXPECT_EQ(D.phi(),phi);
+    }
+}
+TEST(Direction,base3d){
+    RANDOM RG;
+    RandomUniform<> Phi(-PI<>(), PI<>());
+    RandomUniform<> Theta(0, PI<>());
+    for (size_t i = 0; i < 10; i++) {
+        const auto phi=Phi(RG);
+        const auto theta=Theta(RG);
+	const auto D=direction(phi,theta);
+	EXPECT_EQ(D.phi(),phi);
+	EXPECT_EQ(D.th<1>(),theta);
+    }
+}
+TEST(Direction,base4d){
+    RANDOM RG;
+    RandomUniform<> Phi(-PI<>(), PI<>());
+    RandomUniform<> Theta(0, PI<>());
+    for (size_t i = 0; i < 10; i++) {
+        const auto phi=Phi(RG);
+        const auto theta1=Theta(RG);
+        const auto theta2=Theta(RG);
+	const auto D=direction(phi,theta1,theta2);
+	EXPECT_EQ(D.phi(),phi);
+	EXPECT_EQ(D.th<1>(),theta1);
+	EXPECT_EQ(D.th<2>(),theta2);
+    }
+}
+TEST(Direction,base5d){
+    RANDOM RG;
+    RandomUniform<> Phi(-PI<>(), PI<>());
+    RandomUniform<> Theta(0, PI<>());
+    for (size_t i = 0; i < 10; i++) {
+        const auto phi=Phi(RG);
+        const auto theta1=Theta(RG);
+        const auto theta2=Theta(RG);
+        const auto theta3=Theta(RG);
+	const auto D=direction(phi,theta1,theta2,theta3);
+	EXPECT_EQ(D.phi(),phi);
+	EXPECT_EQ(D.th<1>(),theta1);
+	EXPECT_EQ(D.th<2>(),theta2);
+	EXPECT_EQ(D.th<3>(),theta3);
+    }
+}
+TEST(Vector, Isotropic3)
 {
     RANDOM RG;
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
     Distribution1D<> X(c), Y(c), Z(c);
-    for (size_t i = 0; i < 100000; i++) {
-        const auto V = RandomIsotropicDirection3<>(RG);
+    for (size_t i = 0; i < 1000000; i++) {
+        const auto V = randomIsotropic<3>(RG)*1.0;
         X.Fill(V.x());
         Y.Fill(V.y());
         Z.Fill(V.z());
@@ -67,51 +223,27 @@ TEST(Vector3, Isotropic)
     for (const auto &p : Y)EXPECT_TRUE(p.Y().make_wider(2.5).Contains(x));
     for (const auto &p : Z)EXPECT_TRUE(p.Y().make_wider(2.5).Contains(x));
 }
-TEST(Vector2, Rotation)
+TEST(Vector, Rotation2)
 {
     RANDOM RG;
     RandomUniform<> Phi(0, PI<>() * 2.0);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto I = RandomIsotropicDirection2<>(RG);
+    for (size_t i = 0; i < 10; i++) {
+        const auto I = randomIsotropic<2>(RG)*1.0;
         const auto ang = Phi(RG);
         const auto F = Rotate(I, ang);
     }
 }
 
-TEST(Vector3, RotationX)
+TEST(Vector, Rotation3)
 {
     RANDOM RG;
-    RandomUniform<> Phi(0, PI<>() * 2.0);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto I = RandomIsotropicDirection3<>(RG);
-        const auto axis = X<>();
+    RandomUniform<> M(0, 5.0),Phi(-PI<>(),PI<>());
+    for (size_t i = 0; i < 10; i++) {
+        const auto I = randomIsotropic<3>(RG)*M(RG);
         const auto ang = Phi(RG);
-        const auto F = Rotate(I, axis, ang);
-        EXPECT_TRUE(pow(axis * I - axis * F, 2) < 0.0000000000001);
-    }
-}
-TEST(Vector3, RotationY)
-{
-    RANDOM RG;
-    RandomUniform<> Phi(0, PI<>() * 2.0);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto I = RandomIsotropicDirection3<>(RG);
-        const auto axis = Y<>();
-        const auto ang = Phi(RG);
-        const auto F = Rotate(I, axis, ang);
-        EXPECT_TRUE(pow(axis * I - axis * F, 2) < 0.0000000000001);
-    }
-}
-TEST(Vector3, RotationZ)
-{
-    RANDOM RG;
-    RandomUniform<> Phi(0, PI<>() * 2.0);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto I = RandomIsotropicDirection3<>(RG);
-        const auto axis = Z<>();
-        const auto ang = Phi(RG);
-        const auto F = Rotate(I, axis, ang);
-        EXPECT_TRUE(pow(axis * I - axis * F, 2) < 0.0000000000001);
+	const auto dir =randomIsotropic<3>(RG);
+        const auto F = Rotate(I, dir, ang);
+        EXPECT_TRUE(pow((dir*1.0) * I - (dir*1.0) * F, 2) < 0.0000000000001);
     }
 }
 
@@ -120,23 +252,23 @@ TEST(LorentzVector, LorentzTransform)
     RANDOM RG;
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 1.0 - epsilon), metrr(-5, 5);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto V0 = lorentz_byPM(RandomIsotropicDirection3<>(RG), metrr(RG));
+    for (size_t i = 0; i < 10; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<3>(RG)*1.0, metrr(RG));
         const auto V1 = V0.Transform(Zero<>());
         EXPECT_TRUE(V1 == V0);
-        const auto beta = RandomIsotropicDirection3<>(RG) * mr(RG);
+        const auto beta = randomIsotropic<3>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
         EXPECT_TRUE(pow(V2.T() - V0.T(), 2) < epsilon);
         EXPECT_TRUE(pow(V2.S().x() - V0.S().x(), 2) < epsilon);
         EXPECT_TRUE(pow(V2.S().y() - V0.S().y(), 2) < epsilon);
         EXPECT_TRUE(pow(V2.S().z() - V0.S().z(), 2) < epsilon);
-        EXPECT_THROW(V0.Transform(RandomIsotropicDirection3<>(RG) * (1.0 + mr(RG))),Exception<LorentzVector<>>);
+        EXPECT_THROW(V0.Transform(randomIsotropic<3>(RG) * (1.0 + mr(RG))),Exception<LorentzVector<>>);
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(RandomIsotropicDirection3<>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<3>(RG) * 0.2).M();
         EXPECT_TRUE(pow(L0 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L2 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L0 - L2, 2) < epsilon);
-        const auto V00 = LorentzVector<>(V0.M()).Transform(-V0.Beta());
+        const auto V00 = lorentz_byPM(Zero<>(),V0.M()).Transform(-V0.Beta());
         EXPECT_TRUE(pow(V00.T() - V0.T(), 2) < epsilon);
         EXPECT_TRUE(pow(V00.S().x() - V0.S().x(), 2) < epsilon);
         EXPECT_TRUE(pow(V00.S().y() - V0.S().y(), 2) < epsilon);
@@ -148,8 +280,8 @@ TEST(LorentzVector, LorentzTransform2)
     RANDOM RG;
     const double epsilon = 0.0000000000001;
     RandomUniform<> M(0, 5),P(0, 5);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto V0 = lorentz_byPM(RandomIsotropicDirection3<>(RG)*P(RG), M(RG));
+    for (size_t i = 0; i < 10; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<3>(RG)*P(RG), M(RG));
 	const auto V1=V0.Transform(V0.Beta());
         EXPECT_TRUE(pow(V1.S().x(), 2) < epsilon);
         EXPECT_TRUE(pow(V1.S().y(), 2) < epsilon);
@@ -162,38 +294,129 @@ TEST(LorentzVector, LorentzTransform2d)
     RANDOM RG;
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 1.0 - epsilon), metrr(-5, 5);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto V0 = lorentz_byPM(RandomIsotropicDirection2<>(RG), metrr(RG));
+    for (size_t i = 0; i < 10; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<2>(RG)*1.0, metrr(RG));
         const auto V1 = V0.Transform(zero<>());
         EXPECT_TRUE(V1 == V0);
-        const auto beta = RandomIsotropicDirection2<>(RG) * mr(RG);
+        const auto beta = randomIsotropic<2>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
         EXPECT_TRUE(pow(V2.T() - V0.T(), 2) < epsilon);
         EXPECT_TRUE(pow(V2.S().x() - V0.S().x(), 2) < epsilon);
         EXPECT_TRUE(pow(V2.S().y() - V0.S().y(), 2) < epsilon);
-        typedef LorentzVector<double, Vector<2>> LVtype;
-        EXPECT_THROW(V0.Transform(RandomIsotropicDirection2<>(RG) * (1.0 + mr(RG))),Exception<LVtype>);
+	typedef LorentzVector<double,Vector<2>> LV2;
+        EXPECT_THROW(V0.Transform(randomIsotropic<2>(RG) * (1.0 + mr(RG))),Exception<LV2>);
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(RandomIsotropicDirection2<>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) * 0.2).M();
         EXPECT_TRUE(pow(L0 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L2 - L1, 2) < epsilon);
         EXPECT_TRUE(pow(L0 - L2, 2) < epsilon);
-        const auto V00 = LorentzVector<double, Vector<2>>(V0.M()).Transform(-V0.Beta());
+        const auto V00 = lorentz_byPM(zero<>(),V0.M()).Transform(-V0.Beta());
         EXPECT_TRUE(pow(V00.T() - V0.T(), 2) < epsilon);
         EXPECT_TRUE(pow(V00.S().x() - V0.S().x(), 2) < epsilon);
         EXPECT_TRUE(pow(V00.S().y() - V0.S().y(), 2) < epsilon);
     }
 }
+
+TEST(LorentzVector, decays)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> IM(2,3),M1(0,1),M2(0,1),THETA(0,PI()),PHI(0, 2.0 * PI());
+    for (size_t i = 0; i < 10; i++) {
+	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
+	const auto C2=binaryDecay(im,m1,m2,randomIsotropic<2>(RG));
+	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
+	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
+	const auto C3=binaryDecay(im,m1,m2,randomIsotropic<3>(RG));
+	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
+	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
+    }
+}
+TEST(LorentzVector, decays2)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> IM(2,3),M1(0,1),M2(0,1),THETA(0,PI()),PHI(0, 2.0 * PI());
+    for (size_t i = 0; i < 10; i++) {
+	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
+	const auto C2=binaryDecay(im,m1,m2,randomIsotropic<2>(RG));
+	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
+	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
+	const auto C3=binaryDecay(im,m1,m2,randomIsotropic<3>(RG));
+	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
+	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
+	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
+	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
+    }
+}
+
+TEST(Vector,angle2d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto phi=PHI(RG);
+	const auto phi2=direction(fromPolar(M(RG),phi)).phi();
+	EXPECT_TRUE(pow(phi-phi2,2)<epsilon);
+    }
+}
+TEST(Vector,angle3d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> THETA(0.0,PI()),PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto angles=direction(PHI(RG),THETA(RG));
+	const auto angles2=direction(angles*M(RG));
+	EXPECT_TRUE(pow(angles.phi()-angles2.phi(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<1>()-angles2.th<1>(),2)<epsilon);
+    }
+}
+TEST(Vector,angle4d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> THETA(0.0,PI()),PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto angles=direction(PHI(RG),THETA(RG),THETA(RG));
+	const auto angles2=direction(angles*M(RG));
+	EXPECT_TRUE(pow(angles.phi()-angles2.phi(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<1>()-angles2.th<1>(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<2>()-angles2.th<2>(),2)<epsilon);
+    }
+}
+TEST(Vector,angle5d)
+{
+    RANDOM RG;
+    const double epsilon = 0.0000000000001;
+    RandomUniform<> THETA(0.0,PI()),PHI(-PI(),PI()),M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto angles=direction(PHI(RG),THETA(RG),THETA(RG),THETA(RG));
+	const auto angles2=direction(angles*M(RG));
+	EXPECT_TRUE(pow(angles.phi()-angles2.phi(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<1>()-angles2.th<1>(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<2>()-angles2.th<2>(),2)<epsilon);
+	EXPECT_TRUE(pow(angles.th<3>()-angles2.th<3>(),2)<epsilon);
+    }
+}
+
 TEST(Plane3D, SimplePlanes)
 {
     RANDOM RG;
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 10), th(0, 2.0 * PI());
     for (size_t i = 0; i < 10000; i++) {
-        const auto v1 = RandomIsotropicDirection2<>(RG) * mr(RG), v2 = RandomIsotropicDirection2<>(RG) * mr(RG);
+        const auto v1 = randomIsotropic<2>(RG) * mr(RG), v2 = randomIsotropic<2>(RG) * mr(RG);
         const auto p1 = v1 * v2;
         {
-            const auto plane = Plane3D<>::basis<1, 2>();
+            const auto plane = Plane3D<>(X<>(),Y<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).x());
@@ -201,7 +424,7 @@ TEST(Plane3D, SimplePlanes)
             EXPECT_EQ(0, plane(v1).z());
         }
         {
-            const auto plane = Plane3D<>::basis<2, 1>();
+            const auto plane = Plane3D<>(Y<>(),X<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).y());
@@ -209,7 +432,7 @@ TEST(Plane3D, SimplePlanes)
             EXPECT_EQ(0, plane(v1).z());
         }
         {
-            const auto plane = Plane3D<>::basis<1, 3>();
+            const auto plane = Plane3D<>(X<>(),Z<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).x());
@@ -217,7 +440,7 @@ TEST(Plane3D, SimplePlanes)
             EXPECT_EQ(0, plane(v1).y());
         }
         {
-            const auto plane = Plane3D<>::basis<3, 1>();
+            const auto plane = Plane3D<>(Z<>(),X<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).z());
@@ -225,7 +448,7 @@ TEST(Plane3D, SimplePlanes)
             EXPECT_EQ(0, plane(v1).y());
         }
         {
-            const auto plane = Plane3D<>::basis<2, 3>();
+            const auto plane = Plane3D<>(Y<>(),Z<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).y());
@@ -233,7 +456,7 @@ TEST(Plane3D, SimplePlanes)
             EXPECT_EQ(0, plane(v1).x());
         }
         {
-            const auto plane = Plane3D<>::basis<3, 2>();
+            const auto plane = Plane3D<>(Z<>(),Y<>());
             const auto p2 = plane(v1) * plane(v2);
             EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
             EXPECT_EQ(v1.x(), plane(v1).z());
@@ -248,9 +471,9 @@ TEST(Plane3D, scalarProductInvariance)
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 10), th(0, 2.0 * PI());
     for (size_t i = 0; i < 10000; i++) {
-        const auto v1 = RandomIsotropicDirection2<>(RG) * mr(RG), v2 = RandomIsotropicDirection2<>(RG) * mr(RG);
+        const auto v1 = randomIsotropic<2>(RG) * mr(RG), v2 = randomIsotropic<2>(RG) * mr(RG);
         const auto p1 = v1 * v2;
-        const auto plane = Plane3D<>::ByNormalVectorAndTheta(RandomIsotropicDirection3<>(RG), th(RG));
+        const auto plane = Plane3D<>::ByNormalVectorAndTheta(randomIsotropic<3>(RG), th(RG));
         const auto p2 = plane(v1) * plane(v2);
         EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
     }
@@ -261,9 +484,9 @@ TEST(Plane3D, vectorProductInvariance)
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 10), th(0, 2.0 * PI());
     for (size_t i = 0; i < 10000; i++) {
-        const auto v1 = RandomIsotropicDirection2<>(RG) * mr(RG), v2 = RandomIsotropicDirection2<>(RG) * mr(RG);
+        const auto v1 = randomIsotropic<2>(RG) * mr(RG), v2 = randomIsotropic<2>(RG) * mr(RG);
         const auto p1 = pow(v1 ^ v2, 2);
-        const auto plane = Plane3D<>::ByNormalVectorAndTheta(RandomIsotropicDirection3<>(RG), th(RG));
+        const auto plane = Plane3D<>::ByNormalVectorAndTheta(randomIsotropic<3>(RG), th(RG));
         const auto p2 = (plane(v1)^plane(v2)).M_sqr();
         EXPECT_TRUE(pow(p1 - p2, 2) < epsilon);
     }
@@ -274,75 +497,9 @@ TEST(Plane3D, LorentzInvariance)
     const double epsilon = 0.0000000000001;
     RandomUniform<> mr(0, 10), th(0, 2.0 * PI());
     for (size_t i = 0; i < 10000; i++) {
-        const auto v = lorentz_byPM(RandomIsotropicDirection2<>(RG) * mr(RG), mr(RG));
-        const auto plane = Plane3D<>::ByNormalVectorAndTheta(RandomIsotropicDirection3<>(RG), th(RG));
+        const auto v = lorentz_byPM(randomIsotropic<2>(RG) * mr(RG), mr(RG));
+        const auto plane = Plane3D<>::ByNormalVectorAndTheta(randomIsotropic<3>(RG), th(RG));
         const auto v2 = lorentzVector(v.T(), plane(v.S()));
         EXPECT_TRUE(pow(v.M() - v2.M(), 2) < epsilon);
-    }
-}
-TEST(LorentzVector, decays)
-{
-    RANDOM RG;
-    const double epsilon = 0.0000000000001;
-    RandomUniform<> IM(2,3),M1(0,1),M2(0,1),THETA(0,PI()),PHI(0, 2.0 * PI());
-    for (size_t i = 0; i < 10000; i++) {
-	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
-	const auto C1=binaryDecay(im,m1,m2);
-	EXPECT_TRUE(pow((C1.first+C1.second).M()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C1.first).M()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C1.second).M()-m2,2)<epsilon);
-	EXPECT_TRUE((C1.first.S()+C1.second.S()).M_sqr()<epsilon);
-	const auto C2=binaryDecay(im,m1,m2,PHI(RG));
-	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
-	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
-	const auto C3=binaryDecay(im,m1,m2,THETA(RG),PHI(RG));
-	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
-	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
-	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
-	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
-    }
-}
-TEST(LorentzVector, decays2)
-{
-    RANDOM RG;
-    const double epsilon = 0.0000000000001;
-    RandomUniform<> IM(2,3),M1(0,1),M2(0,1),THETA(0,PI()),PHI(0, 2.0 * PI());
-    for (size_t i = 0; i < 10000; i++) {
-	const double im=IM(RG),m1=M1(RG),m2=M2(RG);
-	const auto C2=binaryDecay(im,m1,m2,RandomIsotropicDirection2<>(RG));
-	EXPECT_TRUE(pow((C2.first+C2.second).M()-im,2)<epsilon);
-	EXPECT_TRUE(pow((C2.first).M()-m1,2)<epsilon);
-	EXPECT_TRUE(pow((C2.second).M()-m2,2)<epsilon);
-	EXPECT_TRUE((C2.first.S()+C2.second.S()).M_sqr()<epsilon);
-	const auto C3=binaryDecay(im,m1,m2,RandomIsotropicDirection3<>(RG));
-	EXPECT_TRUE(pow((C3.first+C3.second).M()-im,2)<epsilon);
-	EXPECT_TRUE(pow(C3.first.M()-m1,2)<epsilon);
-	EXPECT_TRUE(pow(C3.second.M()-m2,2)<epsilon);
-	EXPECT_TRUE((C3.first.S()+C3.second.S()).M_sqr()<epsilon);
-    }
-}
-TEST(Vector,angle2d)
-{
-    RANDOM RG;
-    const double epsilon = 0.0000000000001;
-    RandomUniform<> PHI(-PI(),PI()),M(0.0,10.0);
-    for (size_t i = 0; i < 10000; i++) {
-	const auto phi=PHI(RG);
-	const auto phi2=Angle(PolarCoordinates(M(RG),phi));
-	EXPECT_TRUE(pow(phi-phi2,2)<epsilon);
-    }
-}
-TEST(Vector,angle3d)
-{
-    RANDOM RG;
-    const double epsilon = 0.0000000000001;
-    RandomUniform<> THETA(0.0,PI()),PHI(-PI(),PI()),M(0.0,10.0);
-    for (size_t i = 0; i < 10000; i++) {
-	const auto angles=make_pair(THETA(RG),PHI(RG));
-	const auto angles2=Angles(PolarCoordinates(M(RG),angles));
-	EXPECT_TRUE(pow(angles.first-angles2.first,2)<epsilon);
-	EXPECT_TRUE(pow(angles.second-angles2.second,2)<epsilon);
     }
 }
