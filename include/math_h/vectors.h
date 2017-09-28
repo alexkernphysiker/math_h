@@ -114,6 +114,10 @@ public:
     {
         return (m_x == second.m_x);
     }
+    const bool CloseTo(const Vector &second,const numt&epsilon)const
+    {
+        return operator-(second).M()<epsilon;
+    }
 };
 template<size_t size, class numt>
 class Vector
@@ -225,6 +229,10 @@ public:
     {
         return (m_x == second.m_x) && (m_other == second.m_other);
     }
+    const bool CloseTo(const Vector &second,const numt&epsilon)const
+    {
+        return operator-(second).M()<epsilon;
+    }
 };
 template<class numt,class... Args>
 const Vector < sizeof...(Args)+1,numt> desCartes(const numt&x,Args... args)
@@ -289,22 +297,32 @@ const numt operator^(const Vector<2, numt> &first, const Vector<2, numt> &second
 template<class numt>
 class Direction<1,numt>
 {
+private:
+    bool sign;
+    static const numt PHI(RANDOM&r){
+	static const RandomUniform<numt> res(-PI<numt>(),+PI<numt>());
+	return res(r);
+    }
+
 public:
     enum {Dimensions = 1};
     enum {Thetas = 0};
     typedef numt NumberType;
     typedef Vector<1,numt> VType;
-public:
     virtual ~Direction() {}
-    Direction(){}
-    Direction(RANDOM&){}
-    Direction(const Direction&){}
-    Direction(const VType&){}
+    Direction(RANDOM&RG):sign(PHI(RG)>=0){}
+    Direction(const Direction&source):sign(source.sign){}
+    Direction(const VType&v):sign(v.x()>=0){}
     template<class... Args>
-    Direction(const std::tuple<Args...>&){}
+    Direction(const std::tuple<Args...>&args):sign(std::get<0>(args)){}
     const VType operator*(const numt&rho)const
     {
-	return desCartes(rho);
+	if(sign)return desCartes(rho);
+	else return desCartes(-rho);
+    }
+    const bool operator==(const Direction&second)const
+    {
+        return (sign == second.sign);
     }
 };
 
@@ -339,7 +357,10 @@ public:
     const VType operator*(const numt&rho)const{
 	return desCartes(cos(m_phi),sin(m_phi))*rho;
     }
-
+    const bool operator==(const Direction&second)const
+    {
+        return (m_phi == second.m.phi);
+    }
 };
 template<class numt>
 class Direction<3,numt>
@@ -377,6 +398,10 @@ public:
     Direction(const VType&V):m_ld(V.___recursive()),m_theta(acos(V.template component<Dimensions>()/V.M())){}
     const VType operator*(const numt&rho)const{
 	return VType(m_ld*(rho*sin(m_theta)),rho*cos(m_theta));
+    }
+    const bool operator==(const Direction&second)const
+    {
+        return (m_theta == second.m_theta)&&(m_ld==second.m_ld);
     }
 };
 template<size_t size, class numt>
@@ -639,6 +664,8 @@ public:
 private:
     Space basis_x, basis_y;
 public:
+    const Space&x()const{return basis_x;}
+    const Space&y()const{return basis_y;}
     const Space operator()(const Plane &v)const
     {
         return basis_x * v.x() + basis_y * v.y();
@@ -649,16 +676,23 @@ public:
         if ((x ^ y).M_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
     }
     Plane3D(const typename Space::DType &x, const typename Space::DType &y):Plane3D(x*numt(1),y*numt(1)){}
-    static const Plane3D ByNormalVectorAndTheta(const typename Space::DType &N, const numt &theta)
+    static const Plane3D ByNormalVector(const typename Space::DType &n)
     {
-        if (((N*numt(1)) ^ Space::template basis_vector<3>()).M() == 0) {
-            const auto X = Rotate(Space::template basis_vector<1>(), N, theta);
-            return Plane3D(X, (N*numt(1)) ^ X);
+	const auto N=n*1.0;
+	const auto X=N ^ Z<numt>();
+        if (X.M() == 0) {
+            const auto X1 = MathTemplates::X<numt>();
+            return Plane3D(X1, N^X1);
         } else {
-            const auto X = ((N*numt(1)) ^ Space::template basis_vector<3>());
-            return Plane3D(X / X.M(), ((N*numt(1)) ^ (X / X.M())));
+            const auto X1 = X/X.M();
+            return Plane3D(X1, N^X1);
         }
         throw Exception<Plane3D>("This line should not be reached");
+    }
+    static const Plane3D ByNormalVector(const typename Space::DType &n,const typename Plane::DType&r)
+    {
+	const auto P=ByNormalVector(n);
+	return Plane3D(Rotate(P.x(),n,r.phi()),Rotate(P.y(),n,r.phi()));
     }
 };
 
