@@ -609,11 +609,11 @@ const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {
     return LorentzVector<numt, Space>(sqrt(s.M_sqr() + l4 * l4), s);
 }
-template<class numt = double, class Space = Vector<3, numt>, class...Args>
-const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, Args...args)
+template<class numt = double, class Space = Vector<3, numt>>
+const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4,const typename Space::DType&dir)
 {
     numt Sp = sqrt(t * t - l4 * l4);
-    return LorentzVector<numt, Space>(t, direction(args...) * Sp);
+    return LorentzVector<numt, Space>(t, dir*Sp);
 }
 template<size_t size,class numt>
 const std::pair<LorentzVector<numt,Vector<size,numt>>,LorentzVector<numt,Vector<size,numt>>> 
