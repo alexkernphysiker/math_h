@@ -349,7 +349,7 @@ const MatrixData<numt> Solve(const Matrix<numt> &A, const Matrix<numt> &B)
     const auto D = LUP(A);
     const MatrixData<numt> b = Multiply(D.P, B);
     if (b.width() > 1)
-        throw Exception<Matrix<numt>>("Pizdariki");
+        throw Exception<Matrix<numt>>("");
     Chain<numt> y;
     for (size_t i = 0; i < n; i++) {
         numt v = b(i, 0);
