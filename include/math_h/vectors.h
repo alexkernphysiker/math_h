@@ -321,15 +321,32 @@ const Vector<3, numt> operator^(const Vector<3, numt> &first, const Vector<3, nu
 template<class linetype>
 class VectorTransformation<1, linetype>
 {
+    template<size_t sizef, class n>friend class VectorTransformation;
+    template<size_t sizef, class n>friend class Direction;
 public:
     enum {DimensionsFinal = 1};
     enum {DimensionsInitial = linetype::Dimensions};
     typedef typename linetype::NumberType NumberType;
     typedef linetype VIType;
     typedef Vector<1, NumberType> VFType;
+    typedef Vector<DimensionsInitial+1, NumberType> VIWType;
+    typedef VectorTransformation<DimensionsFinal,VIWType> PlusOneColumn;
+    typedef Vector<DimensionsInitial-1, NumberType> VINType;
+    typedef VectorTransformation<DimensionsFinal,VINType> MinusOneColumn;
 private:
     VIType m_line;
+protected:
     VectorTransformation(const VIType &line): m_line(line) {}
+    const MinusOneColumn ___minus_one_column()const{
+	return MinusOneColumn(m_line.___recursive());
+    }
+    const VFType ___last_column()const{
+	return desCartes(m_line.___last_component());
+    }
+    const PlusOneColumn ___add_column(const VFType&col)const
+    {
+	return VIWType(m_line,col.___last_component());
+    }
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -340,6 +357,17 @@ public:
     const VFType operator*(const VIType &v)const
     {
         return desCartes(m_line * v);
+    }
+    const VectorTransformation<DimensionsFinal,Vector<1,NumberType>> 
+    operator*(const VectorTransformation<DimensionsInitial,Vector<1,NumberType>>&B)const
+    {
+        return desCartes(m_line * B.___last_column());
+    }
+    template<size_t third_size>
+    const VectorTransformation<DimensionsFinal,Vector<third_size,NumberType>> 
+    operator*(const VectorTransformation<DimensionsInitial,Vector<third_size,NumberType>>&B)const
+    {
+        return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
     VectorTransformation(const VectorTransformation &source): m_line(source.m_line) {}
     template<class... Args>
@@ -382,6 +410,8 @@ public:
 template<size_t sizef, class linetype>
 class VectorTransformation
 {
+    template<size_t sized, class n>friend class VectorTransformation;
+    template<size_t sized, class n>friend class Direction;
 public:
     enum {DimensionsFinal = sizef};
     enum {DimensionsInitial = linetype::Dimensions};
@@ -389,10 +419,29 @@ public:
     typedef linetype VIType;
     typedef Vector<sizef, NumberType> VFType;
     typedef VectorTransformation < sizef - 1, linetype > MinorTransformation;
+    typedef Vector<DimensionsInitial+1, NumberType> VIWType;
+    typedef VectorTransformation<DimensionsFinal,VIWType> PlusOneColumn;
+    typedef Vector<DimensionsInitial-1, NumberType> VINType;
+    typedef VectorTransformation<DimensionsFinal,VINType> MinusOneColumn;
 private:
     MinorTransformation m_minor;
     VIType m_line;
+protected:
     VectorTransformation(const MinorTransformation &minor, const VIType &line): m_minor(minor), m_line(line) {}
+    const MinusOneColumn ___minus_one_column()const{
+	const auto new_minor=m_minor.___minus_one_column();
+	const auto new_line=m_line.___recursive();
+	return MinusOneColumn(new_minor,new_line);
+    }
+    const VFType ___last_column()const{
+	return VFType(m_minor.___last_column(),m_line.___last_component());
+    }
+    const PlusOneColumn ___add_column(const VFType&col)const
+    {
+	const auto new_minor=m_minor.___add_column(col.___recursive());
+	const auto new_line=VIWType(m_line,col.___last_component());
+	return PlusOneColumn(new_minor,new_line);
+    }
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -403,6 +452,21 @@ public:
     const VFType operator*(const VIType &v)const
     {
         return VFType(m_minor * v, m_line * v);
+    }
+    const VectorTransformation<DimensionsFinal,Vector<1,NumberType>> 
+    operator*(const VectorTransformation<DimensionsInitial,Vector<1,NumberType>>&B)const
+    {
+	const auto P=m_minor*B;
+	const auto C=desCartes(m_line*B.___last_column());
+        return VectorTransformation<DimensionsFinal,Vector<1,NumberType>>(P,C);
+    }
+    template<size_t third_size>
+    const VectorTransformation<DimensionsFinal,Vector<third_size,NumberType>> 
+    operator*(const VectorTransformation<DimensionsInitial,Vector<third_size,NumberType>>&B)const
+    {
+	const auto P=operator*(B.___minus_one_column());
+	const VFType C=operator*(B.___last_column());
+        return P.___add_column(C);
     }
     VectorTransformation(const VectorTransformation &source): m_minor(source.m_minor), m_line(source.m_line) {}
     template<class... Args>
@@ -437,12 +501,10 @@ public:
     {
         return VectorTransformation(
 	    MinorTransformation::template RotationInPlane<x,y>(angle),
-                   (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
-                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
-                   VIType::template basis_vector<DimensionsFinal>()
+(x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
+		VIType::template basis_vector<DimensionsFinal>()
                                                 );
     }
-
 };
 template<class numt, class... Args>
 const Vector < sizeof...(Args) + 1, numt > line(const numt &x, Args... args)
@@ -513,6 +575,14 @@ public:
     {
         return sign ? numt(1) : numt(-1);
     }
+    const VectorTransformation<Dimensions,VType> Rotations()const
+    {
+        return sign ? transformation(line(numt(1))) : transformation(line(numt(-1)));
+    }
+    const VectorTransformation<Dimensions,VType> AntiRotations()const
+    {
+        return sign ? transformation(line(numt(1))) : transformation(line(numt(-1)));
+    }
 };
 
 template<class numt>
@@ -552,6 +622,14 @@ public:
     const bool operator==(const Direction &second)const
     {
         return (m_phi == second.m.phi);
+    }
+    const VectorTransformation<Dimensions,VType> Rotations()const
+    {
+	return VectorTransformation<Dimensions,VType>::template RotationInPlane<1,2>(m_phi);
+    }
+    const VectorTransformation<Dimensions,VType> AntiRotations()const
+    {
+	return VectorTransformation<Dimensions,VType>::template RotationInPlane<1,2>(-m_phi);
     }
 };
 template<class numt>
@@ -598,6 +676,22 @@ public:
     {
         return (m_theta == second.m_theta) && (m_ld == second.m_ld);
     }
+    const VectorTransformation<Dimensions,VType> Rotations()const
+    {
+	return 
+	    VectorTransformation<Dimensions,VType>(
+		m_ld.Rotations().___add_column(DirectionN::VType::zero()),
+		VType::main_axis())
+	    *VectorTransformation<Dimensions,VType>::template RotationInPlane<3,1>(m_theta);
+    }
+    const VectorTransformation<Dimensions,VType> AntiRotations()const
+    {
+	return 
+	VectorTransformation<Dimensions,VType>::template RotationInPlane<3,1>(-m_theta)*
+	    VectorTransformation<Dimensions,VType>(
+		m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
+		VType::main_axis());
+    }
 };
 template<size_t size, class numt>
 class Direction
@@ -638,6 +732,22 @@ public:
     const VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
+    }
+    const VectorTransformation<Dimensions,VType> Rotations()const
+    {
+	return 
+	    VectorTransformation<Dimensions,VType>(
+		m_ld.Rotations().___add_column(DirectionN::VType::zero()),
+		VType::main_axis())
+	    *VectorTransformation<Dimensions,VType>::template RotationInPlane<Dimensions,Dimensions-1>(m_theta);
+    }
+    const VectorTransformation<Dimensions,VType> AntiRotations()const
+    {
+	return 
+	VectorTransformation<Dimensions,VType>::template RotationInPlane<Dimensions,Dimensions-1>(-m_theta)*
+	    VectorTransformation<Dimensions,VType>(
+		m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
+		VType::main_axis());
     }
 };
 template<class numt = double>
@@ -827,67 +937,6 @@ const std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vec
     const auto P = dir * p;
     return std::make_pair(lorentz_byPM(P, m1), lorentz_byPM(-P, m2));
 }
-
-
-
-
-
-
-
-
-
-
-
-template<class numt = double>
-class Plane3D
-{
-public:
-    typedef Vector<3, numt> Space;
-    typedef Vector<2, numt> Plane;
-private:
-    Space basis_x, basis_y;
-public:
-    const Space &x()const
-    {
-        return basis_x;
-    }
-    const Space &y()const
-    {
-        return basis_y;
-    }
-    const Space operator()(const Plane &v)const
-    {
-        return basis_x * v.x() + basis_y * v.y();
-    }
-    virtual ~Plane3D() {}
-    Plane3D(const Space &x, const Space &y): basis_x(x), basis_y(y)
-    {
-        if ((x ^ y).M_sqr() == numt(0))throw Exception<Plane3D>("Invalid basis vectors for converting 2d vectors to 3d");
-    }
-    Plane3D(const typename Space::DType &x, const typename Space::DType &y): Plane3D(x *numt(1), y *numt(1)) {}
-    static const Plane3D ByNormalVector(const typename Space::DType &n)
-    {
-        const auto N = n * 1.0;
-        const auto X = N ^ Z<numt>();
-        if (X.M() == 0) {
-            const auto X1 = MathTemplates::X<numt>();
-            return Plane3D(X1, N ^ X1);
-        } else {
-            const auto X1 = X / X.M();
-            return Plane3D(X1, N ^ X1);
-        }
-        throw Exception<Plane3D>("This line should not be reached");
-    }
-    static const Plane3D ByNormalVector(const typename Space::DType &n, const typename Plane::DType &r)
-    {
-        const auto P = ByNormalVector(n);
-        const auto R = Rotation(n, r.phi());
-        return Plane3D(R * P.x(), R * P.y());
-    }
-};
-
-
-
 
 };
 #endif

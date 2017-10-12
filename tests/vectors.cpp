@@ -443,122 +443,74 @@ TEST(Vector,direction5d)
     }
 }
 
-TEST(Plane3D, SimplePlanes)
+TEST(Vector,rotations1d)
 {
     RANDOM RG;
-    RandomUniform<> mr(0, 10), th(0, 2.0 * PI());
-    for (size_t i = 0; i < 10000; i++) {
-        const auto v1 = randomIsotropic<2>(RG) * mr(RG), v2 = randomIsotropic<2>(RG) * mr(RG);
-        const auto p1 = v1 * v2;
-        {
-            const auto plane = Plane3D<>(X<>(),Y<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).x());
-            EXPECT_EQ(v1.y(), plane(v1).y());
-            EXPECT_EQ(0, plane(v1).z());
-        }
-        {
-            const auto plane = Plane3D<>(Y<>(),X<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).y());
-            EXPECT_EQ(v1.y(), plane(v1).x());
-            EXPECT_EQ(0, plane(v1).z());
-        }
-        {
-            const auto plane = Plane3D<>(X<>(),Z<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).x());
-            EXPECT_EQ(v1.y(), plane(v1).z());
-            EXPECT_EQ(0, plane(v1).y());
-        }
-        {
-            const auto plane = Plane3D<>(Z<>(),X<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).z());
-            EXPECT_EQ(v1.y(), plane(v1).x());
-            EXPECT_EQ(0, plane(v1).y());
-        }
-        {
-            const auto plane = Plane3D<>(Y<>(),Z<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).y());
-            EXPECT_EQ(v1.y(), plane(v1).z());
-            EXPECT_EQ(0, plane(v1).x());
-        }
-        {
-            const auto plane = Plane3D<>(Z<>(),Y<>());
-            const auto p2 = plane(v1) * plane(v2);
-            EXPECT_TRUE(abs(p1 - p2) < epsilon);
-            EXPECT_EQ(v1.x(), plane(v1).z());
-            EXPECT_EQ(v1.y(), plane(v1).y());
-            EXPECT_EQ(0, plane(v1).x());
-        }
+    RandomUniform<> M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto dir=randomIsotropic<1>(RG);
+	const auto m=M(RG);
+	const auto V1=dir*m;
+	const auto V2=dir.Rotations()*(Vector<1>::main_axis()*m);
+	EXPECT_TRUE(V1.CloseTo(V2,epsilon));
+	const auto V3=dir.AntiRotations()*V2;
+	EXPECT_TRUE(V3.CloseTo(Vector<1>::main_axis()*m,epsilon));
     }
 }
-TEST(Plane3D, norm)
+TEST(Vector,rotations2d)
 {
     RANDOM RG;
-    for (size_t i = 0; i < 100; i++) {
-	const  auto n=randomIsotropic<3>(RG);
-        const auto plane = Plane3D<>::ByNormalVector(n);
-	EXPECT_TRUE(abs(plane.x().M()-1)<epsilon);
-	EXPECT_TRUE(abs(plane.y().M()-1)<epsilon);
-        EXPECT_TRUE(abs(plane.x()*plane.y()) < epsilon);
-        EXPECT_TRUE(abs(plane.x()*(n*1.0)) < epsilon);
-        EXPECT_TRUE(abs(plane.y()*(n*1.0)) < epsilon);
-        EXPECT_TRUE(((n*1.0)^plane.x()).CloseTo(plane.y(),epsilon));
-	if ((n*1.0)==Z<>()) {
-	    EXPECT_TRUE(plane.x().CloseTo(X<>(),epsilon));
-        } else {
-	    EXPECT_TRUE(plane.x().CloseTo(direction((n*1.0)^Z<>())*1.0,epsilon));
-        }
+    RandomUniform<> M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto dir=randomIsotropic<2>(RG);
+	const auto m=M(RG);
+	const auto V1=dir*m;
+	const auto V2=dir.Rotations()*(x()*m);
+	EXPECT_TRUE(V1.CloseTo(V2,epsilon));
+	const auto V3=dir.AntiRotations()*V2;
+	EXPECT_TRUE(V3.CloseTo(x()*m,epsilon));
     }
 }
-TEST(Plane3D, norm2)
+TEST(Vector,rotations3d)
 {
     RANDOM RG;
-    for (size_t i = 0; i < 100; i++) {
-	const  auto n=randomIsotropic<3>(RG);
-	const auto rot=randomIsotropic<2>(RG);
-        const auto plane = Plane3D<>::ByNormalVector(n,rot);
-	EXPECT_TRUE(abs(plane.x().M()-1)<epsilon);
-	EXPECT_TRUE(abs(plane.y().M()-1)<epsilon);
-        EXPECT_TRUE(abs(plane.x()*plane.y()) < epsilon);
-        EXPECT_TRUE(abs(plane.x()*(n*1.0)) < epsilon);
-        EXPECT_TRUE(abs(plane.y()*(n*1.0)) < epsilon);
-        EXPECT_TRUE(((n*1.0)^plane.x()).CloseTo(plane.y(),epsilon));
-	if (((n*1.0) ^ Z<>()).M() == 0) {
-	    EXPECT_TRUE(plane.x().CloseTo(Rotation(n,rot.phi())*X<>(),epsilon));
-        } else {
-	    EXPECT_TRUE(plane.x().CloseTo(Rotation(n,rot.phi())*(direction((n*1.0)^Z<>())*1.0),epsilon));
-        }
+    RandomUniform<> M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto dir=randomIsotropic<3>(RG);
+	const auto m=M(RG);
+	const auto V1=dir*m;
+	const auto V2=dir.Rotations()*(Vector<3>::main_axis()*m);
+	EXPECT_TRUE(V1.CloseTo(V2,epsilon));
+	const auto V3=dir.AntiRotations()*V2;
+	EXPECT_TRUE(V3.CloseTo(Vector<3>::main_axis()*m,epsilon));
     }
 }
-TEST(Plane3D, scalarProductInvariance)
+TEST(Vector,rotations4d)
 {
     RANDOM RG;
-    RandomUniform<> mr(0, 10);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto v1 = randomIsotropic<2>(RG) * mr(RG), v2 = randomIsotropic<2>(RG) * mr(RG);
-        const auto p1 = v1 * v2;
-        const auto plane = Plane3D<>::ByNormalVector(randomIsotropic<3>(RG),randomIsotropic<2>(RG));
-        const auto p2 = plane(v1) * plane(v2);
-        EXPECT_TRUE(abs(p1 - p2) < epsilon);
+    RandomUniform<> M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto dir=randomIsotropic<4>(RG);
+	const auto m=M(RG);
+	const auto V1=dir*m;
+	const auto V2=dir.Rotations()*(Vector<4>::main_axis()*m);
+	EXPECT_TRUE(V1.CloseTo(V2,epsilon));
+	const auto V3=dir.AntiRotations()*V2;
+	EXPECT_TRUE(V3.CloseTo(Vector<4>::main_axis()*m,epsilon));
     }
 }
-TEST(Plane3D, LorentzInvariance)
+TEST(Vector,rotations5d)
 {
     RANDOM RG;
-    RandomUniform<> mr(0, 10);
-    for (size_t i = 0; i < 10000; i++) {
-        const auto v = lorentz_byPM(randomIsotropic<2>(RG) * mr(RG), mr(RG));
-        const auto plane = Plane3D<>::ByNormalVector(randomIsotropic<3>(RG), randomIsotropic<2>(RG));
-        const auto v2 = lorentzVector(v.T(), plane(v.S()));
-        EXPECT_TRUE(abs(v.M() - v2.M()) < epsilon);
+    RandomUniform<> M(0.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto dir=randomIsotropic<5>(RG);
+	const auto m=M(RG);
+	const auto V1=dir*m;
+	const auto V2=dir.Rotations()*(Vector<5>::main_axis()*m);
+	EXPECT_TRUE(V1.CloseTo(V2,epsilon));
+	const auto V3=dir.AntiRotations()*V2;
+	EXPECT_TRUE(V3.CloseTo(Vector<5>::main_axis()*m,epsilon));
     }
 }
+
