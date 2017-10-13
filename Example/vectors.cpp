@@ -18,7 +18,7 @@ int main()
     P_vs_P("P-P",BinsByCount(50,0.0,1.0),BinsByCount(50,0.0,1.0),"plot_PP"),
     Th_vs_Th("Th-Th",BinsByCount(45,0.0,180.),BinsByCount(45,0.0,180.),"plot_ThTh");
     for(size_t i=0;i<1000;i++){
-	const auto Pr0=lorentz_byEM(E+M1,M1,direction(Z<>()));
+	const auto Pr0=lorentz_byEM(E+M1,M1,Z<>());
 	const auto Pt0=lorentz_byPM(Zero<>(),M2);
 	const auto Total=Pr0+Pt0;
 	const double invariant_mass=Total.M();

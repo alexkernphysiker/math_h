@@ -18,8 +18,8 @@ const numt &MakeException()
     return x;
 }
 template<size_t size = 3, class numt = double>class Vector;
+template<size_t size = 3, class linetype = Vector<3, double>>class VectorTransformation;
 template<size_t size = 3, class numt = double>class Direction;
-template<size_t sizef = 3, class linetype = Vector<3, double>>class VectorTransformation;
 
 
 
@@ -302,17 +302,6 @@ inline const Vector<i, numt> operator-(const Vector<i, numt> &V)
 {
     return V * numt(-1);
 }
-template<class numt = double>
-const Vector<3, numt> operator^(const Vector<3, numt> &first, const Vector<3, numt> &second)
-{
-    return desCartes(
-               (first.y() * second.z()) - (second.y() * first.z()),
-               (first.z() * second.x()) - (second.z() * first.x()),
-               (first.x() * second.y()) - (second.x() * first.y())
-           );
-}
-
-
 
 
 
@@ -507,12 +496,12 @@ public:
     }
 };
 template<class numt, class... Args>
-const Vector < sizeof...(Args) + 1, numt > line(const numt &x, Args... args)
+inline const Vector < sizeof...(Args) + 1, numt > line(const numt &x, Args... args)
 {
     return Vector < sizeof...(Args) + 1, numt > (std::make_tuple(x, args...));
 }
 template<class linetype, class... Args>
-const VectorTransformation < sizeof...(Args) + 1, linetype > transformation(const linetype &x, Args... args)
+inline const VectorTransformation < sizeof...(Args) + 1, linetype > matrix(const linetype &x, Args... args)
 {
     return VectorTransformation < sizeof...(Args) + 1, linetype > (std::make_tuple(x, args...));
 }
@@ -527,11 +516,21 @@ inline const VectorTransformation<s, Vector<s, numt>> ONE()
     return VectorTransformation<s, Vector<s, numt>>::one();
 }
 template<size_t size, class VIType>
-const VectorTransformation<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
+inline const VectorTransformation<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
 {
     return VectorTransformation<size, VIType>(A, B);
 }
-
+template<class numt = double>
+inline const VectorTransformation<3, Vector<3,numt>> SkewM(const Vector<3, numt> &A)
+{
+    return matrix(
+	line(numt(0),-A.z(),A.y()),
+	line(A.z(),numt(0),-A.x()),
+	line(-A.y(),A.x(),numt(0))
+    );
+}
+template<class A,class B>
+inline const auto operator^(const A&a, const B&b)->decltype(SkewM(a)*b){return SkewM(a)*b;}
 
 
 
@@ -577,11 +576,11 @@ public:
     }
     const VectorTransformation<Dimensions,VType> Rotations()const
     {
-        return sign ? transformation(line(numt(1))) : transformation(line(numt(-1)));
+        return sign ? matrix(line(numt(1))) : matrix(line(numt(-1)));
     }
     const VectorTransformation<Dimensions,VType> AntiRotations()const
     {
-        return sign ? transformation(line(numt(1))) : transformation(line(numt(-1)));
+        return sign ? matrix(line(numt(1))) : matrix(line(numt(-1)));
     }
 };
 
@@ -793,7 +792,7 @@ template<class numt = double>
 const VectorTransformation<2, Vector<2, numt>> Rotation(const numt &theta)
 {
     const numt cost = cos(theta), sint = sin(theta);
-    return transformation(
+    return matrix(
                line(cost, -sint),
                line(sint, cost)
            );
@@ -803,7 +802,7 @@ const VectorTransformation<3, Vector<3, numt>> Rotation(const Direction<3, numt>
 {
     const auto n = axis * numt(1);
     const numt cost = cos(theta), sint = sin(theta), one = 1;
-    return transformation(
+    return matrix(
                line(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
                line((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
                line((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
@@ -875,7 +874,7 @@ public:
     {
         return (m_time * second.m_time) - (m_space * second.m_space);
     }
-    const numt M_sqr()const
+    inline const numt M_sqr()const
     {
         return operator*(*this);
     }
@@ -884,7 +883,7 @@ public:
         return sqrt(M_sqr());
     }
 
-    static const LorentzVector zero()
+    inline static const LorentzVector zero()
     {
         return LorentzVector(numt(0), Space::zero());
     }
@@ -910,21 +909,24 @@ public:
     }
 };
 template<class numt = double, class Space = Vector<3, numt>>
-const LorentzVector<numt, Space> lorentzVector(const numt &t, const Space &s)
+inline const LorentzVector<numt, Space> lorentzVector(const numt &t, const Space &s)
 {
     return LorentzVector<numt, Space>(t, s);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
+inline const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {
     return LorentzVector<numt, Space>(sqrt(s.M_sqr() + l4 * l4), s);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const typename Space::DType &dir)
+inline const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const typename Space::DType &dir)
 {
     numt Sp = sqrt(t * t - l4 * l4);
     return LorentzVector<numt, Space>(t, dir * Sp);
 }
+template<class numt = double, class Space = Vector<3, numt>>
+inline const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const Space&Dir)
+{return lorentz_byEM(t,l4,direction(Dir));}
 template<size_t size, class numt>
 const std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
         binaryDecay(const numt &IM, const numt &m1, const numt &m2, const Direction<size, numt> &dir)
