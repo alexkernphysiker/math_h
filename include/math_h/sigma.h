@@ -258,16 +258,6 @@ inline std::ostream &operator<<(std::ostream &str, const value<numt> &P)
 {
     return str << P.val() << " " << P.uncertainty();
 }
-template<typename numt>
-const value<numt> func_value(const std::function<numt(const numt &)>F, const value<numt> &X)
-{
-    return X.Func(F);
-}
-template<typename numt>
-const std::function<value<numt>(const value<numt>&)> value_func(const std::function<numt(const numt &)>F)
-{
-    return [F](const value<numt> &X)->value<numt> {return X.Func(F);};
-}
 
 template<typename numt = double>
 class StandardDeviation

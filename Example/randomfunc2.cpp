@@ -9,16 +9,15 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main()
 {
-    RandomValueTableDistr<> X([](double x) {
-        return FermiFunc(x, 2.0, 0.2);
-    }, ChainWithStep(0.0, 0.01, 4.0));
-    RandomValueTableDistr<> Y([](double y) {
-        return FermiFunc(y, 2.0, 0.5);
-    }, ChainWithStep(0.0, 0.01, 4.0));
-
-    mt19937 engine;
-    Distribution2D<> H(BinsByCount(40, 0.0, 4.0), BinsByCount(40, 0.0, 4.0));
-    for (size_t i = 0; i < 10000; i++)H.Fill(X(engine), Y(engine));
-   PlotHist2d<>(sp2,"randomfunc2").Distr(H);
+    const LinearInterpolation<> P = Points<>{
+        {0.7, 0.4}, {1.0, 0.0}, {1.8, 1.0}, {2.2, 1.0},
+        {3.0, 0.5}, {3.5, 0.3}, {4.0, 0.3}
+    };
+    const RandomValueTableDistr<> generator = P;
+    RANDOM engine;
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0),"randomfunc2");
+    for (size_t i = 0; i < 1000000; i++) {
+        dist.Fill(generator(engine));
+    }
     return 0;
 }

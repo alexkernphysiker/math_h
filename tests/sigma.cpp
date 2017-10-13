@@ -200,20 +200,11 @@ TEST(value, NumCompare)
 TEST(value, func_val)
 {
     value<double> V(1, 0.1);
-    auto V2 = func_value<double>([](double x) {
-        return 2.0 * x;
-    }, V);
-    EXPECT_EQ(2 * V.val(), V2.val());
-    _EQ(2 * V.uncertainty(), V2.uncertainty());
-}
-TEST(value, func_val2)
-{
-    value<double> V(1, 0.1);
-    auto F = value_func<double>([](double x) {
+    auto V2 = V.Func([](double x) {
         return 2.0 * x;
     });
-    EXPECT_EQ(2 * V.val(), F(V).val());
-    _EQ(2 * V.uncertainty(), F(V).uncertainty());
+    EXPECT_EQ(2 * V.val(), V2.val());
+    _EQ(2 * V.uncertainty(), V2.uncertainty());
 }
 TEST(value, wider)
 {

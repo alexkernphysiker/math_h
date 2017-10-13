@@ -1,7 +1,7 @@
 // this file is distributed under
 // MIT license
 #include <iostream>
-#include <random>
+#include <math_h/randomfunc.h>
 #include <math_h/sigma.h>
 #include <gnuplot_wrap.h>
 using namespace std;
@@ -9,10 +9,10 @@ using namespace MathTemplates;
 using namespace GnuplotWrap;
 int main()
 {
-    mt19937 engine;
-    normal_distribution<double> d1(2, 0.1);
-    normal_distribution<double> d2(5, 1);
-    StandardDeviation<double> S1, S2, S_sum, S_mul, S_ratio, S_f1, S_f2;
+    RANDOM engine;
+    RandomGauss<> d1(2, 0.1);
+    RandomGauss<> d2(5, 1);
+    StandardDeviation<> S1, S2, S_sum, S_mul, S_ratio, S_f1, S_f2;
     auto F = [](double x) {
         return log(x);
     };
@@ -39,10 +39,10 @@ int main()
     cout << "theory ratio = " << S1() / S2() << endl;
     cout << "experiment ratio = " << S_ratio() << endl;
     cout << endl;
-    cout << "theory func 1 = " << func_value<double>(F, S1()) << endl;
+    cout << "theory func 1 = " << S1().Func(F) << endl;
     cout << "experiment func 1 = " << S_f1() << endl;
     cout << endl;
-    cout << "theory func 2 = " << func_value<double>(F, S2()) << endl;
+    cout << "theory func 2 = " << S2().Func(F) << endl;
     cout << "experiment func 2 = " << S_f2() << endl;
     cout << endl;
 }
