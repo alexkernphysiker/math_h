@@ -280,6 +280,52 @@ TEST(Vector,decompose4)
     }
 }
 
+TEST(LorentzVector, LorentzTransform1d)
+{
+    RANDOM RG;
+    RandomUniform<> mr(0, 0.99), metrr(-5, 5);
+    for (size_t i = 0; i < 50; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<1>(RG)*1.0, metrr(RG));
+        const auto V1 = V0.Transform(desCartes(0.));
+        EXPECT_TRUE(V1 == V0);
+        const auto beta = randomIsotropic<1>(RG) * mr(RG);
+        const auto V2 = V0.Transform(beta).Transform(-beta);
+        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
+	EXPECT_TRUE(V2.S().CloseTo(V0.S(),epsilon));
+        EXPECT_ANY_THROW(V0.Transform(randomIsotropic<1>(RG) * (1.0 + mr(RG))));
+        const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<1>(RG) * 0.2).M();
+        EXPECT_TRUE(abs(L0 - L1) < epsilon);
+        EXPECT_TRUE(abs(L2 - L1) < epsilon);
+        EXPECT_TRUE(abs(L0 - L2) < epsilon);
+        const auto V00 = lorentz_byPM(desCartes(0.),V0.M()).Transform(-V0.Beta());
+        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
+	EXPECT_TRUE(V00.S().CloseTo(V0.S(),epsilon));
+    }
+}
+TEST(LorentzVector, LorentzTransform2d)
+{
+    RANDOM RG;
+    RandomUniform<> mr(0, 0.99), metrr(-5, 5);
+    for (size_t i = 0; i < 50; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<2>(RG)*1.0, metrr(RG));
+        const auto V1 = V0.Transform(zero<>());
+        EXPECT_TRUE(V1 == V0);
+        const auto beta = randomIsotropic<2>(RG) * mr(RG);
+        const auto V2 = V0.Transform(beta).Transform(-beta);
+        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
+	EXPECT_TRUE(V2.S().CloseTo(V0.S(),epsilon));
+        EXPECT_ANY_THROW(V0.Transform(randomIsotropic<2>(RG) * (1.0 + mr(RG))));
+        const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) * 0.2).M();
+        EXPECT_TRUE(abs(L0 - L1) < epsilon);
+        EXPECT_TRUE(abs(L2 - L1) < epsilon);
+        EXPECT_TRUE(abs(L0 - L2) < epsilon);
+        const auto V00 = lorentz_byPM(zero<>(),V0.M()).Transform(-V0.Beta());
+        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
+	EXPECT_TRUE(V00.S().CloseTo(V0.S(),epsilon));
+    }
+}
 TEST(LorentzVector, LorentzTransform3d)
 {
     RANDOM RG;
@@ -326,6 +372,28 @@ TEST(LorentzVector, LorentzTransform4d)
 	EXPECT_TRUE(V00.S().CloseTo(V0.S(),epsilon));
     }
 }
+TEST(LorentzVector, LorentzTransform1d_more)
+{
+    RANDOM RG;
+    RandomUniform<> M(0, 5),P(0, 5);
+    for (size_t i = 0; i < 50; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<1>(RG)*P(RG), M(RG));
+	const auto V1=V0.Transform(V0.Beta());
+        EXPECT_TRUE(V1.S().CloseTo(desCartes(0.),epsilon));
+        EXPECT_TRUE(abs(V1.M()-V0.M()) < epsilon);
+    }
+}
+TEST(LorentzVector, LorentzTransform2d_more)
+{
+    RANDOM RG;
+    RandomUniform<> M(0, 5),P(0, 5);
+    for (size_t i = 0; i < 50; i++) {
+        const auto V0 = lorentz_byPM(randomIsotropic<2>(RG)*P(RG), M(RG));
+	const auto V1=V0.Transform(V0.Beta());
+        EXPECT_TRUE(V1.S().CloseTo(zero(),epsilon));
+        EXPECT_TRUE(abs(V1.M()-V0.M()) < epsilon);
+    }
+}
 TEST(LorentzVector, LorentzTransform3d_more)
 {
     RANDOM RG;
@@ -346,30 +414,6 @@ TEST(LorentzVector, LorentzTransform4d_more)
 	const auto V1=V0.Transform(V0.Beta());
         EXPECT_TRUE(V1.S().CloseTo(desCartes(0.,0.,0.,0.),epsilon));
         EXPECT_TRUE(abs(V1.M()-V0.M()) < epsilon);
-    }
-}
-TEST(LorentzVector, LorentzTransform2d)
-{
-    RANDOM RG;
-    RandomUniform<> mr(0, 1.0 - epsilon), metrr(-5, 5);
-    for (size_t i = 0; i < 50; i++) {
-        const auto V0 = lorentz_byPM(randomIsotropic<2>(RG)*1.0, metrr(RG));
-        const auto V1 = V0.Transform(zero<>());
-        EXPECT_TRUE(V1 == V0);
-        const auto beta = randomIsotropic<2>(RG) * mr(RG);
-        const auto V2 = V0.Transform(beta).Transform(-beta);
-        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V2.S().CloseTo(V0.S(),epsilon));
-	typedef LorentzVector<double,Vector<2>> LV2;
-        EXPECT_THROW(V0.Transform(randomIsotropic<2>(RG) * (1.0 + mr(RG))),Exception<LV2>);
-        const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) * 0.2).M();
-        EXPECT_TRUE(abs(L0 - L1) < epsilon);
-        EXPECT_TRUE(abs(L2 - L1) < epsilon);
-        EXPECT_TRUE(abs(L0 - L2) < epsilon);
-        const auto V00 = lorentz_byPM(zero<>(),V0.M()).Transform(-V0.Beta());
-        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V00.S().CloseTo(V0.S(),epsilon));
     }
 }
 
