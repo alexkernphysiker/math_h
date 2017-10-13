@@ -514,3 +514,29 @@ TEST(Vector,rotations5d)
     }
 }
 
+TEST(Vector,rotations3d_plane)
+{
+    RANDOM RG;
+    RandomUniform<> M(-10.0,10.0);
+    for (size_t i = 0; i < 10; i++) {
+	const auto R=randomIsotropic<3>(RG).Rotations();
+	const auto v1=R*desCartes(M(RG),M(RG),0.);
+	const auto v2=R*desCartes(M(RG),M(RG),0.);
+	const auto v3=R*desCartes(M(RG),M(RG),0.);
+	EXPECT_TRUE(abs((v1^v2)*v3)<epsilon);
+    }
+    for (size_t i = 0; i < 10; i++) {
+	const auto R=randomIsotropic<3>(RG).Rotations();
+	const auto v1=R*desCartes(0.,M(RG),M(RG));
+	const auto v2=R*desCartes(0.,M(RG),M(RG));
+	const auto v3=R*desCartes(0.,M(RG),M(RG));
+	EXPECT_TRUE(abs((v1^v2)*v3)<epsilon);
+    }
+    for (size_t i = 0; i < 10; i++) {
+	const auto R=randomIsotropic<3>(RG).Rotations();
+	const auto v1=R*desCartes(M(RG),0.,M(RG));
+	const auto v2=R*desCartes(M(RG),0.,M(RG));
+	const auto v3=R*desCartes(M(RG),0.,M(RG));
+	EXPECT_TRUE(abs((v1^v2)*v3)<epsilon);
+    }
+}
