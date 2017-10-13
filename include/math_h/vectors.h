@@ -263,39 +263,39 @@ const Vector<d,numt> main_axis()
     return Vector<d,numt>::main_axis();
 }
 template<class numt = double>
-const Vector<2, numt> x()
+inline const Vector<2, numt> x()
 {
-    return desCartes(numt(1), numt(0));
+    return Vector<2,numt>::template basis_vector<1>();
 }
 template<class numt = double>
-const Vector<2, numt> y()
+inline const Vector<2, numt> y()
 {
-    return desCartes(numt(0), numt(1));
+    return Vector<2,numt>::template basis_vector<2>();
 }
 template<class numt = double>
-const Vector<2, numt> zero()
+inline const Vector<2, numt> zero()
 {
-    return desCartes(numt(0), numt(0));
+    return Vector<2,numt>::zero();
 }
 template<class numt = double>
-const Vector<3, numt> X()
+inline const Vector<3, numt> X()
 {
-    return desCartes(numt(1), numt(0), numt(0));
+    return Vector<3,numt>::template basis_vector<1>();
 }
 template<class numt = double>
-const Vector<3, numt> Y()
+inline const Vector<3, numt> Y()
 {
-    return desCartes(numt(0), numt(1), numt(0));
+    return Vector<3,numt>::template basis_vector<2>();
 }
 template<class numt = double>
-const Vector<3, numt> Z()
+inline const Vector<3, numt> Z()
 {
-    return desCartes(numt(0), numt(0), numt(1));
+    return Vector<3,numt>::template basis_vector<3>();
 }
 template<class numt = double>
-const Vector<3, numt> Zero()
+inline const Vector<3, numt> Zero()
 {
-    return desCartes(numt(0), numt(0), numt(0));
+    return Vector<3,numt>::zero();
 }
 template<size_t i, class numt = double>
 inline const Vector<i, numt> operator-(const Vector<i, numt> &V)

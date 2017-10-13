@@ -517,7 +517,7 @@ TEST(Vector,rotations5d)
 TEST(Vector,rotations3d_plane)
 {
     RANDOM RG;
-    RandomUniform<> M(-10.0,10.0);
+    RandomUniform<> M(-10.0,10.0),TH(-PI<>(),PI<>());
     for (size_t i = 0; i < 10; i++) {
 	const auto R=randomIsotropic<3>(RG).Rotations();
 	const auto v1=R*desCartes(M(RG),M(RG),0.);
@@ -538,5 +538,14 @@ TEST(Vector,rotations3d_plane)
 	const auto v2=R*desCartes(M(RG),0.,M(RG));
 	const auto v3=R*desCartes(M(RG),0.,M(RG));
 	EXPECT_TRUE(abs((v1^v2)*v3)<epsilon);
+    }
+    for (size_t i = 0; i < 10; i++) {
+	const auto R1=randomIsotropic<3>(RG).Rotations();
+	const auto v1=desCartes(M(RG),0.,M(RG));
+	const auto R2=Rotation(direction(v1),TH(RG));
+	const auto R=R1*R2;
+	const auto v2=desCartes(M(RG),0.,M(RG));
+	const auto v3=desCartes(M(RG),0.,M(RG));
+	EXPECT_TRUE(abs(((R*v1)^(R*v2))*(R*v3))<epsilon);
     }
 }
