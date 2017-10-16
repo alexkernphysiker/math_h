@@ -3,6 +3,9 @@
 #include <math_h/matrices.h>
 using namespace std;
 using namespace MathTemplates;
+//This is an example how to solve Matrix equation A*x=b
+//where A is a matrix, b is a known vector 
+// and x is an unknown vector
 int main()
 {
     const MatrixData<double> A({

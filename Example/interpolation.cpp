@@ -5,15 +5,17 @@
 using namespace std;
 using namespace MathTemplates;
 using namespace GnuplotWrap;
+//This is an example how to use
+// linear interpolation class
 int main()
 {
     //create the table of points for interpolation
     LinearInterpolation<> test=Points<>{{0, 0}, {1, 1}, {2, 4}, {3, 9}};
+    //you can add more points later
     test << point<>(-1, 1) << point<>(-2, 4) << point<>(-3, 9);
     //create chain of values with lesser step
-    const auto x_chain_for_interpolating = ChainWithStep(-3.0, 0.01, 3.0);
-    //plot interpolated tables with lesser step
-    Plot<>("interpolation1").Line(SortedPoints<>(test.func(), x_chain_for_interpolating), "interpolation")
-    .Line(SortedPoints<>(IntegratedLinearInterpolation<>(test).func(), x_chain_for_interpolating), "integrated");
+    SortedPoints<> plot_data;
+    for(double x=-3.;x<=3.;x+=0.1)plot_data<<make_point(x,test(x));
+    Plot<>("interpolation1").Points(plot_data);
     return 0;
 }

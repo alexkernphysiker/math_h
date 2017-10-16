@@ -7,14 +7,21 @@
 using namespace std;
 using namespace MathTemplates;
 using namespace GnuplotWrap;
+//This is an example how to generate random values
+//distributed by a function given in a table
 int main()
 {
-    RandomValueTableDistr<> generator([](const double & x) {
-        return Lorentzian(x, 2.0, 0.2);
-    }, ChainWithStep(0.0, 0.1, 4.0));
+    //test table with distribution density
+     const LinearInterpolation<> P = Points<>{
+        {0.7, 0.4}, {1.0, 0.0}, {1.8, 1.0}, {2.2, 1.0},
+        {3.0, 0.5}, {3.5, 0.3}, {4.0, 0.3}
+    };
+    //creating random value generator
     RANDOM engine;
-    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.01, 4.0),"randomfunc1");
-    for (size_t i = 0; i < 10000; i++) {
+    const RandomValueTableDistr<> generator = P;
+    //Generate values and plot histogram
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0),"randomfunc");
+    for (size_t i = 0; i < 1000000; i++) {
         dist.Fill(generator(engine));
     }
     return 0;

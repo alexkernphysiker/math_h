@@ -74,7 +74,7 @@ public:
     }
     virtual numY operator()(const numX &x)const override
     {
-        return Sympson<numX, numY>([this, x](const numX & ksi) {
+        return Sympson<numX, numY>([this,&x](const numX & ksi) {
             return A(ksi) * B(x - ksi);
         }, Ksi1, Ksi2, Step);
     }
