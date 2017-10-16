@@ -23,7 +23,7 @@ public:
     }
     point(const numtX &pos): x(pos), y(numtY(0)) {}
     point(const numtX &pos, const numtY &val): x(pos), y(val) {}
-    template<class numtX2 = numtX, class numtY2 = numtY>
+    template<class numtX2, class numtY2>
     point(const point<numtX2,numtY2> &source): x(source.X()), y(source.Y()) {}
     template<class numt = numtY>
     point(const std::initializer_list<numt> &source)
@@ -127,7 +127,7 @@ public:
     {
         return z;
     }
-    template<class numtX2 = numtX, class numtY2 = numtY,class numtZ2=numtZ>
+    template<class numtX2, class numtY2,class numtZ2>
     point3d(const point3d<numtX2,numtY2,numtZ2>&source)
 	: x(source.X()), y(source.Y()), z(source.Z()){}
 };

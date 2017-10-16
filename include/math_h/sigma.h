@@ -37,6 +37,14 @@ private:
     }
 public:
     virtual ~value() {}
+    const numt &val()const
+    {
+        return Value;
+    }
+    const numt &uncertainty()const
+    {
+        return Error;
+    }
     value(): Value(numt(0)), Error(numt(0))
     {
         invalidate();
@@ -74,7 +82,8 @@ public:
         if (b < a)throw Exception<value>("Bad interval");
         return value((b + a) / numt(2), (b - a) / numt(2));
     }
-    value(const value &source): Value(source.Value), Error(source.Error)
+    template<class numt2>
+    value(const value &source): Value(source.val()), Error(source.uncertainty())
     {
         invalidate();
     }
@@ -88,14 +97,6 @@ public:
     const value make_wider(const numt &scale)const
     {
         return value(Value, scale * Error);
-    }
-    const numt &val()const
-    {
-        return Value;
-    }
-    const numt &uncertainty()const
-    {
-        return Error;
     }
     const numt &epsilon()const
     {
