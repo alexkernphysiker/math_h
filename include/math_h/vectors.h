@@ -44,7 +44,8 @@ protected:
     }
 public:
     virtual ~Vector() {}
-    Vector(const Vector &source): m_x(source.m_x) {}
+    template<class numt2>
+    Vector(const Vector<Dimensions,numt2> &source): m_x(source.m_x) {}
     template<class... Args>
     Vector(const std::tuple<Args...> &v): m_x(std::get<0>(v)) {}
     static const Vector zero()
@@ -157,7 +158,8 @@ protected:
     }
 public:
     virtual ~Vector() {}
-    Vector(const Vector &source): m_other(source.m_other), m_x(source.m_x) {}
+    template<class numt2>
+    Vector(const Vector<Dimensions,numt2> &source): m_other(source.m_other), m_x(source.m_x) {}
     template<class... Args>
     Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
     static const Vector zero()
@@ -358,7 +360,8 @@ public:
     {
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
-    VectorTransformation(const VectorTransformation &source): m_line(source.m_line) {}
+    template<class otherlinetype>
+    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_line(source.m_line) {}
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
@@ -457,7 +460,8 @@ public:
 	const VFType C=operator*(B.___last_column());
         return P.___add_column(C);
     }
-    VectorTransformation(const VectorTransformation &source): m_minor(source.m_minor), m_line(source.m_line) {}
+    template<class otherlinetype>
+    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_minor(source.m_minor), m_line(source.m_line) {}
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
@@ -557,7 +561,8 @@ public:
     typedef Vector<1, numt> VType;
     virtual ~Direction() {}
     Direction(RANDOM &RG): sign(PHI(RG) >= 0) {}
-    Direction(const Direction &source): sign(source.sign) {}
+    template<class numt2>
+    Direction(const Direction<Dimensions,numt2>&source): sign(source.sign) {}
     Direction(const VType &v): sign(v.x() >= 0) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &args): sign(std::get<0>(args)) {}
@@ -608,7 +613,8 @@ public:
         while (m_phi < -PI<numt>())m_phi += PI<numt>() * numt(2);
     }
     Direction(RANDOM &RG): m_phi(PHI(RG)) {}
-    Direction(const Direction &source): m_phi(source.m_phi) {}
+    template<class numt2>
+    Direction(const Direction<Dimensions,numt2>&source): m_phi(source.m_phi) {}
     const numt &phi()const
     {
         return m_phi;
@@ -650,6 +656,8 @@ private:
     }
 public:
     virtual ~Direction() {}
+    template<class numt2>
+    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.m_ld),m_theta(source.m_theta) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &v): m_ld(v), m_theta(std::get<1>(v))
     {
@@ -711,6 +719,8 @@ private:
     }
 public:
     virtual ~Direction() {}
+    template<class numt2>
+    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.m_ld),m_theta(source.m_theta) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &v): m_ld(v), m_theta(std::get<Thetas>(v))
     {
@@ -831,7 +841,8 @@ public:
     LorentzVector(const numt &t, const Space &S): m_time(t), m_space(S) {}
     typedef Space SpaceVectorType;
     typedef numt TimeCoordinateType;
-    LorentzVector(const LorentzVector &source): LorentzVector(source.m_time, source.m_space) {}
+    template<class numt2,class Space2>
+    LorentzVector(const LorentzVector<numt2,Space2>&source): m_time(source.m_time), m_space(source.m_space){}
     LorentzVector &operator=(const LorentzVector &source)
     {
         m_space = source.m_space;
