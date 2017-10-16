@@ -29,7 +29,8 @@ template<size_t size = 3, class numt = double>class Direction;
 template<class numt>
 class Vector<1, numt>
 {
-    friend class Direction<1, numt>;
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
     template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {Dimensions = 1};
@@ -45,7 +46,7 @@ protected:
 public:
     virtual ~Vector() {}
     template<class numt2>
-    Vector(const Vector<Dimensions,numt2> &source): m_x(source.m_x) {}
+    Vector(const Vector<Dimensions,numt2> &source): m_x(source.___last_component()) {}
     template<class... Args>
     Vector(const std::tuple<Args...> &v): m_x(std::get<0>(v)) {}
     static const Vector zero()
@@ -136,7 +137,8 @@ public:
 template<size_t size, class numt>
 class Vector
 {
-    friend class Direction<size, numt>;
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
     template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {Dimensions = size};
@@ -159,7 +161,7 @@ protected:
 public:
     virtual ~Vector() {}
     template<class numt2>
-    Vector(const Vector<Dimensions,numt2> &source): m_other(source.m_other), m_x(source.m_x) {}
+    Vector(const Vector<Dimensions,numt2> &source): m_other(source.___recursive()), m_x(source.___last_component()) {}
     template<class... Args>
     Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
     static const Vector zero()
@@ -312,8 +314,9 @@ inline const Vector<i, numt> operator-(const Vector<i, numt> &V)
 template<class linetype>
 class VectorTransformation<1, linetype>
 {
-    template<size_t sizef, class n>friend class VectorTransformation;
+    template<size_t sizef, class n>friend class Vector;
     template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {DimensionsFinal = 1};
     enum {DimensionsInitial = linetype::Dimensions};
@@ -338,6 +341,7 @@ protected:
     {
 	return VIWType(m_line,col.___last_component());
     }
+    const VIType&___last_line()const{return m_line;}
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -361,7 +365,7 @@ public:
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
     template<class otherlinetype>
-    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_line(source.m_line) {}
+    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_line(source.___last_line()) {}
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
@@ -402,8 +406,9 @@ public:
 template<size_t sizef, class linetype>
 class VectorTransformation
 {
-    template<size_t sized, class n>friend class VectorTransformation;
-    template<size_t sized, class n>friend class Direction;
+    template<size_t sizeff, class n>friend class Vector;
+    template<size_t sizeff, class n>friend class Direction;
+    template<size_t sizeff, class n>friend class VectorTransformation;
 public:
     enum {DimensionsFinal = sizef};
     enum {DimensionsInitial = linetype::Dimensions};
@@ -434,6 +439,8 @@ protected:
 	const auto new_line=VIWType(m_line,col.___last_component());
 	return PlusOneColumn(new_minor,new_line);
     }
+    const VIType&___last_line()const{return m_line;}
+    const MinorTransformation&___recursive()const{return m_minor;}
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -461,7 +468,7 @@ public:
         return P.___add_column(C);
     }
     template<class otherlinetype>
-    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_minor(source.m_minor), m_line(source.m_line) {}
+    VectorTransformation(const VectorTransformation<DimensionsFinal,otherlinetype> &source): m_minor(source.___recursive()), m_line(source.___last_line()) {}
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
@@ -546,6 +553,9 @@ inline const auto operator^(const A&a, const B&b)->decltype(SkewM(a)*b){return S
 template<class numt>
 class Direction<1, numt>
 {
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class VectorTransformation;
 private:
     bool sign;
     static const numt PHI(RANDOM &r)
@@ -553,7 +563,8 @@ private:
         static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
         return res(r);
     }
-
+protected:
+    const bool&___sign()const{return sign;}
 public:
     enum {Dimensions = 1};
     enum {Thetas = 0};
@@ -562,7 +573,7 @@ public:
     virtual ~Direction() {}
     Direction(RANDOM &RG): sign(PHI(RG) >= 0) {}
     template<class numt2>
-    Direction(const Direction<Dimensions,numt2>&source): sign(source.sign) {}
+    Direction(const Direction<Dimensions,numt2>&source): sign(source.___sign()) {}
     Direction(const VType &v): sign(v.x() >= 0) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &args): sign(std::get<0>(args)) {}
@@ -592,6 +603,9 @@ public:
 template<class numt>
 class Direction<2, numt>
 {
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {Dimensions = 2};
     enum {Thetas = 0};
@@ -604,6 +618,7 @@ private:
         static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
         return res(r);
     }
+    const numt&___last_component()const{return m_phi;}
 public:
     virtual ~Direction() {}
     template<class... Args>
@@ -614,7 +629,7 @@ public:
     }
     Direction(RANDOM &RG): m_phi(PHI(RG)) {}
     template<class numt2>
-    Direction(const Direction<Dimensions,numt2>&source): m_phi(source.m_phi) {}
+    Direction(const Direction<Dimensions,numt2>&source): m_phi(source.___last_component()) {}
     const numt &phi()const
     {
         return m_phi;
@@ -640,6 +655,9 @@ public:
 template<class numt>
 class Direction<3, numt>
 {
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {Dimensions = 3};
     enum {Thetas = 1};
@@ -654,10 +672,13 @@ private:
         static const RandomUniform<numt> res(numt(-1), numt(+1));
         return res(r);
     }
+protected:
+    const DirectionN&___recursive()const{return m_ld;}
+    const numt&___last_component()const{return m_theta;}
 public:
     virtual ~Direction() {}
     template<class numt2>
-    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.m_ld),m_theta(source.m_theta) {}
+    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.___recursive()),m_theta(source.___last_component()) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &v): m_ld(v), m_theta(std::get<1>(v))
     {
@@ -703,6 +724,9 @@ public:
 template<size_t size, class numt>
 class Direction
 {
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class VectorTransformation;
 public:
     enum {Dimensions = size};
     enum {Thetas = size - 2};
@@ -717,10 +741,13 @@ private:
         static const RandomUniform<numt> res(numt(-1), numt(+1));
         return res(r);
     }
+protected:
+    const DirectionN&___recursive()const{return m_ld;}
+    const numt&___last_component()const{return m_theta;}
 public:
     virtual ~Direction() {}
     template<class numt2>
-    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.m_ld),m_theta(source.m_theta) {}
+    Direction(const Direction<Dimensions,numt2>&source): m_ld(source.___recursive()),m_theta(source.___last_component()) {}
     template<class... Args>
     Direction(const std::tuple<Args...> &v): m_ld(v), m_theta(std::get<Thetas>(v))
     {
