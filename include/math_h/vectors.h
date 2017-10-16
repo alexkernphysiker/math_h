@@ -860,29 +860,30 @@ const VectorTransformation<3, Vector<3, numt>> Rotation(const Direction<3, numt>
 template<class numt = double, class Space = Vector<3, numt>>
 class LorentzVector
 {
+public:
+    typedef Space SpaceVectorType;
+    typedef numt TimeCoordinateType;
 private:
-    numt m_time;
-    Space m_space;
+    TimeCoordinateType m_time;
+    SpaceVectorType m_space;
 public:
     virtual ~LorentzVector() {}
     LorentzVector(const numt &t, const Space &S): m_time(t), m_space(S) {}
-    typedef Space SpaceVectorType;
-    typedef numt TimeCoordinateType;
+    const TimeCoordinateType &T()const
+    {
+        return m_time;
+    }
+    const SpaceVectorType &S()const
+    {
+        return m_space;
+    }
     template<class numt2,class Space2>
-    LorentzVector(const LorentzVector<numt2,Space2>&source): m_time(source.m_time), m_space(source.m_space){}
+    LorentzVector(const LorentzVector<numt2,Space2>&source): m_time(source.T()), m_space(source.S()){}
     LorentzVector &operator=(const LorentzVector &source)
     {
         m_space = source.m_space;
         m_time = source.m_time;
         return *this;
-    }
-    const numt &T()const
-    {
-        return m_time;
-    }
-    const Space &S()const
-    {
-        return m_space;
     }
     const bool operator==(const LorentzVector &second)const
     {
