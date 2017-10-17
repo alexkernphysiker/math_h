@@ -531,24 +531,22 @@ inline const VectorTransformation<size, VIType> TensorProduct(const Vector<size,
 {
     return VectorTransformation<size, VIType>(A, B);
 }
+#define AC(n) (A.template component<n>())
+#define ZeRo numt(0)
 template<class numt = double>
 inline const VectorTransformation<1, Vector<2,numt>> SkewM(const Vector<2, numt> &A)
 {
-    return matrix(
-	line(-A.y(),A.x())
-    );
+    return matrix(line(-AC(2),AC(1)));
 }
 template<class numt = double>
 inline const VectorTransformation<3, Vector<3,numt>> SkewM(const Vector<3, numt> &A)
 {
     return matrix(
-	line(numt(0),-A.z(),A.y()),
-	line(A.z(),numt(0),-A.x()),
-	line(-A.y(),A.x(),numt(0))
+	line(  ZeRo,-AC(3), AC(2)),
+	line( AC(3),  ZeRo,-AC(1)),
+	line(-AC(2), AC(1),  ZeRo)
     );
 }
-#define AC(n) (A.template component<n>())
-#define ZeRo numt(0)
 template<class numt = double>
 inline const VectorTransformation<7, Vector<7,numt>> SkewM(const Vector<7, numt> &A)
 {

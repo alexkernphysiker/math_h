@@ -40,7 +40,7 @@ TEST(Vector, scalar_prod3)
     EXPECT_EQ(-1, Y<>() * (-Y<>()));
     EXPECT_EQ(1, (-Z<>()) * (-Z<>()));
 }
-TEST(Vector, vector_prod2_basis)
+TEST(Vector, pseudoscalar_prod)
 {
     EXPECT_EQ(x()^y(), desCartes(1.));
     EXPECT_EQ(y()^x(), desCartes(-1.));
@@ -49,9 +49,8 @@ TEST(Vector, vector_prod2_basis)
     EXPECT_EQ((-x())^x<>(), desCartes(0.));
     EXPECT_EQ((-y())^y<>(), desCartes(0.));
 }
-TEST(Vector, vector_prod2_algebra)
-{//When using vector product of 2d vectors be careful 
-    //because product is 1d vector
+TEST(Vector, pseudoscalar_prod_algebra)
+{
     RANDOM RG;
     RandomUniform<> M(-50,50);
     for (size_t i = 0; i < 50; i++) {
