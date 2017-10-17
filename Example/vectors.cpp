@@ -7,9 +7,10 @@
 using namespace std;
 using namespace MathTemplates;
 using namespace GnuplotWrap;
-//This is an example how to use vectors.h
-//that provides a simple Monte Carlo simulation
-//of particle scattering
+//This is an example how to use vectors.h that provides
+//a simple Monte Carlo simulation of particle scattering
+//The vectors must be given in unit system that assumes c=1
+//and equal units for energy and momentum
 int main()
 {
     RANDOM RG;

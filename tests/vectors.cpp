@@ -40,6 +40,34 @@ TEST(Vector, scalar_prod3)
     EXPECT_EQ(-1, Y<>() * (-Y<>()));
     EXPECT_EQ(1, (-Z<>()) * (-Z<>()));
 }
+TEST(Vector, vector_prod2_basis)
+{
+    EXPECT_EQ(x()^y(), desCartes(1.));
+    EXPECT_EQ(y()^x(), desCartes(-1.));
+    EXPECT_EQ(x()^x(), desCartes(0.));
+    EXPECT_EQ(y()^y(), desCartes(0.));
+    EXPECT_EQ((-x())^x<>(), desCartes(0.));
+    EXPECT_EQ((-y())^y<>(), desCartes(0.));
+}
+TEST(Vector, vector_prod2_algebra)
+{//When using vector product of 2d vectors be careful 
+    //because product is 1d vector
+    RANDOM RG;
+    RandomUniform<> M(-50,50);
+    for (size_t i = 0; i < 50; i++) {
+	const auto
+	A=randomIsotropic<2>(RG)*M(RG),
+	B=randomIsotropic<2>(RG)*M(RG),
+	C=randomIsotropic<2>(RG)*M(RG);
+	const auto a=M(RG);
+	EXPECT_TRUE((A^A).M()<epsilon);
+	EXPECT_TRUE((B^B).M()<epsilon);
+	EXPECT_TRUE(( (A^B) + (B^A) ).M()<epsilon);
+	EXPECT_TRUE(( (A^B)*a - ((A*a)^B) ).M()<epsilon);
+	EXPECT_TRUE(( (A^B)*a - (A^(B*a)) ).M()<epsilon);
+	EXPECT_TRUE(( ((A+B)^C) - ((A^C)+(B^C)) ).M()<epsilon);
+    }
+}
 TEST(Vector, vector_prod3_basis)
 {
     EXPECT_EQ(X<>()^Y<>(), Z<>());
@@ -73,6 +101,28 @@ TEST(Vector, vector_prod3_algebra)
 	EXPECT_TRUE(( ((A+B)^C) - ((A^C)+(B^C)) ).M()<epsilon);
 	EXPECT_TRUE(( ((A^B)^C) + ((C^A)^B) + ((B^C)^A) ).M()<epsilon);
 	EXPECT_TRUE(( (A^(B^C)) - (B*(A*C)) + (C*(A*B)) ).M()<epsilon);
+	EXPECT_TRUE(abs( ((A^B)*C) - (A*(B^C)) )<epsilon);
+    }
+}
+TEST(Vector, vector_prod7_algebra)
+{
+    RANDOM RG;
+    RandomUniform<> M(-50,50);
+    for (size_t i = 0; i < 50; i++) {
+	const auto
+	A=randomIsotropic<7>(RG)*M(RG),
+	B=randomIsotropic<7>(RG)*M(RG),
+	C=randomIsotropic<7>(RG)*M(RG);
+	const auto a=M(RG);
+	EXPECT_TRUE((A^A).M()<epsilon);
+	EXPECT_TRUE((B^B).M()<epsilon);
+	EXPECT_TRUE((C^C).M()<epsilon);
+	EXPECT_TRUE(( (A^B) + (B^A) ).M()<epsilon);
+	EXPECT_TRUE(( (A^C) + (C^A) ).M()<epsilon);
+	EXPECT_TRUE(( (C^B) + (B^C) ).M()<epsilon);
+	EXPECT_TRUE(( (A^B)*a - ((A*a)^B) ).M()<epsilon);
+	EXPECT_TRUE(( (A^B)*a - (A^(B*a)) ).M()<epsilon);
+	EXPECT_TRUE(( ((A+B)^C) - ((A^C)+(B^C)) ).M()<epsilon);
 	EXPECT_TRUE(abs( ((A^B)*C) - (A*(B^C)) )<epsilon);
     }
 }
@@ -385,6 +435,8 @@ TEST(LorentzVector, LorentzTransform1d_more)
 }
 TEST(LorentzVector, LorentzTransform2d_more)
 {
+    //the vectors must be given in unit system that assumes c=1
+    // and equal units for energy and momentum
     RANDOM RG;
     RandomUniform<> M(0, 5),P(0, 5);
     for (size_t i = 0; i < 50; i++) {

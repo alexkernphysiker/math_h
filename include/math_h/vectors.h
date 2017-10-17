@@ -532,6 +532,13 @@ inline const VectorTransformation<size, VIType> TensorProduct(const Vector<size,
     return VectorTransformation<size, VIType>(A, B);
 }
 template<class numt = double>
+inline const VectorTransformation<1, Vector<2,numt>> SkewM(const Vector<2, numt> &A)
+{
+    return matrix(
+	line(-A.y(),A.x())
+    );
+}
+template<class numt = double>
 inline const VectorTransformation<3, Vector<3,numt>> SkewM(const Vector<3, numt> &A)
 {
     return matrix(
@@ -540,6 +547,23 @@ inline const VectorTransformation<3, Vector<3,numt>> SkewM(const Vector<3, numt>
 	line(-A.y(),A.x(),numt(0))
     );
 }
+#define AC(n) (A.template component<n>())
+#define ZeRo numt(0)
+template<class numt = double>
+inline const VectorTransformation<7, Vector<7,numt>> SkewM(const Vector<7, numt> &A)
+{
+    return matrix(
+	line(  ZeRo,-AC(4),-AC(7), AC(2),-AC(6), AC(5), AC(3)),
+	line( AC(4),  ZeRo,-AC(5),-AC(1), AC(3),-AC(7), AC(6)),
+	line( AC(7), AC(5),  ZeRo,-AC(6),-AC(2), AC(4),-AC(1)),
+	line(-AC(2), AC(1), AC(6),  ZeRo,-AC(7),-AC(3), AC(5)),
+	line( AC(6),-AC(3), AC(2), AC(7),  ZeRo,-AC(1),-AC(4)),
+	line(-AC(5), AC(7),-AC(4), AC(3), AC(1),  ZeRo,-AC(2)),
+	line(-AC(3),-AC(6), AC(1),-AC(5), AC(4), AC(2), ZeRo )
+    );
+}
+#undef ZeRo
+#undef AC
 template<class A,class B>
 inline const auto operator^(const A&a, const B&b)->decltype(SkewM(a)*b){return SkewM(a)*b;}
 
@@ -942,7 +966,7 @@ public:
         const auto TT = -Beta * gamma;
         return LorentzVector((T() * gamma) + (S() * TT), (ST * S()) + (TT * T()));
     }
-    const Space Beta()const //Makes physical sense only if it's a lorentz energy-momentum vector
+    const Space Beta()const
     {
         return S() / T();
     }
