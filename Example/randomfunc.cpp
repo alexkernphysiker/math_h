@@ -20,8 +20,8 @@ int main()
     RANDOM engine;
     const RandomValueTableDistr<> generator = P;
     //Generate values and plot histogram
-    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.05, 5.0),"randomfunc");
-    for (size_t i = 0; i < 1000000; i++) {
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.1, 5.0),"randomfunc");
+    for (size_t i = 0; i < 500000; i++) {
         dist.Fill(generator(engine));
     }
     return 0;
