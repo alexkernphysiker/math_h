@@ -2,6 +2,9 @@
 // MIT license
 #ifndef XRYPRAVJWTJCYPQI
 #define XRYPRAVJWTJCYPQI
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <random>
 #include <memory>
 #include "functions.h"

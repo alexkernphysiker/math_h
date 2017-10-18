@@ -2,6 +2,9 @@
 // MIT license
 #ifndef ______POINTS_H_______
 #	define ______POINTS_H_______
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include "chains.h"
 #include "error.h"
 namespace MathTemplates

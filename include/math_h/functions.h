@@ -2,6 +2,9 @@
 // MIT license
 #ifndef EMEFWAYNIGJGENCP
 #define EMEFWAYNIGJGENCP
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <math.h>
 #include <functional>
 #include <memory>

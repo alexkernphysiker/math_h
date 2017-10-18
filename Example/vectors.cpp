@@ -15,14 +15,15 @@ int main()
 {
     RANDOM RG;
     //let's assume two bodies scattering
-    const double M1 = 0.5, M2 = 1.0, P = 0.3;
+    const double M1 = 0.75, M2 = 1.0;
+    const RandomGauss<> P(0.3,0.01);
     //Plots
     PlotDistr2D<>
     P_vs_P("P-P", BinsByCount(200, 0.0, 0.5), BinsByCount(200, 0.0, 0.5), "plot_PP"),
-           Th_vs_Th("Th-Th", BinsByCount(180, 0.0, 180.), BinsByCount(180, 0.0, 180.), "plot_ThTh");
+           Th_vs_Th("Th-Th", BinsByCount(180, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
     //Simulation cycle
-    for (size_t i = 0; i < 50000; i++) {
-        const auto Pr0 = lorentz_byPM(Z() * P, M1);
+    for (size_t i = 0; i < 100000; i++) {
+        const auto Pr0 = lorentz_byPM(Z() * P(RG), M1);
         const auto Pt0 = lorentz_byPM(Zero(), M2);
         const auto Total = Pr0 + Pt0;
         //let them scatter isotropically in CM

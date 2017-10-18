@@ -2,6 +2,9 @@
 // MIT license
 #ifndef zVoOnNfd
 #define zVoOnNfd
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <exception>
 #include <string>
 namespace MathTemplates

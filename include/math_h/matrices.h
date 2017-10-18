@@ -2,6 +2,9 @@
 // MIT license
 #ifndef ______MATRICES_H_______
 #	define ______MATRICES_H_______
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <iostream>
 #include <math.h>
 #include "chains.h"

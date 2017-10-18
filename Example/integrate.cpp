@@ -18,8 +18,12 @@ int main()
 	<< Sympson([k](double x) {return pow(x, k);}, 0.0, 1.0, 0.001) << endl;
 
     //How you can integrate table data
-    SortedPoints<> density([](double x){return Gaussian(x, 0.0, 1.0);}, ChainWithStep(-5.0, 0.1, 5.0));
-    Plot<>("integrate").Points(density, "density").Points(Int_Trapez_Table(density), "integrated");
+    SortedPoints<> table(
+	[](double x){return Gaussian(x, 0.0, 1.0);}, 
+	ChainWithStep(-5.0, 0.1, 5.0)
+    );
+    const auto integrated_table=Int_Trapez_Table(table);
+    Plot<>("integrate").Points(table, "density").Points(integrated_table, "integrated");
 
     //How you can calculate convolution integral
     const auto conv=make_convolution(
@@ -27,6 +31,7 @@ int main()
 	[](double ksi){if(ksi<0)return 0.0;return exp(-ksi/1.5);},
 				     -20.,20.,0.01);
     SortedPoints<> plot_conv;
-    for(double x=-0.;x<=10.;x+=0.1)plot_conv<<make_point(x,conv(x));
+    for(double x=-0.;x<=10.;x+=0.1)
+	plot_conv<<make_point(x,conv(x));
     Plot<>("convolution").Points(plot_conv);
 }

@@ -11,7 +11,7 @@ int main()
     const MatrixData<double> A({
         { 1., 2., 0. },
         { 3., 4., 4. },
-        { 5., 6., 3. },
+        { 5., 6., 3. }
     }),
     b({{3}, {7}, {8}});
     const MatrixData<double> x = Solve(A, b);

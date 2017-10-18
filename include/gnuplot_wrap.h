@@ -2,6 +2,9 @@
 // MIT license
 #ifndef VIJVUSSC
 #define VIJVUSSC
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <fstream>
 #include <stdlib.h>
 #include <string>

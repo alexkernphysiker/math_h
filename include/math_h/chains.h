@@ -2,6 +2,9 @@
 // MIT license
 #ifndef ____CHAINS_H_____
 #	define ____CHAINS_H_____
+#if __cplusplus<201100L
+#error c++>=11 is needed for using math_h headers
+#endif
 #include <vector>
 #include <functional>
 #include "error.h"
