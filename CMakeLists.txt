@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.6)
 project(math_h)
 option(tests "Compile tests.")
 if(NOT DEFINED MATH_H_INC)
-    add_definitions(-std=c++1z)
     get_directory_property(has_parent PARENT_DIRECTORY)
     if(has_parent)
 	set(MATH_H_INC 
