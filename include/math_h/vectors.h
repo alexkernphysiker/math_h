@@ -9,6 +9,11 @@
 #include "chains.h"
 #include "functions.h"
 #include "randomfunc.h"
+#if __cplusplus>201400L
+#define ____optimized_version_of_vectors_h_____
+#else
+#warning compiler does not support "if constexpr(...)". classes from vectors.h will work slower
+#endif
 namespace MathTemplates
 {
 template<size_t size = 3, class numt = double>class Vector;
@@ -47,6 +52,7 @@ public:
     {
         return Vector(std::make_tuple(numt(0)));
     }
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
     inline static const Vector basis_vector()
     {
@@ -59,6 +65,22 @@ public:
 	static_assert(index == 1,"dimension index is out of range");
         return m_x;
     }
+#else
+    template<size_t index>
+    static const Vector basis_vector()
+    {
+	static_assert(index>0,"dimension index is out of range");
+	if(index>1)throw Exception<Vector>("dimension index is out of range");
+        return Vector(std::make_tuple(numt(1)));
+    }
+    template<size_t index>
+    const numt &component()const
+    {
+	static_assert(index>0,"dimension index is out of range");
+	if(index>1)throw Exception<Vector>("dimension index is out of range");
+        return m_x;
+    }
+#endif
     inline const numt &x()const
     {
         return m_x;
@@ -164,6 +186,7 @@ public:
     {
         return Vector(VectorN::zero(), numt(0));
     }
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
     inline static const Vector basis_vector()
     {
@@ -180,6 +203,24 @@ public:
         if constexpr(index == Dimensions)return m_x;
 	else return m_other.template component<index>();
     }
+#else
+    template<size_t index>
+    static const Vector basis_vector()
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
+        if(index == Dimensions) return Vector(VectorN::zero(), numt(1));
+	else return Vector(VectorN::template basis_vector<index>(), numt(0));
+    }
+    template<size_t index>
+    const numt &component()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
+        if(index == Dimensions)return m_x;
+	else return m_other.template component<index>();
+    }
+#endif
     inline const numt &x()const
     {
         return component<1>();
@@ -351,12 +392,22 @@ protected:
     }
 public:
     virtual ~VectorTransformation() {}
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
 	static_assert(index ==1 ,"dimension index is out of range");
         return m_line.template component<jindex>();
     }
+#else
+    template<size_t index, size_t jindex>
+    const NumberType&element()const
+    {
+	static_assert(index>0, "dimension index is out of range");
+	if(index>1)throw Exception<VectorTransformation>("dimension index out of range");
+	return m_line.template component<jindex>();
+    }
+#endif
     const VFType operator*(const VIType &v)const
     {
         return desCartes(m_line * v);
@@ -472,6 +523,7 @@ protected:
     }
 public:
     virtual ~VectorTransformation() {}
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
@@ -480,6 +532,16 @@ public:
 	if constexpr(index==DimensionsFinal) return m_line.template component<jindex>();
 	else return m_minor.template element<index, jindex>();
     }
+#else
+    template<size_t index, size_t jindex>
+    const NumberType &element()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>DimensionsFinal)throw Exception<VectorTransformation>("dimension index is out of range");
+	if(index==DimensionsFinal) return m_line.template component<jindex>();
+	else return m_minor.template element<index, jindex>();
+    }
+#endif
     const VFType operator*(const VIType &v)const
     {
         return VFType(m_minor * v, m_line * v);
@@ -793,12 +855,22 @@ public:
     {
         return m_ld.phi();
     }
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index = 1>
     inline const numt &th()const
     {
 	static_assert(index ==1,"dimension index is out of range");
         return m_theta;
     }
+#else
+    template<size_t index = 1>
+    const numt &th()const
+    {
+	static_assert(index >0,"dimension index is out of range");
+	if(index>1)throw Exception<Direction>("dimension index is out of range");
+        return m_theta;
+    }
+#endif
     Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     const VType operator*(const numt &rho)const
     {
@@ -876,6 +948,7 @@ public:
     {
         return m_ld.phi();
     }
+#ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
     inline const numt &th()const
     {
@@ -884,6 +957,16 @@ public:
         if constexpr(index == Thetas) return m_theta;
 	else return m_ld.template th<index>();
     }
+#else
+    template<size_t index>
+    const numt &th()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index > Thetas)throw Exception<Direction>("dimension index is out of range");
+        if(index == Thetas) return m_theta;
+	else return m_ld.template th<index>();
+    }
+#endif
     Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     const VType operator*(const numt &rho)const
     {
@@ -1102,4 +1185,5 @@ const std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vec
 }
 
 };
+#undef ____optimized_version_of_vectors_h_____
 #endif
