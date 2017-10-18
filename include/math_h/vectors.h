@@ -43,8 +43,10 @@ protected:
     {
         return m_x;
     }
+    Vector(const numt&x):m_x(x){}
 public:
     virtual ~Vector() {}
+    const std::tuple<numt> to_tuple()const{return std::make_tuple(m_x);}
     template<class numt2>
     Vector(const Vector<Dimensions,numt2> &source): m_x(source.___last_component()) {}
     template<class... Args>
@@ -57,10 +59,6 @@ public:
     static const Vector basis_vector()
     {
         return (index == Dimensions) ? Vector(std::make_tuple(numt(1))) : Vector(std::make_tuple(MakeException<numt>()));
-    }
-    inline static const Vector main_axis()
-    {
-	return basis_vector<Dimensions>();
     }
     template<size_t index>
     const numt &component()const
@@ -160,6 +158,10 @@ protected:
     }
 public:
     virtual ~Vector() {}
+    auto to_tuple()const->decltype(std::tuple_cat(m_other.to_tuple(),std::make_tuple(m_x)))
+    {
+	return std::tuple_cat(m_other.to_tuple(),std::make_tuple(m_x));
+    }
     template<class numt2>
     Vector(const Vector<Dimensions,numt2> &source): m_other(source.___recursive()), m_x(source.___last_component()) {}
     template<class... Args>
@@ -172,10 +174,6 @@ public:
     static const Vector basis_vector()
     {
         return (index == Dimensions) ? Vector(VectorN::zero(), numt(1)) : Vector(VectorN::template basis_vector<index>(), numt(0));
-    }
-    inline static const Vector main_axis()
-    {
-	return basis_vector<Dimensions>();
     }
     template<size_t index>
     const numt &component()const
@@ -257,14 +255,14 @@ public:
     }
 };
 template<class numt, class... Args>
-const Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args)
+inline const Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args)
 {
     return Vector < sizeof...(Args) + 1, numt > (std::make_tuple(x, args...));
 }
-template<size_t d,class numt = double>
-const Vector<d,numt> main_axis()
+template<size_t i,size_t d,class numt = double>
+inline const Vector<d,numt> axis()
 {
-    return Vector<d,numt>::main_axis();
+    return Vector<d,numt>::template basis_vector<i>();
 }
 template<class numt = double>
 inline const Vector<2, numt> x()
@@ -342,6 +340,7 @@ protected:
 	return VIWType(m_line,col.___last_component());
     }
     const VIType&___last_line()const{return m_line;}
+    inline const VectorTransformation&AddColumns()const{return *this;}
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -369,6 +368,10 @@ public:
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
+    const bool operator==(const VectorTransformation&B)const
+    {
+	return m_line==B.m_line;
+    }
     const VectorTransformation operator*(const NumberType &v)const
     {
         return VectorTransformation(m_line * v);
@@ -401,6 +404,11 @@ public:
                    (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
                    VIType::template basis_vector<DimensionsFinal>()
                                                 );
+    }
+    template<class... Args>
+    inline const VectorTransformation<DimensionsFinal,Vector<DimensionsInitial+1+sizeof...(Args),NumberType>> AddColumns(const VFType&col,Args...args)const
+    {
+	return ___add_column(col).AddColumns(args...);
     }
 };
 template<size_t sizef, class linetype>
@@ -441,6 +449,7 @@ protected:
     }
     const VIType&___last_line()const{return m_line;}
     const MinorTransformation&___recursive()const{return m_minor;}
+    inline const VectorTransformation&AddColumns()const{return *this;}
 public:
     virtual ~VectorTransformation() {}
     template<size_t index, size_t jindex>
@@ -472,6 +481,10 @@ public:
     template<class... Args>
     VectorTransformation(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
     VectorTransformation(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
+    const bool operator==(const VectorTransformation&B)const
+    {
+	return (m_line==B.m_line)&&(m_minor==B.m_minor);
+    }
     const VectorTransformation operator*(const NumberType &v)const
     {
         return VectorTransformation(m_minor * v, m_line * v);
@@ -501,20 +514,36 @@ public:
     {
         return VectorTransformation(
 	    MinorTransformation::template RotationInPlane<x,y>(angle),
-(x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
+(x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) : 
+(y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
 		VIType::template basis_vector<DimensionsFinal>()
                                                 );
     }
+    template<class... Args>
+    inline const VectorTransformation<DimensionsFinal,Vector<DimensionsInitial+1+sizeof...(Args),NumberType>> AddColumns(const VFType&col,Args...args)const
+    {
+	return ___add_column(col).AddColumns(args...);
+    }
 };
-template<class numt, class... Args>
-inline const Vector < sizeof...(Args) + 1, numt > line(const numt &x, Args... args)
-{
-    return Vector < sizeof...(Args) + 1, numt > (std::make_tuple(x, args...));
-}
 template<class linetype, class... Args>
-inline const VectorTransformation < sizeof...(Args) + 1, linetype > matrix(const linetype &x, Args... args)
+inline const VectorTransformation < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args... args)
 {
     return VectorTransformation < sizeof...(Args) + 1, linetype > (std::make_tuple(x, args...));
+}
+template<class numt,class... Args>
+inline const VectorTransformation<1,Vector<sizeof...(Args) + 1,numt>> line(const numt&x,Args... args)
+{
+    return lines(desCartes(x,args...));
+}
+template<class numt,class...Args>
+inline const VectorTransformation<1+sizeof...(Args),Vector<1,numt>>column(const numt&x,Args...args)
+{
+    return VectorTransformation<1+sizeof...(Args),Vector<1,numt>>(std::make_tuple(x,args...));
+}
+template<class VecT,class...Args>
+inline const VectorTransformation<VecT::Dimensions,Vector<1+sizeof...(Args),typename VecT::NumberType>> columns(const VecT&x,Args...args)
+{
+    return VectorTransformation<VecT::Dimensions,Vector<1,typename VecT::NumberType>>(x.to_tuple()).AddColumns(args...);
 }
 template<size_t s, class numt = double>
 inline const VectorTransformation<s, Vector<s, numt>> ZERO()
@@ -536,34 +565,34 @@ inline const VectorTransformation<size, VIType> TensorProduct(const Vector<size,
 template<class numt = double>
 inline const VectorTransformation<1, Vector<2,numt>> SkewM(const Vector<2, numt> &A)
 {
-    return matrix(line(-AC(2),AC(1)));
+    return lines(desCartes(-AC(2),AC(1)));
 }
 template<class numt = double>
 inline const VectorTransformation<3, Vector<3,numt>> SkewM(const Vector<3, numt> &A)
 {
-    return matrix(
-	line(  ZeRo,-AC(3), AC(2)),
-	line( AC(3),  ZeRo,-AC(1)),
-	line(-AC(2), AC(1),  ZeRo)
+    return lines(
+	desCartes(  ZeRo,-AC(3), AC(2)),
+	desCartes( AC(3),  ZeRo,-AC(1)),
+	desCartes(-AC(2), AC(1),  ZeRo)
     );
 }
 template<class numt = double>
 inline const VectorTransformation<7, Vector<7,numt>> SkewM(const Vector<7, numt> &A)
 {
-    return matrix(
-	line(  ZeRo,-AC(4),-AC(7), AC(2),-AC(6), AC(5), AC(3)),
-	line( AC(4),  ZeRo,-AC(5),-AC(1), AC(3),-AC(7), AC(6)),
-	line( AC(7), AC(5),  ZeRo,-AC(6),-AC(2), AC(4),-AC(1)),
-	line(-AC(2), AC(1), AC(6),  ZeRo,-AC(7),-AC(3), AC(5)),
-	line( AC(6),-AC(3), AC(2), AC(7),  ZeRo,-AC(1),-AC(4)),
-	line(-AC(5), AC(7),-AC(4), AC(3), AC(1),  ZeRo,-AC(2)),
-	line(-AC(3),-AC(6), AC(1),-AC(5), AC(4), AC(2), ZeRo )
+    return lines(
+	desCartes(  ZeRo,-AC(4),-AC(7), AC(2),-AC(6), AC(5), AC(3)),
+	desCartes( AC(4),  ZeRo,-AC(5),-AC(1), AC(3),-AC(7), AC(6)),
+	desCartes( AC(7), AC(5),  ZeRo,-AC(6),-AC(2), AC(4),-AC(1)),
+	desCartes(-AC(2), AC(1), AC(6),  ZeRo,-AC(7),-AC(3), AC(5)),
+	desCartes( AC(6),-AC(3), AC(2), AC(7),  ZeRo,-AC(1),-AC(4)),
+	desCartes(-AC(5), AC(7),-AC(4), AC(3), AC(1),  ZeRo,-AC(2)),
+	desCartes(-AC(3),-AC(6), AC(1),-AC(5), AC(4), AC(2), ZeRo )
     );
 }
 #undef ZeRo
 #undef AC
 template<class A,class B>
-inline const auto operator^(const A&a, const B&b)->decltype(SkewM(a)*b){return SkewM(a)*b;}
+inline auto operator^(const A&a, const B&b)->decltype(SkewM(a)*b){return SkewM(a)*b;}
 
 
 
@@ -614,11 +643,11 @@ public:
     }
     const VectorTransformation<Dimensions,VType> Rotations()const
     {
-        return sign ? matrix(line(numt(1))) : matrix(line(numt(-1)));
+        return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
     }
     const VectorTransformation<Dimensions,VType> AntiRotations()const
     {
-        return sign ? matrix(line(numt(1))) : matrix(line(numt(-1)));
+        return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
     }
 };
 
@@ -731,7 +760,7 @@ public:
 	return 
 	    VectorTransformation<Dimensions,VType>(
 		m_ld.Rotations().___add_column(DirectionN::VType::zero()),
-		VType::main_axis())
+		VType::template basis_vector<Dimensions>())
 	    *VectorTransformation<Dimensions,VType>::template RotationInPlane<3,1>(m_theta);
     }
     const VectorTransformation<Dimensions,VType> AntiRotations()const
@@ -740,7 +769,7 @@ public:
 	VectorTransformation<Dimensions,VType>::template RotationInPlane<3,1>(-m_theta)*
 	    VectorTransformation<Dimensions,VType>(
 		m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
-		VType::main_axis());
+		VType::template basis_vector<Dimensions>());
     }
 };
 template<size_t size, class numt>
@@ -796,7 +825,7 @@ public:
 	return 
 	    VectorTransformation<Dimensions,VType>(
 		m_ld.Rotations().___add_column(DirectionN::VType::zero()),
-		VType::main_axis())
+		VType::template basis_vector<Dimensions>())
 	    *VectorTransformation<Dimensions,VType>::template RotationInPlane<Dimensions,Dimensions-1>(m_theta);
     }
     const VectorTransformation<Dimensions,VType> AntiRotations()const
@@ -805,7 +834,7 @@ public:
 	VectorTransformation<Dimensions,VType>::template RotationInPlane<Dimensions,Dimensions-1>(-m_theta)*
 	    VectorTransformation<Dimensions,VType>(
 		m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
-		VType::main_axis());
+		VType::template basis_vector<Dimensions>());
     }
 };
 template<class numt = double>
@@ -851,9 +880,9 @@ template<class numt = double>
 const VectorTransformation<2, Vector<2, numt>> Rotation(const numt &theta)
 {
     const numt cost = cos(theta), sint = sin(theta);
-    return matrix(
-               line(cost, -sint),
-               line(sint, cost)
+    return lines(
+               desCartes(cost, -sint),
+               desCartes(sint, cost)
            );
 }
 template<class numt = double>
@@ -861,10 +890,10 @@ const VectorTransformation<3, Vector<3, numt>> Rotation(const Direction<3, numt>
 {
     const auto n = axis * numt(1);
     const numt cost = cos(theta), sint = sin(theta), one = 1;
-    return matrix(
-               line(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
-               line((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
-               line((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
+    return lines(
+               desCartes(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
+               desCartes((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
+               desCartes((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
            );
 }
 
