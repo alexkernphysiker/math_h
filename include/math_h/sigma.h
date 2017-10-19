@@ -30,7 +30,7 @@ private:
             Error = INFINITY;
         f_cache = nullptr;
     }
-    inline void calc()const
+    void calc()const
     {
         if (!f_cache) {
             const_cast<value &>(*this).f_cache = std::make_shared<cache>(
@@ -40,11 +40,11 @@ private:
     }
 public:
     virtual ~value() {}
-    const numt &val()const
+    inline const numt &val()const
     {
         return Value;
     }
-    const numt &uncertainty()const
+    inline const numt &uncertainty()const
     {
         return Error;
     }
@@ -80,7 +80,7 @@ public:
         if (res.Error < numt(1))res.Error = numt(1);
         return res;
     }
-    static const value interval(const numt &a, const numt &b)
+    inline static const value interval(const numt &a, const numt &b)
     {
         if (b < a)throw Exception<value>("Bad interval");
         return value((b + a) / numt(2), (b - a) / numt(2));
@@ -159,23 +159,23 @@ public:
         return pow((Value - x.Value) / (Error + x.Error), 2);
     }
     //Inheriting number-like comparing
-    const bool operator<(const value &other)const
+    inline const bool operator<(const value &other)const
     {
         return Value < other.Value;
     }
-    const bool operator>(const value &other)const
+    inline const bool operator>(const value &other)const
     {
         return Value > other.Value;
     }
-    const bool operator==(const value &other)const
+    inline const bool operator==(const value &other)const
     {
         return Value == other.Value;
     }
-    const bool operator>=(const value &other)const
+    inline const bool operator>=(const value &other)const
     {
         return Value >= other.Value;
     }
-    const bool operator<=(const value &other)const
+    inline const bool operator<=(const value &other)const
     {
         return Value <= other.Value;
     }
@@ -209,39 +209,39 @@ public:
         invalidate();
         return *this;
     }
-    const value operator+(const value &other)const
+    inline const value operator+(const value &other)const
     {
         return value(*this) += other;
     }
-    const value operator+(const value&&other)const
+    inline const value operator+(const value&&other)const
     {
         return value(*this) += other;
     }
-    const value operator-(const value &other)const
+    inline const value operator-(const value &other)const
     {
         return value(*this) -= other;
     }
-    const value operator-(const value&&other)const
+    inline const value operator-(const value&&other)const
     {
         return value(*this) -= other;
     }
-    const value operator*(const value &other)const
+    inline const value operator*(const value &other)const
     {
         return value(*this) *= other;
     }
-    const value operator*(const value&&other)const
+    inline const value operator*(const value&&other)const
     {
         return value(*this) *= other;
     }
-    const value operator/(const value &other)const
+    inline const value operator/(const value &other)const
     {
         return value(*this) /= other;
     }
-    const value operator/(const value&&other)const
+    inline const value operator/(const value&&other)const
     {
         return value(*this) /= other;
     }
-    const value Func(const std::function<numt(const numt &)>F)const
+    inline const value Func(const std::function<numt(const numt &)>F)const
     {
         numt V = F(val());
         return value(V, sqrt(
@@ -250,7 +250,7 @@ public:
     }
 };
 template<class numt>
-const value<numt> std_error(const numt &v)
+inline const value<numt> std_error(const numt &v)
 {
     return value<numt>::std_error(v);
 }
@@ -284,7 +284,7 @@ public:
 	if(index>=m_list.size())throw Exception<StandardDeviation>("range check error");
 	return m_list[index];
     }
-    const size_t size()const
+    inline const size_t size()const
     {
         return m_list.size();
     }
@@ -303,11 +303,11 @@ public:
         m_cache = nullptr;
         return *this;
     }
-    const size_t count()const
+    inline const size_t count()const
     {
         return m_list.size();
     }
-    const numt &scaling_factor()const
+    inline const numt &scaling_factor()const
     {
         return m_scale;
     }
