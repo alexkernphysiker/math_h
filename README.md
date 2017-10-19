@@ -1,6 +1,5 @@
-Header files with mathematical template functions and classes (C++11)
+Header files with mathematical template functions and classes (C++17)
 ====================================================================
-This repository also contains a small static library which is an interface between these classes and gnuplot
 
 
 
@@ -14,6 +13,7 @@ If you have your own git repository with cmake project you can add this repo as 
 	
 Then add to your CMakeLists.txt
 
+	add_definitions(-std=c++17)
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
 	
@@ -28,33 +28,10 @@ if ON the tests are compiled
 Header files
 ============
 
-	math_h/bit_opr.h
-useful templates for constructing bit masks
+	include/math_h/*.h
+	include/*.h
 
-	math_h/error.h
-template exception class that requires "what"-message as constructor argument and the template parameter is the name of class that throws it.
-
-	math_h/functions.h
-interface IFunction and some useful template functions.
-
-	math_h/sigma.h
-class for representing value with uncertainty and templates for calculations of dispersion and wieghted average.
-
-	math_h/structures.h
-classes for representing data structures usually useful in calculations
-
-	math_h/interpolate.h
-interpolation algorithm(s): Linear and bilinear interpolations
-
-	math_h/integrate.h
-calculating numeric integrals: Sympson formula for function and trapezium formula for table.
-
-	math_h/randomfunc.h
-template class for generating random values distributed by given function.
-
-	gnuplot_wrap.h
-template classes for gnuplot interface.
-
+Contain template classes and can be included in your project
 
 Examples
 ========
@@ -64,5 +41,4 @@ Simple programs that show how to use this template classes
 Tests
 =====
 	tests/*.cpp
-The directory tests contains cmake project with unit tests.
-The tests require GoogleTest framework to be installed
+The unit tests (require GoogleTest framework to be installed)
