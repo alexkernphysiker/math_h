@@ -249,6 +249,11 @@ public:
                      ));
     }
 };
+template<class numt>
+const value<numt> std_error(const numt &v)
+{
+    return value<numt>::std_error(v);
+}
 template<typename numt>
 inline std::istream &operator>>(std::istream &str, value<numt> &P)
 {
