@@ -9,8 +9,6 @@
 #include <math.h>
 #include <type_traits>
 #include "error.h"
-#include "chains.h"
-#include "functions.h"
 #include "randomfunc.h"
 #if __cplusplus>201700L
 #define ____optimized_version_of_vectors_h_____

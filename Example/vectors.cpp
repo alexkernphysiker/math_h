@@ -1,7 +1,6 @@
 // this file is distributed under
 // MIT license
 #include <iostream>
-#include <math_h/tabledata.h>
 #include <math_h/vectors.h>
 #include <gnuplot_wrap.h>
 using namespace std;
