@@ -17,6 +17,6 @@ int main()
     SortedPoints<> plot_data;
     for(double x=-3.;x<=3.;x+=0.1)
 	plot_data<<make_point(x,test(x));
-    Plot<>("interpolation1").Points(plot_data);
+    Plot("interpolation1").Points(plot_data);
     return 0;
 }

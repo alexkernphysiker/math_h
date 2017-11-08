@@ -23,7 +23,7 @@ int main()
 	ChainWithStep(-5.0, 0.1, 5.0)
     );
     const auto integrated_table=Int_Trapez_Table(table);
-    Plot<>("integrate").Points(table, "density").Points(integrated_table, "integrated");
+    Plot("integrate").Points(table, "density").Points(integrated_table, "integrated");
 
     //How you can calculate convolution integral
     const auto conv=make_convolution(
@@ -33,5 +33,5 @@ int main()
     SortedPoints<> plot_conv;
     for(double x=-0.;x<=10.;x+=0.1)
 	plot_conv<<make_point(x,conv(x));
-    Plot<>("convolution").Points(plot_conv);
+    Plot("convolution").Points(plot_conv);
 }
