@@ -160,7 +160,7 @@ public:
             Plotter::Instance() << line;
         }
     }
-    Plot &File(const std::string &name, const std::string &options, const std::string &title)
+    inline Plot &File(const std::string &name, const std::string &options, const std::string &title)
     {
         std::string line = "\"" + name + "\" ";
         line += options;
