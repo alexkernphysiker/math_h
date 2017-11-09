@@ -1076,7 +1076,7 @@ public:
     inline const TimeCoordinateType &E()const{return m_time;}
     inline const SpaceVectorType &P()const{return m_space;}
     template<class numt2, class Space2>
-    inline LorentzVector(const LorentzVector<numt2, Space2> &source): m_time(source.T()), m_space(source.S()) {}
+    inline LorentzVector(const LorentzVector<numt2, Space2> &source): m_time(source.E()), m_space(source.P()) {}
     LorentzVector &operator=(const LorentzVector &source)
     {
         m_space = source.m_space;
