@@ -18,8 +18,9 @@ int main()
     const RandomGauss<> P(0.3,0.01);
     //Plots
     PlotDistr2D<>
-    P_vs_P("P-P", BinsByCount(200, 0.0, 0.5), BinsByCount(200, 0.0, 0.5), "plot_PP"),
-           Th_vs_Th("Th-Th", BinsByCount(180, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
+    P_vs_P("P-P", BinsByCount(100, 0.0, 0.5), BinsByCount(100, 0.0, 0.5), "plot_PP"),
+    E_vs_E("Ek-Ek", BinsByCount(100, 0.0, 0.1), BinsByCount(100, 0.0, 0.1), "plot_EE"),
+    Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
     //Simulation cycle
     for (size_t i = 0; i < 100000; i++) {
         const auto Pr0 = lorentz_byPM(Z() * P(RG), M1);
@@ -33,8 +34,9 @@ int main()
         const auto final1 = finalCM.first.Transform(-Total.Beta());
         const auto final2 = finalCM.second.Transform(-Total.Beta());
         //gather kinematic information
-        Th_vs_Th.Fill(direction(final1.S()).th() * 180. / PI(), direction(final2.S()).th() * 180. / PI());
-        P_vs_P.Fill(final1.S().M(), final2.S().M());
+        Th_vs_Th.Fill(direction(final1.P()).th() * 180. / PI(), direction(final2.P()).th() * 180. / PI());
+        P_vs_P.Fill(final1.P().M(), final2.P().M());
+        E_vs_E.Fill(final1.Ekin(), final2.Ekin());
     }
 }
 

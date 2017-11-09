@@ -347,8 +347,8 @@ TEST(LorentzVector, LorentzTransform1d)
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<1>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
-        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V2.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V2.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<1>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
                    L2 = V0.Transform(beta).Transform(randomIsotropic<1>(RG) * 0.2).M();
@@ -356,8 +356,8 @@ TEST(LorentzVector, LorentzTransform1d)
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
         const auto V00 = lorentz_byPM(desCartes(0.), V0.M()).Transform(-V0.Beta());
-        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V00.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
 }
 TEST(LorentzVector, LorentzTransform2d)
@@ -370,8 +370,8 @@ TEST(LorentzVector, LorentzTransform2d)
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<2>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
-        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V2.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V2.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<2>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
                    L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) * 0.2).M();
@@ -379,8 +379,8 @@ TEST(LorentzVector, LorentzTransform2d)
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
         const auto V00 = lorentz_byPM(zero(), V0.M()).Transform(-V0.Beta());
-        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V00.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
 }
 TEST(LorentzVector, LorentzTransform3d)
@@ -393,8 +393,8 @@ TEST(LorentzVector, LorentzTransform3d)
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<3>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
-        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V2.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V2.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_THROW(V0.Transform(randomIsotropic<3>(RG) * (1.0 + mr(RG))), Exception<LorentzVector<>>);
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
                    L2 = V0.Transform(beta).Transform(randomIsotropic<3>(RG) * 0.2).M();
@@ -402,8 +402,8 @@ TEST(LorentzVector, LorentzTransform3d)
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
         const auto V00 = lorentz_byPM(Zero(), V0.M()).Transform(-V0.Beta());
-        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V00.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
 }
 TEST(LorentzVector, LorentzTransform4d)
@@ -416,8 +416,8 @@ TEST(LorentzVector, LorentzTransform4d)
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<4>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
-        EXPECT_TRUE(abs(V2.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V2.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V2.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<4>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
                    L2 = V0.Transform(beta).Transform(randomIsotropic<4>(RG) * 0.2).M();
@@ -425,8 +425,8 @@ TEST(LorentzVector, LorentzTransform4d)
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
         const auto V00 = lorentz_byPM(desCartes(0., 0., 0., 0.), V0.M()).Transform(-V0.Beta());
-        EXPECT_TRUE(abs(V00.T() - V0.T()) < epsilon);
-        EXPECT_TRUE(V00.S().CloseTo(V0.S(), epsilon));
+        EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
+        EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
 }
 TEST(LorentzVector, LorentzTransform1d_more)
@@ -436,7 +436,7 @@ TEST(LorentzVector, LorentzTransform1d_more)
     for (size_t i = 0; i < 50; i++) {
         const auto V0 = lorentz_byPM(randomIsotropic<1>(RG) * P(RG), M(RG));
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.S().CloseTo(desCartes(0.), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(desCartes(0.), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }
@@ -447,7 +447,7 @@ TEST(LorentzVector, LorentzTransform2d_more)
     for (size_t i = 0; i < 50; i++) {
         const auto V0 = lorentz_byPM(randomIsotropic<2>(RG) * P(RG), M(RG));
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.S().CloseTo(zero(), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(zero(), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }
@@ -458,7 +458,7 @@ TEST(LorentzVector, LorentzTransform3d_more)
     for (size_t i = 0; i < 50; i++) {
         const auto V0 = lorentz_byPM(randomIsotropic<3>(RG) * P(RG), M(RG));
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.S().CloseTo(Zero(), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(Zero(), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }
@@ -469,7 +469,7 @@ TEST(LorentzVector, LorentzTransform4d_more)
     for (size_t i = 0; i < 50; i++) {
         const auto V0 = lorentz_byPM(randomIsotropic<4>(RG) * P(RG), M(RG));
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.S().CloseTo(desCartes(0., 0., 0., 0.), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(desCartes(0., 0., 0., 0.), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }
@@ -484,12 +484,12 @@ TEST(LorentzVector, decays)
         EXPECT_TRUE(abs((C2.first + C2.second).M() - im) < epsilon);
         EXPECT_TRUE(abs((C2.first).M() - m1) < epsilon);
         EXPECT_TRUE(abs((C2.second).M() - m2) < epsilon);
-        EXPECT_TRUE((C2.first.S() + C2.second.S()).M() < epsilon);
+        EXPECT_TRUE((C2.first.P() + C2.second.P()).M() < epsilon);
         const auto C3 = binaryDecay(im, m1, m2, randomIsotropic<3>(RG));
         EXPECT_TRUE(abs((C3.first + C3.second).M() - im) < epsilon);
         EXPECT_TRUE(abs(C3.first.M() - m1) < epsilon);
         EXPECT_TRUE(abs(C3.second.M() - m2) < epsilon);
-        EXPECT_TRUE((C3.first.S() + C3.second.S()).M() < epsilon);
+        EXPECT_TRUE((C3.first.P() + C3.second.P()).M() < epsilon);
     }
 }
 TEST(LorentzVector, decays2)
@@ -502,12 +502,12 @@ TEST(LorentzVector, decays2)
         EXPECT_TRUE(abs((C2.first + C2.second).M() - im) < epsilon);
         EXPECT_TRUE(abs((C2.first).M() - m1) < epsilon);
         EXPECT_TRUE(abs((C2.second).M() - m2) < epsilon);
-        EXPECT_TRUE((C2.first.S() + C2.second.S()).M() < epsilon);
+        EXPECT_TRUE((C2.first.P() + C2.second.P()).M() < epsilon);
         const auto C3 = binaryDecay(im, m1, m2, randomIsotropic<3>(RG));
         EXPECT_TRUE(abs((C3.first + C3.second).M() - im) < epsilon);
         EXPECT_TRUE(abs(C3.first.M() - m1) < epsilon);
         EXPECT_TRUE(abs(C3.second.M() - m2) < epsilon);
-        EXPECT_TRUE((C3.first.S() + C3.second.S()).M() < epsilon);
+        EXPECT_TRUE((C3.first.P() + C3.second.P()).M() < epsilon);
     }
 }
 

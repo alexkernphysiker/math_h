@@ -36,7 +36,10 @@ public:
         m_func = source.m_func;
     }
     virtual ~StdFunctionWrap() {}
-    virtual result operator()(Args...)const = 0;
+    virtual result operator()(Args...args)const
+    {
+	return m_func(args...);
+    };
 };
 template<class result, typename... Args>
 inline const StdFunctionWrap<result, Args...>

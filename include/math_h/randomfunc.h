@@ -9,7 +9,6 @@
 #include <memory>
 #include "functions.h"
 #include "interpolate.h"
-#include "integrate.h"
 namespace MathTemplates
 {
 typedef std::mt19937 RANDOM;

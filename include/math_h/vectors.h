@@ -1073,14 +1073,8 @@ private:
 public:
     virtual ~LorentzVector() {}
     inline LorentzVector(const numt &t, const Space &S): m_time(t), m_space(S) {}
-    inline const TimeCoordinateType &T()const
-    {
-        return m_time;
-    }
-    inline const SpaceVectorType &S()const
-    {
-        return m_space;
-    }
+    inline const TimeCoordinateType &E()const{return m_time;}
+    inline const SpaceVectorType &P()const{return m_space;}
     template<class numt2, class Space2>
     inline LorentzVector(const LorentzVector<numt2, Space2> &source): m_time(source.T()), m_space(source.S()) {}
     LorentzVector &operator=(const LorentzVector &source)
@@ -1125,6 +1119,10 @@ public:
     {
         return sqrt(M_sqr());
     }
+    inline const numt Ekin()const
+    {
+	return E()-M();
+    }
 
     inline static const LorentzVector zero()
     {
@@ -1133,7 +1131,7 @@ public:
     template<class...Args>
     inline const LorentzVector Rotate(Args...args)const
     {
-        return LorentzVector(T(), MathTemplates::Rotation(args...) * S());
+        return LorentzVector(E(), MathTemplates::Rotation(args...) * P());
     }
     const LorentzVector Transform(const Space &Beta)const
     {
@@ -1144,11 +1142,11 @@ public:
         const numt gamma = numt(1) / sqrt(numt(1) - beta * beta);
         const auto ST = ONE<Space::Dimensions>() + TensorProduct(bn, bn) * (gamma - numt(1));
         const auto TT = -Beta * gamma;
-        return LorentzVector((T() * gamma) + (S() * TT), (ST * S()) + (TT * T()));
+        return LorentzVector((E() * gamma) + (P() * TT), (ST * P()) + (TT * E()));
     }
     const Space Beta()const
     {
-        return S() / T();
+        return P() / E();
     }
 };
 template<class numt = double, class Space = Vector<3, numt>>

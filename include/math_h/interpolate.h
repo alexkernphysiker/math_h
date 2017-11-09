@@ -7,7 +7,6 @@
 #endif
 #include "functions.h"
 #include "integrate.h"
-#include "tabledata.h"
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>

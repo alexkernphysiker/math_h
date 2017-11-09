@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <random>
-#include <math_h/chains.h>
+#include <math_h/tabledata.h>
 using namespace std;
 using namespace MathTemplates;
 double TestArray[] = { -2, -1, 0, 1, 2, 3, 4, 5, 6, 7};

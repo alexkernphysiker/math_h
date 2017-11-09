@@ -7,8 +7,8 @@
 #endif
 #include <iostream>
 #include <math.h>
-#include "chains.h"
 #include "error.h"
+#include "tabledata.h"
 namespace MathTemplates
 {
 template<class numt = double>

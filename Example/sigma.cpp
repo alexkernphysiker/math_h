@@ -23,5 +23,6 @@ int main()
     cout<<"A-B = "<<A-B<<endl;
     cout<<"A*B = "<<A*B<<endl;
     cout<<"A/B = "<<A/B<<endl;
-    cout<<"log(A) = "<<A.Func([](double x){return log(x);})<<endl;
+    const auto func=[](double x)->double{return log(x);};
+    cout<<"log(A) = "<< value<>(func,A) <<endl;
 }
