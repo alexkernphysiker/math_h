@@ -27,12 +27,14 @@ int main()
 
     //How you can calculate convolution integral
     const auto conv=make_convolution(
-	[](double ksi){return Gaussian(ksi,1.5,0.2);},
-	[](double ksi){if(ksi<0)return 0.0;return exp(-ksi/1.5);},
+	[](double ksi){return Gaussian(ksi,1.5,0.5);},
+	[](double ksi){if(ksi<0)return 0.0;else return exp(-ksi/1.5);},
 	-20.,20.,0.01
     );
     SortedPoints<> plot_conv;
-    for(double x=-0.;x<=10.;x+=0.1)
-	plot_conv<<make_point(x,conv(x));
+    for(double x=-2.;x<=10.;x+=0.1){
+	const auto y = conv(x);//that's how we calculate convolution integral
+	plot_conv<<make_point(x,y);
+    }
     Plot("convolution").Points(plot_conv);
 }

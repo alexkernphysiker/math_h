@@ -20,7 +20,8 @@ int main()
     //Generate values and plot histogram
     PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.1, 5.0),"randomfunc");
     for (size_t i = 0; i < 500000; i++) {
-        dist.Fill(generator(engine));
+	const auto v=generator(engine);//That's how we generate random value
+        dist.Fill(v);
     }
     return 0;
 }
