@@ -123,6 +123,7 @@ class Plot
 private:
     MathTemplates::Chain<std::string> lines;
     MathTemplates::Chain<std::string> plots;
+    MathTemplates::Chain<std::string> finalization;
     inline Plot &Object(const std::string &plot)
     {
         plots.push_back(plot);
@@ -132,6 +133,11 @@ public:
     inline Plot &operator<<(const std::string &line)
     {
         lines.push_back(line);
+        return *this;
+    }
+    inline Plot &operator>>(const std::string &line)
+    {
+        finalization.push_back(line);
         return *this;
     }
     inline Plot(const std::string &name = "")
@@ -159,6 +165,8 @@ public:
                 line += ",\\";
             Plotter::Instance() << line;
         }
+        for (const std::string &line : finalization)
+            Plotter::Instance() << line;
     }
     inline Plot &File(const std::string &name, const std::string &options, const std::string &title)
     {
@@ -228,6 +236,7 @@ class PlotHist2d
 private:
     MathTemplates::Chain<std::string> lines;
     MathTemplates::Chain<std::string> plots;
+    MathTemplates::Chain<std::string> finalization;
     template<class numtX = double,class numtY = numtX,class numtZ = numtY>
     std::string Surf2File(const MathTemplates::BiSortedPoints<numtX,numtY,numtZ> &D, const std::string &name = "")const
     {
@@ -297,6 +306,11 @@ public:
         lines.push_back(line);
         return *this;
     }
+    inline PlotHist2d &operator>>(const std::string &line)
+    {
+        finalization.push_back(line);
+        return *this;
+    }
     inline PlotHist2d(const TypeOf3D type, const std::string &name = "")
     {
         operator<<(Plotter::Instance().GetTerminal(name));
@@ -319,7 +333,8 @@ public:
     }
     inline ~PlotHist2d()
     {
-        for (const std::string &line : lines)Plotter::Instance() << line;
+        for (const std::string &line : lines)
+	    Plotter::Instance() << line;
         for (int i = 0, n = plots.size(); i < n; i++) {
             std::string line = plots[i];
             if (i == 0)
@@ -328,6 +343,8 @@ public:
                 line += ",\\";
             Plotter::Instance() << line;
         }
+        for (const std::string &line : finalization)
+            Plotter::Instance() << line;
     }
     inline PlotHist2d &Object(const std::string&plot)
     {
