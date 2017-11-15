@@ -1170,6 +1170,16 @@ inline const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &
 {
     return lorentz_byEM(t, l4, direction(Dir));
 }
+template<class numt = double, class Space = Vector<3, numt>>
+inline const LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const typename Space::DType &dir)
+{
+    return lorentz_byEM(e+l4, l4, dir);
+}
+template<class numt = double, class Space = Vector<3, numt>>
+inline const LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const Space &Dir)
+{
+    return lorentz_byEM(e+l4, l4, direction(Dir));
+}
 template<size_t size, class numt>
 const std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
         binaryDecay(const numt &IM, const numt &m1, const numt &m2, const Direction<size, numt> &dir)
