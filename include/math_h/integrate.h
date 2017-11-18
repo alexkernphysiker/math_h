@@ -1,5 +1,5 @@
 // this file is distributed under
-// MIT license
+// LGPLv3 license
 #ifndef GRIVHOWXKUEHYGQF
 #	define GRIVHOWXKUEHYGQF
 #if __cplusplus<201100L

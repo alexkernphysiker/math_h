@@ -1,5 +1,5 @@
 // this file is distributed under
-// MIT license
+// LGPLv3 license
 #ifndef PPRNSANGJGXVGERD
 #define PPRNSANGJGXVGERD
 #if __cplusplus<201100L

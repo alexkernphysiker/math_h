@@ -1,5 +1,5 @@
 // this file is distributed under
-// MIT license
+// LGPLv3 license
 #ifndef ___________VECTORS_H_____
 #	define ___________VECTORS_H_____
 #if __cplusplus<201100L

@@ -1,5 +1,5 @@
 // this file is distributed under
-// MIT license
+// LGPLv3 license
 #ifndef ____HISTS_H_____
 #	define ____HISTS_H_____
 #if __cplusplus<201100L

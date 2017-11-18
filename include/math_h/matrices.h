@@ -1,5 +1,5 @@
 // this file is distributed under
-// MIT license
+// LGPLv3 license
 #ifndef ______MATRICES_H_______
 #	define ______MATRICES_H_______
 #if __cplusplus<201100L

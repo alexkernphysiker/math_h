@@ -2,6 +2,15 @@ Header files with mathematical template functions and classes (C++17)
 ====================================================================
 
 
+The library is distributed under LGPL license.
+
+
+    Question of how LGPL deals with c++ templates is explained here:
+    http://eigen.tuxfamily.org/index.php?title=Licensing_FAQ&oldid=1117#But_doesn.27t_the_LGPL_have_issues_with_code_that_is_in_header_files.2C_and_template_libraries.3F
+    That's a page of C++ library that contains templates
+
+
+
 
 
 How to use it
