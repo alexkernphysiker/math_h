@@ -1,5 +1,3 @@
-// this file is distributed under
-// MIT license
 #include <iostream>
 #include <math_h/functions.h>
 #include <math_h/integrate.h>

@@ -1,5 +1,3 @@
-// this file is distributed under
-// MIT license
 #include <math_h/matrices.h>
 using namespace std;
 using namespace MathTemplates;

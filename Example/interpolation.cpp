@@ -1,5 +1,3 @@
-// this file is distributed under
-// MIT license
 #include <math_h/interpolate.h>
 #include <gnuplot_wrap.h>
 using namespace std;

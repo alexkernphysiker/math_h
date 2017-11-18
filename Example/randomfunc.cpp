@@ -1,5 +1,3 @@
-// this file is distributed under
-// MIT license
 #include <math_h/functions.h>
 #include <math_h/randomfunc.h>
 #include <math_h/hists.h>
