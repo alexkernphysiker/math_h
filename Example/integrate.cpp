@@ -18,11 +18,11 @@ int main()
 	<< Sympson([k](double x) {return pow(x, k);}, 0.0, 1.0, 0.001) << endl;
 
     //How you can integrate table data
-    SortedPoints<> table(
+    SortedPoints<> table(//create the table of data points
 	[](double x){return Gaussian(x, 0.0, 1.0);}, 
 	ChainWithStep(-5.0, 0.1, 5.0)
     );
-    const auto integrated_table=Int_Trapez_Table(table);
+    const auto integrated_table=Int_Trapez_Table(table);//integrate the data points using trapeze method
     Plot("integrate").Points(table, "density").Points(integrated_table, "integrated");
 
     //How you can calculate convolution integral

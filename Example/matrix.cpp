@@ -14,8 +14,10 @@ int main()
         { 5., 6., 3. }
     }),
     b({{3}, {7}, {8}});
+    //Solving linear equation
     const auto x = Solve(A, b);
     cout << A << endl << x << endl << b << endl;
+    //Calculating determinant
     cout << "det(A) = "<<Determinant(A);
     return 0;
 }
