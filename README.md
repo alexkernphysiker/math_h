@@ -27,7 +27,7 @@ Then commit your changes
 CMake Options
 =============
 
-Option that turns on unit tests compiletion
+Option that turns on unit tests compilation
 
 	tests
 
