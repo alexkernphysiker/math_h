@@ -1,8 +1,6 @@
 // this file is distributed under
 // LGPLv3 license
 #include <gtest/gtest.h>
-#include <math.h>
-#include <random>
 #include <math_h/tabledata.h>
 using namespace std;
 using namespace MathTemplates;

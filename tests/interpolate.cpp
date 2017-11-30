@@ -1,8 +1,8 @@
 // this file is distributed under
 // LGPLv3 license
 #include <gtest/gtest.h>
-#include <math.h>
 #include <math_h/interpolate.h>
+#include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
 TEST(LinearInterpolation, Create)

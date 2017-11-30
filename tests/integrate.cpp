@@ -62,7 +62,7 @@ TEST(Int_Trapez_Table_PositiveStrict, BasicTest)
     _EQ(0.333333, res.right().Y());
     cout << res.right().Y() << endl;
 }
-TEST(Convolution, BasicTest)
+TEST(Convolution, Test)
 {
     auto F1 = [](double x) {
         return x;
@@ -77,7 +77,7 @@ TEST(Convolution, BasicTest)
     }, 0.0, 1.0, 0.01);
     EXPECT_EQ(test_value, C(x));
 }
-TEST(Convolution, BasicTest2)
+TEST(Convolution, Test2)
 {
     auto F1 = [](const double & x) {
         return x;

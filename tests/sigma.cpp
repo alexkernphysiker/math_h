@@ -1,32 +1,31 @@
 // this file is distributed under
 // LGPLv3 license
-#include <random>
-#include <math.h>
 #include <gtest/gtest.h>
 #include <math_h/sigma.h>
+#include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
 TEST(value, error_handling)
 {
-    EXPECT_NO_THROW(value<double>(1, -0.1));
-    EXPECT_NO_THROW(value<double>(1, 0));
-    EXPECT_NO_THROW(value<double>(1, 0.1));
-    EXPECT_EQ(value<double>(1, 0).uncertainty(), 0);
-    EXPECT_EQ(value<double>(1, 0.1).uncertainty(), 0.1);
-    EXPECT_FALSE(isfinite(value<double>(1, -0.1).uncertainty()));
-    EXPECT_NO_THROW(value<double>(1, -0.1) + value<double>(1, 0.1));
-    EXPECT_EQ((value<double>(1, -0.1) + value<double>(1, 0.1)).val(), 2);
-    EXPECT_FALSE(isfinite((value<double>(1, -0.1) + value<double>(1, 0.1)).uncertainty()));
+    EXPECT_NO_THROW(value<>(1, -0.1));
+    EXPECT_NO_THROW(value<>(1, 0));
+    EXPECT_NO_THROW(value<>(1, 0.1));
+    EXPECT_EQ(value<>(1, 0).uncertainty(), 0);
+    EXPECT_EQ(value<>(1, 0.1).uncertainty(), 0.1);
+    EXPECT_FALSE(isfinite(value<>(1, -0.1).uncertainty()));
+    EXPECT_NO_THROW(value<>(1, -0.1) + value<>(1, 0.1));
+    EXPECT_EQ((value<>(1, -0.1) + value<>(1, 0.1)).val(), 2);
+    EXPECT_FALSE(isfinite((value<>(1, -0.1) + value<>(1, 0.1)).uncertainty()));
 }
 TEST(value, fromlist)
 {
     initializer_list<double> l = {};
-    value<double> v;
-    EXPECT_THROW(v = l, Exception<value<double>>);
+    value<> v;
+    EXPECT_THROW(v = l, Exception<value<>>);
     l = {1.0, 2.0, 3.0};
-    EXPECT_THROW(v = l, Exception<value<double>>);
+    EXPECT_THROW(v = l, Exception<value<>>);
     l = {1.0, 2.0, 3.0, 4.0};
-    EXPECT_THROW(v = l, Exception<value<double>>);
+    EXPECT_THROW(v = l, Exception<value<>>);
     l = {1.0};
     EXPECT_NO_THROW(v = l);
     l = {1.0, 2.0};
@@ -45,7 +44,7 @@ TEST(value, base)
     normal_distribution<double> G;
     for (size_t i = 0; i < 10; i++) {
         double x = G(gen);
-        value<double> V(x, 0.1);
+        value<> V(x, 0.1);
         EXPECT_EQ(x, V.val());
         EXPECT_EQ(0.1, V.uncertainty());
         EXPECT_EQ(0.1 / x, V.epsilon());
@@ -55,7 +54,7 @@ TEST(value, base)
 }
 TEST(value, compare1)
 {
-    value<double> V(0, 0.1);
+    value<> V(0, 0.1);
     EXPECT_EQ(false, V.Contains(-0.2));
     EXPECT_EQ(true, V.Contains(-0.05));
     EXPECT_EQ(true, V.Contains(0));
@@ -70,22 +69,22 @@ TEST(value, compare1)
 }
 TEST(value, compare2)
 {
-    bool v = value<double> {2, 1} .Above({0, 0.9});
+    bool v = value<> {2, 1} .Above({0, 0.9});
     EXPECT_TRUE(v);
-    v = value<double> {2, 1} .Above({0, 1.1});
+    v = value<> {2, 1} .Above({0, 1.1});
     EXPECT_FALSE(v);
-    v = value<double> {0, 1} .Below({2, 0.9});
+    v = value<> {0, 1} .Below({2, 0.9});
     EXPECT_TRUE(v);
-    v = value<double> {0, 1} .Below({2, 1.1});
+    v = value<> {0, 1} .Below({2, 1.1});
     EXPECT_FALSE(v);
 
-    v = value<double> {2, 1} .Above(0.9);
+    v = value<> {2, 1} .Above(0.9);
     EXPECT_TRUE(v);
-    v = value<double> {2, 1} .Above(1.1);
+    v = value<> {2, 1} .Above(1.1);
     EXPECT_FALSE(v);
-    v = value<double> {0, 1} .Below(1.1);
+    v = value<> {0, 1} .Below(1.1);
     EXPECT_TRUE(v);
-    v = value<double> {0, 1} .Below(0.9);
+    v = value<> {0, 1} .Below(0.9);
     EXPECT_FALSE(v);
 }
 #define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
@@ -94,7 +93,7 @@ TEST(value, arithmetic_actions1)
     mt19937 G;
     uniform_real_distribution<double> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<double> A(val(G), unc(G)), B(val(G), unc(G));
+        value<> A(val(G), unc(G)), B(val(G), unc(G));
         auto sum = A + B;
         EXPECT_EQ(A.val() + B.val(), sum.val());
         _EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
@@ -114,7 +113,7 @@ TEST(value, arithmetic_actions2)
     mt19937 G;
     uniform_real_distribution<double> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<double> A(val(G), unc(G));
+        value<> A(val(G), unc(G));
         double B = val(G);
         auto sum = A + B;
         EXPECT_EQ(A.val() + B, sum.val());
@@ -133,67 +132,67 @@ TEST(value, arithmetic_actions2)
 TEST(value, NumCompare)
 {
     {
-        double v = value<double>(0, 1).NumCompare(0);
+        double v = value<>(0, 1).NumCompare(0);
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<double>(0, 1).NumCompare(0.5);
+        double v = value<>(0, 1).NumCompare(0.5);
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<double>(0, 1).NumCompare(1);
+        double v = value<>(0, 1).NumCompare(1);
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<double>(0, 1).NumCompare(2);
+        double v = value<>(0, 1).NumCompare(2);
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<double>(2, 1).NumCompare(2);
+        double v = value<>(2, 1).NumCompare(2);
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<double>(2, 1).NumCompare(1.5);
+        double v = value<>(2, 1).NumCompare(1.5);
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<double>(2, 1).NumCompare(1);
+        double v = value<>(2, 1).NumCompare(1);
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<double>(2, 1).NumCompare(0);
+        double v = value<>(2, 1).NumCompare(0);
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<double>(0, 1).NumCompare({0, 1});
+        double v = value<>(0, 1).NumCompare({0, 1});
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<double>(0, 1).NumCompare({1, 1});
+        double v = value<>(0, 1).NumCompare({1, 1});
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<double>(0, 1).NumCompare({2, 1});
+        double v = value<>(0, 1).NumCompare({2, 1});
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<double>(0, 1).NumCompare({4, 1});
+        double v = value<>(0, 1).NumCompare({4, 1});
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<double>(2, 1).NumCompare({2, 1});
+        double v = value<>(2, 1).NumCompare({2, 1});
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<double>(2, 1).NumCompare({1, 1});
+        double v = value<>(2, 1).NumCompare({1, 1});
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<double>(2, 1).NumCompare({0, 1});
+        double v = value<>(2, 1).NumCompare({0, 1});
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<double>(2, 1).NumCompare({ -2, 1});
+        double v = value<>(2, 1).NumCompare({ -2, 1});
         EXPECT_EQ(v, 4);
     }
 }
@@ -206,7 +205,7 @@ TEST(value, func_val)
 }
 TEST(value, wider)
 {
-    value<double> V1(1, 0.1), V2(2, 0.1), V3(1, 0.5);
+    value<> V1(1, 0.1), V2(2, 0.1), V3(1, 0.5);
     EXPECT_EQ(V1, V1.make_wider(1));
     EXPECT_EQ(V2, V2.make_wider(1));
     EXPECT_EQ(V3, V3.make_wider(1));
@@ -292,14 +291,14 @@ TEST(WeightedAverage, Zeros)
 {
     WeightedAverage<double> W;
     EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
-    EXPECT_THROW(W << value<double>(0, 0), Exception<WeightedAverage<double>>);
-    EXPECT_EQ(&W, &(W << value<double>(0, 1)));
+    EXPECT_THROW(W << value<>(0, 0), Exception<WeightedAverage<double>>);
+    EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0, W().val());
     _EQ(1, W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(0, 1)));
+    EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0, W().val());
     _EQ(1.0 / sqrt(2.0), W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(0, 1)));
+    EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0, W().val());
     _EQ(1.0 / sqrt(3.0), W().uncertainty());
 }
@@ -307,14 +306,14 @@ TEST(WeightedAverage, Ones)
 {
     WeightedAverage<double> W;
     EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
-    EXPECT_THROW(W << value<double>(1, 0), Exception<WeightedAverage<double>>);
-    EXPECT_EQ(&W, &(W << value<double>(1, 1)));
+    EXPECT_THROW(W << value<>(1, 0), Exception<WeightedAverage<double>>);
+    EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1, W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(1, 1)));
+    EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1.0 / sqrt(2.0), W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(1, 1)));
+    EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1.0 / sqrt(3.0), W().uncertainty());
 }
@@ -322,16 +321,16 @@ TEST(WeightedAverage, Zeros_plus_Ones)
 {
     WeightedAverage<double> W;
     EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
-    EXPECT_EQ(&W, &(W << value<double>(1, 1)));
+    EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1, W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(0, 1)));
+    EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0.5, W().val());
     _EQ(1.0 / sqrt(2.0), W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(1, 1)));
+    EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(2.0 / 3.0, W().val());
     _EQ(1.0 / sqrt(3.0), W().uncertainty());
-    EXPECT_EQ(&W, &(W << value<double>(0, 1)));
+    EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0.5, W().val());
     _EQ(1.0 / sqrt(4.0), W().uncertainty());
 }

@@ -1,7 +1,6 @@
 // this file is distributed under
 // LGPLv3 license
 #include <gtest/gtest.h>
-#include <math.h>
 #include <math_h/matrices.h>
 using namespace std;
 using namespace MathTemplates;
@@ -16,6 +15,7 @@ TEST(Matrix, SimpleObjects)
     EXPECT_FALSE(A != A);
     EXPECT_TRUE(A.HasSizeAs(A));
     EXPECT_TRUE(A == Unitary<double>(3));
+    EXPECT_FALSE(A != Unitary<double>(3));
     EXPECT_FALSE(Unitary<double>(3) != A);
     EXPECT_TRUE(Unitary<double>(3) == A);
     EXPECT_FALSE(A != Unitary<double>(3));

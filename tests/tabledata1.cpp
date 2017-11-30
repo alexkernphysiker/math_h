@@ -1,9 +1,8 @@
 // this file is distributed under
 // LGPLv3 license
 #include <gtest/gtest.h>
-#include <math.h>
-#include <random>
 #include <math_h/tabledata.h>
+#include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
 double TestArray[] = { -2, -1, 0, 1, 2, 3, 4, 5, 6, 7};
@@ -49,9 +48,9 @@ TEST(InsertSorted, BasicTest)
 }
 TEST(SortedChain, basetest)
 {
-    mt19937 engine;
-    SortedChain<double> chain;
-    uniform_real_distribution<double> get(-10, 10);
+    RANDOM engine;
+    SortedChain<> chain;
+    RandomUniform<> get(-10, 10);
     for (size_t i = 0; i < 100; i++)
         chain << get(engine);
     for (size_t i = 1; i < 100; i++)
