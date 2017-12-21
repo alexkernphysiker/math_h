@@ -7,7 +7,7 @@ using namespace MathTemplates;
 int main()
 {
     //how to declare values with uncertainties
-    const value<> A(10.,1.0),B(3.,0.2);
+    const value<> A(10.,1.0),B={3.,0.2};
     //how to get value's components
     cout<<"A: value = "<<A.val()<<endl;
     cout<<"A: delta = "<<A.uncertainty()<<endl;

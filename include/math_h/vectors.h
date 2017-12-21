@@ -1154,6 +1154,16 @@ inline const LorentzVector<numt, Space> lorentzVector(const numt &t, const Space
 {
     return LorentzVector<numt, Space>(t, s);
 }
+template<size_t dim,class numt = double>
+inline const LorentzVector<numt, Vector<dim,numt>> lorentz_rest(const numt &l4)
+{
+    return LorentzVector<numt,Vector<dim,numt>>(l4 * l4,Vector<dim,numt>::zero());
+}
+template<class numt = double>
+inline const LorentzVector<numt, Vector<3,numt>> lorentz_Rest(const numt &l4)
+{
+    return lorentz_rest<3,numt>(l4);
+}
 template<class numt = double, class Space = Vector<3, numt>>
 inline const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {

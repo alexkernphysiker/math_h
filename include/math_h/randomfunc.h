@@ -7,7 +7,7 @@
 #endif
 #include <random>
 #include <memory>
-#include "functions.h"
+#include "tabledata.h"
 #include "interpolate.h"
 namespace MathTemplates
 {

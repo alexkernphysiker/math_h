@@ -23,7 +23,7 @@ int main()
     for (size_t i = 0; i < 100000; i++) {
 	//Create Lorentz vectors for input particles
         const auto Pr0 = lorentz_byPM(Z() * P(RG), M1);
-        const auto Pt0 = lorentz_byPM(Zero(), M2);
+        const auto Pt0 = lorentz_Rest(M2);
         const auto Total = Pr0 + Pt0;
         //Let them scatter isotropically in CM
         const auto finalCM = binaryDecay(Total.M(), M1, M2, randomIsotropic<3>(RG));
