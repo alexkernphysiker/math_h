@@ -63,3 +63,26 @@ TEST(SortedPoints, size2)
         EXPECT_EQ(i, chain[i].X().val());
     }
 }
+TEST(SortedPoints, WeightedAvr)
+{
+    SortedPoints<double,WeightedAverage<>> chain;
+    chain
+    << make_point(0, WeightedAverage<>())
+    << make_point(1, WeightedAverage<>())
+    << make_point(2, WeightedAverage<>());
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X());
+        EXPECT_THROW(chain[i].Y()(),Exception<WeightedAverage<>>);
+    }
+    SortedPoints<double,value<>> opr1=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};
+    chain.leftArrow(opr1);
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X());
+        EXPECT_EQ(i, chain[i].Y()().val());
+    }
+    chain.leftArrow(value<>(0,1));
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X());
+        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+    }
+}

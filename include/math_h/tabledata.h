@@ -263,6 +263,12 @@ public:
         else
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
+    template<class OtherY>
+    point&operator<<(const point<numtX,OtherY>&other)
+    {
+	y<<other.Y();
+	return *this;
+    }
 };
 template<class numtX = double, class numtY = numtX>
 inline const point<numtX,numtY>make_point(const numtX&x,const numtY&y){return point<numtX,numtY>(x,y);}
@@ -468,6 +474,22 @@ public:
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
             Bin(i)=Bin(i)/c;
+        return *this;
+    }
+    template<class OtherY>
+    SortedPoints&leftArrow(const SortedPoints<numX,OtherY>&other)
+    {
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    Bin(i)<<other[i];
+        }
+        return *this;
+    }
+    template<class OtherY>
+    SortedPoints&leftArrow(const OtherY&other)
+    {
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    Bin(i)<<make_point(Bin(i).X(),other);
+        }
         return *this;
     }
 

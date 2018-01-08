@@ -327,6 +327,12 @@ public:
         return *m_cache;
     }
 };
+template<typename numt>
+inline std::ostream &operator<<(std::ostream &str, const StandardDeviation<numt> &P)
+{
+    return str << P();
+}
+
 template<typename numt = double>
 class WeightedAverage
 {
@@ -351,6 +357,10 @@ public:
         m_cache = nullptr;
         return *this;
     }
+    WeightedAverage(const value<numt> &X):WeightedAverage()
+    {
+	operator<<(X);
+    }
     const value<numt> &operator()()const
     {
         using namespace std;
@@ -361,6 +371,12 @@ public:
         return *m_cache;
     }
 };
+template<typename numt>
+inline std::ostream &operator<<(std::ostream &str, const WeightedAverage<numt> &P)
+{
+    return str << P();
+}
+
 template<typename numt = double>
 class CorrelationLinear
 {
