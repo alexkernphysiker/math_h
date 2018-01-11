@@ -44,7 +44,7 @@ public:
     hist(const SortedPoints<value<numtX>, value<numtY2>> &source)
         : SortedPoints<value<numtX>, value<numtY>>(source) {}
     template<class numtY2>
-    hist(const Points<numtX, numtY2> &data)
+    hist(const Points<value<numtX>, numtY2> &data)
     {
         for (const auto &P : data)this->operator<<(Point(P));
     }
