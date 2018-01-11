@@ -492,14 +492,6 @@ public:
     {
         return leftArrow(SortedPoints<numX,numtY2>(other));
     }
-    template<class numtY2>
-    SortedPoints&leftArrow(const numtY2&other)
-    {
-        for (size_t i = 0, n = this->size(); i < n; i++) {
-	    Bin(i)<<make_point(Bin(i).X(),other);
-        }
-        return *this;
-    }
 
     template<class numtY2>
     auto operator+(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other[0].Y())>

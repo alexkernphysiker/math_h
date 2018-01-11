@@ -80,12 +80,11 @@ TEST(SortedPoints, WeightedAvr)
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(i, chain[i].Y()().val());
     }
-    chain.leftArrow(value<>(0,1));
+    chain.leftArrow(Points<double,value<>>{{0,{0,1}},{1,{0,1}},{2,{0,1}}});
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(double(i)/2, chain[i].Y()().val());
     }
-    
     const auto chain2=chain+2;
     for (size_t i = 0; i < chain2.size(); i++) {
         EXPECT_EQ(i, chain2[i].X());
@@ -109,12 +108,12 @@ TEST(SortedPoints, WeightedAvr)
 }
 TEST(SortedPoints, WeightedAvr2)
 {
-    SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};;
+    SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(i, chain[i].Y()().val());
     }
-    chain.leftArrow(value<>(0,1));
+    chain.leftArrow(Points<double,value<>>{{0,{0,1}},{1,{0,1}},{2,{0,1}}});
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(double(i)/2, chain[i].Y()().val());
