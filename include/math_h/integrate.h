@@ -27,7 +27,7 @@ numY Sympson(const functype y, const numX &a, const numX &b, const numX &step)
     return res;
 }
 template<class numX, class numY = numX>
-const SortedPoints<numX, numY> Int_Trapez_Table(const SortedPoints<numX, numY> &source)
+SortedPoints<numX, numY> Int_Trapez_Table(const SortedPoints<numX, numY> &source)
 {
     SortedPoints<numX, numY> res;
     res << point<numX, numY>(source.left().X(), 0);
@@ -40,7 +40,7 @@ const SortedPoints<numX, numY> Int_Trapez_Table(const SortedPoints<numX, numY> &
     return res;
 }
 template<class numX, class numY = numX> //Accepts only positive function
-const SortedPoints<numX, numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<numX, numY> &source)
+SortedPoints<numX, numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<numX, numY> &source)
 {
     SortedPoints<numX, numY> res;
     res << point<numX, numY>(source.left().X(), 0);
@@ -85,7 +85,7 @@ public:
 template<class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
          >
-const Convolution<numX, numY, func1, func2> make_convolution(
+Convolution<numX, numY, func1, func2> make_convolution(
     const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numX &step)
 {
     return Convolution<numX, numY, func1, func2>(a, b, ksi1, ksi2, step);

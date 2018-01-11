@@ -10,7 +10,7 @@
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>
-class LinearInterpolation: public SortedPoints<numX, numY>, public IFunction<const numY, const numX &>
+class LinearInterpolation: public SortedPoints<numX, numY>, public IFunction<numY, const numX &>
 {
 public:
     typedef point<numX, numY> Point;
@@ -29,7 +29,7 @@ public:
     LinearInterpolation(const SortedPoints<numX, numY> &source)
         : SortedPoints<numX, numY>(source) {}
     virtual ~LinearInterpolation() {}
-    virtual const numY operator()(const numX &x)const override
+    virtual numY operator()(const numX &x)const override
     {
         auto tbl = [this](size_t i)->const Point& {
             return this->operator[](i);
@@ -54,7 +54,7 @@ public:
     }
 };
 template<class numX = double, class numY = numX>
-class IntegratedLinearInterpolation: public SortedPoints<numX, numY>, public IFunction<const numY, const numX &>
+class IntegratedLinearInterpolation: public SortedPoints<numX, numY>, public IFunction<numY, const numX &>
 {
 public:
     typedef typename SortedPoints<numX, numY>::Func Func;
@@ -65,7 +65,7 @@ public:
     IntegratedLinearInterpolation(const IntegratedLinearInterpolation<numX, numY> &source)
         : SortedPoints<numX, numY>(source), raw(source.raw) {}
     virtual ~IntegratedLinearInterpolation() {}
-    virtual const numY operator()(const numX &x)const override
+    virtual numY operator()(const numX &x)const override
     {
         const size_t sz = raw.size();
         if (x == raw.left().X())
@@ -84,7 +84,7 @@ public:
     }
 };
 template<class numX = double, class numY = numX>
-class ReverseIntegratedLinearInterpolation: public SortedPoints<numY, numX>, public IFunction<const numX, const numY &>
+class ReverseIntegratedLinearInterpolation: public SortedPoints<numY, numX>, public IFunction<numX, const numY &>
 {
 public:
     typedef typename SortedPoints<numX, numY>::Func Func;
@@ -95,7 +95,7 @@ public:
     ReverseIntegratedLinearInterpolation(const ReverseIntegratedLinearInterpolation<numX, numY> &source)
         : SortedPoints<numY, numX>(source), raw(source.raw) {}
     virtual ~ReverseIntegratedLinearInterpolation() {}
-    virtual const numX operator()(const numY &y)const override
+    virtual numX operator()(const numY &y)const override
     {
         const size_t sz = this->size();
         if (y == this->left().X())

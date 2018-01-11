@@ -17,22 +17,22 @@ class Matrix
 public:
     typedef std::function<const numt(const size_t, const size_t)> function;
     virtual ~Matrix() {}
-    virtual const size_t height()const = 0;
-    virtual const size_t width()const = 0;
+    virtual size_t height()const = 0;
+    virtual size_t width()const = 0;
 protected:
-    virtual const numt get_element(const size_t i, const size_t j)const = 0;
+    virtual numt get_element(const size_t i, const size_t j)const = 0;
 public:
-    const numt operator()(const size_t i, const size_t j)const
+    numt operator()(const size_t i, const size_t j)const
     {
         if (i >= height())throw Exception<Matrix>("Range check error");
         if (j >= width())throw Exception<Matrix>("Range check error");
         return get_element(i, j);
     }
-    inline const bool HasSizeAs(const Matrix &other)const
+    inline bool HasSizeAs(const Matrix &other)const
     {
         return (height() == other.height()) && (width() == other.width());
     }
-    const bool operator==(const Matrix &other)const
+    bool operator==(const Matrix &other)const
     {
         if (!HasSizeAs(other))return false;
         for (size_t i = 0; i < height(); i++) {
@@ -42,15 +42,15 @@ public:
         }
         return true;
     }
-    inline const bool operator!=(const Matrix &other)const
+    inline bool operator!=(const Matrix &other)const
     {
         return !operator==(other);
     }
-    inline const bool operator==(const numt &c)const
+    inline bool operator==(const numt &c)const
     {
         return (width() == 1) && (height() == 1) && (operator()(0, 0) == c);
     }
-    inline const bool operator!=(const numt &c)const
+    inline bool operator!=(const numt &c)const
     {
         return !operator==(c);
     }
@@ -71,21 +71,21 @@ class MatrixData: public Matrix<numt>
 {
 public:
     typedef Chain<Chain<numt>> container;
-    typedef std::function<const numt(const size_t, const size_t, const numt &)> transform_function;
-    typedef std::function<const numt(const numt &)> transform_func;
+    typedef std::function<numt(const size_t, const size_t, const numt &)> transform_function;
+    typedef std::function<numt(const numt &)> transform_func;
 private:
     container f_data;
 protected:
-    virtual const numt get_element(const size_t i, const size_t j)const override
+    virtual numt get_element(const size_t i, const size_t j)const override
     {
         return f_data[i][j];
     }
 public:
-    virtual const size_t height()const override
+    virtual size_t height()const override
     {
         return f_data.size();
     }
-    virtual const size_t width()const override
+    virtual size_t width()const override
     {
         return f_data[0].size();
     }
@@ -150,44 +150,44 @@ private:
 public:
     MatrixByFormula(const size_t N, const size_t M, const typename Matrix<numt>::function F): f_N(N), f_M(M), f_func(F) {}
     virtual ~MatrixByFormula() {}
-    virtual const size_t height()const override
+    virtual size_t height()const override
     {
         return f_N;
     }
-    virtual const size_t width()const override
+    virtual size_t width()const override
     {
         return f_M;
     }
 protected:
-    virtual const numt get_element(const size_t i, const size_t j)const override
+    virtual numt get_element(const size_t i, const size_t j)const override
     {
         return f_func(i, j);
     }
 };
 
 template<class numt>
-const MatrixByFormula<numt> Unitary(const size_t N)
+MatrixByFormula<numt> Unitary(const size_t N)
 {
     return MatrixByFormula<numt>(N, N, [](size_t i, size_t j)->numt {return (i == j) ? 1 : 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> Zeros(const size_t N, const size_t M)
+MatrixByFormula<numt> Zeros(const size_t N, const size_t M)
 {
     return MatrixByFormula<numt>(N, M, [](size_t, size_t)->numt {return 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> RVec(const size_t N, const size_t i)
+MatrixByFormula<numt> RVec(const size_t N, const size_t i)
 {
     if (i >= N)throw Exception<Matrix<numt>>("Invalid reference vector");
     return MatrixByFormula<numt>(N, 1, [i](size_t ii, size_t)->numt {return (ii == i) ? 1 : 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> Diagonal(const Chain<numt> &V)
+MatrixByFormula<numt> Diagonal(const Chain<numt> &V)
 {
     return MatrixByFormula<numt>(V.size(), V.size(), [V](size_t i, size_t j)->numt {return (i == j) ? V[i] : 0;});
 }
 template<class numt>
-const MatrixByFormula<numt> Permutation(const Chain<size_t> &V)
+MatrixByFormula<numt> Permutation(const Chain<size_t> &V)
 {
     for (const size_t i : V)if (i >= V.size())
             throw Exception<MatrixByFormula<numt>>("invalid permutation matrix");
@@ -196,28 +196,28 @@ const MatrixByFormula<numt> Permutation(const Chain<size_t> &V)
 
 
 template<class numt>
-const MatrixByFormula<numt> operator*(const Matrix<numt> &source, const numt &k)
+ MatrixByFormula<numt> operator*(const Matrix<numt> &source, const numt &k)
 {
     return MatrixByFormula<numt>(source.height(), source.width(),
                                  [&source, &k](size_t i, size_t j)->numt {return source(i, j) * k;}
                                 );
 }
 template<class numt>
-const MatrixByFormula<numt> operator/(const Matrix<numt> &source, const numt &k)
+MatrixByFormula<numt> operator/(const Matrix<numt> &source, const numt &k)
 {
     return MatrixByFormula<numt>(source.height(), source.width(),
                                  [&source, &k](size_t i, size_t j)->numt {return source(i, j) / k;}
                                 );
 }
 template<class numt>
-const MatrixByFormula<numt> Transponate(const Matrix<numt> &source)
+MatrixByFormula<numt> Transponate(const Matrix<numt> &source)
 {
     return MatrixByFormula<numt>(source.width(), source.height(),
                                  [&source](size_t i, size_t j)->numt {return source(j, i);}
                                 );
 }
 template<class numt>
-const MatrixByFormula<numt> Minor(const Matrix<numt> &source, const size_t i, const size_t j)
+MatrixByFormula<numt> Minor(const Matrix<numt> &source, const size_t i, const size_t j)
 {
     if ((source.height() < 2) || (source.width() < 2) || (i >= source.height()) || (j >= source.width()))
         throw Exception<MatrixByFormula<numt>>("Invalid minor");
@@ -231,7 +231,7 @@ const MatrixByFormula<numt> Minor(const Matrix<numt> &source, const size_t i, co
                                 );
 }
 template<class numt>
-const numt Suplement(const Matrix<numt> &source, const size_t i, const size_t j)
+numt Suplement(const Matrix<numt> &source, const size_t i, const size_t j)
 {
     switch ((i + j) % 2) {
     case 0:
@@ -242,7 +242,7 @@ const numt Suplement(const Matrix<numt> &source, const size_t i, const size_t j)
     throw;
 }
 template<class numt>
-const MatrixByFormula<numt> Suplements(const Matrix<numt> &source)
+MatrixByFormula<numt> Suplements(const Matrix<numt> &source)
 {
     return MatrixByFormula<numt>(
                source.height(), source.width(),
@@ -252,7 +252,7 @@ const MatrixByFormula<numt> Suplements(const Matrix<numt> &source)
            );
 }
 template<class numt>
-const numt Determinant(const Matrix<numt> &source)
+numt Determinant(const Matrix<numt> &source)
 {
     if ((source.height() != source.width()) || (source.height() == 0))
         throw Exception<MatrixByFormula<numt>>("Cannot calculate the determinant");
@@ -266,7 +266,7 @@ const numt Determinant(const Matrix<numt> &source)
     return result;
 }
 template<class numt>
-const MatrixData<numt> CalcInverseMatrix(const Matrix<numt> &source)
+MatrixData<numt> CalcInverseMatrix(const Matrix<numt> &source)
 {
     numt D = Determinant(source);
     if (D == 0)throw Exception<MatrixByFormula<numt>>("Cannot calculate inverse matrix");
@@ -275,7 +275,7 @@ const MatrixData<numt> CalcInverseMatrix(const Matrix<numt> &source)
     return Transponate(Suplements(source)) / D;
 }
 template<class numt>
-const MatrixByFormula<numt> Multiply(const Matrix<numt> &A, const Matrix<numt> &B)
+MatrixByFormula<numt> Multiply(const Matrix<numt> &A, const Matrix<numt> &B)
 {
     if (A.width() != B.height())
         throw Exception<Matrix<numt>>("Matrix Multiplication: size mismatch");
@@ -293,7 +293,7 @@ struct lup {
     MatrixByFormula<numt>P;
 };
 template<class numt>
-const lup<numt> LUP(const Matrix<numt> &A_)
+lup<numt> LUP(const Matrix<numt> &A_)
 {
     if (A_.width() != A_.height())
         throw Exception<Matrix<numt>>("LUP decomposition is possible only for squared matrix");
@@ -340,7 +340,7 @@ const lup<numt> LUP(const Matrix<numt> &A_)
     return {.L = L, .U = U, .P = Permutation<numt>(pi)};
 }
 template<class numt>
-const MatrixData<numt> Solve(const Matrix<numt> &A, const Matrix<numt> &B)
+MatrixData<numt> Solve(const Matrix<numt> &A, const Matrix<numt> &B)
 {
     if (A.width() != A.height())
         throw Exception<Matrix<numt>>("Solve: parameter 1 must be squared matrix");

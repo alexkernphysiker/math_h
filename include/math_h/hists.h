@@ -11,7 +11,7 @@
 namespace MathTemplates
 {
 template<class numt>
-const Chain<value<numt>> BinsByStep(const numt from, const numt step, const numt to)
+Chain<value<numt>> BinsByStep(const numt from, const numt step, const numt to)
 {
     if (0 >= step)throw Exception<Chain<value<numt>>>("wrong bin width");
     if (to <= from)throw Exception<Chain<value<numt>>>("wrong range");
@@ -22,7 +22,7 @@ const Chain<value<numt>> BinsByStep(const numt from, const numt step, const numt
     return res;
 }
 template<class numt>
-const Chain<value<numt>> BinsByCount(const size_t count, const numt from, const numt to)
+Chain<value<numt>> BinsByCount(const size_t count, const numt from, const numt to)
 {
     if (0 == count)throw Exception<Chain<value<numt>>>("wrong bins count");
     return BinsByStep(from, (to - from) / numt(count), to);
@@ -38,25 +38,15 @@ public:
     {
         for (const auto &v : data)this->append_item_from_sorted(Point(v,numtY(0)));
     }
-    hist(const SortedChain<point<numtX, numtY>> &data)
-    {
-        for (const auto &P : data)this->append_item_from_sorted(Point(P));
-    }
-    hist(const SortedChain<Point> &data)
-    {
-        for (const auto &P : data)this->append_item_from_sorted(P);
-    }
     hist(const typename SortedPoints<value<numtX>, value<numtY>>::Func f, const SortedChain<value<numtX>> &chain)
         : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
-    hist(const SortedPoints<value<numtX>, value<numtY>> &source)
+    template<class numtY2>
+    hist(const SortedPoints<value<numtX>, value<numtY2>> &source)
         : SortedPoints<value<numtX>, value<numtY>>(source) {}
-    hist(const Points<numtX, numtY> &data)
+    template<class numtY2>
+    hist(const Points<numtX, numtY2> &data)
     {
         for (const auto &P : data)this->operator<<(Point(P));
-    }
-    hist(const Chain<Point> &data)
-    {
-        for (const auto &P : data)this->operator<<(P);
     }
     hist Clone()const
     {
@@ -80,14 +70,14 @@ public:
         for (const Point &P : *this)res += P.Y();
         return res;
     }
-    const SortedPoints<numtX, numtY> toLine()const
+    SortedPoints<numtX, numtY> toLine()const
     {
         SortedPoints<numtX, numtY> res;
         for (const Point &P : *this)
             res << point<numtX, numtY>(P.X().val(), P.Y().val());
         return res;
     }
-    const hist Scale(const size_t sc_x)const
+    hist Scale(const size_t sc_x)const
     {
         SortedChain<value<numtX>> new_x, sorted_x;
         for (const auto &item : *this)
@@ -133,7 +123,7 @@ public:
 
     virtual ~hist2d() {}
 
-    const hist2d Scale(const size_t sc_x, const size_t sc_y)const
+    hist2d Scale(const size_t sc_x, const size_t sc_y)const
     {
         SortedChain<value<numtX>> new_x;
         for (size_t i = sc_x - 1, n = this->X().size(); i < n; i += sc_x) {
@@ -193,7 +183,7 @@ public:
         }
         return *this;
     }
-    const unsigned long long Entries()const
+    unsigned long long Entries()const
     {
         return counter;
     }
@@ -230,7 +220,7 @@ public:
             }
         return *this;
     }
-    const unsigned long long Entries()const
+    unsigned long long Entries()const
     {
         return counter;
     }

@@ -107,3 +107,16 @@ TEST(SortedPoints, WeightedAvr)
         EXPECT_EQ(double(i)/4, chain5[i].Y().val());
     }
 }
+TEST(SortedPoints, WeightedAvr2)
+{
+    SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};;
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X());
+        EXPECT_EQ(i, chain[i].Y()().val());
+    }
+    chain.leftArrow(value<>(0,1));
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X());
+        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+    }
+}

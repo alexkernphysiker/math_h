@@ -26,7 +26,7 @@ private:
     unsigned int terminal_counter, filename_counter;
     std::string outpath;
     std::string m_prefix;
-    inline const std::string GetFileName(const std::string &name)
+    inline std::string GetFileName(const std::string &name)
     {
         if (name == "") {
             filename_counter++;
@@ -43,13 +43,13 @@ protected:
         lines.push_back(line);
         return *this;
     }
-    inline const std::string File(std::ofstream&str,const std::string &name = "")
+    inline std::string File(std::ofstream&str,const std::string &name = "")
     {
         const auto n = GetFileName(name);
 	str.open((outpath + "/" + n).c_str());
         return n;
     }
-    inline const std::string GetTerminal(const std::string &name = "")
+    inline std::string GetTerminal(const std::string &name = "")
     {
         const std::string firstline = "set terminal pngcairo size 1024,868 font 'Verdana,18'\n";
         if (name == "") {
@@ -95,7 +95,7 @@ public:
         m_prefix = prefix;
     }
     template<class numtX = double,class numtY = numtX>
-    const MathTemplates::Points<numtX,numtY> GetPoints(const std::string &name)
+    MathTemplates::Points<numtX,numtY> GetPoints(const std::string &name)
     {
         MathTemplates::Points<numtX,numtY> res;
 	std::ifstream str((outpath + "/" + GetFileName(name)).c_str());
@@ -106,7 +106,7 @@ public:
         return res;
     }
     template<class numtX = double,class numtY = numtX>
-    const std::string SavePoints(const MathTemplates::Points<numtX,numtY>&data,const std::string &name = "")
+    std::string SavePoints(const MathTemplates::Points<numtX,numtY>&data,const std::string &name = "")
     {
 	std::ofstream str;
         auto n = Plotter::Instance().File(str,name);

@@ -41,7 +41,7 @@ protected:
     inline Vector(const numt &x): m_x(x) {}
 public:
     virtual ~Vector() {}
-    inline const std::tuple<numt> to_tuple()const
+    inline std::tuple<numt> to_tuple()const
     {
         return std::make_tuple(m_x);
     }
@@ -49,13 +49,13 @@ public:
     inline Vector(const Vector<Dimensions, numt2> &source): m_x(source.___last_component()) {}
     template<class... Args>
     inline Vector(const std::tuple<Args...> &v): m_x(std::get<0>(v)) {}
-    inline static const Vector zero()
+    inline static Vector zero()
     {
         return Vector(std::make_tuple(numt(0)));
     }
 #ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
-    inline static const Vector basis_vector()
+    inline static Vector basis_vector()
     {
 	static_assert(index ==1,"dimension index is out of range");
         return Vector(std::make_tuple(numt(1)));
@@ -68,7 +68,7 @@ public:
     }
 #else
     template<size_t index>
-    static const Vector basis_vector()
+    static Vector basis_vector()
     {
 	static_assert(index>0,"dimension index is out of range");
 	if(index>1)throw Exception<Vector>("dimension index is out of range");
@@ -96,7 +96,7 @@ public:
         m_x += second.m_x;
         return *this;
     }
-    const Vector operator+(const Vector &second)const
+    Vector operator+(const Vector &second)const
     {
         return Vector(std::make_tuple(m_x + second.m_x));
     }
@@ -105,7 +105,7 @@ public:
         m_x -= second.m_x;
         return *this;
     }
-    const Vector operator-(const Vector &second)const
+    Vector operator-(const Vector &second)const
     {
         return Vector(std::make_tuple(m_x - second.m_x));
     }
@@ -115,7 +115,7 @@ public:
         m_x *= second;
         return *this;
     }
-    const Vector operator*(const numt &second)const
+    Vector operator*(const numt &second)const
     {
         return Vector(std::make_tuple(m_x * second));
     }
@@ -124,27 +124,27 @@ public:
         m_x /= second;
         return *this;
     }
-    const Vector operator/(const numt &second)const
+    Vector operator/(const numt &second)const
     {
         return Vector(std::make_tuple(m_x / second));
     }
-    const numt operator*(const Vector &second)const
+    numt operator*(const Vector &second)const
     {
         return m_x * second.m_x;
     }
-    inline const numt M_sqr()const
+    inline numt M_sqr()const
     {
         return operator*(*this);
     }
-    inline const numt M()const
+    inline numt M()const
     {
         return sqrt(M_sqr());
     }
-    const bool operator==(const Vector &second)const
+    bool operator==(const Vector &second)const
     {
         return (m_x == second.m_x);
     }
-    const bool CloseTo(const Vector &second, const numt &epsilon)const
+    bool CloseTo(const Vector &second, const numt &epsilon)const
     {
         return operator-(second).M() < epsilon;
     }
@@ -183,13 +183,13 @@ public:
     inline Vector(const Vector<Dimensions, numt2> &source): m_other(source.___recursive()), m_x(source.___last_component()) {}
     template<class... Args>
     inline Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
-    inline static const Vector zero()
+    inline static Vector zero()
     {
         return Vector(VectorN::zero(), numt(0));
     }
 #ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
-    inline static const Vector basis_vector()
+    inline static Vector basis_vector()
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=Dimensions,"dimension index is out of range");
@@ -206,7 +206,7 @@ public:
     }
 #else
     template<size_t index>
-    static const Vector basis_vector()
+    static Vector basis_vector()
     {
 	static_assert(index > 0,"dimension index is out of range");
 	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
@@ -240,7 +240,7 @@ public:
         m_other += second.m_other;
         return *this;
     }
-    const Vector operator+(const Vector &second)const
+    Vector operator+(const Vector &second)const
     {
         return Vector(m_other + second.m_other, m_x + second.m_x);
     }
@@ -250,7 +250,7 @@ public:
         m_other -= second.m_other;
         return *this;
     }
-    const Vector operator-(const Vector &second)const
+    Vector operator-(const Vector &second)const
     {
         return Vector(m_other - second.m_other, m_x - second.m_x);
     }
@@ -261,7 +261,7 @@ public:
         m_other *= second.m_other;
         return *this;
     }
-    const Vector operator*(const numt &second)const
+    Vector operator*(const numt &second)const
     {
         return Vector(m_other * second, m_x * second);
     }
@@ -271,78 +271,78 @@ public:
         m_other /= second.m_other;
         return *this;
     }
-    const Vector operator/(const numt &second)const
+    Vector operator/(const numt &second)const
     {
         return Vector(m_other / second, m_x / second);
     }
-    const numt operator*(const Vector &second)const
+    numt operator*(const Vector &second)const
     {
         return (m_other * second.m_other) + (m_x * second.m_x);
     }
-    inline const numt M_sqr()const
+    inline numt M_sqr()const
     {
         return operator*(*this);
     }
-    inline const numt M()const
+    inline numt M()const
     {
         return sqrt(M_sqr());
     }
-    const bool operator==(const Vector &second)const
+    bool operator==(const Vector &second)const
     {
         return (m_x == second.m_x) && (m_other == second.m_other);
     }
-    const bool CloseTo(const Vector &second, const numt &epsilon)const
+    bool CloseTo(const Vector &second, const numt &epsilon)const
     {
         return operator-(second).M() < epsilon;
     }
 };
 template<class numt, class... Args>
-inline const Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args)
+inline Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args)
 {
     return Vector < sizeof...(Args) + 1, numt > (std::make_tuple(x, args...));
 }
 template<size_t i, size_t d, class numt = double>
-inline const Vector<d, numt> axis()
+inline Vector<d, numt> axis()
 {
     return Vector<d, numt>::template basis_vector<i>();
 }
 template<class numt = double>
-inline const Vector<2, numt> x()
+inline Vector<2, numt> x()
 {
     return Vector<2, numt>::template basis_vector<1>();
 }
 template<class numt = double>
-inline const Vector<2, numt> y()
+inline Vector<2, numt> y()
 {
     return Vector<2, numt>::template basis_vector<2>();
 }
 template<class numt = double>
-inline const Vector<2, numt> zero()
+inline Vector<2, numt> zero()
 {
     return Vector<2, numt>::zero();
 }
 template<class numt = double>
-inline const Vector<3, numt> X()
+inline Vector<3, numt> X()
 {
     return Vector<3, numt>::template basis_vector<1>();
 }
 template<class numt = double>
-inline const Vector<3, numt> Y()
+inline Vector<3, numt> Y()
 {
     return Vector<3, numt>::template basis_vector<2>();
 }
 template<class numt = double>
-inline const Vector<3, numt> Z()
+inline Vector<3, numt> Z()
 {
     return Vector<3, numt>::template basis_vector<3>();
 }
 template<class numt = double>
-inline const Vector<3, numt> Zero()
+inline Vector<3, numt> Zero()
 {
     return Vector<3, numt>::zero();
 }
 template<size_t i, class numt = double>
-inline const Vector<i, numt> operator-(const Vector<i, numt> &V)
+inline Vector<i, numt> operator-(const Vector<i, numt> &V)
 {
     return V * numt(-1);
 }
@@ -371,15 +371,15 @@ private:
     VIType m_line;
 protected:
     inline VectorTransformation(const VIType &line): m_line(line) {}
-    inline const MinusOneColumn ___minus_one_column()const
+    inline MinusOneColumn ___minus_one_column()const
     {
         return MinusOneColumn(m_line.___recursive());
     }
-    inline const VFType ___last_column()const
+    inline VFType ___last_column()const
     {
         return desCartes(m_line.___last_component());
     }
-    inline const PlusOneColumn ___add_column(const VFType &col)const
+    inline PlusOneColumn ___add_column(const VFType &col)const
     {
         return VIWType(m_line, col.___last_component());
     }
@@ -409,17 +409,17 @@ public:
 	return m_line.template component<jindex>();
     }
 #endif
-    const VFType operator*(const VIType &v)const
+    VFType operator*(const VIType &v)const
     {
         return desCartes(m_line * v);
     }
-    const VectorTransformation<DimensionsFinal, Vector<1, NumberType>>
+    VectorTransformation<DimensionsFinal, Vector<1, NumberType>>
             operator*(const VectorTransformation<DimensionsInitial, Vector<1, NumberType>> &B)const
     {
         return desCartes(m_line * B.___last_column());
     }
     template<size_t third_size>
-    const VectorTransformation<DimensionsFinal, Vector<third_size, NumberType>>
+    VectorTransformation<DimensionsFinal, Vector<third_size, NumberType>>
             operator*(const VectorTransformation<DimensionsInitial, Vector<third_size, NumberType>> &B)const
     {
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
@@ -429,36 +429,36 @@ public:
     template<class... Args>
     inline VectorTransformation(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
     inline VectorTransformation(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
-    const bool operator==(const VectorTransformation &B)const
+    bool operator==(const VectorTransformation &B)const
     {
         return m_line == B.m_line;
     }
-    const VectorTransformation operator*(const NumberType &v)const
+    VectorTransformation operator*(const NumberType &v)const
     {
         return VectorTransformation(m_line * v);
     }
-    const VectorTransformation operator/(const NumberType &v)const
+    VectorTransformation operator/(const NumberType &v)const
     {
         return VectorTransformation(m_line / v);
     }
-    const VectorTransformation operator+(const VectorTransformation &B)const
+    VectorTransformation operator+(const VectorTransformation &B)const
     {
         return VectorTransformation(m_line + B.m_line);
     }
-    const VectorTransformation operator-(const VectorTransformation &B)const
+    VectorTransformation operator-(const VectorTransformation &B)const
     {
         return VectorTransformation(m_line - B.m_line);
     }
-    static inline const VectorTransformation zero()
+    static inline VectorTransformation zero()
     {
         return VectorTransformation(VIType::zero());
     }
-    static inline const VectorTransformation one()
+    static inline VectorTransformation one()
     {
         return VectorTransformation(VIType::template basis_vector<DimensionsFinal>());
     }
     template<size_t x, size_t y>
-    static inline const VectorTransformation RotationInPlane(const NumberType &angle)
+    static inline VectorTransformation RotationInPlane(const NumberType &angle)
     {
         return VectorTransformation(
                    (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
@@ -467,7 +467,7 @@ public:
                                                 );
     }
     template<class... Args>
-    inline const VectorTransformation < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    inline VectorTransformation < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
     {
         return ___add_column(col).AddColumns(args...);
     }
@@ -494,17 +494,17 @@ private:
     VIType m_line;
 protected:
     inline VectorTransformation(const MinorTransformation &minor, const VIType &line): m_minor(minor), m_line(line) {}
-    inline const MinusOneColumn ___minus_one_column()const
+    inline MinusOneColumn ___minus_one_column()const
     {
         const auto new_minor = m_minor.___minus_one_column();
         const auto new_line = m_line.___recursive();
         return MinusOneColumn(new_minor, new_line);
     }
-    inline const VFType ___last_column()const
+    inline VFType ___last_column()const
     {
         return VFType(m_minor.___last_column(), m_line.___last_component());
     }
-    inline const PlusOneColumn ___add_column(const VFType &col)const
+    inline PlusOneColumn ___add_column(const VFType &col)const
     {
         const auto new_minor = m_minor.___add_column(col.___recursive());
         const auto new_line = VIWType(m_line, col.___last_component());
@@ -543,11 +543,11 @@ public:
 	else return m_minor.template element<index, jindex>();
     }
 #endif
-    const VFType operator*(const VIType &v)const
+    VFType operator*(const VIType &v)const
     {
         return VFType(m_minor * v, m_line * v);
     }
-    const VectorTransformation<DimensionsFinal, Vector<1, NumberType>>
+    VectorTransformation<DimensionsFinal, Vector<1, NumberType>>
             operator*(const VectorTransformation<DimensionsInitial, Vector<1, NumberType>> &B)const
     {
         const auto P = m_minor * B;
@@ -555,7 +555,7 @@ public:
         return VectorTransformation<DimensionsFinal, Vector<1, NumberType>>(P, C);
     }
     template<size_t third_size>
-    const VectorTransformation<DimensionsFinal, Vector<third_size, NumberType>>
+    VectorTransformation<DimensionsFinal, Vector<third_size, NumberType>>
             operator*(const VectorTransformation<DimensionsInitial, Vector<third_size, NumberType>> &B)const
     {
         const auto P = operator*(B.___minus_one_column());
@@ -567,36 +567,36 @@ public:
     template<class... Args>
     inline VectorTransformation(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
     inline VectorTransformation(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
-    const bool operator==(const VectorTransformation &B)const
+    bool operator==(const VectorTransformation &B)const
     {
         return (m_line == B.m_line) && (m_minor == B.m_minor);
     }
-    const VectorTransformation operator*(const NumberType &v)const
+    VectorTransformation operator*(const NumberType &v)const
     {
         return VectorTransformation(m_minor * v, m_line * v);
     }
-    const VectorTransformation operator/(const NumberType &v)const
+    VectorTransformation operator/(const NumberType &v)const
     {
         return VectorTransformation(m_minor / v, m_line / v);
     }
-    const VectorTransformation operator+(const VectorTransformation &B)const
+    VectorTransformation operator+(const VectorTransformation &B)const
     {
         return VectorTransformation(m_minor + B.m_minor, m_line + B.m_line);
     }
-    const VectorTransformation operator-(const VectorTransformation &B)const
+    VectorTransformation operator-(const VectorTransformation &B)const
     {
         return VectorTransformation(m_minor - B.m_minor, m_line - B.m_line);
     }
-    static inline const VectorTransformation zero()
+    static inline VectorTransformation zero()
     {
         return VectorTransformation(MinorTransformation::zero(), VIType::zero());
     }
-    static inline const VectorTransformation one()
+    static inline VectorTransformation one()
     {
         return VectorTransformation(MinorTransformation::one(), VIType::template basis_vector<DimensionsFinal>());
     }
     template<size_t x, size_t y>
-    static inline const VectorTransformation RotationInPlane(const NumberType &angle)
+    static inline VectorTransformation RotationInPlane(const NumberType &angle)
     {
         return VectorTransformation(
                    MinorTransformation::template RotationInPlane<x, y>(angle),
@@ -606,55 +606,55 @@ public:
                                                 );
     }
     template<class... Args>
-    inline const VectorTransformation < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    inline VectorTransformation < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
     {
         return ___add_column(col).AddColumns(args...);
     }
 };
 template<class linetype, class... Args>
-inline const VectorTransformation < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args... args)
+inline VectorTransformation < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args... args)
 {
     return VectorTransformation < sizeof...(Args) + 1, linetype > (std::make_tuple(x, args...));
 }
 template<class numt, class... Args>
-inline const VectorTransformation < 1, Vector < sizeof...(Args) + 1, numt >> line(const numt &x, Args... args)
+inline VectorTransformation < 1, Vector < sizeof...(Args) + 1, numt >> line(const numt &x, Args... args)
 {
     return lines(desCartes(x, args...));
 }
 template<class numt, class...Args>
-inline const VectorTransformation < 1 + sizeof...(Args), Vector<1, numt >> column(const numt &x, Args...args)
+inline VectorTransformation < 1 + sizeof...(Args), Vector<1, numt >> column(const numt &x, Args...args)
 {
     return VectorTransformation < 1 + sizeof...(Args), Vector<1, numt >> (std::make_tuple(x, args...));
 }
 template<class VecT, class...Args>
-inline const VectorTransformation < VecT::Dimensions, Vector < 1 + sizeof...(Args), typename VecT::NumberType >> columns(const VecT &x, Args...args)
+inline VectorTransformation < VecT::Dimensions, Vector < 1 + sizeof...(Args), typename VecT::NumberType >> columns(const VecT &x, Args...args)
 {
     return VectorTransformation<VecT::Dimensions, Vector<1, typename VecT::NumberType>>(x.to_tuple()).AddColumns(args...);
 }
 template<size_t s, class numt = double>
-inline const VectorTransformation<s, Vector<s, numt>> ZERO()
+inline VectorTransformation<s, Vector<s, numt>> ZERO()
 {
     return VectorTransformation<s, Vector<s, numt>>::zero();
 }
 template<size_t s, class numt = double>
-inline const VectorTransformation<s, Vector<s, numt>> ONE()
+inline VectorTransformation<s, Vector<s, numt>> ONE()
 {
     return VectorTransformation<s, Vector<s, numt>>::one();
 }
 template<size_t size, class VIType>
-inline const VectorTransformation<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
+inline VectorTransformation<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
 {
     return VectorTransformation<size, VIType>(A, B);
 }
 #define AC(n) (A.template component<n>())
 #define ZeRo numt(0)
 template<class numt = double>
-inline const VectorTransformation<1, Vector<2, numt>> SkewM(const Vector<2, numt> &A)
+inline VectorTransformation<1, Vector<2, numt>> SkewM(const Vector<2, numt> &A)
 {
     return lines(desCartes(-AC(2), AC(1)));
 }
 template<class numt = double>
-inline const VectorTransformation<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
+inline VectorTransformation<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
 {
     return lines(
                desCartes(ZeRo, -AC(3), AC(2)),
@@ -663,7 +663,7 @@ inline const VectorTransformation<3, Vector<3, numt>> SkewM(const Vector<3, numt
            );
 }
 template<class numt = double>
-inline const VectorTransformation<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
+inline VectorTransformation<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
 {
     return lines(
                desCartes(ZeRo, -AC(4), -AC(7), AC(2), -AC(6), AC(5), AC(3)),
@@ -698,7 +698,7 @@ class Direction<1, numt>
     template<size_t sizef, class n>friend class VectorTransformation;
 private:
     bool sign;
-    static const numt PHI(RANDOM &r)
+    static numt PHI(RANDOM &r)
     {
         static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
         return res(r);
@@ -720,24 +720,24 @@ public:
     inline Direction(const VType &v): sign(v.x() >= 0) {}
     template<class... Args>
     inline Direction(const std::tuple<Args...> &args): sign(std::get<0>(args)) {}
-    inline const VType operator*(const numt &rho)const
+    inline VType operator*(const numt &rho)const
     {
         if (sign)return desCartes(rho);
         else return desCartes(-rho);
     }
-    inline const bool operator==(const Direction &second)const
+    inline bool operator==(const Direction &second)const
     {
         return (sign == second.sign);
     }
-    inline const numt dir()const
+    inline numt dir()const
     {
         return sign ? numt(1) : numt(-1);
     }
-    inline const VectorTransformation<Dimensions, VType> Rotations()const
+    inline VectorTransformation<Dimensions, VType> Rotations()const
     {
         return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
     }
-    inline const VectorTransformation<Dimensions, VType> AntiRotations()const
+    inline VectorTransformation<Dimensions, VType> AntiRotations()const
     {
         return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
     }
@@ -761,7 +761,7 @@ private:
         while (m_phi > PI<numt>())m_phi -= PI<numt>() * numt(2);
         while (m_phi < -PI<numt>())m_phi += PI<numt>() * numt(2);
     }
-    static const numt PHI(RANDOM &r)
+    static numt PHI(RANDOM &r)
     {
         static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
         return res(r);
@@ -788,19 +788,19 @@ public:
         return m_phi;
     }
     Direction(const VType &V): m_phi(atan2(V.y(), V.x())) {}
-    const VType operator*(const numt &rho)const
+    VType operator*(const numt &rho)const
     {
         return desCartes(cos(m_phi), sin(m_phi)) * rho;
     }
-    const bool operator==(const Direction &second)const
+    bool operator==(const Direction &second)const
     {
         return (m_phi == second.m.phi);
     }
-    const VectorTransformation<Dimensions, VType> Rotations()const
+    VectorTransformation<Dimensions, VType> Rotations()const
     {
         return VectorTransformation<Dimensions, VType>::template RotationInPlane<1, 2>(m_phi);
     }
-    const VectorTransformation<Dimensions, VType> AntiRotations()const
+    VectorTransformation<Dimensions, VType> AntiRotations()const
     {
         return VectorTransformation<Dimensions, VType>::template RotationInPlane<1, 2>(-m_phi);
     }
@@ -825,7 +825,7 @@ private:
         if (m_theta < numt(0))throw Exception<Direction>("wrong theta value <0");
         if (m_theta > PI<numt>())throw Exception<Direction>("wrong theta value >pi");
     }
-    static const numt CTHETA(RANDOM &r)
+    static numt CTHETA(RANDOM &r)
     {
         static const RandomUniform<numt> res(numt(-1), numt(+1));
         return res(r);
@@ -873,15 +873,15 @@ public:
     }
 #endif
     Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
-    const VType operator*(const numt &rho)const
+    VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
     }
-    const bool operator==(const Direction &second)const
+    bool operator==(const Direction &second)const
     {
         return (m_theta == second.m_theta) && (m_ld == second.m_ld);
     }
-    const VectorTransformation<Dimensions, VType> Rotations()const
+    VectorTransformation<Dimensions, VType> Rotations()const
     {
         return
             VectorTransformation<Dimensions, VType>(
@@ -889,7 +889,7 @@ public:
                 VType::template basis_vector<Dimensions>())
             * VectorTransformation<Dimensions, VType>::template RotationInPlane<3, 1>(m_theta);
     }
-    const VectorTransformation<Dimensions, VType> AntiRotations()const
+    VectorTransformation<Dimensions, VType> AntiRotations()const
     {
         return
             VectorTransformation<Dimensions, VType>::template RotationInPlane<3, 1>(-m_theta) *
@@ -918,7 +918,7 @@ private:
         if (m_theta < numt(0))throw Exception<Direction>("wrong theta value <0");
         if (m_theta > PI<numt>())throw Exception<Direction>("wrong theta value >pi");
     }
-    static const numt CTHETA(RANDOM &r)
+    static numt CTHETA(RANDOM &r)
     {
         static const RandomUniform<numt> res(numt(-1), numt(+1));
         return res(r);
@@ -969,11 +969,11 @@ public:
     }
 #endif
     Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
-    const VType operator*(const numt &rho)const
+    VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
     }
-    const VectorTransformation<Dimensions, VType> Rotations()const
+    VectorTransformation<Dimensions, VType> Rotations()const
     {
         return
             VectorTransformation<Dimensions, VType>(
@@ -981,7 +981,7 @@ public:
                 VType::template basis_vector<Dimensions>())
             * VectorTransformation<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (m_theta);
     }
-    const VectorTransformation<Dimensions, VType> AntiRotations()const
+    VectorTransformation<Dimensions, VType> AntiRotations()const
     {
         return
             VectorTransformation<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (-m_theta) *
@@ -991,22 +991,22 @@ public:
     }
 };
 template<class numt = double>
-inline const Direction< 1, numt > direction()
+inline Direction< 1, numt > direction()
 {
     return Direction < 1, numt > (std::make_tuple(true));
 }
 template<class numt = double, class... Args>
-inline const Direction < 2 + sizeof...(Args), numt > direction(const numt &phi, Args... other)
+inline Direction < 2 + sizeof...(Args), numt > direction(const numt &phi, Args... other)
 {
     return Direction < 2 + sizeof...(Args), numt > (std::make_tuple(phi, other...));
 }
 template<size_t size, class numt = double>
-inline const Direction< size, numt > direction(const Vector<size, numt> &V)
+inline Direction< size, numt > direction(const Vector<size, numt> &V)
 {
     return Direction < size, numt > (V);
 }
 template<size_t size = 3, class numt = double, class RG = RANDOM>
-inline const Direction<size, numt> randomIsotropic(RG &generator)
+inline Direction<size, numt> randomIsotropic(RG &generator)
 {
     return Direction<size, numt>(generator);
 }
@@ -1016,21 +1016,21 @@ struct VectorDecomposition {
     VType n;
 };
 template<class VType>
-inline const VectorDecomposition<VType> decompose_by_direction(const VType &source, const typename VType::DType &dir)
+inline VectorDecomposition<VType> decompose_by_direction(const VType &source, const typename VType::DType &dir)
 {
     typedef typename VType::NumberType numt;
     const auto t = dir * ((dir * numt(1)) * source);
     return {.tau = t, .n = source - t};
 }
 template<class VType>
-inline const VectorDecomposition<VType> decompose_by_plane_normale(const VType &source, const typename VType::DType &pn)
+inline VectorDecomposition<VType> decompose_by_plane_normale(const VType &source, const typename VType::DType &pn)
 {
     typedef typename VType::NumberType numt;
     const auto t = pn * ((pn * numt(1)) * source);
     return {.tau = source - t, .n = t};
 }
 template<class numt = double>
-inline const VectorTransformation<2, Vector<2, numt>> Rotation(const numt &theta)
+inline VectorTransformation<2, Vector<2, numt>> Rotation(const numt &theta)
 {
     const numt cost = cos(theta), sint = sin(theta);
     return lines(
@@ -1039,7 +1039,7 @@ inline const VectorTransformation<2, Vector<2, numt>> Rotation(const numt &theta
            );
 }
 template<class numt = double>
-inline const VectorTransformation<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const numt &theta)
+inline VectorTransformation<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const numt &theta)
 {
     const auto n = axis * numt(1);
     const numt cost = cos(theta), sint = sin(theta), one = 1;
@@ -1083,7 +1083,7 @@ public:
         m_time = source.m_time;
         return *this;
     }
-    const bool operator==(const LorentzVector &second)const
+    bool operator==(const LorentzVector &second)const
     {
         return (m_time == second.m_time) && (m_space == second.m_space);
     }
@@ -1093,7 +1093,7 @@ public:
         m_space += second.m_space;
         return *this;
     }
-    const LorentzVector operator+(const LorentzVector &second)const
+    LorentzVector operator+(const LorentzVector &second)const
     {
         return LorentzVector(m_time + second.m_time, m_space + second.m_space);
     }
@@ -1103,37 +1103,37 @@ public:
         m_space -= second.m_space;
         return *this;
     }
-    const LorentzVector operator-(const LorentzVector &second)const
+    LorentzVector operator-(const LorentzVector &second)const
     {
         return LorentzVector(m_time - second.m_time, m_space - second.m_space);
     }
-    const numt operator*(const LorentzVector &second)const
+    numt operator*(const LorentzVector &second)const
     {
         return (m_time * second.m_time) - (m_space * second.m_space);
     }
-    inline const numt M_sqr()const
+    inline numt M_sqr()const
     {
         return operator*(*this);
     }
-    inline const numt M()const
+    inline numt M()const
     {
         return sqrt(M_sqr());
     }
-    inline const numt Ekin()const
+    inline numt Ekin()const
     {
 	return E()-M();
     }
 
-    inline static const LorentzVector zero()
+    inline static LorentzVector zero()
     {
         return LorentzVector(numt(0), Space::zero());
     }
     template<class...Args>
-    inline const LorentzVector Rotate(Args...args)const
+    inline LorentzVector Rotate(Args...args)const
     {
         return LorentzVector(E(), MathTemplates::Rotation(args...) * P());
     }
-    const LorentzVector Transform(const Space &Beta)const
+    LorentzVector Transform(const Space &Beta)const
     {
         const numt beta = Beta.M();
         if (beta == 0.0)return *this;
@@ -1144,54 +1144,54 @@ public:
         const auto TT = -Beta * gamma;
         return LorentzVector((E() * gamma) + (P() * TT), (ST * P()) + (TT * E()));
     }
-    const Space Beta()const
+    Space Beta()const
     {
         return P() / E();
     }
 };
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentzVector(const numt &t, const Space &s)
+inline LorentzVector<numt, Space> lorentzVector(const numt &t, const Space &s)
 {
     return LorentzVector<numt, Space>(t, s);
 }
 template<size_t dim,class numt = double>
-inline const LorentzVector<numt, Vector<dim,numt>> lorentz_rest(const numt &l4)
+inline LorentzVector<numt, Vector<dim,numt>> lorentz_rest(const numt &l4)
 {
     return LorentzVector<numt,Vector<dim,numt>>(l4 * l4,Vector<dim,numt>::zero());
 }
 template<class numt = double>
-inline const LorentzVector<numt, Vector<3,numt>> lorentz_Rest(const numt &l4)
+inline LorentzVector<numt, Vector<3,numt>> lorentz_Rest(const numt &l4)
 {
     return lorentz_rest<3,numt>(l4);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
+inline LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {
     return LorentzVector<numt, Space>(sqrt(s.M_sqr() + l4 * l4), s);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const typename Space::DType &dir)
+inline LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const typename Space::DType &dir)
 {
     numt Sp = sqrt(t * t - l4 * l4);
     return LorentzVector<numt, Space>(t, dir * Sp);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const Space &Dir)
+inline LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const Space &Dir)
 {
     return lorentz_byEM(t, l4, direction(Dir));
 }
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const typename Space::DType &dir)
+inline LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const typename Space::DType &dir)
 {
     return lorentz_byEM(e+l4, l4, dir);
 }
 template<class numt = double, class Space = Vector<3, numt>>
-inline const LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const Space &Dir)
+inline LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, const Space &Dir)
 {
     return lorentz_byEM(e+l4, l4, direction(Dir));
 }
 template<size_t size, class numt>
-const std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
+std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
         binaryDecay(const numt &IM, const numt &m1, const numt &m2, const Direction<size, numt> &dir)
 {
     if (m1 < 0)throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Negative mass1 error");

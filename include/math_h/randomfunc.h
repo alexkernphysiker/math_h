@@ -13,7 +13,7 @@ namespace MathTemplates
 {
 typedef std::mt19937 RANDOM;
 template<class numt = double, class RG = RANDOM>
-using RandomValueGenerator = IFunction<const numt, RG &>;
+using RandomValueGenerator = IFunction<numt, RG &>;
 template<class numt = double, class RG = RANDOM>
 class RandomValueTableDistr: public RandomValueGenerator<numt, RG>
 {
@@ -37,7 +37,7 @@ public:
     RandomValueTableDistr(const std::function<numt(numt)> distribution_density, const SortedChain<numt> &chain):
         RandomValueTableDistr(LinearInterpolation<numt>(distribution_density, chain)) {}
     virtual ~RandomValueTableDistr() {}
-    virtual const numt operator()(RG &generator)const override
+    virtual numt operator()(RG &generator)const override
     {
         return reverse_distr_func(f_distr->operator()(generator));
     }
@@ -51,7 +51,7 @@ public:
     RandomUniform(const numt x1, const numt x2): f_distr(std::make_shared<std::uniform_real_distribution<numt>>(x1, x2)) {}
     RandomUniform(const RandomUniform &source): f_distr(source.f_distr) {}
     virtual ~RandomUniform() {}
-    virtual const numt operator()(RG &generator)const override
+    virtual numt operator()(RG &generator)const override
     {
         return f_distr->operator()(generator);
     }
@@ -65,7 +65,7 @@ public:
     RandomGauss(const numt x1, const numt x2): f_distr(std::make_shared<std::normal_distribution<numt>>(x1, x2)) {}
     RandomGauss(const RandomGauss &source): f_distr(source.f_distr) {}
     virtual ~RandomGauss() {}
-    virtual const numt operator()(RG &generator)const override
+    virtual numt operator()(RG &generator)const override
     {
         return f_distr->operator()(generator);
     }

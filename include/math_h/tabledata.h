@@ -48,12 +48,13 @@ private:
 public:
     const Chain<comparable>&operator()()const{return data;}
     SortedChain() {}
-    SortedChain(const SortedChain &points)
+    template<class comparable2>
+    SortedChain(const SortedChain<comparable2> &points)
     {
         for (const auto &p : points.data)
-            data.push_back(p);
+            data.push_back(comparable(p));
     }
-    const SortedChain IndexRange(const size_t from, const size_t count)const
+    SortedChain IndexRange(const size_t from, const size_t count)const
     {
         SortedChain result;
         size_t final = from + count;
@@ -61,7 +62,7 @@ public:
             result.data.push_back(data[i]);
         return result;
     }
-    const SortedChain SelectByCondition(const std::function<bool(const comparable &)> condition)const
+    SortedChain SelectByCondition(const std::function<bool(const comparable &)> condition)const
     {
         SortedChain result;
         for (size_t i = 0; i < data.size(); i++)
@@ -74,10 +75,11 @@ public:
         details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
         return *this;
     }
-    SortedChain(const std::vector<comparable> &points)
+    template<class comparable2>
+    SortedChain(const Chain<comparable2>&points)
     {
         for (const auto &p : points)
-            operator<<(p);
+            operator<<(comparable(p));
     }
     virtual ~SortedChain() {}
     void clear()
@@ -85,7 +87,7 @@ public:
         data.clear();
     }
 
-    const size_t size()const
+    size_t size()const
     {
         return data.size();
     }
@@ -137,7 +139,7 @@ protected:
     }
 };
 template<class numX>
-const Chain<numX> ChainWithStep(const numX &from, const numX &step, const numX &to)
+Chain<numX> ChainWithStep(const numX &from, const numX &step, const numX &to)
 {
     if (from >= to)throw Exception<Chain<numX>>("wrong binning ranges");
     if (step <= 0)throw Exception<Chain<numX>>("wrong binning step");
@@ -146,7 +148,7 @@ const Chain<numX> ChainWithStep(const numX &from, const numX &step, const numX &
     return res;
 }
 template<class numX>
-const Chain<numX> ChainWithCount(const size_t cont, const numX &from, const numX &to)
+Chain<numX> ChainWithCount(const size_t cont, const numX &from, const numX &to)
 {
     if (from >= to)throw Exception<Chain<numX>>("wrong binning ranges");
     if (0 == cont)throw Exception<Chain<numX>>("wrong bins count");
@@ -270,7 +272,7 @@ public:
     }
 };
 template<class numtX = double, class numtY = numtX>
-inline const point<numtX,numtY>make_point(const numtX&x,const numtY&y){return point<numtX,numtY>(x,y);}
+inline point<numtX,numtY>make_point(const numtX&x,const numtY&y){return point<numtX,numtY>(x,y);}
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class point3d
 {
@@ -299,7 +301,7 @@ public:
 	: x(source.X()), y(source.Y()), z(source.Z()){}
 };
 template<class numtX = double, class numtY = numtX,class numtZ=numtY>
-inline const point3d<numtX,numtY,numtZ>make_point(const numtX&x,const numtY&y,const numtZ&z){
+inline point3d<numtX,numtY,numtZ>make_point(const numtX&x,const numtY&y,const numtZ&z){
     return point3d<numtX,numtY,numtZ>(x,y,z);
 }
 
@@ -312,15 +314,17 @@ class SortedPoints: public SortedChain<point<numX, numY>>
 public:
     typedef std::function<numY(const numX &)> Func;
     SortedPoints() {}
-    SortedPoints(const Points<numX, numY> &chain)
+    template<class numY2>
+    SortedPoints(const Points<numX, numY2> &chain)
     {
         for (const auto &x : chain)
-            SortedChain<point<numX, numY>>::operator<<(x);
+            SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x));
     }
-    SortedPoints(const SortedChain<point<numX, numY>> &chain)
+    template<class numY2>
+    SortedPoints(const SortedChain<point<numX, numY2>> &chain)
     {
         for (const auto &x : chain)
-            SortedChain<point<numX, numY>>::append_item_from_sorted(x);
+            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x));
     }
     SortedPoints(const Func f, const SortedChain<numX> &chain)
     {
@@ -338,39 +342,39 @@ protected:
         return SortedChain<point<numX, numY>>::accessBin(i);
     }
 public:
-    const  Points<numY, numX> Transponate()const
+    Points<numY, numX> Transponate()const
     {
         Points<numY, numX> res;
         for (const auto &p : *this)
             res.push_back(point<numX, numY>(p.Y(), p.X()));
         return res;
     }
-    const  SortedChain<point<numY, numX>> TransponateAndSort()const
+    SortedChain<point<numY, numX>> TransponateAndSort()const
     {
         SortedChain<point<numY, numX>> res;
         for (const auto &p : *this)
             res << point<numX, numY>(p.Y(), p.X());
         return res;
     }
-    const SortedPoints XRange(const numX &from, const numX &to)const
+    SortedPoints XRange(const numX &from, const numX &to)const
     {
         return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.X() >= from) && (P.X() <= to);
         });
     }
-    const SortedPoints YRange(const numY &from, const numY &to)const
+    SortedPoints YRange(const numY &from, const numY &to)const
     {
         return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.Y() >= from) && (P.Y() <= to);
         });
     }
-    const SortedPoints XExclude(const numX &from, const numX &to)const
+    SortedPoints XExclude(const numX &from, const numX &to)const
     {
         return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.X() < from) || (P.X() > to);
         });
     }
-    const SortedPoints YExclude(const numY &from, const numY &to)const
+    SortedPoints YExclude(const numY &from, const numY &to)const
     {
         return SortedChain<point<numX, numY>>::SelectByCondition([from, to](const point<numX, numY> &P) {
             return (P.Y() < from) || (P.Y() > to);
@@ -567,19 +571,19 @@ public:
         return res;
     }
 
-    const SortedPoints operator+(const Func other)const
+    SortedPoints operator+(const Func other)const
     {
         return SortedPoints(*this) += other;
     }
-    const SortedPoints operator-(const Func other)const
+    SortedPoints operator-(const Func other)const
     {
         return SortedPoints(*this) -= other;
     }
-    const SortedPoints operator*(const Func other)const
+    SortedPoints operator*(const Func other)const
     {
         return SortedPoints(*this) *= other;
     }
-    const SortedPoints operator/(const Func other)const
+    SortedPoints operator/(const Func other)const
     {
         return SortedPoints(*this) /= other;
     }
@@ -666,7 +670,7 @@ public:
         if (m_data[i].size() <= j)throw Exception<BiSortedPoints>("Y-range check error " + std::to_string(i) + ":" + std::to_string(j));
         return m_data[i][j];
     }
-    const SortedPoints<numtX, numtZ>CutX(const size_t j)const
+    SortedPoints<numtX, numtZ>CutX(const size_t j)const
     {
         if (m_y_axis.size() <= j)throw Exception<BiSortedPoints>("range check error");
         SortedPoints<numtX, numtZ> res;
@@ -675,7 +679,7 @@ public:
         }
         return res;
     }
-    const SortedPoints<numtY, numtZ>CutY(const size_t i)const
+    SortedPoints<numtY, numtZ>CutY(const size_t i)const
     {
         if (m_x_axis.size() <= i)throw Exception<BiSortedPoints>("range check error");
         SortedPoints<numtY, numtZ> res;
@@ -684,7 +688,7 @@ public:
         }
         return res;
     }
-    const point3d<numtX, numtY, numtZ> operator()(const size_t i, const size_t j)const
+    point3d<numtX, numtY, numtZ> operator()(const size_t i, const size_t j)const
     {
         if (size() <= i)throw Exception<BiSortedPoints>("range check error");
         if (m_y_axis.size() <= j)throw Exception<BiSortedPoints>("range check error");
