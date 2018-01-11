@@ -27,34 +27,51 @@ Chain<value<numt>> BinsByCount(const size_t count, const numt from, const numt t
     if (0 == count)throw Exception<Chain<value<numt>>>("wrong bins count");
     return BinsByStep(from, (to - from) / numt(count), to);
 }
-template<class numtX = double, class numtY = numtX>
-class hist_avr:public SortedPoints<value<numtX>, WeightedAverage<numtY>>
+template<class numtX, class numtY>
+class hist_avr_calculator:public SortedPoints<numtX, WeightedAverage<numtY>>
 {
 public:
-    inline hist_avr(const Points<value<numtX>, value<numtY>>&source)
-    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(source){}
-    inline hist_avr(const SortedPoints<value<numtX>, value<numtY>>&source)
-    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(source){}
-    template<class Arg,typename...Args>
-    inline hist_avr(const Arg&source,Args...args)
-    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(args...){
-	SortedPoints<value<numtX>, WeightedAverage<numtY>>::leftArrow(source);
+    inline hist_avr_calculator(const SortedPoints<numtX, value<numtY>>&source)
+    :SortedPoints<numtX, WeightedAverage<numtY>>(source){}
+    template<typename...Args>
+    inline hist_avr_calculator(const SortedPoints<numtX, value<numtY>>&source,Args...args)
+    :SortedPoints<numtX, WeightedAverage<numtY>>(args...){
+	SortedPoints<numtX, WeightedAverage<numtY>>::leftArrow(source);
     }
 };
-template<class numtX = double, class numtY = numtX>
-class hist_stdev:public SortedPoints<value<numtX>, StandardDeviation<numtY>>
+template<class numtX, class numtY,typename...Args>
+inline hist_avr_calculator<numtX,numtY> hist_avr(const SortedPoints<numtX, value<numtY>>&source,Args...args)
+{
+    return hist_avr_calculator<numtX,numtY>(source,args...);
+}
+template<class numtX, class numtY,typename...Args>
+inline hist_avr_calculator<numtX,numtY> hist_avr(const Points<numtX, value<numtY>>&source,Args...args)
+{
+    return hist_avr_calculator<numtX,numtY>(SortedPoints<numtX, value<numtY>>(source),args...);
+}
+template<class numtX, class numtY>
+class hist_stdev_calculator:public SortedPoints<numtX, StandardDeviation<numtY>>
 {
 public:
-    hist_stdev(const Points<value<numtX>, numtY>&source)
-    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(source){}
-    hist_stdev(const SortedPoints<value<numtX>, numtY>&source)
-    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(source){}
+    hist_stdev_calculator(const SortedPoints<numtX, numtY>&source)
+    :SortedPoints<numtX, StandardDeviation<numtY>>(source){}
     template<class Arg,typename...Args>
-    hist_stdev(const Arg&source,Args...args)
-    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(args...){
-	SortedPoints<value<numtX>, StandardDeviation<numtY>>::leftArrow(source);
+    hist_stdev_calculator(const Arg&source,Args...args)
+    :SortedPoints<numtX, StandardDeviation<numtY>>(args...){
+	SortedPoints<numtX, StandardDeviation<numtY>>::leftArrow(source);
     }
 };
+template<class numtX, class numtY,typename...Args>
+inline hist_stdev_calculator<numtX,numtY> hist_stdev(const SortedPoints<numtX,numtY>&source,Args...args)
+{
+    return hist_stdev_calculator<numtX,numtY>(source,args...);
+}
+template<class numtX, class numtY,typename...Args>
+inline hist_stdev_calculator<numtX,numtY> hist_stdev(const Points<numtX,numtY>&source,Args...args)
+{
+    return hist_stdev_calculator<numtX,numtY>(SortedPoints<numtX,numtY>(source),args...);
+}
+
 template<class numtX = double, class numtY = numtX>
 class hist: public SortedPoints<value<numtX>, value<numtY>>
 {
