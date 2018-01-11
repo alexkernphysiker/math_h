@@ -85,4 +85,25 @@ TEST(SortedPoints, WeightedAvr)
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(double(i)/2, chain[i].Y()().val());
     }
+    
+    const auto chain2=chain+2;
+    for (size_t i = 0; i < chain2.size(); i++) {
+        EXPECT_EQ(i, chain2[i].X());
+        EXPECT_EQ(double(i)/2 + 2, chain2[i].Y().val());
+    }
+    const auto chain3=chain-2;
+    for (size_t i = 0; i < chain3.size(); i++) {
+        EXPECT_EQ(i, chain3[i].X());
+        EXPECT_EQ(double(i)/2 - 2, chain3[i].Y().val());
+    }
+    const auto chain4=chain*2;
+    for (size_t i = 0; i < chain4.size(); i++) {
+        EXPECT_EQ(i, chain4[i].X());
+        EXPECT_EQ(double(i), chain4[i].Y().val());
+    }
+    const auto chain5=chain/2;
+    for (size_t i = 0; i < chain5.size(); i++) {
+        EXPECT_EQ(i, chain5[i].X());
+        EXPECT_EQ(double(i)/4, chain5[i].Y().val());
+    }
 }

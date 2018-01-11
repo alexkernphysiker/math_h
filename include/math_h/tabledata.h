@@ -35,11 +35,6 @@ void InsertSorted(const comparable &x, indexer &X, const Size size, const Insert
     if (size() == 0) insert(0, x);
     else insert(WhereToInsert(0, size() - 1, X, x), x);
 }
-template<class comparable, class indexer, class Size, class Insert>
-void InsertSorted(const comparable &&x, indexer &X, const Size size, const Insert insert)
-{
-    InsertSorted(x, X, size, insert);
-}
 }
 #define std_size(vector) [&vector](){return (vector).size();}
 #define std_insert(vector,type) [&vector](int pos,type x){(vector).insert((vector).begin()+pos,x);}
@@ -85,13 +80,6 @@ public:
             operator<<(p);
     }
     virtual ~SortedChain() {}
-    SortedChain &operator=(const SortedChain &points)
-    {
-        data.clear();
-        for (const auto &p : points.data)
-            data.push_back(p);
-        return *this;
-    }
     void clear()
     {
         data.clear();
@@ -199,16 +187,15 @@ public:
         x = numtX(v[0]);
         y = numtY(v[1]);
     }
-    template<class numtX2 = numtX, class numtY2 = numtY>
-    point &operator=(const point<numtX2,numtY2> &source)
+    point&operator=(const point&source)
     {
-        x = source.X();
-        y = source.Y();
+        x = source.x;
+        y = source.y;
 	return *this;
     }
-    point &operator=(const numtY &s)
+    point&operator=(const numtY&source)
     {
-        y = s;
+        y = source;
 	return *this;
     }
     bool operator<(const point &b)const
@@ -219,54 +206,66 @@ public:
     {
         return x > b.x;
     }
-    const point operator+(const numtY &val)const
+    template<class numtY2>
+    auto operator+(const numtY2 &val)const->point<numtX,decltype(Y()+val)>
     {
         return {X(), Y() + val};
     }
-    const point operator-(const numtY &val)const
+    template<class numtY2>
+    auto operator+(const point<numtX,numtY2> &val)const->point<numtX,decltype(Y()+val.Y())>
+    {
+        if (val.X() == X())
+            return operator+(val.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    template<class numtY2>
+    auto operator-(const numtY2 &val)const->point<numtX,decltype(Y()-val)>
     {
         return {X(), Y() - val};
     }
-    const point operator*(const numtY &val)const
+    template<class numtY2>
+    auto operator-(const point<numtX,numtY2> &val)const->point<numtX,decltype(Y()-val.Y())>
+    {
+        if (val.X() == X())
+            return operator-(val.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    template<class numtY2>
+    auto operator*(const numtY2 &val)const->point<numtX,decltype(Y()*val)>
     {
         return {X(), Y() * val};
     }
-    const point operator/(const numtY &val)const
+    template<class numtY2>
+    auto operator*(const point<numtX,numtY2> &val)const->point<numtX,decltype(Y()*val.Y())>
+    {
+        if (val.X() == X())
+            return operator*(val.Y());
+        else
+            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
+    }
+    template<class numtY2>
+    auto operator/(const numtY2 &val)const->point<numtX,decltype(Y()/val)>
     {
         return {X(), Y() / val};
     }
-    const point operator+(const point &other)const
+    template<class numtY2>
+    auto operator/(const point<numtX,numtY2> &val)const->point<numtX,decltype(Y()/val.Y())>
     {
-        if (other.X() == X())
-            return operator+(other.Y());
+        if (val.X() == X())
+            return operator/(val.Y());
         else
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
-    const point operator-(const point &other)const
+
+    template<class numtY2>
+    point&operator<<(const point<numtX,numtY2>&other)
     {
         if (other.X() == X())
-            return operator-(other.Y());
+            y<<other.Y();
         else
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    const point operator*(const point &other)const
-    {
-        if (other.X() == X())
-            return operator*(other.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    const point operator/(const point &other)const
-    {
-        if (other.X() == X())
-            return operator/(other.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    template<class OtherY>
-    point&operator<<(const point<numtX,OtherY>&other)
-    {
-	y<<other.Y();
 	return *this;
     }
 };
@@ -476,16 +475,16 @@ public:
             Bin(i)=Bin(i)/c;
         return *this;
     }
-    template<class OtherY>
-    SortedPoints&leftArrow(const SortedPoints<numX,OtherY>&other)
+    template<class numtY2>
+    SortedPoints&leftArrow(const SortedPoints<numX,numtY2>&other)
     {
         for (size_t i = 0, n = this->size(); i < n; i++) {
 	    Bin(i)<<other[i];
         }
         return *this;
     }
-    template<class OtherY>
-    SortedPoints&leftArrow(const OtherY&other)
+    template<class numtY2>
+    SortedPoints&leftArrow(const numtY2&other)
     {
         for (size_t i = 0, n = this->size(); i < n; i++) {
 	    Bin(i)<<make_point(Bin(i).X(),other);
@@ -493,38 +492,79 @@ public:
         return *this;
     }
 
-    const SortedPoints operator+(const SortedPoints &other)const
+    template<class numtY2>
+    auto operator+(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other[0].Y())>
     {
-        return SortedPoints(*this) += other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other[0].Y())> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)+other[i]);
+        }
+        return res;
     }
-    const SortedPoints operator-(const SortedPoints &other)const
+    template<class numtY2>
+    auto operator-(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()-other[0].Y())>
     {
-        return SortedPoints(*this) -= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()-other[0].Y())> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)-other[i]);
+        }
+        return res;
     }
-    const SortedPoints operator*(const SortedPoints &other)const
+    template<class numtY2>
+    auto operator*(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()*other[0].Y())>
     {
-        return SortedPoints(*this) *= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()*other[0].Y())> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)*other[i]);
+        }
+        return res;
     }
-    const SortedPoints operator/(const SortedPoints &other)const
+    template<class numtY2>
+    auto operator/(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()/other[0].Y())>
     {
-        return SortedPoints(*this) /= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()/other[0].Y())> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)/other[i]);
+        }
+        return res;
     }
 
-    const SortedPoints operator+(const numY &other)const
+
+    template<class numtY2>
+    auto operator+(const numtY2 &other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other)>
     {
-        return SortedPoints(*this) += other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other)> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)+other);
+        }
+        return res;
     }
-    const SortedPoints operator-(const numY &other)const
+    template<class numtY2>
+    auto operator-(const numtY2 &other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()-other)>
     {
-        return SortedPoints(*this) -= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()-other)> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)-other);
+        }
+        return res;
     }
-    const SortedPoints operator*(const numY &other)const
+    template<class numtY2>
+    auto operator*(const numtY2 &other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()*other)>
     {
-        return SortedPoints(*this) *= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()*other)> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)*other);
+        }
+        return res;
     }
-    const SortedPoints operator/(const numY &other)const
+    template<class numtY2>
+    auto operator/(const numtY2 &other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()/other)>
     {
-        return SortedPoints(*this) /= other;
+	SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()/other)> res;
+        for (size_t i = 0, n = this->size(); i < n; i++) {
+	    res<<(SortedChain<point<numX, numY>>::operator[](i)/other);
+        }
+        return res;
     }
 
     const SortedPoints operator+(const Func other)const

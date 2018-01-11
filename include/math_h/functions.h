@@ -16,7 +16,7 @@ class IFunction
 public:
     virtual ~IFunction() {}
     virtual result operator()(Args...)const = 0;
-    inline const std::function<result(Args...)> func()const
+    inline std::function<result(Args...)> func()const
     {
         return [this](Args... args)->result {return this->operator()(args...);};
     }
@@ -42,19 +42,19 @@ public:
     };
 };
 template<class result, typename... Args>
-inline const StdFunctionWrap<result, Args...>
+inline StdFunctionWrap<result, Args...>
 Function(const std::function<result(Args...)>f)
 {
     return StdFunctionWrap<result, Args...>(f);
 }
 template<class result, typename... Args>
-inline const std::shared_ptr<StdFunctionWrap<result, Args...>>
+inline std::shared_ptr<StdFunctionWrap<result, Args...>>
         PFunction(const std::function<result(Args...)>f)
 {
     return std::make_shared<StdFunctionWrap<result, Args...>>(f);
 }
 template<class numt = double>
-inline const numt PI()
+inline numt PI()
 {
     return 3.1415926;
 }

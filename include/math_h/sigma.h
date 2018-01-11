@@ -78,14 +78,14 @@ public:
         else Error = v[1];
         invalidate();
     }
-    static const value std_error(const numt &v)
+    static value std_error(const numt &v)
     {
         if (v < 0)throw Exception<value>("Cannot calculate std error for negative value");
         auto res = value(v, sqrt(v));
         if (res.Error < numt(1))res.Error = numt(1);
         return res;
     }
-    inline static const value interval(const numt &a, const numt &b)
+    inline static value interval(const numt &a, const numt &b)
     {
         if (b < a)throw Exception<value>("Bad interval");
         return value((b + a) / numt(2), (b - a) / numt(2));
@@ -102,7 +102,7 @@ public:
         invalidate();
         return *this;
     }
-    const value make_wider(const numt &scale)const
+    value make_wider(const numt &scale)const
     {
         return value(Value, scale * Error);
     }
@@ -122,65 +122,65 @@ public:
         return f_cache->max;
     }
     //Physical comparing of magnitudes with uncertainties
-    const bool Contains(const numt &x)const
+    bool Contains(const numt &x)const
     {
         return (x >= min()) && (x <= max());
     }
-    const bool Contains(const value &x)const
+    bool Contains(const value &x)const
     {
         return (x.max() >= min()) && (x.min() <= max());
     }
-    const bool NotEqual(const numt &x)const
+    bool NotEqual(const numt &x)const
     {
         return (x < min()) || (x > max());
     }
-    const bool NotEqual(const value &x)const
+    bool NotEqual(const value &x)const
     {
         return (x.max() < min()) || (x.min() > max());
     }
-    const bool Below(const numt &x)const
+    bool Below(const numt &x)const
     {
         return max() < x;
     }
-    const bool Below(const value &x)const
+    bool Below(const value &x)const
     {
         return max() < x.min();
     }
-    const bool Above(const numt &x)const
+    bool Above(const numt &x)const
     {
         return min() > x;
     }
-    const bool Above(const value &x)const
+    bool Above(const value &x)const
     {
         return min() > x.max();
     }
     //chi-square-like numeric comparing of magnitudes
-    const numt NumCompare(const numt &x)const
+    numt NumCompare(const numt &x)const
     {
         return pow((Value - x) / Error, 2);
     }
-    const numt NumCompare(const value &x)const
+    numt NumCompare(const value &x)const
     {
         return pow((Value - x.Value) / (Error + x.Error), 2);
     }
     //Inheriting number-like comparing
-    inline const bool operator<(const value &other)const
+    inline bool operator<(const value &other)const
     {
         return Value < other.Value;
     }
-    inline const bool operator>(const value &other)const
+    inline bool operator>(const value &other)const
     {
         return Value > other.Value;
     }
-    inline const bool operator==(const value &other)const
+    inline bool operator==(const value &other)const
     {
         return Value == other.Value;
     }
-    inline const bool operator>=(const value &other)const
+    inline bool operator>=(const value &other)const
     {
         return Value >= other.Value;
     }
-    inline const bool operator<=(const value &other)const
+    inline bool operator<=(const value &other)const
     {
         return Value <= other.Value;
     }
@@ -214,41 +214,25 @@ public:
         invalidate();
         return *this;
     }
-    inline const value operator+(const value &other)const
+    inline value operator+(const value &other)const
     {
         return value(*this) += other;
     }
-    inline const value operator+(const value&&other)const
-    {
-        return value(*this) += other;
-    }
-    inline const value operator-(const value &other)const
+    inline value operator-(const value &other)const
     {
         return value(*this) -= other;
     }
-    inline const value operator-(const value&&other)const
-    {
-        return value(*this) -= other;
-    }
-    inline const value operator*(const value &other)const
+    inline value operator*(const value &other)const
     {
         return value(*this) *= other;
     }
-    inline const value operator*(const value&&other)const
-    {
-        return value(*this) *= other;
-    }
-    inline const value operator/(const value &other)const
-    {
-        return value(*this) /= other;
-    }
-    inline const value operator/(const value&&other)const
+    inline value operator/(const value &other)const
     {
         return value(*this) /= other;
     }
 };
 template<class numt>
-inline const value<numt> std_error(const numt &v)
+inline value<numt> std_error(const numt &v)
 {
     return value<numt>::std_error(v);
 }
@@ -282,7 +266,7 @@ public:
 	if(index>=m_list.size())throw Exception<StandardDeviation>("range check error");
 	return m_list[index];
     }
-    inline const size_t size()const
+    inline size_t size()const
     {
         return m_list.size();
     }
@@ -301,7 +285,7 @@ public:
         m_cache = nullptr;
         return *this;
     }
-    inline const size_t count()const
+    inline size_t count()const
     {
         return m_list.size();
     }
@@ -325,6 +309,22 @@ public:
                 make_shared<value<numt>>(average, sqrt(m_sigsqr) * m_scale);
         }
         return *m_cache;
+    }
+    inline value<numt> operator+(const value<numt> &other)const
+    {
+        return operator()() + other;
+    }
+    inline value<numt> operator-(const value<numt> &other)const
+    {
+        return operator()() - other;
+    }
+    inline value<numt> operator*(const value<numt> &other)const
+    {
+        return operator()() * other;
+    }
+    inline value<numt> operator/(const value<numt> &other)const
+    {
+        return operator()() / other;
     }
 };
 template<typename numt>
@@ -370,6 +370,22 @@ public:
         }
         return *m_cache;
     }
+    inline value<numt> operator+(const value<numt> &other)const
+    {
+        return operator()() + other;
+    }
+    inline value<numt> operator-(const value<numt> &other)const
+    {
+        return operator()() - other;
+    }
+    inline value<numt> operator*(const value<numt> &other)const
+    {
+        return operator()() * other;
+    }
+    inline value<numt> operator/(const value<numt> &other)const
+    {
+        return operator()() / other;
+    }
 };
 template<typename numt>
 inline std::ostream &operator<<(std::ostream &str, const WeightedAverage<numt> &P)
@@ -393,11 +409,11 @@ public:
         _XY << P.first *P.second;
         return *this;
     }
-    const numt Covariance()const
+    numt Covariance()const
     {
         return _XY().val() - _X().val() * _Y().val();
     }
-    const numt R()const
+    numt R()const
     {
         return Covariance() / (_X().uncertainty() * _Y().uncertainty());
     }
