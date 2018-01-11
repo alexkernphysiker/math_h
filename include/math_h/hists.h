@@ -71,7 +71,6 @@ inline hist_stdev_calculator<numtX,numtY> hist_stdev(const Points<numtX,numtY>&s
 {
     return hist_stdev_calculator<numtX,numtY>(SortedPoints<numtX,numtY>(source),args...);
 }
-
 template<class numtX = double, class numtY = numtX>
 class hist: public SortedPoints<value<numtX>, value<numtY>>
 {
