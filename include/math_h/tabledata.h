@@ -11,7 +11,7 @@
 #if __cplusplus>201700L
 #define ____full_version_of_tabledata_h_____
 #else
-#warning compiler does not support all features for "auto" return type in templates. c++>=17 is needed.Some of the new features won't work
+#warning compiler does not support all features for "auto" return type in templates. c++>=17 is needed.Some of the new features will not work
 #endif
 namespace MathTemplates
 {
