@@ -27,7 +27,34 @@ Chain<value<numt>> BinsByCount(const size_t count, const numt from, const numt t
     if (0 == count)throw Exception<Chain<value<numt>>>("wrong bins count");
     return BinsByStep(from, (to - from) / numt(count), to);
 }
-
+template<class numtX = double, class numtY = numtX>
+class hist_avr:public SortedPoints<value<numtX>, WeightedAverage<numtY>>
+{
+public:
+    inline hist_avr(const Points<value<numtX>, value<numtY>>&source)
+    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(source){}
+    inline hist_avr(const SortedPoints<value<numtX>, value<numtY>>&source)
+    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(source){}
+    template<class Arg,typename...Args>
+    inline hist_avr(const Arg&source,Args...args)
+    :SortedPoints<value<numtX>, WeightedAverage<numtY>>(args...){
+	SortedPoints<value<numtX>, WeightedAverage<numtY>>::leftArrow(source);
+    }
+};
+template<class numtX = double, class numtY = numtX>
+class hist_stdev:public SortedPoints<value<numtX>, StandardDeviation<numtY>>
+{
+public:
+    hist_stdev(const Points<value<numtX>, numtY>&source)
+    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(source){}
+    hist_stdev(const SortedPoints<value<numtX>, numtY>&source)
+    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(source){}
+    template<class Arg,typename...Args>
+    hist_stdev(const Arg&source,Args...args)
+    :SortedPoints<value<numtX>, StandardDeviation<numtY>>(args...){
+	SortedPoints<value<numtX>, StandardDeviation<numtY>>::leftArrow(source);
+    }
+};
 template<class numtX = double, class numtY = numtX>
 class hist: public SortedPoints<value<numtX>, value<numtY>>
 {

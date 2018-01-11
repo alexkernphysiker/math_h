@@ -257,7 +257,6 @@ private:
     Chain<numt> m_list;
     numt m_sum;
     std::shared_ptr<value<numt>>m_cache;
-    numt m_scale;
 public:
     typedef typename Chain<numt>::const_iterator const_iterator;
     const_iterator begin()const{return m_list.begin();}
@@ -271,12 +270,7 @@ public:
         return m_list.size();
     }
 
-    StandardDeviation(const numt &scale = 1)
-    {
-        if (scale <= 0)throw Exception<StandardDeviation>("Uncertainty scaling factor must be greater than zero");
-        m_scale = scale;
-        m_sum = 0;
-    }
+    StandardDeviation():m_sum(0){}
     virtual ~StandardDeviation() {}
     StandardDeviation &operator<<(const numt &x)
     {
@@ -285,13 +279,13 @@ public:
         m_cache = nullptr;
         return *this;
     }
+    StandardDeviation(const numt &x):StandardDeviation()
+    {
+        operator<<(x);
+    }
     inline size_t count()const
     {
         return m_list.size();
-    }
-    inline const numt &scaling_factor()const
-    {
-        return m_scale;
     }
     const value<numt> &operator()()const
     {
@@ -306,7 +300,7 @@ public:
                 m_sigsqr += pow(value - average, 2);
             m_sigsqr /= sz - 1;
             const_cast<StandardDeviation &>(*this).m_cache =
-                make_shared<value<numt>>(average, sqrt(m_sigsqr) * m_scale);
+                make_shared<value<numt>>(average, sqrt(m_sigsqr));
         }
         return *m_cache;
     }

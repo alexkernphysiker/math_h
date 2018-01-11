@@ -153,3 +153,51 @@ TEST(Distribution2D, BaseTest)
     EXPECT_EQ(1, dbg[5].Y().val());
     EXPECT_EQ(2, dbg[5].Z().val());
 }
+TEST(hist_avr, test1)
+{
+    hist_avr<> chain=Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{1,1}},{{2,0.5},{2,1}}};;
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_EQ(i, chain[i].Y()().val());
+    }
+    chain.leftArrow(value<>(0,1));
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+    }
+}
+TEST(hist_avr, test2)
+{
+    hist_avr<> chain(
+	Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{1,1}},{{2,0.5},{2,1}}},
+	Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{0,1}},{{2,0.5},{0,1}}}
+    );
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+    }
+}
+TEST(hist_stdev, test1)
+{
+    hist_stdev<> chain=Points<value<>,double>{{{0,0.5},0},{{1,0.5},2},{{2,0.5},4}};;
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_THROW(chain[i].Y()(),Exception<StandardDeviation<>>);
+    }
+    chain.leftArrow(0.0);
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_EQ(int(chain[i].Y()().val()*10),i*10);
+    }
+}
+TEST(hist_stdev, test2)
+{
+    hist_stdev<> chain(
+	Points<value<>,double>{{{0,0.5},0},{{1,0.5},1},{{2,0.5},2}},
+	Points<value<>,double>{{{0,0.5},0},{{1,0.5},1},{{2,0.5},2}}
+    );
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(i, chain[i].X().val());
+        EXPECT_EQ(int(chain[i].Y()().val()*10),i*10);
+    }
+}

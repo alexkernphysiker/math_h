@@ -195,16 +195,16 @@ public:
         y = source.y;
 	return *this;
     }
-    point&operator=(const numtY&source)
+    inline point&operator=(const numtY&source)
     {
         y = source;
 	return *this;
     }
-    bool operator<(const point &b)const
+    inline bool operator<(const point &b)const
     {
         return x < b.x;
     }
-    bool operator>(const point &b)const
+    inline bool operator>(const point &b)const
     {
         return x > b.x;
     }
@@ -222,7 +222,7 @@ public:
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
     template<class numtY2>
-    auto operator-(const numtY2 &val)const->point<numtX,decltype(Y()-val)>
+    inline auto operator-(const numtY2 &val)const->point<numtX,decltype(Y()-val)>
     {
         return {X(), Y() - val};
     }
@@ -235,7 +235,7 @@ public:
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
     template<class numtY2>
-    auto operator*(const numtY2 &val)const->point<numtX,decltype(Y()*val)>
+    inline auto operator*(const numtY2 &val)const->point<numtX,decltype(Y()*val)>
     {
         return {X(), Y() * val};
     }
@@ -248,7 +248,7 @@ public:
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
     template<class numtY2>
-    auto operator/(const numtY2 &val)const->point<numtX,decltype(Y()/val)>
+    inline auto operator/(const numtY2 &val)const->point<numtX,decltype(Y()/val)>
     {
         return {X(), Y() / val};
     }
@@ -486,6 +486,11 @@ public:
 	    Bin(i)<<other[i];
         }
         return *this;
+    }
+    template<class numtY2>
+    inline SortedPoints&leftArrow(const Points<numX,numtY2>&other)
+    {
+        return leftArrow(SortedPoints<numX,numtY2>(other));
     }
     template<class numtY2>
     SortedPoints&leftArrow(const numtY2&other)

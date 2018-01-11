@@ -230,12 +230,12 @@ TEST(value, wider)
 }
 TEST(StandardDeviation, Throwing)
 {
-    StandardDeviation<double> S;
+    StandardDeviation<> S;
     EXPECT_EQ(0, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<double>>);
+    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<double>>);
+    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(2, S.count());
     EXPECT_EQ(0, S().val());
@@ -243,10 +243,10 @@ TEST(StandardDeviation, Throwing)
 }
 TEST(StandardDeviation, Base)
 {
-    StandardDeviation<double> S;
+    StandardDeviation<> S;
     S << 0.0;
     EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<double>>);
+    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
     S << 1.0;
     EXPECT_EQ(2, S.count());
     EXPECT_EQ(0.5, S().val());
@@ -254,7 +254,7 @@ TEST(StandardDeviation, Base)
 }
 TEST(StandardDeviation, Base2)
 {
-    StandardDeviation<double> S;
+    StandardDeviation<> S;
     S << 0.0 << 1.0;
     size_t cnt=0;
     for(const auto&x:S)cnt++;
@@ -265,33 +265,29 @@ TEST(StandardDeviation, Base2)
     EXPECT_EQ(1.0,S[1]);
     EXPECT_ANY_THROW(S[2]);
 }
-#define _EQ2(a,b) EXPECT_TRUE(pow(a-b,2)<0.01)
+#define _EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 TEST(StandardDeviation, WithRandomValues)
 {
-    StandardDeviation<double> S;
+    StandardDeviation<> S;
     default_random_engine generator;
     normal_distribution<double> distribution(1.0, 3.0);
-    for (int i = 0; i < 2000; i++)
+    for (int i = 0; i < 200000; i++)
         S << distribution(generator);
     _EQ2(1.0, S().val());
     _EQ2(3.0, S().uncertainty());
 }
-TEST(StandardDeviation, WithRandomValues2)
+TEST(StandardDeviation, Constructor2)
 {
-    StandardDeviation<double> S(2);
-    default_random_engine generator;
-    normal_distribution<double> distribution(1.0, 3.0);
-    for (int i = 0; i < 2000; i++)
-        S << distribution(generator);
+    StandardDeviation<> S(2);
+    S << 0;
     _EQ2(1.0, S().val());
-    _EQ2(6.0, S().uncertainty());
 }
 
 TEST(WeightedAverage, Zeros)
 {
-    WeightedAverage<double> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
-    EXPECT_THROW(W << value<>(0, 0), Exception<WeightedAverage<double>>);
+    WeightedAverage<> W;
+    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W << value<>(0, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
     _EQ(0, W().val());
     _EQ(1, W().uncertainty());
@@ -304,9 +300,9 @@ TEST(WeightedAverage, Zeros)
 }
 TEST(WeightedAverage, Ones)
 {
-    WeightedAverage<double> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
-    EXPECT_THROW(W << value<>(1, 0), Exception<WeightedAverage<double>>);
+    WeightedAverage<> W;
+    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W << value<>(1, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1, W().uncertainty());
@@ -319,8 +315,8 @@ TEST(WeightedAverage, Ones)
 }
 TEST(WeightedAverage, Zeros_plus_Ones)
 {
-    WeightedAverage<double> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<double>>);
+    WeightedAverage<> W;
+    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
     _EQ(1, W().val());
     _EQ(1, W().uncertainty());
@@ -338,7 +334,7 @@ TEST(CorrelationLinear, simple1)
 {
     mt19937 gen;
     normal_distribution<double> G;
-    CorrelationLinear<double> A, B, C;
+    CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen), v2 = G(gen);
         EXPECT_EQ(&A, &(A << make_pair(v1, v1)));
@@ -353,7 +349,7 @@ TEST(CorrelationLinear, simple2)
 {
     mt19937 gen;
     normal_distribution<double> G;
-    CorrelationLinear<double> A, B, C;
+    CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen), v2 = G(gen);
         A << make_pair(v1   , v2);
@@ -368,7 +364,7 @@ TEST(CorrelationLinear, simple3)
 {
     mt19937 gen;
     normal_distribution<double> G;
-    CorrelationLinear<double> A, B;
+    CorrelationLinear<> A, B;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen), v2 = G(gen);
         A << make_pair(v1, v2);
@@ -380,7 +376,7 @@ TEST(CorrelationLinear, simple4)
 {
     mt19937 gen;
     normal_distribution<double> G;
-    CorrelationLinear<double> A, B, C;
+    CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen);
         A << make_pair(v1, v1);
@@ -395,7 +391,7 @@ TEST(CorrelationLinear, simple5)
 {
     mt19937 gen;
     normal_distribution<double> G;
-    CorrelationLinear<double> A, B, C;
+    CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen);
         A << make_pair(v1, -v1);
