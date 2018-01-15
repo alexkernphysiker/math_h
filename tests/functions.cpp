@@ -88,29 +88,21 @@ TEST(FermiFunc, Shape)
         }, X - diffuse * 5, X, X + diffuse * 5);
 }
 
+template<size_t P=10>
 void test_polynom(function<double(int)> f)
 {
-    double C[9 + 1];
-    for (int i = 0; i <= 9; i++)C[i] = f(i);
+    double C[P + 1];
+    for (int i = 0; i <= P; i++)C[i] = f(i);
     for (double x = -2; x <= 2; x += 0.01) {
         double V = 0;
-        for (int p = 0; p <= 9; p++) {
+        for (int p = 0; p <= P; p++) {
             V += pow(x, p) * C[p];
-            EXPECT_EQ(true, pow(V - Polynom(x, C, p), 2) < 0.0001);
         }
+        EXPECT_EQ(true, pow(V - Polynom<P>(x, C), 2) < 0.0001);
     }
+    if constexpr(P>0) test_polynom<P-1>(f);
 }
-TEST(Polynom, Base)
-{
-    for (int p = 0; p < 10; p++) {
-        double C[p + 1];
-        for (int i = 0; i < p; i++)C[i] = 0;
-        C[p] = 1;
-        for (double x = -2; x <= 2; x += 0.01)for (int P = p; P >= 0; P--) {
-                EXPECT_EQ(true, pow(pow(x, P) - Polynom(x, C, P, p - P), 2) < 0.0001);
-            }
-    }
-}
+
 TEST(Polynom, Extended0)
 {
     test_polynom([](int) {

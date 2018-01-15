@@ -8,6 +8,11 @@
 #include <math.h>
 #include <functional>
 #include <memory>
+#if __cplusplus>201700L
+#define ____full_version_of_functions_h_____
+#else
+#warning compiler does not support "if constexpr(...)". c++>=17 is needed. Non optimal versions of some templates will be used.
+#endif
 namespace MathTemplates
 {
 template<class result, typename... Args>
@@ -91,21 +96,22 @@ numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
 {
     return 1.0 / (1.0 + exp((x - X_border) / diffuse));
 }
-template<class numt, class indexer>
-numt Polynom(const numt &x, const indexer p, const unsigned int P, const int index_offset = 0)
-{
-    numt res = 0;
-    numt c = 1;
-    for (unsigned int i = 0; i <= P; i++) {
-        res += c * p[index_offset + i];
-        if (i < P)c *= x;
-    }
-    return res;
-}
+#ifndef ____full_version_of_functions_h_____
 template<unsigned int P, class numt, class indexer, int index_offset = 0>
-inline numt Polynom(const numt &x, const indexer p)
+inline numt Polynom(const numt &x, const indexer&p)
 {
-    return Polynom<numt, indexer>(x, p, P, index_offset);
+    static_assert(index_offset >= 0,"Polynom offset index is out of range");
+    if(P==0) return p[index_offset];
+    else return Polynom<P-1,numt,indexer,index_offset+1>(x, p)*x+p[index_offset];
 }
+#else
+template<unsigned int P, class numt, class indexer, int index_offset = 0>
+inline numt Polynom(const numt &x, const indexer&p)
+{
+    static_assert(index_offset >= 0,"Polynom offset index is out of range");
+    if constexpr(P==0) return p[index_offset];
+    else return Polynom<P-1,numt,indexer,index_offset+1>(x, p)*x+p[index_offset];
+}
+#endif
 };
 #endif
