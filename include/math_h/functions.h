@@ -101,8 +101,9 @@ template<unsigned int P,int index_offset = 0, class numt, class indexer>
 inline numt Polynom(const numt &x, const indexer&p)
 {
     static_assert(index_offset >= 0,"Polynom offset index is out of range");
-    if(P==0) return p[index_offset];
-    else return Polynom<P-1,index_offset+1,numt,indexer>(x, p)*x+p[index_offset];
+    numt res=0;
+    for(int i=P;i>=0;i--)res+=res*x+p[index_offset+i];
+    return res;
 }
 #else
 template<unsigned int P, int index_offset = 0, class numt, class indexer>
