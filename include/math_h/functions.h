@@ -102,7 +102,10 @@ inline numt Polynom(const numt &x, const indexer&p)
 {
     static_assert(index_offset >= 0,"Polynom offset index is out of range");
     numt res=0;
-    for(int i=P;i>=0;i--)res+=res*x+p[index_offset+i];
+    for(int i=P;i>=0;i--){
+	res*=x;
+	res+=p[index_offset+i];
+    }
     return res;
 }
 #else
