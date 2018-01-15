@@ -97,20 +97,20 @@ numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
     return 1.0 / (1.0 + exp((x - X_border) / diffuse));
 }
 #ifndef ____full_version_of_functions_h_____
-template<unsigned int P, class numt, class indexer, int index_offset = 0>
+template<unsigned int P,int index_offset = 0, class numt, class indexer>
 inline numt Polynom(const numt &x, const indexer&p)
 {
     static_assert(index_offset >= 0,"Polynom offset index is out of range");
     if(P==0) return p[index_offset];
-    else return Polynom<P-1,numt,indexer,index_offset+1>(x, p)*x+p[index_offset];
+    else return Polynom<P-1,index_offset+1,numt,indexer>(x, p)*x+p[index_offset];
 }
 #else
-template<unsigned int P, class numt, class indexer, int index_offset = 0>
+template<unsigned int P, int index_offset = 0, class numt, class indexer>
 inline numt Polynom(const numt &x, const indexer&p)
 {
     static_assert(index_offset >= 0,"Polynom offset index is out of range");
     if constexpr(P==0) return p[index_offset];
-    else return Polynom<P-1,numt,indexer,index_offset+1>(x, p)*x+p[index_offset];
+    else return Polynom<P-1,index_offset+1,numt,indexer>(x, p)*x+p[index_offset];
 }
 #endif
 };
