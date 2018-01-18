@@ -83,6 +83,10 @@ public:
     }
     hist(const typename SortedPoints<value<numtX>, value<numtY>>::Func f, const SortedChain<value<numtX>> &chain)
         : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
+    template<class numY2>
+    hist(const typename SortedPoints<value<numtX>, value<numtY>>::Func f,const SortedChain<point<value<numtX>, numY2>> &chain)
+        : SortedPoints<value<numtX>, value<numtY>>(f, chain) {}
+
     template<class numtY2>
     hist(const SortedPoints<value<numtX>, value<numtY2>> &source)
         : SortedPoints<value<numtX>, value<numtY>>(source) {}

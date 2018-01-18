@@ -383,6 +383,12 @@ public:
         for (numX x : chain)
             SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
     }
+    template<class numY2>
+    SortedPoints(const Func f,const SortedChain<point<numX, numY2>> &chain)
+    {
+        for (const auto&p : chain)
+            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(p.X(), f(p.X())));
+    }
     virtual ~SortedPoints() {}
     SortedPoints Clone()const
     {
