@@ -8,367 +8,309 @@
 #include <iostream>
 #include <math.h>
 #include "error.h"
-#include "tabledata.h"
+#include "vectors.h"
+#if __cplusplus>201700L
+#define ____optimized_version_of_matrices_h_____
+#else
+#warning compiler does not support "if constexpr(...)". c++>=17 is needed. classes from vectors.h will work slower
+#endif
 namespace MathTemplates
 {
-template<class numt = double>
+template<class linetype>
+class Matrix<1, linetype>
+{
+    template<size_t sizef, class n>friend class Vector;
+    template<size_t sizef, class n>friend class Direction;
+    template<size_t sizef, class n>friend class Matrix;
+public:
+    enum {DimensionsFinal = 1};
+    enum {DimensionsInitial = linetype::Dimensions};
+    typedef typename linetype::NumberType NumberType;
+    typedef linetype VIType;
+    typedef Vector<1, NumberType> VFType;
+    typedef Vector < DimensionsInitial + 1, NumberType > VIWType;
+    typedef Matrix<DimensionsFinal, VIWType> PlusOneColumn;
+    typedef Vector < DimensionsInitial - 1, NumberType > VINType;
+    typedef Matrix<DimensionsFinal, VINType> MinusOneColumn;
+private:
+    VIType m_line;
+protected:
+    inline Matrix(const VIType &line): m_line(line) {}
+    inline MinusOneColumn ___minus_one_column()const
+    {
+        return MinusOneColumn(m_line.___recursive());
+    }
+    inline VFType ___last_column()const
+    {
+        return desCartes(m_line.___last_component());
+    }
+    inline PlusOneColumn ___add_column(const VFType &col)const
+    {
+        return VIWType(m_line, col.___last_component());
+    }
+    inline const VIType &___last_line()const
+    {
+        return m_line;
+    }
+    inline const Matrix &AddColumns()const
+    {
+        return *this;
+    }
+public:
+    virtual ~Matrix() {}
+#ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index, size_t jindex>
+    inline const NumberType &element()const
+    {
+	static_assert(index ==1 ,"dimension index is out of range");
+        return m_line.template component<jindex>();
+    }
+#else
+    template<size_t index, size_t jindex>
+    const NumberType&element()const
+    {
+	static_assert(index>0, "dimension index is out of range");
+	if(index>1)throw Exception<Matrix>("dimension index out of range");
+	return m_line.template component<jindex>();
+    }
+#endif
+    VFType operator*(const VIType &v)const
+    {
+        return desCartes(m_line * v);
+    }
+    Matrix<DimensionsFinal, Vector<1, NumberType>>
+            operator*(const Matrix<DimensionsInitial, Vector<1, NumberType>> &B)const
+    {
+        return desCartes(m_line * B.___last_column());
+    }
+    template<size_t third_size>
+    Matrix<DimensionsFinal, Vector<third_size, NumberType>>
+            operator*(const Matrix<DimensionsInitial, Vector<third_size, NumberType>> &B)const
+    {
+        return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
+    }
+    template<class otherlinetype>
+    inline Matrix(const Matrix<DimensionsFinal, otherlinetype> &source): m_line(source.___last_line()) {}
+    template<class... Args>
+    inline Matrix(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
+    inline Matrix(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
+    bool operator==(const Matrix &B)const
+    {
+        return m_line == B.m_line;
+    }
+    Matrix operator*(const NumberType &v)const
+    {
+        return Matrix(m_line * v);
+    }
+    Matrix operator/(const NumberType &v)const
+    {
+        return Matrix(m_line / v);
+    }
+    Matrix operator+(const Matrix &B)const
+    {
+        return Matrix(m_line + B.m_line);
+    }
+    Matrix operator-(const Matrix &B)const
+    {
+        return Matrix(m_line - B.m_line);
+    }
+    static inline Matrix zero()
+    {
+        return Matrix(VIType::zero());
+    }
+    static inline Matrix one()
+    {
+        return Matrix(VIType::template basis_vector<DimensionsFinal>());
+    }
+    template<size_t x, size_t y>
+    static inline Matrix RotationInPlane(const NumberType &angle)
+    {
+        return Matrix(
+                   (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
+                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
+                   VIType::template basis_vector<DimensionsFinal>()
+                                                );
+    }
+    template<class... Args>
+    inline Matrix < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    {
+        return ___add_column(col).AddColumns(args...);
+    }
+};
+template<size_t sizef, class linetype>
 class Matrix
 {
+    template<size_t sizeff, class n>friend class Vector;
+    template<size_t sizeff, class n>friend class Direction;
+    template<size_t sizeff, class n>friend class Matrix;
 public:
-    typedef std::function<const numt(const size_t, const size_t)> function;
+    enum {DimensionsFinal = sizef};
+    enum {DimensionsInitial = linetype::Dimensions};
+    typedef typename linetype::NumberType NumberType;
+    typedef linetype VIType;
+    typedef Vector<sizef, NumberType> VFType;
+    typedef Matrix < sizef - 1, linetype > MinorTransformation;
+    typedef Vector < DimensionsInitial + 1, NumberType > VIWType;
+    typedef Matrix<DimensionsFinal, VIWType> PlusOneColumn;
+    typedef Vector < DimensionsInitial - 1, NumberType > VINType;
+    typedef Matrix<DimensionsFinal, VINType> MinusOneColumn;
+private:
+    MinorTransformation m_minor;
+    VIType m_line;
+protected:
+    inline Matrix(const MinorTransformation &minor, const VIType &line): m_minor(minor), m_line(line) {}
+    inline MinusOneColumn ___minus_one_column()const
+    {
+        const auto new_minor = m_minor.___minus_one_column();
+        const auto new_line = m_line.___recursive();
+        return MinusOneColumn(new_minor, new_line);
+    }
+    inline VFType ___last_column()const
+    {
+        return VFType(m_minor.___last_column(), m_line.___last_component());
+    }
+    inline PlusOneColumn ___add_column(const VFType &col)const
+    {
+        const auto new_minor = m_minor.___add_column(col.___recursive());
+        const auto new_line = VIWType(m_line, col.___last_component());
+        return PlusOneColumn(new_minor, new_line);
+    }
+    inline const VIType &___last_line()const
+    {
+        return m_line;
+    }
+    inline const MinorTransformation &___recursive()const
+    {
+        return m_minor;
+    }
+    inline const Matrix &AddColumns()const
+    {
+        return *this;
+    }
+public:
     virtual ~Matrix() {}
-    virtual size_t height()const = 0;
-    virtual size_t width()const = 0;
-protected:
-    virtual numt get_element(const size_t i, const size_t j)const = 0;
-public:
-    numt operator()(const size_t i, const size_t j)const
+#ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index, size_t jindex>
+    inline const NumberType &element()const
     {
-        if (i >= height())throw Exception<Matrix>("Range check error");
-        if (j >= width())throw Exception<Matrix>("Range check error");
-        return get_element(i, j);
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=DimensionsFinal,"dimension index is out of range");
+	if constexpr(index==DimensionsFinal) return m_line.template component<jindex>();
+	else return m_minor.template element<index, jindex>();
     }
-    inline bool HasSizeAs(const Matrix &other)const
+#else
+    template<size_t index, size_t jindex>
+    const NumberType &element()const
     {
-        return (height() == other.height()) && (width() == other.width());
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>DimensionsFinal)throw Exception<Matrix>("dimension index is out of range");
+	if(index==DimensionsFinal) return m_line.template component<jindex>();
+	else return m_minor.template element<index, jindex>();
     }
-    bool operator==(const Matrix &other)const
+#endif
+    VFType operator*(const VIType &v)const
     {
-        if (!HasSizeAs(other))return false;
-        for (size_t i = 0; i < height(); i++) {
-            for (size_t j = 0; j < width(); j++)
-                if (operator()(i, j) != other(i, j))
-                    return false;
-        }
-        return true;
+        return VFType(m_minor * v, m_line * v);
     }
-    inline bool operator!=(const Matrix &other)const
+    Matrix<DimensionsFinal, Vector<1, NumberType>>
+            operator*(const Matrix<DimensionsInitial, Vector<1, NumberType>> &B)const
     {
-        return !operator==(other);
+        const auto P = m_minor * B;
+        const auto C = desCartes(m_line * B.___last_column());
+        return Matrix<DimensionsFinal, Vector<1, NumberType>>(P, C);
     }
-    inline bool operator==(const numt &c)const
+    template<size_t third_size>
+    Matrix<DimensionsFinal, Vector<third_size, NumberType>>
+            operator*(const Matrix<DimensionsInitial, Vector<third_size, NumberType>> &B)const
     {
-        return (width() == 1) && (height() == 1) && (operator()(0, 0) == c);
+        const auto P = operator*(B.___minus_one_column());
+        const VFType C = operator*(B.___last_column());
+        return P.___add_column(C);
     }
-    inline bool operator!=(const numt &c)const
+    template<class otherlinetype>
+    inline Matrix(const Matrix<DimensionsFinal, otherlinetype> &source): m_minor(source.___recursive()), m_line(source.___last_line()) {}
+    template<class... Args>
+    inline Matrix(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
+    inline Matrix(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
+    bool operator==(const Matrix &B)const
     {
-        return !operator==(c);
+        return (m_line == B.m_line) && (m_minor == B.m_minor);
+    }
+    Matrix operator*(const NumberType &v)const
+    {
+        return Matrix(m_minor * v, m_line * v);
+    }
+    Matrix operator/(const NumberType &v)const
+    {
+        return Matrix(m_minor / v, m_line / v);
+    }
+    Matrix operator+(const Matrix &B)const
+    {
+        return Matrix(m_minor + B.m_minor, m_line + B.m_line);
+    }
+    Matrix operator-(const Matrix &B)const
+    {
+        return Matrix(m_minor - B.m_minor, m_line - B.m_line);
+    }
+    static inline Matrix zero()
+    {
+        return Matrix(MinorTransformation::zero(), VIType::zero());
+    }
+    static inline Matrix one()
+    {
+        return Matrix(MinorTransformation::one(), VIType::template basis_vector<DimensionsFinal>());
+    }
+    template<size_t x, size_t y>
+    static inline Matrix RotationInPlane(const NumberType &angle)
+    {
+        return Matrix(
+                   MinorTransformation::template RotationInPlane<x, y>(angle),
+                   (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
+                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
+                   VIType::template basis_vector<DimensionsFinal>()
+                                                );
+    }
+    template<class... Args>
+    inline Matrix < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    {
+        return ___add_column(col).AddColumns(args...);
     }
 };
-template<typename numt>
-inline std::ostream &operator<<(std::ostream &str, const Matrix<numt> &M)
+template<class linetype, class... Args>
+inline Matrix < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args... args)
 {
-    for (size_t i = 0, n = M.height(); i < n; i++) {
-        for (size_t j = 0, m = M.width(); j < m; j++)
-            str << M(i, j) << "\t";
-        str << std::endl;
-    }
-    return str;
+    return Matrix < sizeof...(Args) + 1, linetype > (std::make_tuple(x, args...));
+}
+template<class numt, class... Args>
+inline Matrix < 1, Vector < sizeof...(Args) + 1, numt >> line(const numt &x, Args... args)
+{
+    return lines(desCartes(x, args...));
+}
+template<class numt, class...Args>
+inline Matrix < 1 + sizeof...(Args), Vector<1, numt >> column(const numt &x, Args...args)
+{
+    return Matrix < 1 + sizeof...(Args), Vector<1, numt >> (std::make_tuple(x, args...));
+}
+template<class VecT, class...Args>
+inline Matrix < VecT::Dimensions, Vector < 1 + sizeof...(Args), typename VecT::NumberType >> columns(const VecT &x, Args...args)
+{
+    return Matrix<VecT::Dimensions, Vector<1, typename VecT::NumberType>>(x.to_tuple()).AddColumns(args...);
+}
+template<size_t s, class numt = double>
+inline Matrix<s, Vector<s, numt>> ZERO()
+{
+    return Matrix<s, Vector<s, numt>>::zero();
+}
+template<size_t s, class numt = double>
+inline Matrix<s, Vector<s, numt>> ONE()
+{
+    return Matrix<s, Vector<s, numt>>::one();
+}
+template<size_t size, class VIType>
+inline Matrix<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
+{
+    return Matrix<size, VIType>(A, B);
 }
 
-template<class numt = double>
-class MatrixData: public Matrix<numt>
-{
-public:
-    typedef Chain<Chain<numt>> container;
-    typedef std::function<numt(const size_t, const size_t, const numt &)> transform_function;
-    typedef std::function<numt(const numt &)> transform_func;
-private:
-    container f_data;
-protected:
-    virtual numt get_element(const size_t i, const size_t j)const override
-    {
-        return f_data[i][j];
-    }
-public:
-    virtual size_t height()const override
-    {
-        return f_data.size();
-    }
-    virtual size_t width()const override
-    {
-        return f_data[0].size();
-    }
-    numt &var_element(const size_t i, const size_t j)
-    {
-        return f_data[i][j];
-    }
-    virtual ~MatrixData() {}
-    MatrixData(const numt &A)
-    {
-        f_data.push_back({A});
-    }
-    MatrixData(const container &A)
-    {
-        if (A.size() == 0)
-            throw Exception<MatrixData, 0>("invalid matrix size");
-        if ((A.size() == 1) && (A[0].size() == 0))
-            throw Exception<MatrixData, 0>("invalid matrix size");
-        const size_t first_row_size = A[0].size();
-        if (first_row_size == 0)
-            throw Exception<MatrixData, 0>("invalid matrix size");
-        for (const auto &row : A) {
-            if (row.size() != first_row_size)
-                throw Exception<MatrixData, 0>("invalid matrix size");
-            f_data.push_back(Chain<numt>());
-            const auto row_index = f_data.size() - 1;
-            for (const auto &item : row)
-                f_data[row_index].push_back(item);
-        }
-    }
-    MatrixData(const Matrix<numt> &source)
-    {
-        for (size_t i = 0; i < source.height(); i++) {
-            f_data.push_back(Chain<numt>());
-            for (size_t j = 0; j < source.width(); j++)
-                f_data[i].push_back(source(i, j));
-        }
-    }
-    MatrixData &Transform(const transform_function F)
-    {
-        for (size_t i = 0; i < height(); i++) {
-            for (size_t j = 0; j < width(); j++)
-                f_data[i][j] = F(i, j, f_data[i][j]);
-        }
-        return *this;
-    }
-    MatrixData &Transform(const transform_func F)
-    {
-        for (size_t i = 0; i < height(); i++) {
-            for (size_t j = 0; j < width(); j++)
-                f_data[i][j] = F(f_data[i][j]);
-        }
-        return *this;
-    }
 };
-template<class numt = double>
-class MatrixByFormula: public Matrix<numt>
-{
-private:
-    size_t f_N, f_M;
-    typename Matrix<numt>::function f_func;
-public:
-    MatrixByFormula(const size_t N, const size_t M, const typename Matrix<numt>::function F): f_N(N), f_M(M), f_func(F) {}
-    virtual ~MatrixByFormula() {}
-    virtual size_t height()const override
-    {
-        return f_N;
-    }
-    virtual size_t width()const override
-    {
-        return f_M;
-    }
-protected:
-    virtual numt get_element(const size_t i, const size_t j)const override
-    {
-        return f_func(i, j);
-    }
-};
-
-template<class numt>
-MatrixByFormula<numt> Unitary(const size_t N)
-{
-    return MatrixByFormula<numt>(N, N, [](size_t i, size_t j)->numt {return (i == j) ? 1 : 0;});
-}
-template<class numt>
-MatrixByFormula<numt> Zeros(const size_t N, const size_t M)
-{
-    return MatrixByFormula<numt>(N, M, [](size_t, size_t)->numt {return 0;});
-}
-template<class numt>
-MatrixByFormula<numt> RVec(const size_t N, const size_t i)
-{
-    if (i >= N)throw Exception<Matrix<numt>>("Invalid reference vector");
-    return MatrixByFormula<numt>(N, 1, [i](size_t ii, size_t)->numt {return (ii == i) ? 1 : 0;});
-}
-template<class numt>
-MatrixByFormula<numt> Diagonal(const Chain<numt> &V)
-{
-    return MatrixByFormula<numt>(V.size(), V.size(), [V](size_t i, size_t j)->numt {return (i == j) ? V[i] : 0;});
-}
-template<class numt>
-MatrixByFormula<numt> Permutation(const Chain<size_t> &V)
-{
-    for (const size_t i : V)if (i >= V.size())
-            throw Exception<MatrixByFormula<numt>>("invalid permutation matrix");
-    return MatrixByFormula<numt>(V.size(), V.size(), [V](size_t i, size_t j)->numt {return j == V[i] ? 1 : 0;});
-}
-
-
-template<class numt>
- MatrixByFormula<numt> operator*(const Matrix<numt> &source, const numt &k)
-{
-    return MatrixByFormula<numt>(source.height(), source.width(),
-                                 [&source, &k](size_t i, size_t j)->numt {return source(i, j) * k;}
-                                );
-}
-template<class numt>
-MatrixByFormula<numt> operator/(const Matrix<numt> &source, const numt &k)
-{
-    return MatrixByFormula<numt>(source.height(), source.width(),
-                                 [&source, &k](size_t i, size_t j)->numt {return source(i, j) / k;}
-                                );
-}
-template<class numt>
-MatrixByFormula<numt> Transponate(const Matrix<numt> &source)
-{
-    return MatrixByFormula<numt>(source.width(), source.height(),
-                                 [&source](size_t i, size_t j)->numt {return source(j, i);}
-                                );
-}
-template<class numt>
-MatrixByFormula<numt> Minor(const Matrix<numt> &source, const size_t i, const size_t j)
-{
-    if ((source.height() < 2) || (source.width() < 2) || (i >= source.height()) || (j >= source.width()))
-        throw Exception<MatrixByFormula<numt>>("Invalid minor");
-    return MatrixByFormula<numt>(source.height() - 1, source.width() - 1,
-    [&source, i, j](size_t ii, size_t jj)->numt {
-        auto new_ii = ii, new_jj = jj;
-        if (ii >= i)new_ii++;
-        if (jj >= j)new_jj++;
-        return source(new_ii, new_jj);
-    }
-                                );
-}
-template<class numt>
-numt Suplement(const Matrix<numt> &source, const size_t i, const size_t j)
-{
-    switch ((i + j) % 2) {
-    case 0:
-        return Determinant(Minor(source, i, j));
-    case 1:
-        return -Determinant(Minor(source, i, j));
-    }
-    throw;
-}
-template<class numt>
-MatrixByFormula<numt> Suplements(const Matrix<numt> &source)
-{
-    return MatrixByFormula<numt>(
-               source.height(), source.width(),
-    [&source](size_t i, size_t j)->numt {
-        return Suplement(source, i, j);
-    }
-           );
-}
-template<class numt>
-numt Determinant(const Matrix<numt> &source)
-{
-    if ((source.height() != source.width()) || (source.height() == 0))
-        throw Exception<MatrixByFormula<numt>>("Cannot calculate the determinant");
-    if (source.height() == 1)return source(0, 0);
-    numt result = 0;
-    for (size_t i = 0; i < source.width(); i++) {
-        auto a = source(0, i);
-        if (a != 0)
-            result += a * Suplement(source, 0, i);
-    }
-    return result;
-}
-template<class numt>
-MatrixData<numt> CalcInverseMatrix(const Matrix<numt> &source)
-{
-    numt D = Determinant(source);
-    if (D == 0)throw Exception<MatrixByFormula<numt>>("Cannot calculate inverse matrix");
-    if (source.height() == 1)
-        return MatrixData<numt>(1) / D;
-    return Transponate(Suplements(source)) / D;
-}
-template<class numt>
-MatrixByFormula<numt> Multiply(const Matrix<numt> &A, const Matrix<numt> &B)
-{
-    if (A.width() != B.height())
-        throw Exception<Matrix<numt>>("Matrix Multiplication: size mismatch");
-    size_t cycle_length = A.width();
-    return MatrixByFormula<numt>(A.height(), B.width(), [&A, &B, cycle_length](size_t i, size_t j)->numt {
-        numt result = 0;
-        for (size_t k = 0; k < cycle_length; k++)
-            result += A(i, k) * B(k, j);
-        return result;
-    });
-}
-template<class numt>
-struct lup {
-    MatrixData<numt> L, U;
-    MatrixByFormula<numt>P;
-};
-template<class numt>
-lup<numt> LUP(const Matrix<numt> &A_)
-{
-    if (A_.width() != A_.height())
-        throw Exception<Matrix<numt>>("LUP decomposition is possible only for squared matrix");
-    MatrixData<numt> A = A_;
-    const size_t n = A.width();
-    Chain<size_t>pi;
-    for (size_t i = 0; i < n; i++)pi.push_back(i);
-    for (size_t k = 0; k < n; k++) {
-        size_t new_k = k;
-        numt p = 0;
-        for (size_t i = k; i < n; i++) {
-            const auto a = pow(A(i, k), 2);
-            if (a > p) {
-                p = a;
-                new_k = i;
-            }
-        }
-        if (0 == p)throw Exception<Matrix<numt>>("LUP: the matrix is singular");
-        if (new_k != k) {
-            const auto ii = pi[k];
-            pi[k] = pi[new_k];
-            pi[new_k] = ii;
-            for (size_t i = 0; i < n; i++) {
-                const auto a = A(k, i);
-                A.var_element(k, i) = A(new_k, i);
-                A.var_element(new_k, i) = a;
-            }
-        }
-        for (size_t i = k + 1; i < n; i++) {
-            A.var_element(i, k) /= A(k, k);
-            for (size_t j = k + 1; j < n; j++) {
-                A.var_element(i, j) -= A(i, k) * A(k, j);
-            }
-        }
-    }
-    MatrixData<numt> L(Zeros<numt>(n, n)), U(Zeros<numt>(n, n));
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            if (i > j)L.var_element(i, j) = A(i, j);
-            else U.var_element(i, j) = A(i, j);
-        }
-        L.var_element(i, i) = 1;
-    }
-    return {.L = L, .U = U, .P = Permutation<numt>(pi)};
-}
-template<class numt>
-MatrixData<numt> Solve(const Matrix<numt> &A, const Matrix<numt> &B)
-{
-    if (A.width() != A.height())
-        throw Exception<Matrix<numt>>("Solve: parameter 1 must be squared matrix");
-    if (B.width() != 1)
-        throw Exception<Matrix<numt>>("Solve: parameter 2 must be a vector");
-    if (B.height() != A.height())
-        throw Exception<Matrix<numt>>("Solve: matrix and vector size mismatch");
-    const auto n = A.width();
-    const auto D = LUP(A);
-    const MatrixData<numt> b = Multiply(D.P, B);
-    if (b.width() > 1)
-        throw Exception<Matrix<numt>>("");
-    Chain<numt> y;
-    for (size_t i = 0; i < n; i++) {
-        numt v = b(i, 0);
-        for (size_t j = 0; j < i; j++)
-            v -= y[j] * D.L(i, j);
-        y.push_back(v);
-    }
-    MatrixData<numt> X = Zeros<numt>(n, 1);
-    for (size_t ii = n; ii > 0; ii--) {
-        const size_t i = ii - 1;
-        numt x = y[i];
-        for (size_t j = ii; j < n; j++)
-            x -= D.U(i, j) * X(j, 0);
-        X.var_element(i, 0) = x / D.U(i, i);
-    }
-    return X;
-}
-}
 #endif

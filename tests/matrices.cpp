@@ -2,229 +2,183 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/matrices.h>
+#include <math_h/vectortransformations.h>
 using namespace std;
 using namespace MathTemplates;
-typedef Exception<Chain<Chain<>>, 0> invalid_matr;
-typedef Exception<Chain<Chain<>>, 1> size_mismatch;
-TEST(Matrix, SimpleObjects)
-{
-    auto A = Unitary<double>(3);
-    EXPECT_EQ(A.height(), A.width());
-    EXPECT_EQ(3, A.height());
-    EXPECT_TRUE(A == A);
-    EXPECT_FALSE(A != A);
-    EXPECT_TRUE(A.HasSizeAs(A));
-    EXPECT_TRUE(A == Unitary<double>(3));
-    EXPECT_FALSE(A != Unitary<double>(3));
-    EXPECT_FALSE(Unitary<double>(3) != A);
-    EXPECT_TRUE(Unitary<double>(3) == A);
-    EXPECT_FALSE(A != Unitary<double>(3));
-    EXPECT_TRUE(A.HasSizeAs(Unitary<double>(3)));
-    for (size_t i = 0; i < 3; i++)for (size_t j = 0; j < 3; j++)
-            if (i == j)EXPECT_EQ(A(i, j), 1);
-            else EXPECT_EQ(A(i, j), 0);
-    EXPECT_TRUE(A.HasSizeAs(Zeros<double>(3, 3)));
-    EXPECT_FALSE(A == Zeros<double>(3, 3));
-    EXPECT_TRUE(Zeros<double>(3, 3).HasSizeAs(A));
-    EXPECT_FALSE(Zeros<double>(3, 3) == A);
-    EXPECT_EQ(Zeros<double>(4, 2).height(), 4);
-    EXPECT_EQ(Zeros<double>(4, 2).width(), 2);
-    EXPECT_TRUE(Zeros<double>(4, 2) == MatrixByFormula<double>(4, 2, [](size_t, size_t) {
-        return 0.0;
-    }));
-    auto Z = Zeros<double>(3, 4);
-    EXPECT_TRUE(Z == Z);
-    EXPECT_FALSE(Z != Z);
-    EXPECT_EQ(Z.height(), 3);
-    EXPECT_EQ(Z.width(), 4);
-    for (size_t i = 0; i < 3; i++)for (size_t j = 0; j < 4; j++)
-            EXPECT_EQ(Z(i, j), 0);
-}
-const function<double(size_t, size_t)> F = [](size_t i, size_t j)
-{
-    return i * 30 + j;
-};
-TEST(Matrix, Formula)
-{
-    auto A = MatrixByFormula<double>(3, 4, F);
-    auto B = MatrixData<double>({
-        {0, 0, 0, 0},
-        {0, 0, 0, 0},
-        {0, 0, 0, 0}
-    });
-    B.Transform([](size_t i, size_t j, const double &) {
-        return F(i, j);
-    });
-    EXPECT_TRUE(A == B);
-    for (size_t i = 0; i < 3; i++)for (size_t j = 0; j < 4; j++)
-            EXPECT_EQ(A(i, j), F(i, j));
-}
-TEST(Matrix, Transponate)
-{
-    auto A = MatrixByFormula<double>(3, 4, F);
-    auto B = Transponate(A);
-    EXPECT_EQ(A.width(), B.height());
-    EXPECT_EQ(B.width(), A.height());
-    for (size_t i = 0; i < A.height(); i++)for (size_t j = 0; j < A.width(); j++)
-            EXPECT_EQ(A(i, j), B(j, i));
-    EXPECT_TRUE(Transponate(A) == B);
-}
-TEST(Matrix, Multiply)
-{
-    EXPECT_EQ(Multiply(Zeros<double>(3, 3), Zeros<double>(3, 3)), Zeros<double>(3, 3));
-    EXPECT_EQ(Multiply(Zeros<double>(3, 5), Zeros<double>(5, 3)), Zeros<double>(3, 3));
-    EXPECT_EQ(Multiply(Zeros<double>(2, 3), Zeros<double>(3, 4)), Zeros<double>(2, 4));
-    EXPECT_EQ(Multiply(Unitary<double>(1), Unitary<double>(1)), Unitary<double>(1));
-    EXPECT_EQ(Multiply(Unitary<double>(2), Unitary<double>(2)), Unitary<double>(2));
-    EXPECT_EQ(Multiply(Unitary<double>(3), Unitary<double>(3)), Unitary<double>(3));
-    EXPECT_EQ(Multiply(Unitary<double>(4), Unitary<double>(4)), Unitary<double>(4));
-    EXPECT_EQ(Multiply(Unitary<double>(5), Unitary<double>(5)), Unitary<double>(5));
-    EXPECT_EQ(MatrixByFormula<double>(4, 4, F), Multiply(MatrixByFormula<double>(4, 4, F), Unitary<double>(4)));
-    EXPECT_EQ(MatrixByFormula<double>(4, 4, F), Multiply(Unitary<double>(4), MatrixByFormula<double>(4, 4, F)));
-    EXPECT_EQ(Zeros<double>(4, 4), Multiply(MatrixByFormula<double>(4, 4, F), Zeros<double>(4, 4)));
-    EXPECT_EQ(Zeros<double>(4, 4), Multiply(Zeros<double>(4, 4), MatrixByFormula<double>(4, 4, F)));
-    for (size_t i = 0; i < 5; i++)for (size_t j = 0; j < 5; j++)
-            EXPECT_EQ(Multiply(Transponate(RVec<double>(5, i)), RVec<double>(5, j)), (i == j) ? 1.0 : 0.0);
-    auto A = MatrixData<double>({
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {9, 0, 1, 2}
-    });
-    auto B = MatrixData<double>({
-        {1, 2},
-        {3, 4},
-        {5, 6},
-        {7, 8}
-    });
-    auto C = MatrixData<double>({
-        {50, 60},
-        {114, 140},
-        {28, 40}
-    });
-    EXPECT_EQ(Multiply(A, B), C);
-}
-TEST(Matrix, Diagonal)
+const double epsilon = 0.0000000001;
+TEST(Matrix, zero1)
 {
     EXPECT_EQ(
-        Diagonal<double>({1, 2, 3, 4}),
-    MatrixData<double>({
-        {1, 0, 0, 0},
-        {0, 2, 0, 0},
-        {0, 0, 3, 0},
-        {0, 0, 0, 4}
-    })
+        ZERO<1>(), line(0.)
+    );
+    EXPECT_EQ(
+        ZERO<2>(), lines(
+            desCartes(0., 0.),
+            desCartes(0., 0.)
+        )
+    );
+    EXPECT_EQ(
+        ZERO<3>(), lines(
+            desCartes(0., 0., 0.),
+            desCartes(0., 0., 0.),
+            desCartes(0., 0., 0.)
+        )
     );
 }
-TEST(Matrix, Permutation)
+TEST(Matrix, zero2)
 {
-    EXPECT_THROW(Permutation<double>({3, 3}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({0, 3}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({3, 0}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({1, 3}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({2, 2}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({0, 2}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({2, 0}), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Permutation<double>({1, 2}), Exception<MatrixByFormula<double>>);
-    //ToDo: provide such control
-    //EXPECT_THROW(Permutation<double>({1,1}),Exception<MatrixByFormula<double>>);
-    //EXPECT_THROW(Permutation<double>({0,0}),Exception<MatrixByFormula<double>>);
-    //EXPECT_THROW(Permutation<double>({1,1,0}),Exception<MatrixByFormula<double>>);
-    //EXPECT_THROW(Permutation<double>({2,1,1}),Exception<MatrixByFormula<double>>);
-    //EXPECT_THROW(Permutation<double>({1,0,1}),Exception<MatrixByFormula<double>>);
-    EXPECT_EQ(Permutation<double>({0, 1}), MatrixData<double>({{1, 0}, {0, 1}}));
-    EXPECT_EQ(Permutation<double>({1, 0}), MatrixData<double>({{0, 1}, {1, 0}}));
-    EXPECT_EQ(Permutation<double>({0, 1, 2}), MatrixData<double>({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}));
-    EXPECT_EQ(Permutation<double>({1, 0, 2}), MatrixData<double>({{0, 1, 0}, {1, 0, 0}, {0, 0, 1}}));
-    EXPECT_EQ(Permutation<double>({2, 0, 1}), MatrixData<double>({{0, 0, 1}, {1, 0, 0}, {0, 1, 0}}));
+    EXPECT_EQ(
+        ZERO<1>(), column(0.)
+    );
+    EXPECT_EQ(
+        ZERO<2>(), columns(
+            desCartes(0., 0.),
+            desCartes(0., 0.)
+        )
+    );
+    EXPECT_EQ(
+        ZERO<3>(), columns(
+            desCartes(0., 0., 0.),
+            desCartes(0., 0., 0.),
+            desCartes(0., 0., 0.)
+        )
+    );
 }
-TEST(Matrix, Minor)
+TEST(Matrix, one1)
 {
-    auto A = MatrixData<double>({
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}
-    });
-    EXPECT_THROW(Minor(A, 3, 3), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Minor(A, 4, 3), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Minor(A, 3, 4), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Minor(A, 4, 4), Exception<MatrixByFormula<double>>);
-    EXPECT_EQ(Minor(A, 0, 0), MatrixData<double>({{5, 6}, {8, 9}}));
-    EXPECT_EQ(Minor(A, 0, 1), MatrixData<double>({{4, 6}, {7, 9}}));
-    EXPECT_EQ(Minor(A, 0, 2), MatrixData<double>({{4, 5}, {7, 8}}));
-    EXPECT_EQ(Minor(A, 1, 0), MatrixData<double>({{2, 3}, {8, 9}}));
-    EXPECT_EQ(Minor(A, 1, 1), MatrixData<double>({{1, 3}, {7, 9}}));
-    EXPECT_EQ(Minor(A, 1, 2), MatrixData<double>({{1, 2}, {7, 8}}));
-    EXPECT_EQ(Minor(A, 2, 0), MatrixData<double>({{2, 3}, {5, 6}}));
-    EXPECT_EQ(Minor(A, 2, 1), MatrixData<double>({{1, 3}, {4, 6}}));
-    EXPECT_EQ(Minor(A, 2, 2), MatrixData<double>({{1, 2}, {4, 5}}));
-    EXPECT_EQ(Minor(Minor(A, 0, 0), 1, 1), 5.0);
-    EXPECT_EQ(Minor(Minor(A, 0, 0), 0, 0), 9.0);
-    EXPECT_EQ(Minor(Minor(A, 2, 1), 1, 1), 1.0);
-    EXPECT_EQ(Minor(Minor(A, 2, 1), 0, 0), 6.0);
-    EXPECT_EQ(Minor(Minor(A, 2, 1), 0, 1), 4.0);
-    EXPECT_EQ(Minor(Minor(A, 1, 1), 1, 1), 1.0);
-    EXPECT_THROW(Minor(Minor(Minor(A, 0, 0), 1, 1), 0, 0), Exception<MatrixByFormula<double>>);
+    EXPECT_EQ(
+        ONE<1>(), line(1.)
+    );
+    EXPECT_EQ(
+        ONE<2>(), lines(
+            desCartes(1., 0.),
+            desCartes(0., 1.)
+        )
+    );
+    EXPECT_EQ(
+        ONE<3>(), lines(
+            desCartes(1., 0., 0.),
+            desCartes(0., 1., 0.),
+            desCartes(0., 0., 1.)
+        )
+    );
 }
-TEST(Matrix, Determinant)
+TEST(Matrix, one2)
 {
-    EXPECT_THROW(Determinant(MatrixData<double>({{1, 2}})), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(Determinant(MatrixData<double>({{1}, {2}})), Exception<MatrixByFormula<double>>);
-    EXPECT_EQ(Determinant(MatrixData<double>(5)), 5.0);
-    EXPECT_EQ(Determinant(MatrixData<double>({{1, 2}, {3, 4}})), -2);
-    EXPECT_EQ(Determinant(MatrixData<double>({{1, 2, 3}, {4, 5, 6}, {7, 8, 9}})), 0);
-    EXPECT_EQ(Determinant(Unitary<double>(1)), 1);
-    EXPECT_EQ(Determinant(Unitary<double>(2)), 1);
-    EXPECT_EQ(Determinant(Unitary<double>(3)), 1);
-    EXPECT_EQ(Determinant(Unitary<double>(4)), 1);
-    EXPECT_EQ(Determinant(Unitary<double>(5)), 1);
-    EXPECT_EQ(Determinant(Zeros<double>(1, 1)), 0);
-    EXPECT_EQ(Determinant(Zeros<double>(2, 2)), 0);
-    EXPECT_EQ(Determinant(Zeros<double>(3, 3)), 0);
-    EXPECT_EQ(Determinant(Zeros<double>(4, 4)), 0);
-    EXPECT_EQ(Determinant(Zeros<double>(5, 5)), 0);
+    EXPECT_EQ(
+        ONE<1>(), column(1.)
+    );
+    EXPECT_EQ(
+        ONE<2>(), columns(
+            desCartes(1., 0.),
+            desCartes(0., 1.)
+        )
+    );
+    EXPECT_EQ(
+        ONE<3>(), columns(
+            desCartes(1., 0., 0.),
+            desCartes(0., 1., 0.),
+            desCartes(0., 0., 1.)
+        )
+    );
 }
-TEST(Matrix, Inverse)
+TEST(Matrix, lines_columns)
 {
-    EXPECT_THROW(CalcInverseMatrix(Zeros<double>(1, 3)), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(CalcInverseMatrix(Zeros<double>(1, 2)), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(CalcInverseMatrix(Zeros<double>(2, 2)), Exception<MatrixByFormula<double>>);
-    EXPECT_THROW(CalcInverseMatrix(Zeros<double>(3, 3)), Exception<MatrixByFormula<double>>);
-
-    EXPECT_EQ(CalcInverseMatrix(Unitary<double>(1)), Unitary<double>(1));
-    EXPECT_EQ(CalcInverseMatrix(Unitary<double>(2)), Unitary<double>(2));
-    EXPECT_EQ(CalcInverseMatrix(Unitary<double>(3)), Unitary<double>(3));
-    EXPECT_EQ(CalcInverseMatrix(Unitary<double>(4)), Unitary<double>(4));
-
-    EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(2)), MatrixData<double>(0.5));
-    EXPECT_EQ(CalcInverseMatrix(MatrixData<double>(10)), MatrixData<double>(0.1));
-    {
-        MatrixData<double> A({{1, 2}, {3, 4}});
-        EXPECT_EQ(Multiply(A, CalcInverseMatrix(A)), Unitary<double>(A.height()));
-        EXPECT_EQ(Multiply(CalcInverseMatrix(A), A), Unitary<double>(A.height()));
+    EXPECT_EQ(
+        lines(
+            desCartes(1, 2, 3),
+            desCartes(4, 5, 6),
+            desCartes(7, 8, 9)
+        ),
+        columns(
+            desCartes(1, 4, 7),
+            desCartes(2, 5, 8),
+            desCartes(3, 6, 9)
+        )
+    );
+    EXPECT_EQ(
+        lines(
+            desCartes(1, 2, 3),
+            desCartes(4, 5, 6)
+        ),
+        columns(
+            desCartes(1, 4),
+            desCartes(2, 5),
+            desCartes(3, 6)
+        )
+    );
+}
+TEST(Matrix, elements)
+{
+    const auto M=lines(
+	desCartes(1,2,3,4),
+	desCartes(5,6,7,8),
+	desCartes(9,0,1,2)
+    );
+    const auto&e11=M.element<1,1>();
+    const auto&e12=M.element<1,2>();
+    const auto&e13=M.element<1,3>();
+    const auto&e14=M.element<1,4>();
+    const auto&e21=M.element<2,1>();
+    const auto&e22=M.element<2,2>();
+    const auto&e23=M.element<2,3>();
+    const auto&e24=M.element<2,4>();
+    const auto&e31=M.element<3,1>();
+    const auto&e32=M.element<3,2>();
+    const auto&e33=M.element<3,3>();
+    const auto&e34=M.element<3,4>();
+    EXPECT_EQ(e11,1);
+    EXPECT_EQ(e12,2);
+    EXPECT_EQ(e13,3);
+    EXPECT_EQ(e14,4);
+    EXPECT_EQ(e21,5);
+    EXPECT_EQ(e22,6);
+    EXPECT_EQ(e23,7);
+    EXPECT_EQ(e24,8);
+    EXPECT_EQ(e31,9);
+    EXPECT_EQ(e32,0);
+    EXPECT_EQ(e33,1);
+    EXPECT_EQ(e34,2);
+}
+TEST(Matrix, mul1)
+{
+    RANDOM RG;
+    RandomUniform<> M(0.0, 10.0);
+    for (size_t i = 0; i < 50; i++) {
+        const auto v = randomIsotropic<1>(RG) * M(RG);
+        EXPECT_TRUE(desCartes(0.).CloseTo(ZERO<1>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<1>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<1>() * (ONE<1>()*v), epsilon));
+        const auto R1 = randomIsotropic<1>(RG).Rotations();
+        const auto R2 = randomIsotropic<1>(RG).Rotations();
+        EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
-    {
-        MatrixData<double>A({
-            {2, 5, 7},
-            {6, 3, 4},
-            {5, -2, -3}
-        });
-        EXPECT_EQ(Multiply(A, CalcInverseMatrix(A)), Unitary<double>(A.height()));
-        EXPECT_EQ(Multiply(CalcInverseMatrix(A), A), Unitary<double>(A.height()));
+}
+TEST(Matrix, mul2)
+{
+    RANDOM RG;
+    RandomUniform<> M(0.0, 10.0);
+    for (size_t i = 0; i < 50; i++) {
+        const auto v = randomIsotropic<2>(RG) * M(RG);
+        EXPECT_TRUE(zero().CloseTo(ZERO<2>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<2>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<2>() * (ONE<2>()*v), epsilon));
+        const auto R1 = randomIsotropic<2>(RG).Rotations();
+        const auto R2 = randomIsotropic<2>(RG).Rotations();
+        EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
-TEST(Matrix, Solve)
+TEST(Matrix, mul3)
 {
-    {
-        const MatrixData<double> A({{1, 2, 0}, {3, 4, 4}, {5, 6, 3}}), b({{3}, {7}, {8}}),
-        x = Solve(A, b), b2 = Multiply(A, x);
-        ASSERT_EQ(b.height(), b2.height());
-        for (size_t i = 0; i < b.height(); i++)
-            EXPECT_TRUE(pow(b(i, 0) - b2(i, 0), 2) < 0.0000001);
-    }{
-        const MatrixData<double> A({{2, 0, 2, 0.6}, {3, 3, 4, -2}, {5, 5, 4, 2}, { -1, -2, 3.4, -1}}),
-        b({{1}, {2}, {3}, {1}}), x = Solve(A, b), b2 = Multiply(A, x);
-        ASSERT_EQ(b.height(), b2.height());
-        for (size_t i = 0; i < b.height(); i++)
-            EXPECT_TRUE(pow(b(i, 0) - b2(i, 0), 2) < 0.0000001);
+    RANDOM RG;
+    RandomUniform<> M(0.0, 10.0);
+    for (size_t i = 0; i < 50; i++) {
+        const auto v = randomIsotropic<3>(RG) * M(RG);
+        EXPECT_TRUE(Zero().CloseTo(ZERO<3>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<3>()*v, epsilon));
+        EXPECT_TRUE(v.CloseTo(ONE<3>() * (ONE<3>()*v), epsilon));
+        const auto R1 = randomIsotropic<3>(RG).Rotations();
+        const auto R2 = randomIsotropic<3>(RG).Rotations();
+        EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
