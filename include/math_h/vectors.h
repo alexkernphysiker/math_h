@@ -183,6 +183,22 @@ public:
     inline Vector(const Vector<Dimensions, numt2> &source): m_other(source.___recursive()), m_x(source.___last_component()) {}
     template<class... Args>
     inline Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
+protected:
+#ifdef ____optimized_version_of_vectors_h_____
+    template<size_t index>
+    inline VectorN remove_component()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=Dimensions,"dimension index is out of range");
+        if constexpr(index == Dimensions)return m_other;
+        else if constexpr(Dimensions ==2)return VectorN(m_x);
+	else {
+	    const auto other=m_other.template remove_component<index>();
+	    return VectorN(other,m_x);
+	}
+    }
+#endif
+public:
     inline static Vector zero()
     {
         return Vector(VectorN::zero(), numt(0));
@@ -347,5 +363,4 @@ inline Vector<i, numt> operator-(const Vector<i, numt> &V)
     return V * numt(-1);
 }
 };
-#undef ____optimized_version_of_vectors_h_____
 #endif

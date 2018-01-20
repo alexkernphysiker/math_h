@@ -182,3 +182,27 @@ TEST(Matrix, mul3)
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
+#ifdef ____optimized_version_of_matrices_h_____
+TEST(Matrix, det1)
+{
+    const auto M=line(3.0);
+    EXPECT_EQ(3,M.Determinant());
+}
+TEST(Matrix, det2)
+{
+    const auto M=lines(
+	desCartes(1.0,2.0),
+	desCartes(3.0,4.0)
+    );
+    EXPECT_EQ(-2,M.Determinant());
+}
+TEST(Matrix, det3)
+{
+    const auto M=lines(
+	desCartes(1.0,2.0,3.0),
+	desCartes(3.0,4.0,5.0),
+	desCartes(4.0,5.0,6.0)
+    );
+    EXPECT_EQ(0,M.Determinant());
+}
+#endif

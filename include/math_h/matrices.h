@@ -12,7 +12,7 @@
 #if __cplusplus>201700L
 #define ____optimized_version_of_matrices_h_____
 #else
-#warning compiler does not support "if constexpr(...)". c++>=17 is needed. classes from vectors.h will work slower
+#warning compiler does not support "if constexpr(...)". c++>=17 is needed. Some features of matrices.h will be absent
 #endif
 namespace MathTemplates
 {
@@ -23,32 +23,41 @@ class Matrix<1, linetype>
     template<size_t sizef, class n>friend class Direction;
     template<size_t sizef, class n>friend class Matrix;
 public:
-    enum {DimensionsFinal = 1};
-    enum {DimensionsInitial = linetype::Dimensions};
+    enum {RowsCount = 1};
+    enum {ColumnsCount = linetype::Dimensions};
     typedef typename linetype::NumberType NumberType;
-    typedef linetype VIType;
-    typedef Vector<1, NumberType> VFType;
-    typedef Vector < DimensionsInitial + 1, NumberType > VIWType;
-    typedef Matrix<DimensionsFinal, VIWType> PlusOneColumn;
-    typedef Vector < DimensionsInitial - 1, NumberType > VINType;
-    typedef Matrix<DimensionsFinal, VINType> MinusOneColumn;
+    typedef linetype LineType;
+    typedef Vector<1, NumberType> ColumnType;
+    typedef Vector < ColumnsCount + 1, NumberType > LongerLine;
+    typedef Matrix<RowsCount, LongerLine> PlusOneColumn;
+    typedef Vector < ColumnsCount - 1, NumberType > ShorterLine;
+    typedef Matrix<RowsCount, ShorterLine> MinusOneColumn;
 private:
-    VIType m_line;
+    LineType m_line;
 protected:
-    inline Matrix(const VIType &line): m_line(line) {}
+    inline Matrix(const LineType &line): m_line(line) {}
+#ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index>
+    inline MinusOneColumn ___removecolumn()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=ColumnsCount,"dimension index is out of range");
+	return MinusOneColumn(m_line.template remove_component<index>());
+    }
+#endif
     inline MinusOneColumn ___minus_one_column()const
     {
         return MinusOneColumn(m_line.___recursive());
     }
-    inline VFType ___last_column()const
+    inline ColumnType ___last_column()const
     {
         return desCartes(m_line.___last_component());
     }
-    inline PlusOneColumn ___add_column(const VFType &col)const
+    inline PlusOneColumn ___add_column(const ColumnType &col)const
     {
-        return VIWType(m_line, col.___last_component());
+        return LongerLine(m_line, col.___last_component());
     }
-    inline const VIType &___last_line()const
+    inline const LineType &___last_line()const
     {
         return m_line;
     }
@@ -65,6 +74,11 @@ public:
 	static_assert(index ==1 ,"dimension index is out of range");
         return m_line.template component<jindex>();
     }
+    inline NumberType Determinant()const
+    {
+	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
+	return m_line.x();
+    }
 #else
     template<size_t index, size_t jindex>
     const NumberType&element()const
@@ -74,26 +88,26 @@ public:
 	return m_line.template component<jindex>();
     }
 #endif
-    VFType operator*(const VIType &v)const
+    ColumnType operator*(const LineType &v)const
     {
-        return desCartes(m_line * v);
+        return m_line * v;
     }
-    Matrix<DimensionsFinal, Vector<1, NumberType>>
-            operator*(const Matrix<DimensionsInitial, Vector<1, NumberType>> &B)const
+    Matrix<RowsCount, Vector<1, NumberType>>
+            operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
         return desCartes(m_line * B.___last_column());
     }
     template<size_t third_size>
-    Matrix<DimensionsFinal, Vector<third_size, NumberType>>
-            operator*(const Matrix<DimensionsInitial, Vector<third_size, NumberType>> &B)const
+    Matrix<RowsCount, Vector<third_size, NumberType>>
+            operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
     {
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
     template<class otherlinetype>
-    inline Matrix(const Matrix<DimensionsFinal, otherlinetype> &source): m_line(source.___last_line()) {}
+    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_line(source.___last_line()) {}
     template<class... Args>
-    inline Matrix(const std::tuple<Args...> &v): m_line(std::get < DimensionsFinal - 1 > (v)) {}
-    inline Matrix(const VFType &A, const VIType &B): m_line(B *A.___last_component()) {}
+    inline Matrix(const std::tuple<Args...> &v): m_line(std::get < RowsCount - 1 > (v)) {}
+    inline Matrix(const ColumnType &A, const LineType &B): m_line(B *A.___last_component()) {}
     bool operator==(const Matrix &B)const
     {
         return m_line == B.m_line;
@@ -116,23 +130,23 @@ public:
     }
     static inline Matrix zero()
     {
-        return Matrix(VIType::zero());
+        return Matrix(LineType::zero());
     }
     static inline Matrix one()
     {
-        return Matrix(VIType::template basis_vector<DimensionsFinal>());
+        return Matrix(LineType::template basis_vector<RowsCount>());
     }
     template<size_t x, size_t y>
     static inline Matrix RotationInPlane(const NumberType &angle)
     {
         return Matrix(
-                   (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
-                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
-                   VIType::template basis_vector<DimensionsFinal>()
+                   (x == RowsCount) ? ((LineType::template basis_vector<x>() * cos(angle)) - (LineType::template basis_vector<y>() * sin(angle))) :
+                   (y == RowsCount) ? ((LineType::template basis_vector<y>() * cos(angle)) + (LineType::template basis_vector<x>() * sin(angle))) :
+                   LineType::template basis_vector<RowsCount>()
                                                 );
     }
     template<class... Args>
-    inline Matrix < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    inline Matrix < RowsCount, Vector < ColumnsCount + 1 + sizeof...(Args), NumberType >> AddColumns(const ColumnType &col, Args...args)const
     {
         return ___add_column(col).AddColumns(args...);
     }
@@ -144,44 +158,65 @@ class Matrix
     template<size_t sizeff, class n>friend class Direction;
     template<size_t sizeff, class n>friend class Matrix;
 public:
-    enum {DimensionsFinal = sizef};
-    enum {DimensionsInitial = linetype::Dimensions};
+    enum {RowsCount = sizef};
+    enum {ColumnsCount = linetype::Dimensions};
     typedef typename linetype::NumberType NumberType;
-    typedef linetype VIType;
-    typedef Vector<sizef, NumberType> VFType;
-    typedef Matrix < sizef - 1, linetype > MinorTransformation;
-    typedef Vector < DimensionsInitial + 1, NumberType > VIWType;
-    typedef Matrix<DimensionsFinal, VIWType> PlusOneColumn;
-    typedef Vector < DimensionsInitial - 1, NumberType > VINType;
-    typedef Matrix<DimensionsFinal, VINType> MinusOneColumn;
+    typedef linetype LineType;
+    typedef Vector<sizef, NumberType> ColumnType;
+    typedef Matrix < sizef - 1, linetype > MinusOneRow;
+    typedef Vector < ColumnsCount + 1, NumberType > LongerLine;
+    typedef Matrix<RowsCount, LongerLine> PlusOneColumn;
+    typedef Vector < ColumnsCount - 1, NumberType > ShorterLine;
+    typedef Matrix<RowsCount, ShorterLine> MinusOneColumn;
+    typedef typename MinusOneRow::MinusOneColumn Minor;
 private:
-    MinorTransformation m_minor;
-    VIType m_line;
+    MinusOneRow m_other_lines;
+    LineType m_line;
 protected:
-    inline Matrix(const MinorTransformation &minor, const VIType &line): m_minor(minor), m_line(line) {}
+    inline Matrix(const MinusOneRow &minor, const LineType &line): m_other_lines(minor), m_line(line) {}
+#ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index>
+    inline MinusOneColumn ___removecolumn()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=ColumnsCount,"dimension index is out of range");
+        const auto new_minor = m_other_lines.template ___removecolumn<index>();
+        const auto new_line = m_line.template remove_component<index>();
+        return MinusOneColumn(new_minor, new_line);
+    }
+    template<size_t index>
+    inline MinusOneRow ___removerow()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=RowsCount,"dimension index is out of range");
+        if constexpr(index == RowsCount)return m_other_lines;
+	else if constexpr(index > 1) return MinusOneRow(m_line,m_other_lines.template ___removerow<index>());
+	else if constexpr(RowsCount==2) return MinusOneRow(m_line);
+    }
+#endif
     inline MinusOneColumn ___minus_one_column()const
     {
-        const auto new_minor = m_minor.___minus_one_column();
+        const auto new_minor = m_other_lines.___minus_one_column();
         const auto new_line = m_line.___recursive();
         return MinusOneColumn(new_minor, new_line);
     }
-    inline VFType ___last_column()const
+    inline ColumnType ___last_column()const
     {
-        return VFType(m_minor.___last_column(), m_line.___last_component());
+        return ColumnType(m_other_lines.___last_column(), m_line.___last_component());
     }
-    inline PlusOneColumn ___add_column(const VFType &col)const
+    inline PlusOneColumn ___add_column(const ColumnType &col)const
     {
-        const auto new_minor = m_minor.___add_column(col.___recursive());
-        const auto new_line = VIWType(m_line, col.___last_component());
+        const auto new_minor = m_other_lines.___add_column(col.___recursive());
+        const auto new_line = LongerLine(m_line, col.___last_component());
         return PlusOneColumn(new_minor, new_line);
     }
-    inline const VIType &___last_line()const
+    inline const LineType &___last_line()const
     {
         return m_line;
     }
-    inline const MinorTransformation &___recursive()const
+    inline const MinusOneRow &___recursive()const
     {
-        return m_minor;
+        return m_other_lines;
     }
     inline const Matrix &AddColumns()const
     {
@@ -194,84 +229,105 @@ public:
     inline const NumberType &element()const
     {
 	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=DimensionsFinal,"dimension index is out of range");
-	if constexpr(index==DimensionsFinal) return m_line.template component<jindex>();
-	else return m_minor.template element<index, jindex>();
+	static_assert(index<=RowsCount,"dimension index is out of range");
+	if constexpr(index==RowsCount) return m_line.template component<jindex>();
+	else return m_other_lines.template element<index, jindex>();
     }
 #else
     template<size_t index, size_t jindex>
     const NumberType &element()const
     {
 	static_assert(index > 0,"dimension index is out of range");
-	if(index>DimensionsFinal)throw Exception<Matrix>("dimension index is out of range");
-	if(index==DimensionsFinal) return m_line.template component<jindex>();
-	else return m_minor.template element<index, jindex>();
+	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
+	if(index==RowsCount) return m_line.template component<jindex>();
+	else return m_other_lines.template element<index, jindex>();
     }
 #endif
-    VFType operator*(const VIType &v)const
+#ifdef ____optimized_version_of_matrices_h_____
+private:
+    template<size_t row,size_t col>
+    inline Minor ___minor()const{return ___removerow<row>().template ___removecolumn<col>();}
+    template<size_t index>
+    NumberType __det_until()const
     {
-        return VFType(m_minor * v, m_line * v);
+	static_assert(index <= RowsCount,"dimension index is out of range");
+	static_assert(index > 0,"dimension index is out of range");
+	const NumberType res=element<1,index>()*___minor<1,index>().Determinant();
+	if constexpr(index==RowsCount) return res;
+	else return res-__det_until<index+1>();
     }
-    Matrix<DimensionsFinal, Vector<1, NumberType>>
-            operator*(const Matrix<DimensionsInitial, Vector<1, NumberType>> &B)const
+public:
+    inline NumberType Determinant()const
     {
-        const auto P = m_minor * B;
+	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
+	return __det_until<1>();
+    }
+#endif
+
+    ColumnType operator*(const LineType &v)const
+    {
+        return ColumnType(m_other_lines * v, m_line * v);
+    }
+    Matrix<RowsCount, Vector<1, NumberType>>
+            operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
+    {
+        const auto P = m_other_lines * B;
         const auto C = desCartes(m_line * B.___last_column());
-        return Matrix<DimensionsFinal, Vector<1, NumberType>>(P, C);
+        return Matrix<RowsCount, Vector<1, NumberType>>(P, C);
     }
     template<size_t third_size>
-    Matrix<DimensionsFinal, Vector<third_size, NumberType>>
-            operator*(const Matrix<DimensionsInitial, Vector<third_size, NumberType>> &B)const
+    Matrix<RowsCount, Vector<third_size, NumberType>>
+            operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
     {
         const auto P = operator*(B.___minus_one_column());
-        const VFType C = operator*(B.___last_column());
+        const ColumnType C = operator*(B.___last_column());
         return P.___add_column(C);
     }
     template<class otherlinetype>
-    inline Matrix(const Matrix<DimensionsFinal, otherlinetype> &source): m_minor(source.___recursive()), m_line(source.___last_line()) {}
+    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_other_lines(source.___recursive()), m_line(source.___last_line()) {}
     template<class... Args>
-    inline Matrix(const std::tuple<Args...> &v): m_minor(v), m_line(std::get < DimensionsFinal - 1 > (v)) {}
-    inline Matrix(const VFType &A, const VIType &B): m_minor(A.___recursive(), B), m_line(B *A.___last_component()) {}
+    inline Matrix(const std::tuple<Args...> &v): m_other_lines(v), m_line(std::get < RowsCount - 1 > (v)) {}
+    inline Matrix(const ColumnType &A, const LineType &B): m_other_lines(A.___recursive(), B), m_line(B *A.___last_component()) {}
     bool operator==(const Matrix &B)const
     {
-        return (m_line == B.m_line) && (m_minor == B.m_minor);
+        return (m_line == B.m_line) && (m_other_lines == B.m_other_lines);
     }
     Matrix operator*(const NumberType &v)const
     {
-        return Matrix(m_minor * v, m_line * v);
+        return Matrix(m_other_lines * v, m_line * v);
     }
     Matrix operator/(const NumberType &v)const
     {
-        return Matrix(m_minor / v, m_line / v);
+        return Matrix(m_other_lines / v, m_line / v);
     }
     Matrix operator+(const Matrix &B)const
     {
-        return Matrix(m_minor + B.m_minor, m_line + B.m_line);
+        return Matrix(m_other_lines + B.m_other_lines, m_line + B.m_line);
     }
     Matrix operator-(const Matrix &B)const
     {
-        return Matrix(m_minor - B.m_minor, m_line - B.m_line);
+        return Matrix(m_other_lines - B.m_other_lines, m_line - B.m_line);
     }
     static inline Matrix zero()
     {
-        return Matrix(MinorTransformation::zero(), VIType::zero());
+        return Matrix(MinusOneRow::zero(), LineType::zero());
     }
     static inline Matrix one()
     {
-        return Matrix(MinorTransformation::one(), VIType::template basis_vector<DimensionsFinal>());
+        return Matrix(MinusOneRow::one(), LineType::template basis_vector<RowsCount>());
     }
     template<size_t x, size_t y>
     static inline Matrix RotationInPlane(const NumberType &angle)
     {
         return Matrix(
-                   MinorTransformation::template RotationInPlane<x, y>(angle),
-                   (x == DimensionsFinal) ? ((VIType::template basis_vector<x>() * cos(angle)) - (VIType::template basis_vector<y>() * sin(angle))) :
-                   (y == DimensionsFinal) ? ((VIType::template basis_vector<y>() * cos(angle)) + (VIType::template basis_vector<x>() * sin(angle))) :
-                   VIType::template basis_vector<DimensionsFinal>()
+                   MinusOneRow::template RotationInPlane<x, y>(angle),
+                   (x == RowsCount) ? ((LineType::template basis_vector<x>() * cos(angle)) - (LineType::template basis_vector<y>() * sin(angle))) :
+                   (y == RowsCount) ? ((LineType::template basis_vector<y>() * cos(angle)) + (LineType::template basis_vector<x>() * sin(angle))) :
+                   LineType::template basis_vector<RowsCount>()
                                                 );
     }
     template<class... Args>
-    inline Matrix < DimensionsFinal, Vector < DimensionsInitial + 1 + sizeof...(Args), NumberType >> AddColumns(const VFType &col, Args...args)const
+    inline Matrix < RowsCount, Vector < ColumnsCount + 1 + sizeof...(Args), NumberType >> AddColumns(const ColumnType &col, Args...args)const
     {
         return ___add_column(col).AddColumns(args...);
     }
@@ -306,10 +362,10 @@ inline Matrix<s, Vector<s, numt>> ONE()
 {
     return Matrix<s, Vector<s, numt>>::one();
 }
-template<size_t size, class VIType>
-inline Matrix<size, VIType> TensorProduct(const Vector<size, typename VIType::NumberType> &A, const VIType &B)
+template<size_t size, class LineType>
+inline Matrix<size, LineType> TensorProduct(const Vector<size, typename LineType::NumberType> &A, const LineType &B)
 {
-    return Matrix<size, VIType>(A, B);
+    return Matrix<size, LineType>(A, B);
 }
 
 };
