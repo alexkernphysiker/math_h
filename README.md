@@ -20,6 +20,8 @@ What features does this library provide
 
 - Vectors and matrices with arbitrary dimmensions count. Vectors transformations are represented as matrices
 
+- Determinant calculation and solving systems of linear equations using Cramer's method
+
 - Defining angles of vector's direction. Rotating vectors.
 
 - Lorentz vectors and relativistic kinematics facilities.
