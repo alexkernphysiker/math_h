@@ -43,7 +43,7 @@ TEST(Vector, base1d)
 {
     RANDOM RG;
     RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 50; i++) {
+    for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG);
         const auto V = desCartes(x);
         EXPECT_EQ(x, V.x());
@@ -54,7 +54,7 @@ TEST(Vector, base2d)
 {
     RANDOM RG;
     RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 50; i++) {
+    for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG);
         const auto V = desCartes(x, y);
         EXPECT_EQ(x, V.x());
@@ -67,7 +67,7 @@ TEST(Vector, base3d)
 {
     RANDOM RG;
     RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 50; i++) {
+    for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG), z = X(RG);
         const auto V = desCartes(x, y, z);
         EXPECT_EQ(x, V.x());
@@ -82,7 +82,7 @@ TEST(Vector, base4d)
 {
     RANDOM RG;
     RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 50; i++) {
+    for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG), z = X(RG), zz = X(RG);
         const auto V = desCartes(x, y, z, zz);
         EXPECT_EQ(x, V.x());

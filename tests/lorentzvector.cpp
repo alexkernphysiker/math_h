@@ -3,8 +3,6 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/lorentzvector.h>
-#include <math_h/hists.h>
-#include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
 const double epsilon = 0.0000000001;
@@ -23,9 +21,10 @@ TEST(LorentzVector, LorentzTransform1d)
         const auto V2 = V0.Transform(beta).Transform(-beta);
         EXPECT_TRUE(abs(V2.E() - V0.E()) < epsilon);
         EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
+	//above speed of light
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<1>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(randomIsotropic<1>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<1>(RG) * mr(RG)).M();
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
@@ -50,7 +49,7 @@ TEST(LorentzVector, LorentzTransform2d)
         EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<2>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<2>(RG) *  mr(RG)).M();
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
@@ -75,7 +74,7 @@ TEST(LorentzVector, LorentzTransform3d)
         EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_THROW(V0.Transform(randomIsotropic<3>(RG) * (1.0 + mr(RG))), Exception<LorentzVector<>>);
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(randomIsotropic<3>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<3>(RG) *  mr(RG)).M();
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
@@ -100,7 +99,7 @@ TEST(LorentzVector, LorentzTransform4d)
         EXPECT_TRUE(V2.P().CloseTo(V0.P(), epsilon));
         EXPECT_ANY_THROW(V0.Transform(randomIsotropic<4>(RG) * (1.0 + mr(RG))));
         const auto L0 = V0.M(), L1 = V0.Transform(beta).M(),
-                   L2 = V0.Transform(beta).Transform(randomIsotropic<4>(RG) * 0.2).M();
+                   L2 = V0.Transform(beta).Transform(randomIsotropic<4>(RG) *  mr(RG)).M();
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);

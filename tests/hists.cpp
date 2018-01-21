@@ -20,17 +20,17 @@ TEST(hist, scale_norm)
 }
 TEST(hist2d, scale_norm)
 {
-    hist2d<double> H(BinsByCount(10, 0.0, 1.0), BinsByCount(10, 0.0, 1.0));
-    H.FullCycleVar([](const value<double> &x, const value<double> &y, value<double> &z) {
-        z = value<double>(10.0 + 4.0 * sin(x.val() + y.val()));
+    hist2d<> H(BinsByCount(10, 0.0, 1.0), BinsByCount(10, 0.0, 1.0));
+    H.FullCycleVar([](const value<> &x, const value<> &y, value<> &z) {
+        z = value<>(10.0 + 4.0 * sin(x.val() + y.val()));
     });
     double s1 = 0;
-    H.FullCycle([&s1](const value<double> &, const value<double> &, const value<double> &z) {
+    H.FullCycle([&s1](const value<> &, const value<> &, const value<> &z) {
         s1 += z.val();
     });
     double s2 = 0;
     auto H2 = H.Scale(2, 2);
-    H2.FullCycle([&s2](const value<double> &, const value<double> &, const value<double> &z) {
+    H2.FullCycle([&s2](const value<> &, const value<> &, const value<> &z) {
         s2 += z.val();
     });
     EXPECT_TRUE(pow(s1 - s2, 2) < 0.000001);
@@ -42,9 +42,9 @@ TEST(hist2d, scale_norm)
 }
 TEST(hist2d, cut)
 {
-    hist2d<double> H(BinsByCount(10, 0.0, 1.0), BinsByCount(20, 0.0, 1.0));
-    H.FullCycleVar([](const value<double> &x, const value<double> &y, value<double> &z) {
-        z = value<double>(10.0 + 4.0 * sin(x.val() + y.val()));
+    hist2d<> H(BinsByCount(10, 0.0, 1.0), BinsByCount(20, 0.0, 1.0));
+    H.FullCycleVar([](const value<> &x, const value<> &y, value<> &z) {
+        z = value<>(10.0 + 4.0 * sin(x.val() + y.val()));
     });
     for (size_t x = 0; x < H.X().size(); x++) {
         const auto Y = H.CutY(x);
@@ -107,8 +107,8 @@ TEST(Distribution1D, basetest)
 TEST(Distribution2D, BaseTest)
 {
     Distribution2D<> D(
-    {value<double>(-1.0, 0.5), value<double>(-0.0, 0.5), value<double>(1.0, 0.5)},
-    {value<double>(-0.0, 0.5), value<double>(1.0, 0.5)}
+    {value<>(-1.0, 0.5), value<>(-0.0, 0.5), value<>(1.0, 0.5)},
+    {value<>(-0.0, 0.5), value<>(1.0, 0.5)}
     );
     ASSERT_EQ(3, D.X().size());
     ASSERT_EQ(2, D.Y().size());
@@ -129,8 +129,8 @@ TEST(Distribution2D, BaseTest)
     EXPECT_EQ(0, D[1][1].val());
     EXPECT_EQ(1, D[2][0].val());
     EXPECT_EQ(2, D[2][1].val());
-    Chain<point3d<value<double>>> dbg;
-    D.FullCycle([&dbg](const point3d<value<double>> &p) {
+    Chain<point3d<value<>>> dbg;
+    D.FullCycle([&dbg](const point3d<value<>> &p) {
         dbg.push_back(p);
     });
     ASSERT_EQ(6, dbg.size());

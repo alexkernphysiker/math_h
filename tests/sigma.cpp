@@ -40,8 +40,8 @@ TEST(value, fromlist)
 }
 TEST(value, base)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,6);
     for (size_t i = 0; i < 10; i++) {
         double x = G(gen);
         value<> V(x, 0.1);
@@ -87,11 +87,11 @@ TEST(value, compare2)
     v = value<> {0, 1} .Below(0.9);
     EXPECT_FALSE(v);
 }
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.005)
+#define _EQ(a,b) EXPECT_TRUE(abs(a-b)<0.001)
 TEST(value, arithmetic_actions1)
 {
-    mt19937 G;
-    uniform_real_distribution<double> val(1, 50), unc(0.1, 10);
+    RANDOM G;
+    RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
         value<> A(val(G), unc(G)), B(val(G), unc(G));
         auto sum = A + B;
@@ -110,8 +110,8 @@ TEST(value, arithmetic_actions1)
 }
 TEST(value, arithmetic_actions2)
 {
-    mt19937 G;
-    uniform_real_distribution<double> val(1, 50), unc(0.1, 10);
+    RANDOM G;
+    RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
         value<> A(val(G), unc(G));
         double B = val(G);
@@ -132,74 +132,74 @@ TEST(value, arithmetic_actions2)
 TEST(value, NumCompare)
 {
     {
-        double v = value<>(0, 1).NumCompare(0);
+        const double v = value<>(0, 1).NumCompare(0);
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<>(0, 1).NumCompare(0.5);
+        const double v = value<>(0, 1).NumCompare(0.5);
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<>(0, 1).NumCompare(1);
+        const double v = value<>(0, 1).NumCompare(1);
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<>(0, 1).NumCompare(2);
+        const double v = value<>(0, 1).NumCompare(2);
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<>(2, 1).NumCompare(2);
+        const double v = value<>(2, 1).NumCompare(2);
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<>(2, 1).NumCompare(1.5);
+        const double v = value<>(2, 1).NumCompare(1.5);
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<>(2, 1).NumCompare(1);
+        const double v = value<>(2, 1).NumCompare(1);
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<>(2, 1).NumCompare(0);
+        const double v = value<>(2, 1).NumCompare(0);
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<>(0, 1).NumCompare({0, 1});
+        const double v = value<>(0, 1).NumCompare({0, 1});
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<>(0, 1).NumCompare({1, 1});
+        const double v = value<>(0, 1).NumCompare({1, 1});
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<>(0, 1).NumCompare({2, 1});
+        const double v = value<>(0, 1).NumCompare({2, 1});
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<>(0, 1).NumCompare({4, 1});
+        const double v = value<>(0, 1).NumCompare({4, 1});
         EXPECT_EQ(v, 4);
     }
     {
-        double v = value<>(2, 1).NumCompare({2, 1});
+        const double v = value<>(2, 1).NumCompare({2, 1});
         EXPECT_EQ(v, 0);
     }
     {
-        double v = value<>(2, 1).NumCompare({1, 1});
+        const double v = value<>(2, 1).NumCompare({1, 1});
         EXPECT_EQ(v, 0.25);
     }
     {
-        double v = value<>(2, 1).NumCompare({0, 1});
+        const double v = value<>(2, 1).NumCompare({0, 1});
         EXPECT_EQ(v, 1);
     }
     {
-        double v = value<>(2, 1).NumCompare({ -2, 1});
+        const double v = value<>(2, 1).NumCompare({ -2, 1});
         EXPECT_EQ(v, 4);
     }
 }
 TEST(value, func_val)
 {
     value<> V(1, 0.1),
-    V2([](double x)->double{return 2.0 * x;},V);
+    V2([](double x){return 2.0 * x;},V);
     EXPECT_EQ(2 * V.val(), V2.val());
     _EQ(2 * V.uncertainty(), V2.uncertainty());
 }
@@ -269,8 +269,8 @@ TEST(StandardDeviation, Base2)
 TEST(StandardDeviation, WithRandomValues)
 {
     StandardDeviation<> S;
-    default_random_engine generator;
-    normal_distribution<double> distribution(1.0, 3.0);
+    RANDOM generator;
+    RandomGauss<> distribution(1.0, 3.0);
     for (int i = 0; i < 200000; i++)
         S << distribution(generator);
     _EQ2(1.0, S().val());
@@ -332,10 +332,10 @@ TEST(WeightedAverage, Zeros_plus_Ones)
 }
 TEST(CorrelationLinear, simple1)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 10000; i++) {
+    for (size_t i = 0; i < 100000; i++) {
         double v1 = G(gen), v2 = G(gen);
         EXPECT_EQ(&A, &(A << make_pair(v1, v1)));
         B << make_pair(v1, -v1);
@@ -347,10 +347,10 @@ TEST(CorrelationLinear, simple1)
 }
 TEST(CorrelationLinear, simple2)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 10000; i++) {
+    for (size_t i = 0; i < 100000; i++) {
         double v1 = G(gen), v2 = G(gen);
         A << make_pair(v1   , v2);
         B << make_pair(v1 * 2., v2);
@@ -362,10 +362,10 @@ TEST(CorrelationLinear, simple2)
 }
 TEST(CorrelationLinear, simple3)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,5);
     CorrelationLinear<> A, B;
-    for (size_t i = 0; i < 10000; i++) {
+    for (size_t i = 0; i < 100000; i++) {
         double v1 = G(gen), v2 = G(gen);
         A << make_pair(v1, v2);
         B << make_pair(v2, v1);
@@ -374,10 +374,10 @@ TEST(CorrelationLinear, simple3)
 }
 TEST(CorrelationLinear, simple4)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 10000; i++) {
+    for (size_t i = 0; i < 100000; i++) {
         double v1 = G(gen);
         A << make_pair(v1, v1);
         B << make_pair(v1 * 2., v1);
@@ -389,8 +389,8 @@ TEST(CorrelationLinear, simple4)
 }
 TEST(CorrelationLinear, simple5)
 {
-    mt19937 gen;
-    normal_distribution<double> G;
+    RANDOM gen;
+    RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
         double v1 = G(gen);

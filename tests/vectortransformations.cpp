@@ -116,6 +116,7 @@ TEST(Direction, base3d)
         const auto D = direction(phi, theta);
         EXPECT_EQ(D.phi(), phi);
         EXPECT_EQ(D.th(), theta);
+        EXPECT_EQ(D.th<1>(), theta);
     }
 }
 TEST(Direction, base4d)

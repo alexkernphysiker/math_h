@@ -31,8 +31,8 @@ What features does this library provide
 - Plotting data with gnuplot
 
 
-How to use it
-=============
+How to compile
+==============
 
 If you have your own git repository with cmake project you can add this repository as a submodule:
 
@@ -53,33 +53,27 @@ This library still can be compiled with c++11 or c++14 compiler but some feature
 CMake Options
 =============
 
-Option that turns on unit tests compilation
+Option that turns on unit tests compilation (requires GoogleTest framework)
 
 	tests
 
-Header files (that are used)
-============================
+Header files
+============
 
 	include/math_h/*.h
 	include/*.h
 
 
-Examples
-========
+How to use
+==========
 
-The examples that show the main facilities of the library and good using patterns are here:
+Typical patterns of using the template classes and functions from this library can be learnt from:
+
+Examples
 
 	Examples/*.cpp
 
-Please look through them before you start using this code
-
-Unit tests (require GoogleTest framework)
-=========================================
-
-The unit tests for this library are here
+Unit tests
 
 	tests/*.cpp
 
-For compilation use "tests" option in cmake project.
-This requires GoogleTest framework installed into your system.
-You can look into these cpp files and use them as documentation for classes declared in the library
