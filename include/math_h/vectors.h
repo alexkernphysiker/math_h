@@ -168,15 +168,15 @@ class Vector
 public:
     enum {Dimensions = size};
     typedef numt NumberType;
-    typedef Vector < size - 1, numt > VectorN;
+    typedef Vector < size - 1, numt > MinusOneComponent;
     typedef Direction<size, numt> DType;
     typedef Vector<size+1,numt> PlusOneComponent;
 private:
-    VectorN m_other;
+    MinusOneComponent m_other;
     numt m_x;
-    inline Vector(const VectorN &other, const numt &x): m_other(other), m_x(x) {}
+    inline Vector(const MinusOneComponent &other, const numt &x): m_other(other), m_x(x) {}
 protected:
-    inline const VectorN &___recursive()const
+    inline const MinusOneComponent &___recursive()const
     {
         return m_other;
     }
@@ -196,7 +196,7 @@ public:
     inline Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
     inline static Vector zero()
     {
-        return Vector(VectorN::zero(), numt(0));
+        return Vector(MinusOneComponent::zero(), numt(0));
     }
 #ifdef ____optimized_version_of_vectors_h_____
     template<size_t index>
@@ -204,8 +204,8 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=Dimensions,"dimension index is out of range");
-        if constexpr(index == Dimensions) return Vector(VectorN::zero(), numt(1));
-	else return Vector(VectorN::template basis_vector<index>(), numt(0));
+        if constexpr(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
+	else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
     }
     template<size_t index>
     inline const numt &component()const
@@ -216,13 +216,13 @@ public:
 	else return m_other.template component<index>();
     }
     template<size_t index>
-    inline VectorN RemoveComponent()const
+    inline MinusOneComponent RemoveComponent()const
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions)return m_other;
-        else if constexpr(Dimensions ==2)return VectorN(m_x);
-	else return VectorN(m_other.template RemoveComponent<index>(),m_x);
+        else if constexpr(Dimensions ==2)return MinusOneComponent(m_x);
+	else return MinusOneComponent(m_other.template RemoveComponent<index>(),m_x);
     }
     template<size_t index>
     inline PlusOneComponent InsertComponent(const NumberType&c)const
@@ -239,8 +239,8 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
-        if(index == Dimensions) return Vector(VectorN::zero(), numt(1));
-	else return Vector(VectorN::template basis_vector<index>(), numt(0));
+        if(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
+	else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
     }
     template<size_t index>
     const numt &component()const

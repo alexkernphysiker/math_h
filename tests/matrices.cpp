@@ -205,20 +205,115 @@ TEST(Matrix, det1)
 }
 TEST(Matrix, det2)
 {
-    const auto M=lines(
+    EXPECT_EQ(lines(
 	desCartes(1.0,2.0),
 	desCartes(3.0,4.0)
-    );
-    EXPECT_EQ(-2,M.Determinant());
+    ).Determinant(),-2);
+    EXPECT_EQ(lines(
+	desCartes(1.0,2.0),
+	desCartes(2.0,4.0)
+    ).Determinant(),0);
+    EXPECT_EQ(lines(
+	desCartes(1.0,0.0),
+	desCartes(0.0,1.0)
+    ).Determinant(),1);
 }
 TEST(Matrix, det3)
 {
-    const auto M=lines(
+    EXPECT_EQ(lines(
 	desCartes(1.,2.,3.),
 	desCartes(3.,4.,5.),
 	desCartes(4.,5.,6.)
+    ).Determinant(),0);
+    EXPECT_EQ(lines(
+	desCartes(1,0,0),
+	desCartes(0,1,0),
+	desCartes(0,0,1)
+    ).Determinant(),1);
+    EXPECT_EQ(lines(
+	desCartes(1.,0.,0.),
+	desCartes(0.,1.,0.),
+	desCartes(0.,0.,1.)
+    ).Determinant(),1);
+}
+TEST(Matrix, minor3)
+{
+    auto M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<1,1>();
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(4.,5.),
+	    desCartes(5.,6.)
+	)
     );
-    EXPECT_EQ(0,M.Determinant());
+        M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<1,2>();
+
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(3.,5.),
+	    desCartes(4.,6.)
+	)
+    );
+        M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<1,3>();
+
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(3.,4.),
+	    desCartes(4.,5.)
+	)
+    );
+        M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<2,1>();
+
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(2.,3.),
+	    desCartes(5.,6.)
+	)
+    );
+        M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<2,2>();
+
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(1.,3.),
+	    desCartes(4.,6.)
+	)
+    );
+        M=lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	).GetMinor<2,3>();
+    EXPECT_EQ(
+	M,
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(4.,5.)
+	)
+    );
 }
 TEST(Matrix, InsertColumn)
 {
@@ -233,6 +328,196 @@ TEST(Matrix, InsertColumn)
 	    desCartes(3.,5.),
 	    desCartes(4.,6.)
 	).InsertColumn<2>(desCartes(2.,4.,5.))
+    );
+}
+TEST(Matrix, InsertRow1)
+{
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.)
+	).InsertRow<1>(desCartes(0.,0.)),
+	lines(
+	    desCartes(0.,0.),
+	    desCartes(1.,2.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.)
+	).InsertRow<2>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(0.,0.)
+	)
+    );
+}
+TEST(Matrix, InsertRow2)
+{
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.)
+	).InsertRow<1>(desCartes(0.,0.)),
+	lines(
+	    desCartes(0.,0.),
+	    desCartes(1.,2.),
+	    desCartes(3.,4.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.)
+	).InsertRow<2>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(0.,0.),
+	    desCartes(3.,4.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.)
+	).InsertRow<3>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(0.,0.)
+	)
+    );
+}
+TEST(Matrix, InsertRow3)
+{
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	).InsertRow<1>(desCartes(0.,0.)),
+	lines(
+	    desCartes(0.,0.),
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	).InsertRow<2>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(0.,0.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	).InsertRow<3>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(0.,0.),
+	    desCartes(5.,6.)
+	)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.)
+	).InsertRow<4>(desCartes(0.,0.)),
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.),
+	    desCartes(5.,6.),
+	    desCartes(0.,0.)
+	)
+    );
+}
+TEST(Matrix,Cramer1)
+{
+    EXPECT_EQ(line(2).Cramer(desCartes(6)),desCartes(3));
+    EXPECT_EQ(line(1).Cramer(desCartes(1)),desCartes(1));
+    EXPECT_EQ(line(1).Cramer(desCartes(0)),desCartes(0));
+    EXPECT_ANY_THROW(line(0).Cramer(desCartes(1)));
+}
+TEST(Matrix,Cramer2)
+{
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.),
+	    desCartes(3.,4.)
+	).Cramer(desCartes(1.,1.)),
+	desCartes(-1.,1.)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,0.),
+	    desCartes(0.,1.)
+	).Cramer(desCartes(1.,1.)),
+	desCartes(1.,1.)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,0.),
+	    desCartes(0.,1.)
+	).Cramer(desCartes(2.,3.)),
+	desCartes(2.,3.)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(0.,1.),
+	    desCartes(1.,0.)
+	).Cramer(desCartes(2.,3.)),
+	desCartes(3.,2.)
+    );
+    EXPECT_ANY_THROW(
+	lines(
+	    desCartes(1.,1.),
+	    desCartes(0.,0.)
+	).Cramer(desCartes(1.,1.))
+    );
+}
+TEST(Matrix,Cramer3)
+{
+    EXPECT_ANY_THROW(
+	lines(
+	    desCartes(1.,0.,1.),
+	    desCartes(0.,1.,0.),
+	    desCartes(0.,0.,0.)
+	).Cramer(desCartes(1.,1.,1.))
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,0.,0.),
+	    desCartes(0.,1.,0.),
+	    desCartes(0.,0.,1.)
+	).Cramer(desCartes(1.,1.,1.)),
+	desCartes(1.,1.,1.)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,0.,0.),
+	    desCartes(0.,1.,0.),
+	    desCartes(0.,0.,1.)
+	).Cramer(desCartes(2.,3.,5.)),
+	desCartes(2.,3.,5.)
+    );
+    EXPECT_EQ(
+	lines(
+	    desCartes(0.,0.,1.),
+	    desCartes(0.,1.,0.),
+	    desCartes(1.,0.,0.)
+	).Cramer(desCartes(2.,3.,5.)),
+	desCartes(5.,3.,2.)
     );
 }
 #endif

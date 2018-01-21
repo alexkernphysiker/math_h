@@ -76,16 +76,31 @@ public:
 	static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
 	return PlusOneColumn(m_line.template InsertComponent<index>(C.x()));
     }
+    template<size_t index>
+    inline PlusOneRow InsertRow(const LineType&L)const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=(RowsCount+1),"dimension index is out of range");
+	if constexpr(index==(RowsCount+1)) return lines(m_line,L);
+	if constexpr(index==RowsCount) return lines(L,m_line);
+    }
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
-	static_assert(index ==1 ,"dimension index is out of range");
+	static_assert(index == 1 ,"dimension index is out of range");
         return m_line.template component<jindex>();
     }
     inline NumberType Determinant()const
     {
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	return m_line.x();
+    }
+    inline LineType Cramer(const LineType&X)const
+    {
+	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
+	const NumberType D=Determinant();
+	if(D==0)throw Exception<Matrix>("System of equations cannot be solved");
+	return desCartes(X.x()/D);
     }
 #else
     template<size_t index, size_t jindex>
@@ -107,7 +122,7 @@ public:
     }
     template<size_t third_size>
     Matrix<RowsCount, Vector<third_size, NumberType>>
-            operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
+	operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
     {
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
@@ -148,10 +163,10 @@ public:
     static inline Matrix RotationInPlane(const NumberType &angle)
     {
         return Matrix(
-                   (x == RowsCount) ? ((LineType::template basis_vector<x>() * cos(angle)) - (LineType::template basis_vector<y>() * sin(angle))) :
-                   (y == RowsCount) ? ((LineType::template basis_vector<y>() * cos(angle)) + (LineType::template basis_vector<x>() * sin(angle))) :
-                   LineType::template basis_vector<RowsCount>()
-                                                );
+	    (x == RowsCount) ? ((LineType::template basis_vector<x>() * cos(angle)) - (LineType::template basis_vector<y>() * sin(angle))) :
+	    (y == RowsCount) ? ((LineType::template basis_vector<y>() * cos(angle)) + (LineType::template basis_vector<x>() * sin(angle))) :
+	    LineType::template basis_vector<RowsCount>()
+	);
     }
     template<class... Args>
     inline Matrix < RowsCount, Vector < ColumnsCount + 1 + sizeof...(Args), NumberType >> AddColumns(const ColumnType &col, Args...args)const
@@ -239,8 +254,17 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=RowsCount,"dimension index is out of range");
         if constexpr(index == RowsCount)return m_other_lines;
-	else if constexpr(index > 1) return MinusOneRow(m_line,m_other_lines.template RemoveRow<index>());
-	else if constexpr(RowsCount==2) return MinusOneRow(m_line);
+	if constexpr(RowsCount==2) return MinusOneRow(m_line);
+	else return MinusOneRow(m_other_lines.template RemoveRow<index>(),m_line);
+    }
+    template<size_t index>
+    inline PlusOneRow InsertRow(const LineType&L)const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=(RowsCount+1),"dimension index is out of range");
+	if constexpr(index==(RowsCount+1)) return PlusOneRow(*this,L);
+	if constexpr(index==RowsCount) return PlusOneRow(Matrix(m_other_lines,L),m_line);
+	if constexpr(index<RowsCount) return PlusOneRow(m_other_lines.template InsertRow<index>(L),m_line);
     }
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
@@ -248,25 +272,43 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=RowsCount,"dimension index is out of range");
 	if constexpr(index==RowsCount) return m_line.template component<jindex>();
-	else return m_other_lines.template element<index, jindex>();
+	if constexpr(index<RowsCount) return m_other_lines.template element<index, jindex>();
     }
-private:
     template<size_t row,size_t col>
-    inline Minor ___minor()const{return RemoveRow<row>().template RemoveColumn<col>();}
+    inline Minor GetMinor()const{return RemoveColumn<col>().template RemoveRow<row>();}
+private:
     template<size_t index>
     inline NumberType __det_until()const
     {
 	static_assert(index <= RowsCount,"dimension index is out of range");
 	static_assert(index > 0,"dimension index is out of range");
-	const NumberType res=element<1,index>()*___minor<1,index>().Determinant();
+	const NumberType res=element<1,index>()*GetMinor<1,index>().Determinant();
 	if constexpr(index==RowsCount) return res;
-	else return res-__det_until<index+1>();
+	if constexpr(index<RowsCount) return res-__det_until<index+1>();
     }
 public:
     inline NumberType Determinant()const
     {
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	return __det_until<1>();
+    }
+private:
+    template<size_t index>
+    inline Vector<index,NumberType> ___cramer(const LineType&X,const NumberType&D)const
+    {
+	static_assert(index <= ColumnsCount,"dimension index is out of range");
+	static_assert(index > 0,"dimension index is out of range");
+	const NumberType d=RemoveColumn<index>().template InsertColumn<index>(X).Determinant();
+	if constexpr(index==1) return desCartes(d/D);
+	if constexpr(index>1) return Vector<index,NumberType>(___cramer<index-1>(X,D),d/D);
+    }
+public:
+    inline LineType Cramer(const LineType&X)const
+    {
+	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
+	const NumberType D=Determinant();
+	if(D==0)throw Exception<Matrix>("System of equations cannot be solved");
+	return ___cramer<ColumnsCount>(X,D);
     }
 #else
     template<size_t index, size_t jindex>
