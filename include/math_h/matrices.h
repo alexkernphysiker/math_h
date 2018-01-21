@@ -16,6 +16,8 @@
 #endif
 namespace MathTemplates
 {
+template<class linetype, class... Args>
+inline Matrix < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args... args);
 template<class linetype>
 class Matrix<1, linetype>
 {
@@ -32,6 +34,7 @@ public:
     typedef Matrix<RowsCount, LongerLine> PlusOneColumn;
     typedef Vector < ColumnsCount - 1, NumberType > ShorterLine;
     typedef Matrix<RowsCount, ShorterLine> MinusOneColumn;
+    typedef Matrix<RowsCount+1, LineType> PlusOneRow;
 private:
     LineType m_line;
 protected:
@@ -65,6 +68,13 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=ColumnsCount,"dimension index is out of range");
 	return MinusOneColumn(m_line.template RemoveComponent<index>());
+    }
+    template<size_t index>
+    inline PlusOneColumn InsertColumn(const ColumnType&C)const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
+	return PlusOneColumn(m_line.template InsertComponent<index>(C.x()));
     }
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
@@ -162,6 +172,7 @@ public:
     typedef linetype LineType;
     typedef Vector<sizef, NumberType> ColumnType;
     typedef Matrix < sizef - 1, linetype > MinusOneRow;
+    typedef Matrix<RowsCount+1, LineType> PlusOneRow;
     typedef Vector < ColumnsCount + 1, NumberType > LongerLine;
     typedef Matrix<RowsCount, LongerLine> PlusOneColumn;
     typedef Vector < ColumnsCount - 1, NumberType > ShorterLine;
@@ -211,6 +222,16 @@ public:
         const auto new_minor = m_other_lines.template RemoveColumn<index>();
         const auto new_line = m_line.template RemoveComponent<index>();
         return MinusOneColumn(new_minor, new_line);
+    }
+    template<size_t index>
+    inline PlusOneColumn InsertColumn(const ColumnType&C)const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
+	return PlusOneColumn(
+		m_other_lines.template InsertColumn<index>(C.___recursive()),
+		m_line.template InsertComponent<index>(C.___last_component())
+	);
     }
     template<size_t index>
     inline MinusOneRow RemoveRow()const

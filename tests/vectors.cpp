@@ -99,9 +99,16 @@ TEST(Vector, remove_component)
 {
     EXPECT_EQ(desCartes(1,2).RemoveComponent<1>(),desCartes(2));
     EXPECT_EQ(desCartes(1,2).RemoveComponent<2>(),desCartes(1));
+
     EXPECT_EQ(desCartes(1,2,3).RemoveComponent<1>(),desCartes(2,3));
     EXPECT_EQ(desCartes(1,2,3).RemoveComponent<2>(),desCartes(1,3));
     EXPECT_EQ(desCartes(1,2,3).RemoveComponent<3>(),desCartes(1,2));
+
+    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<1>(),desCartes(2,3,4));
+    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<2>(),desCartes(1,3,4));
+    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<3>(),desCartes(1,2,4));
+    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<4>(),desCartes(1,2,3));
+
 }
 TEST(Vector, insert_component)
 {

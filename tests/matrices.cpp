@@ -205,4 +205,19 @@ TEST(Matrix, det3)
     );
     EXPECT_EQ(0,M.Determinant());
 }
+TEST(Matrix, InsertColumn)
+{
+    EXPECT_EQ(
+	lines(
+	    desCartes(1.,2.,3.),
+	    desCartes(3.,4.,5.),
+	    desCartes(4.,5.,6.)
+	),
+	lines(
+	    desCartes(1.,3.),
+	    desCartes(3.,5.),
+	    desCartes(4.,6.)
+	).InsertColumn<2>(desCartes(2.,4.,5.))
+    );
+}
 #endif
