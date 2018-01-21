@@ -94,4 +94,27 @@ TEST(Vector, base4d)
         EXPECT_EQ(zz, V.component<4>());
     }
 }
+#ifdef ____optimized_version_of_vectors_h_____
+TEST(Vector, remove_component)
+{
+    EXPECT_EQ(desCartes(1,2).RemoveComponent<1>(),desCartes(2));
+    EXPECT_EQ(desCartes(1,2).RemoveComponent<2>(),desCartes(1));
+    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<1>(),desCartes(2,3));
+    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<2>(),desCartes(1,3));
+    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<3>(),desCartes(1,2));
+}
+TEST(Vector, insert_component)
+{
+    EXPECT_EQ(desCartes(1).InsertComponent<1>(0),desCartes(0,1));
+    EXPECT_EQ(desCartes(1).InsertComponent<2>(0),desCartes(1,0));
 
+    EXPECT_EQ(desCartes(1,2).InsertComponent<1>(0),desCartes(0,1,2));
+    EXPECT_EQ(desCartes(1,2).InsertComponent<2>(0),desCartes(1,0,2));
+    EXPECT_EQ(desCartes(1,2).InsertComponent<3>(0),desCartes(1,2,0));
+
+    EXPECT_EQ(desCartes(1,2,3).InsertComponent<1>(0),desCartes(0,1,2,3));
+    EXPECT_EQ(desCartes(1,2,3).InsertComponent<2>(0),desCartes(1,0,2,3));
+    EXPECT_EQ(desCartes(1,2,3).InsertComponent<3>(0),desCartes(1,2,0,3));
+    EXPECT_EQ(desCartes(1,2,3).InsertComponent<4>(0),desCartes(1,2,3,0));
+}
+#endif

@@ -199,9 +199,9 @@ TEST(Matrix, det2)
 TEST(Matrix, det3)
 {
     const auto M=lines(
-	desCartes(1.0,2.0,3.0),
-	desCartes(3.0,4.0,5.0),
-	desCartes(4.0,5.0,6.0)
+	desCartes(1.,2.,3.),
+	desCartes(3.,4.,5.),
+	desCartes(4.,5.,6.)
     );
     EXPECT_EQ(0,M.Determinant());
 }

@@ -36,15 +36,6 @@ private:
     LineType m_line;
 protected:
     inline Matrix(const LineType &line): m_line(line) {}
-#ifdef ____optimized_version_of_matrices_h_____
-    template<size_t index>
-    inline MinusOneColumn ___removecolumn()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=ColumnsCount,"dimension index is out of range");
-	return MinusOneColumn(m_line.template remove_component<index>());
-    }
-#endif
     inline MinusOneColumn ___minus_one_column()const
     {
         return MinusOneColumn(m_line.___recursive());
@@ -68,6 +59,13 @@ protected:
 public:
     virtual ~Matrix() {}
 #ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index>
+    inline MinusOneColumn RemoveColumn()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=ColumnsCount,"dimension index is out of range");
+	return MinusOneColumn(m_line.template RemoveComponent<index>());
+    }
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
@@ -174,26 +172,6 @@ private:
     LineType m_line;
 protected:
     inline Matrix(const MinusOneRow &minor, const LineType &line): m_other_lines(minor), m_line(line) {}
-#ifdef ____optimized_version_of_matrices_h_____
-    template<size_t index>
-    inline MinusOneColumn ___removecolumn()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=ColumnsCount,"dimension index is out of range");
-        const auto new_minor = m_other_lines.template ___removecolumn<index>();
-        const auto new_line = m_line.template remove_component<index>();
-        return MinusOneColumn(new_minor, new_line);
-    }
-    template<size_t index>
-    inline MinusOneRow ___removerow()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=RowsCount,"dimension index is out of range");
-        if constexpr(index == RowsCount)return m_other_lines;
-	else if constexpr(index > 1) return MinusOneRow(m_line,m_other_lines.template ___removerow<index>());
-	else if constexpr(RowsCount==2) return MinusOneRow(m_line);
-    }
-#endif
     inline MinusOneColumn ___minus_one_column()const
     {
         const auto new_minor = m_other_lines.___minus_one_column();
@@ -225,6 +203,24 @@ protected:
 public:
     virtual ~Matrix() {}
 #ifdef ____optimized_version_of_matrices_h_____
+    template<size_t index>
+    inline MinusOneColumn RemoveColumn()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=ColumnsCount,"dimension index is out of range");
+        const auto new_minor = m_other_lines.template RemoveColumn<index>();
+        const auto new_line = m_line.template RemoveComponent<index>();
+        return MinusOneColumn(new_minor, new_line);
+    }
+    template<size_t index>
+    inline MinusOneRow RemoveRow()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=RowsCount,"dimension index is out of range");
+        if constexpr(index == RowsCount)return m_other_lines;
+	else if constexpr(index > 1) return MinusOneRow(m_line,m_other_lines.template RemoveRow<index>());
+	else if constexpr(RowsCount==2) return MinusOneRow(m_line);
+    }
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
@@ -233,22 +229,11 @@ public:
 	if constexpr(index==RowsCount) return m_line.template component<jindex>();
 	else return m_other_lines.template element<index, jindex>();
     }
-#else
-    template<size_t index, size_t jindex>
-    const NumberType &element()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
-	if(index==RowsCount) return m_line.template component<jindex>();
-	else return m_other_lines.template element<index, jindex>();
-    }
-#endif
-#ifdef ____optimized_version_of_matrices_h_____
 private:
     template<size_t row,size_t col>
-    inline Minor ___minor()const{return ___removerow<row>().template ___removecolumn<col>();}
+    inline Minor ___minor()const{return RemoveRow<row>().template RemoveColumn<col>();}
     template<size_t index>
-    NumberType __det_until()const
+    inline NumberType __det_until()const
     {
 	static_assert(index <= RowsCount,"dimension index is out of range");
 	static_assert(index > 0,"dimension index is out of range");
@@ -262,14 +247,22 @@ public:
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	return __det_until<1>();
     }
+#else
+    template<size_t index, size_t jindex>
+    const NumberType &element()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
+	if(index==RowsCount) return m_line.template component<jindex>();
+	else return m_other_lines.template element<index, jindex>();
+    }
 #endif
-
     ColumnType operator*(const LineType &v)const
     {
         return ColumnType(m_other_lines * v, m_line * v);
     }
     Matrix<RowsCount, Vector<1, NumberType>>
-            operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
+	operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
         const auto P = m_other_lines * B;
         const auto C = desCartes(m_line * B.___last_column());
@@ -277,7 +270,7 @@ public:
     }
     template<size_t third_size>
     Matrix<RowsCount, Vector<third_size, NumberType>>
-            operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
+	operator*(const Matrix<ColumnsCount, Vector<third_size, NumberType>> &B)const
     {
         const auto P = operator*(B.___minus_one_column());
         const ColumnType C = operator*(B.___last_column());
