@@ -182,6 +182,21 @@ TEST(Matrix, mul3)
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
+TEST(Matrix, mul32)
+{
+    RANDOM RG;
+    RandomUniform<> M(0.0, 10.0);
+    for (size_t i = 0; i < 50; i++) {
+        const auto a = randomIsotropic<3>(RG) * M(RG);
+        const auto b = randomIsotropic<3>(RG) * M(RG);
+        const auto c = randomIsotropic<3>(RG) * M(RG);
+        const auto d = randomIsotropic<3>(RG) * M(RG);
+	EXPECT_EQ(
+	    lines(a,b)*columns(c,d),
+	    lines(desCartes(a*c,a*d),desCartes(b*c,b*d))
+	);
+    }
+}
 #ifdef ____optimized_version_of_matrices_h_____
 TEST(Matrix, det1)
 {
