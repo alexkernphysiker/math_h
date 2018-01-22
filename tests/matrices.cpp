@@ -197,6 +197,77 @@ TEST(Matrix, mul32)
 	);
     }
 }
+TEST(Matrix, AddColumns)
+{
+    EXPECT_TRUE(line(1).AddColumns(desCartes(4))==line(1,4));
+    EXPECT_TRUE(line(1).AddColumns(desCartes(4),desCartes(5))==line(1,4,5));
+    EXPECT_TRUE(line(1).AddColumns(desCartes(4),desCartes(5),desCartes(6))==line(1,4,5,6));
+    EXPECT_TRUE(line(1,2).AddColumns(desCartes(4))==line(1,2,4));
+    EXPECT_TRUE(line(1,2).AddColumns(desCartes(4),desCartes(5))==line(1,2,4,5));
+    EXPECT_TRUE(line(1,2).AddColumns(desCartes(4),desCartes(5),desCartes(6))==line(1,2,4,5,6));
+
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddColumns(desCartes(4,5))
+	    ==lines(desCartes(1,4),desCartes(2,5)));
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddColumns(desCartes(4,5),desCartes(5,7))
+	    ==lines(desCartes(1,4,5),desCartes(2,5,7)));
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddColumns(desCartes(4,5),desCartes(5,6),desCartes(6,7))
+	    ==lines(desCartes(1,4,5,6),desCartes(2,5,6,7)));
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(2,3)).AddColumns(desCartes(4,5))
+	    ==lines(desCartes(1,2,4),desCartes(2,3,5)));
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(2,3)).AddColumns(desCartes(4,5),desCartes(9,6))
+	    ==lines(desCartes(1,2,4,9),desCartes(2,3,5,6)));
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(2,3)).AddColumns(desCartes(4,5),desCartes(5,6),desCartes(6,7))
+	    ==lines(desCartes(1,2,4,5,6),desCartes(2,3,5,6,7)));
+
+    EXPECT_TRUE(
+	lines(desCartes(1,2),desCartes(3,4)).AddColumns(lines(desCartes(1,2),desCartes(3,4)))
+	    ==lines(desCartes(1,2,1,2),desCartes(3,4,3,4))
+    );
+    EXPECT_TRUE(
+	lines(desCartes(1,2)).AddColumns(line(3,4))
+	    ==lines(desCartes(1,2,3,4))
+    );
+}
+TEST(Matrix, AddRows)
+{
+    EXPECT_TRUE(lines(desCartes(1)).AddRows(desCartes(6))
+	    ==lines(desCartes(1),desCartes(6)));
+    EXPECT_TRUE(lines(desCartes(1)).AddRows(desCartes(6),desCartes(7))
+	    ==lines(desCartes(1),desCartes(6),desCartes(7)));
+    EXPECT_TRUE(lines(desCartes(1)).AddRows(desCartes(6),desCartes(7),desCartes(8))
+	    ==lines(desCartes(1),desCartes(6),desCartes(7),desCartes(8)));
+
+    EXPECT_TRUE(lines(desCartes(1,2)).AddRows(desCartes(6,8))
+	    ==lines(desCartes(1,2),desCartes(6,8)));
+    EXPECT_TRUE(lines(desCartes(1,2)).AddRows(desCartes(6,8),desCartes(7,9))
+	    ==lines(desCartes(1,2),desCartes(6,8),desCartes(7,9)));
+    EXPECT_TRUE(lines(desCartes(1,2)).AddRows(desCartes(6,8),desCartes(7,9),desCartes(8,0))
+	    ==lines(desCartes(1,2),desCartes(6,8),desCartes(7,9),desCartes(8,0)));
+
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddRows(desCartes(6))
+	    ==lines(desCartes(1),desCartes(2),desCartes(6)));
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddRows(desCartes(6),desCartes(7))
+	    ==lines(desCartes(1),desCartes(2),desCartes(6),desCartes(7)));
+    EXPECT_TRUE(lines(desCartes(1),desCartes(2)).AddRows(desCartes(6),desCartes(7),desCartes(8))
+	    ==lines(desCartes(1),desCartes(2),desCartes(6),desCartes(7),desCartes(8)));
+
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(3,4)).AddRows(desCartes(6,8))
+	    ==lines(desCartes(1,2),desCartes(3,4),desCartes(6,8)));
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(3,4)).AddRows(desCartes(6,8),desCartes(7,9))
+	    ==lines(desCartes(1,2),desCartes(3,4),desCartes(6,8),desCartes(7,9)));
+    EXPECT_TRUE(lines(desCartes(1,2),desCartes(3,4)).AddRows(desCartes(6,8),desCartes(7,9),desCartes(8,0))
+	    ==lines(desCartes(1,2),desCartes(3,4),desCartes(6,8),desCartes(7,9),desCartes(8,0)));
+
+    EXPECT_TRUE(
+	lines(desCartes(1,2),desCartes(3,4)).AddRows(lines(desCartes(1,2),desCartes(3,4)))
+	    ==lines(desCartes(1,2),desCartes(3,4),desCartes(1,2),desCartes(3,4))
+    );
+    EXPECT_TRUE(
+	lines(desCartes(3,4)).AddRows(lines(desCartes(1,2),desCartes(3,4)))
+	    ==lines(desCartes(3,4),desCartes(1,2),desCartes(3,4))
+    );
+
+}
 #ifdef ____optimized_version_of_matrices_h_____
 TEST(Matrix, det1)
 {
