@@ -5,6 +5,7 @@
 #include <math_h/functions.h>
 using namespace std;
 using namespace MathTemplates;
+#define ALMOST_EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.0001)
 TEST(LinearInterpolation, Create)
 {
     LinearInterpolation<> F;
@@ -22,65 +23,64 @@ TEST(LinearInterpolation, Create)
     EXPECT_NO_THROW(F.right().X());
     EXPECT_EQ(0, F(0.5));
 }
-#define _EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.0001)
 TEST(LinearInterpolation, SimpleLine)
 {
     LinearInterpolation<> F;
     F << make_point(0, 0) << make_point(1, 1);
     EXPECT_EQ(0, F(0));
     EXPECT_EQ(1, F(1));
-    _EQ(0.1, F(0.1));
-    _EQ(0.2, F(0.2));
-    _EQ(0.3, F(0.3));
-    _EQ(0.4, F(0.4));
-    _EQ(0.5, F(0.5));
-    _EQ(0.6, F(0.6));
-    _EQ(0.7, F(0.7));
-    _EQ(0.8, F(0.8));
-    _EQ(0.9, F(0.9));
+    ALMOST_EQ(0.1, F(0.1));
+    ALMOST_EQ(0.2, F(0.2));
+    ALMOST_EQ(0.3, F(0.3));
+    ALMOST_EQ(0.4, F(0.4));
+    ALMOST_EQ(0.5, F(0.5));
+    ALMOST_EQ(0.6, F(0.6));
+    ALMOST_EQ(0.7, F(0.7));
+    ALMOST_EQ(0.8, F(0.8));
+    ALMOST_EQ(0.9, F(0.9));
     F << make_point(2, 0);
     EXPECT_EQ(0, F(0));
     EXPECT_EQ(1, F(1));
-    _EQ(0.1, F(0.1));
-    _EQ(0.2, F(0.2));
-    _EQ(0.3, F(0.3));
-    _EQ(0.4, F(0.4));
-    _EQ(0.5, F(0.5));
-    _EQ(0.6, F(0.6));
-    _EQ(0.7, F(0.7));
-    _EQ(0.8, F(0.8));
-    _EQ(0.9, F(0.9));
+    ALMOST_EQ(0.1, F(0.1));
+    ALMOST_EQ(0.2, F(0.2));
+    ALMOST_EQ(0.3, F(0.3));
+    ALMOST_EQ(0.4, F(0.4));
+    ALMOST_EQ(0.5, F(0.5));
+    ALMOST_EQ(0.6, F(0.6));
+    ALMOST_EQ(0.7, F(0.7));
+    ALMOST_EQ(0.8, F(0.8));
+    ALMOST_EQ(0.9, F(0.9));
     EXPECT_EQ(0, F(2));
-    _EQ(0.1, F(1.9));
-    _EQ(0.2, F(1.8));
-    _EQ(0.3, F(1.7));
-    _EQ(0.4, F(1.6));
-    _EQ(0.5, F(1.5));
-    _EQ(0.6, F(1.4));
-    _EQ(0.7, F(1.3));
-    _EQ(0.8, F(1.2));
-    _EQ(0.9, F(1.1));
+    ALMOST_EQ(0.1, F(1.9));
+    ALMOST_EQ(0.2, F(1.8));
+    ALMOST_EQ(0.3, F(1.7));
+    ALMOST_EQ(0.4, F(1.6));
+    ALMOST_EQ(0.5, F(1.5));
+    ALMOST_EQ(0.6, F(1.4));
+    ALMOST_EQ(0.7, F(1.3));
+    ALMOST_EQ(0.8, F(1.2));
+    ALMOST_EQ(0.9, F(1.1));
     F << make_point(0.5, 0.5) << make_point(1.5, 0.5);
     EXPECT_EQ(0, F(0));
     EXPECT_EQ(1, F(1));
-    _EQ(0.1, F(0.1));
-    _EQ(0.2, F(0.2));
-    _EQ(0.3, F(0.3));
-    _EQ(0.4, F(0.4));
+    ALMOST_EQ(0.1, F(0.1));
+    ALMOST_EQ(0.2, F(0.2));
+    ALMOST_EQ(0.3, F(0.3));
+    ALMOST_EQ(0.4, F(0.4));
     EXPECT_EQ(0.5, F(0.5));
-    _EQ(0.6, F(0.6));
-    _EQ(0.7, F(0.7));
-    _EQ(0.8, F(0.8));
-    _EQ(0.9, F(0.9));
+    ALMOST_EQ(0.6, F(0.6));
+    ALMOST_EQ(0.7, F(0.7));
+    ALMOST_EQ(0.8, F(0.8));
+    ALMOST_EQ(0.9, F(0.9));
     EXPECT_EQ(0, F(2));
-    _EQ(0.1, F(1.9));
-    _EQ(0.2, F(1.8));
-    _EQ(0.3, F(1.7));
-    _EQ(0.4, F(1.6));
+    ALMOST_EQ(0.1, F(1.9));
+    ALMOST_EQ(0.2, F(1.8));
+    ALMOST_EQ(0.3, F(1.7));
+    ALMOST_EQ(0.4, F(1.6));
     EXPECT_EQ(0.5, F(1.5));
-    _EQ(0.6, F(1.4));
-    _EQ(0.7, F(1.3));
-    _EQ(0.8, F(1.2));
-    _EQ(0.9, F(1.1));
+    ALMOST_EQ(0.6, F(1.4));
+    ALMOST_EQ(0.7, F(1.3));
+    ALMOST_EQ(0.8, F(1.2));
+    ALMOST_EQ(0.9, F(1.1));
     for (double x = 0; x < 2; x += 0.01)EXPECT_EQ(F(x), F.func()(x));
 }

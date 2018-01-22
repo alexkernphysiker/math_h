@@ -99,10 +99,16 @@ TEST(Direction, base2d)
 {
     RANDOM RG;
     RandomUniform<> Phi(-PI(), PI());
+    RandomUniform<> A(0,10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi(RG);
         const auto D = direction(phi);
         EXPECT_EQ(D.phi(), phi);
+	const auto a=A(RG);
+	EXPECT_EQ(D*a,vec(
+	    a*cos(phi),
+	    a*sin(phi)
+	));
     }
 }
 TEST(Direction, base3d)
@@ -110,6 +116,7 @@ TEST(Direction, base3d)
     RANDOM RG;
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI());
+    RandomUniform<> A(0,10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi(RG);
         const auto theta = Theta(RG);
@@ -117,6 +124,12 @@ TEST(Direction, base3d)
         EXPECT_EQ(D.phi(), phi);
         EXPECT_EQ(D.th(), theta);
         EXPECT_EQ(D.th<1>(), theta);
+	const auto a=A(RG);
+	EXPECT_EQ(D*a,vec(
+	    a*sin(theta)*cos(phi),
+	    a*sin(theta)*sin(phi),
+	    a*cos(theta)
+	));
     }
 }
 TEST(Direction, base4d)
@@ -124,6 +137,7 @@ TEST(Direction, base4d)
     RANDOM RG;
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI<>());
+    RandomUniform<> A(0,10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi(RG);
         const auto theta1 = Theta(RG);
@@ -132,6 +146,13 @@ TEST(Direction, base4d)
         EXPECT_EQ(D.phi(), phi);
         EXPECT_EQ(D.th<1>(), theta1);
         EXPECT_EQ(D.th<2>(), theta2);
+	const auto a=A(RG);
+	EXPECT_EQ(D*a,vec(
+	    a*sin(theta2)*sin(theta1)*cos(phi),
+	    a*sin(theta2)*sin(theta1)*sin(phi),
+	    a*sin(theta2)*cos(theta1),
+	    a*cos(theta2)
+	));
     }
 }
 TEST(Direction, base5d)
@@ -139,6 +160,7 @@ TEST(Direction, base5d)
     RANDOM RG;
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI());
+    RandomUniform<> A(0,10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi(RG);
         const auto theta1 = Theta(RG);
@@ -149,6 +171,14 @@ TEST(Direction, base5d)
         EXPECT_EQ(D.th<1>(), theta1);
         EXPECT_EQ(D.th<2>(), theta2);
         EXPECT_EQ(D.th<3>(), theta3);
+	const auto a=A(RG);
+	EXPECT_EQ(D*a,vec(
+	    a*sin(theta3)*sin(theta2)*sin(theta1)*cos(phi),
+	    a*sin(theta3)*sin(theta2)*sin(theta1)*sin(phi),
+	    a*sin(theta3)*sin(theta2)*cos(theta1),
+	    a*sin(theta3)*cos(theta2),
+	    a*cos(theta3)
+	));
     }
 }
 

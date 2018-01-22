@@ -5,39 +5,8 @@
 #include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
-TEST(value, error_handling)
-{
-    EXPECT_NO_THROW(value<>(1, -0.1));
-    EXPECT_NO_THROW(value<>(1, 0));
-    EXPECT_NO_THROW(value<>(1, 0.1));
-    EXPECT_EQ(value<>(1, 0).uncertainty(), 0);
-    EXPECT_EQ(value<>(1, 0.1).uncertainty(), 0.1);
-    EXPECT_FALSE(isfinite(value<>(1, -0.1).uncertainty()));
-    EXPECT_NO_THROW(value<>(1, -0.1) + value<>(1, 0.1));
-    EXPECT_EQ((value<>(1, -0.1) + value<>(1, 0.1)).val(), 2);
-    EXPECT_FALSE(isfinite((value<>(1, -0.1) + value<>(1, 0.1)).uncertainty()));
-}
-TEST(value, fromlist)
-{
-    initializer_list<double> l = {};
-    value<> v;
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0, 2.0, 3.0};
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0, 2.0, 3.0, 4.0};
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0};
-    EXPECT_NO_THROW(v = l);
-    l = {1.0, 2.0};
-    EXPECT_NO_THROW(v = l);
-
-    v = {1.0};
-    EXPECT_EQ(1.0, v.val());
-    EXPECT_EQ(0.0, v.uncertainty());
-    v = {1.0, 2.0};
-    EXPECT_EQ(1.0, v.val());
-    EXPECT_EQ(2.0, v.uncertainty());
-}
+#define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
+#define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 TEST(value, base)
 {
     RANDOM gen;
@@ -87,7 +56,6 @@ TEST(value, compare2)
     v = value<> {0, 1} .Below(0.9);
     EXPECT_FALSE(v);
 }
-#define _EQ(a,b) EXPECT_TRUE(abs(a-b)<0.001)
 TEST(value, arithmetic_actions1)
 {
     RANDOM G;
@@ -96,16 +64,16 @@ TEST(value, arithmetic_actions1)
         value<> A(val(G), unc(G)), B(val(G), unc(G));
         auto sum = A + B;
         EXPECT_EQ(A.val() + B.val(), sum.val());
-        _EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
+        ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
         auto sub = A - B;
         EXPECT_EQ(A.val() - B.val(), sub.val());
-        _EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sub.uncertainty(), 2));
+        ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sub.uncertainty(), 2));
         auto prod = A * B;
         EXPECT_EQ(A.val()*B.val(), prod.val());
-        _EQ(pow(A.uncertainty()*B.val(), 2) + pow(A.val()*B.uncertainty(), 2), pow(prod.uncertainty(), 2));
+        ALMOST_EQ(pow(A.uncertainty()*B.val(), 2) + pow(A.val()*B.uncertainty(), 2), pow(prod.uncertainty(), 2));
         auto ratio = A / B;
         EXPECT_EQ(A.val() / B.val(), ratio.val());
-        _EQ(pow(A.uncertainty() / B.val(), 2) + pow((A.val()*B.uncertainty()) / pow(B.val(), 2), 2), pow(ratio.uncertainty(), 2));
+        ALMOST_EQ(pow(A.uncertainty() / B.val(), 2) + pow((A.val()*B.uncertainty()) / pow(B.val(), 2), 2), pow(ratio.uncertainty(), 2));
     }
 }
 TEST(value, arithmetic_actions2)
@@ -201,7 +169,7 @@ TEST(value, func_val)
     value<> V(1, 0.1),
     V2([](double x){return 2.0 * x;},V);
     EXPECT_EQ(2 * V.val(), V2.val());
-    _EQ(2 * V.uncertainty(), V2.uncertainty());
+    ALMOST_EQ(2 * V.uncertainty(), V2.uncertainty());
 }
 TEST(value, wider)
 {
@@ -227,6 +195,39 @@ TEST(value, wider)
     EXPECT_EQ(V21.uncertainty(), V1.uncertainty() * 2.5);
     EXPECT_EQ(V22.uncertainty(), V2.uncertainty() * 2.5);
     EXPECT_EQ(V23.uncertainty(), V3.uncertainty() * 2.5);
+}
+TEST(value, error_handling)
+{
+    EXPECT_NO_THROW(value<>(1, -0.1));
+    EXPECT_NO_THROW(value<>(1, 0));
+    EXPECT_NO_THROW(value<>(1, 0.1));
+    EXPECT_EQ(value<>(1, 0).uncertainty(), 0);
+    EXPECT_EQ(value<>(1, 0.1).uncertainty(), 0.1);
+    EXPECT_FALSE(isfinite(value<>(1, -0.1).uncertainty()));
+    EXPECT_NO_THROW(value<>(1, -0.1) + value<>(1, 0.1));
+    EXPECT_EQ((value<>(1, -0.1) + value<>(1, 0.1)).val(), 2);
+    EXPECT_FALSE(isfinite((value<>(1, -0.1) + value<>(1, 0.1)).uncertainty()));
+}
+TEST(value, fromlist)
+{
+    initializer_list<double> l = {};
+    value<> v;
+    EXPECT_THROW(v = l, Exception<value<>>);
+    l = {1.0, 2.0, 3.0};
+    EXPECT_THROW(v = l, Exception<value<>>);
+    l = {1.0, 2.0, 3.0, 4.0};
+    EXPECT_THROW(v = l, Exception<value<>>);
+    l = {1.0};
+    EXPECT_NO_THROW(v = l);
+    l = {1.0, 2.0};
+    EXPECT_NO_THROW(v = l);
+
+    v = {1.0};
+    EXPECT_EQ(1.0, v.val());
+    EXPECT_EQ(0.0, v.uncertainty());
+    v = {1.0, 2.0};
+    EXPECT_EQ(1.0, v.val());
+    EXPECT_EQ(2.0, v.uncertainty());
 }
 TEST(StandardDeviation, Throwing)
 {
@@ -265,7 +266,6 @@ TEST(StandardDeviation, Base2)
     EXPECT_EQ(1.0,S[1]);
     EXPECT_ANY_THROW(S[2]);
 }
-#define _EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 TEST(StandardDeviation, WithRandomValues)
 {
     StandardDeviation<> S;
@@ -273,14 +273,14 @@ TEST(StandardDeviation, WithRandomValues)
     RandomGauss<> distribution(1.0, 3.0);
     for (int i = 0; i < 200000; i++)
         S << distribution(generator);
-    _EQ2(1.0, S().val());
-    _EQ2(3.0, S().uncertainty());
+    ALMOST_EQ2(1.0, S().val());
+    ALMOST_EQ2(3.0, S().uncertainty());
 }
 TEST(StandardDeviation, Constructor2)
 {
     StandardDeviation<> S(2);
     S << 0;
-    _EQ2(1.0, S().val());
+    ALMOST_EQ(1.0, S().val());
 }
 
 TEST(WeightedAverage, Zeros)
@@ -289,14 +289,14 @@ TEST(WeightedAverage, Zeros)
     EXPECT_THROW(W(), Exception<WeightedAverage<>>);
     EXPECT_THROW(W << value<>(0, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    _EQ(0, W().val());
-    _EQ(1, W().uncertainty());
+    ALMOST_EQ(0, W().val());
+    ALMOST_EQ(1, W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    _EQ(0, W().val());
-    _EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(0, W().val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    _EQ(0, W().val());
-    _EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(0, W().val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
 }
 TEST(WeightedAverage, Ones)
 {
@@ -304,31 +304,31 @@ TEST(WeightedAverage, Ones)
     EXPECT_THROW(W(), Exception<WeightedAverage<>>);
     EXPECT_THROW(W << value<>(1, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    _EQ(1, W().val());
-    _EQ(1, W().uncertainty());
+    ALMOST_EQ(1, W().val());
+    ALMOST_EQ(1, W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    _EQ(1, W().val());
-    _EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(1, W().val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    _EQ(1, W().val());
-    _EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(1, W().val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
 }
 TEST(WeightedAverage, Zeros_plus_Ones)
 {
     WeightedAverage<> W;
     EXPECT_THROW(W(), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    _EQ(1, W().val());
-    _EQ(1, W().uncertainty());
+    ALMOST_EQ(1, W().val());
+    ALMOST_EQ(1, W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    _EQ(0.5, W().val());
-    _EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(0.5, W().val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    _EQ(2.0 / 3.0, W().val());
-    _EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(2.0 / 3.0, W().val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    _EQ(0.5, W().val());
-    _EQ(1.0 / sqrt(4.0), W().uncertainty());
+    ALMOST_EQ(0.5, W().val());
+    ALMOST_EQ(1.0 / sqrt(4.0), W().uncertainty());
 }
 TEST(CorrelationLinear, simple1)
 {
@@ -341,9 +341,9 @@ TEST(CorrelationLinear, simple1)
         B << make_pair(v1, -v1);
         C << make_pair(v1, v2);
     }
-    _EQ(A.R(), 1);
-    _EQ(B.R(), -1);
-    _EQ(C.R(), 0);
+    ALMOST_EQ2(A.R(), 1);
+    ALMOST_EQ2(B.R(), -1);
+    ALMOST_EQ2(C.R(), 0);
 }
 TEST(CorrelationLinear, simple2)
 {
@@ -356,9 +356,9 @@ TEST(CorrelationLinear, simple2)
         B << make_pair(v1 * 2., v2);
         C << make_pair(v1   , v2 * 2.);
     }
-    _EQ(A.R(), 0);
-    _EQ(B.R(), 0);
-    _EQ(C.R(), 0);
+    ALMOST_EQ2(A.R(), 0);
+    ALMOST_EQ2(B.R(), 0);
+    ALMOST_EQ2(C.R(), 0);
 }
 TEST(CorrelationLinear, simple3)
 {
@@ -383,9 +383,9 @@ TEST(CorrelationLinear, simple4)
         B << make_pair(v1 * 2., v1);
         C << make_pair(v1, v1 * 3.);
     }
-    _EQ(A.R(), 1);
-    _EQ(B.R(), 1);
-    _EQ(C.R(), 1);
+    ALMOST_EQ(A.R(), 1);
+    ALMOST_EQ(B.R(), 1);
+    ALMOST_EQ(C.R(), 1);
 }
 TEST(CorrelationLinear, simple5)
 {
@@ -398,7 +398,7 @@ TEST(CorrelationLinear, simple5)
         B << make_pair(-v1 * 2., v1);
         C << make_pair(v1, -v1 * 3.);
     }
-    _EQ(A.R(), -1);
-    _EQ(B.R(), -1);
-    _EQ(C.R(), -1);
+    ALMOST_EQ2(A.R(), -1);
+    ALMOST_EQ2(B.R(), -1);
+    ALMOST_EQ2(C.R(), -1);
 }

@@ -176,7 +176,7 @@ private:
     numt m_x;
     inline Vector(const MinusOneComponent &other, const numt &x): m_other(other), m_x(x) {}
 protected:
-    inline const MinusOneComponent &___recursive()const
+    inline const MinusOneComponent &___minus_one_component()const
     {
         return m_other;
     }
@@ -191,7 +191,7 @@ public:
         return std::tuple_cat(m_other.to_tuple(), std::make_tuple(m_x));
     }
     template<class numt2>
-    inline Vector(const Vector<Dimensions, numt2> &source): m_other(source.___recursive()), m_x(source.___last_component()) {}
+    inline Vector(const Vector<Dimensions, numt2> &source): m_other(source.___minus_one_component()), m_x(source.___last_component()) {}
     template<class... Args>
     inline Vector(const std::tuple<Args...> &v): m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
     inline static Vector zero()

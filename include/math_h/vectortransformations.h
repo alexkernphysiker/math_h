@@ -160,7 +160,7 @@ private:
         return res(r);
     }
 protected:
-    inline const DirectionN &___recursive()const
+    inline const DirectionN &___minus_one_component()const
     {
         return m_ld;
     }
@@ -171,7 +171,7 @@ protected:
 public:
     virtual ~Direction() {}
     template<class numt2>
-    inline Direction(const Direction<Dimensions, numt2> &source): m_ld(source.___recursive()), m_theta(source.___last_component())
+    inline Direction(const Direction<Dimensions, numt2> &source): m_ld(source.___minus_one_component()), m_theta(source.___last_component())
     {
         ___theta_check();
     }
@@ -201,7 +201,7 @@ public:
         return m_theta;
     }
 #endif
-    Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
+    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
@@ -253,7 +253,7 @@ private:
         return res(r);
     }
 protected:
-    inline const DirectionN &___recursive()const
+    inline const DirectionN &___minus_one_component()const
     {
         return m_ld;
     }
@@ -264,7 +264,7 @@ protected:
 public:
     virtual ~Direction() {}
     template<class numt2>
-    inline Direction(const Direction<Dimensions, numt2> &source): m_ld(source.___recursive()), m_theta(source.___last_component())
+    inline Direction(const Direction<Dimensions, numt2> &source): m_ld(source.___minus_one_component()), m_theta(source.___last_component())
     {
         ___theta_check();
     }
@@ -297,7 +297,7 @@ public:
 	else return m_ld.template th<index>();
     }
 #endif
-    Direction(const VType &V): m_ld(V.___recursive()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
+    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));

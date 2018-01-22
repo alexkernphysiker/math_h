@@ -36,26 +36,26 @@ public:
     typedef Matrix<RowsCount, ShorterLine> MinusOneColumn;
     typedef Matrix<RowsCount+1, RowType> PlusOneRow;
 private:
-    RowType m_line;
+    RowType m_row;
 protected:
-    inline Matrix(const RowType &line): m_line(line) {}
+    inline Matrix(const RowType &line): m_row(line) {}
     inline MinusOneColumn ___minus_one_column()const
     {
-        return MinusOneColumn(m_line.___recursive());
+        return MinusOneColumn(m_row.___minus_one_component());
     }
     inline ColumnType ___last_column()const
     {
-        return vec(m_line.___last_component());
+        return vec(m_row.___last_component());
     }
     inline const RowType &___last_row()const
     {
-        return m_line;
+        return m_row;
     }
 public:
     virtual ~Matrix() {}
     inline PlusOneColumn AddColumn(const ColumnType &col)const
     {
-        return LongerLine(m_line, col.___last_component());
+        return LongerLine(m_row, col.___last_component());
     }
     inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
@@ -68,7 +68,7 @@ public:
     }
     inline PlusOneRow AddRow(const RowType &row)const
     {
-        return rows(m_line,row);
+        return rows(m_row,row);
     }
     inline Matrix<RowsCount+1,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
     {
@@ -77,14 +77,14 @@ public:
     template<size_t third_size>
     inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return AddRows(M.___recursive()).AddRow(M.___last_row());
+	return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
 #ifdef ____optimized_version_of_matrices_h_____
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
 	static_assert(index == 1 ,"dimension index is out of range");
-        return m_line.template component<jindex>();
+        return m_row.template component<jindex>();
     }
 
     template<size_t index>
@@ -92,7 +92,7 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=ColumnsCount,"dimension index is out of range");
-	return MinusOneColumn(m_line.template RemoveComponent<index>());
+	return MinusOneColumn(m_row.template RemoveComponent<index>());
     }
     template<size_t index,size_t count>
     inline auto RemoveColumns()const
@@ -109,7 +109,7 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
-	return PlusOneColumn(m_line.template InsertComponent<index>(C.x()));
+	return PlusOneColumn(m_row.template InsertComponent<index>(C.x()));
     }
     template<size_t index,size_t third_size>
     inline auto InsertColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&C)const
@@ -126,8 +126,8 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=(RowsCount+1),"dimension index is out of range");
-	if constexpr(index==(RowsCount+1)) return rows(m_line,L);
-	if constexpr(index==RowsCount) return rows(L,m_line);
+	if constexpr(index==(RowsCount+1)) return rows(m_row,L);
+	if constexpr(index==RowsCount) return rows(L,m_row);
     }
     template<size_t index,size_t third_size>
     inline auto InsertRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&C)const
@@ -136,13 +136,13 @@ public:
 	static_assert(index<=(RowsCount+1),"dimension index is out of range");
 	if constexpr(third_size==1)return InsertRow<index>(C.___last_row());
 	if constexpr(third_size>1)return InsertRow<index>(C.___last_row())
-	    .template InsertRows<index,third_size-1>(C.___recursive());
+	    .template InsertRows<index,third_size-1>(C.___minus_one_component());
     }
 
     inline NumberType Determinant()const
     {
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
-	return m_line.x();
+	return m_row.x();
     }
     inline RowType Cramer(const RowType&X)const
     {
@@ -157,17 +157,17 @@ public:
     {
 	static_assert(index>0, "dimension index is out of range");
 	if(index>1)throw Exception<Matrix>("dimension index out of range");
-	return m_line.template component<jindex>();
+	return m_row.template component<jindex>();
     }
 #endif
     inline ColumnType operator*(const RowType &v)const
     {
-        return m_line * v;
+        return m_row * v;
     }
     inline Matrix<RowsCount, Vector<1, NumberType>>
             operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
-        return vec(m_line * B.___last_column());
+        return vec(m_row * B.___last_column());
     }
     template<size_t third_size>
     inline Matrix<RowsCount, Vector<third_size, NumberType>>
@@ -176,29 +176,29 @@ public:
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
     template<class otherlinetype>
-    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_line(source.___last_row()) {}
+    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_row(source.___last_row()) {}
     template<class... Args>
-    inline Matrix(const std::tuple<Args...> &v): m_line(std::get < RowsCount - 1 > (v)) {}
-    inline Matrix(const ColumnType &A, const RowType &B): m_line(B *A.___last_component()) {}
+    inline Matrix(const std::tuple<Args...> &v): m_row(std::get < RowsCount - 1 > (v)) {}
+    inline Matrix(const ColumnType &A, const RowType &B): m_row(B *A.___last_component()) {}
     inline bool operator==(const Matrix &B)const
     {
-        return m_line == B.m_line;
+        return m_row == B.m_row;
     }
     inline Matrix operator*(const NumberType &v)const
     {
-        return Matrix(m_line * v);
+        return Matrix(m_row * v);
     }
     inline Matrix operator/(const NumberType &v)const
     {
-        return Matrix(m_line / v);
+        return Matrix(m_row / v);
     }
     inline Matrix operator+(const Matrix &B)const
     {
-        return Matrix(m_line + B.m_line);
+        return Matrix(m_row + B.m_row);
     }
     inline Matrix operator-(const Matrix &B)const
     {
-        return Matrix(m_line - B.m_line);
+        return Matrix(m_row - B.m_row);
     }
     static inline Matrix zero()
     {
@@ -240,24 +240,24 @@ public:
     typedef typename MinusOneRow::MinusOneColumn Minor;
 private:
     MinusOneRow m_other_rows;
-    RowType m_line;
+    RowType m_row;
 protected:
-    inline Matrix(const MinusOneRow &minor, const RowType &line): m_other_rows(minor), m_line(line) {}
+    inline Matrix(const MinusOneRow &minor, const RowType &line): m_other_rows(minor), m_row(line) {}
     inline MinusOneColumn ___minus_one_column()const
     {
         const auto new_minor = m_other_rows.___minus_one_column();
-        const auto new_line = m_line.___recursive();
+        const auto new_line = m_row.___minus_one_component();
         return MinusOneColumn(new_minor, new_line);
     }
     inline ColumnType ___last_column()const
     {
-        return ColumnType(m_other_rows.___last_column(), m_line.___last_component());
+        return ColumnType(m_other_rows.___last_column(), m_row.___last_component());
     }
     inline const RowType &___last_row()const
     {
-        return m_line;
+        return m_row;
     }
-    inline const MinusOneRow &___recursive()const
+    inline const MinusOneRow &___minus_one_component()const
     {
         return m_other_rows;
     }
@@ -265,8 +265,8 @@ public:
     virtual ~Matrix() {}
     inline PlusOneColumn AddColumn(const ColumnType &col)const
     {
-        const auto new_minor = m_other_rows.AddColumn(col.___recursive());
-        const auto new_line = LongerLine(m_line, col.___last_component());
+        const auto new_minor = m_other_rows.AddColumn(col.___minus_one_component());
+        const auto new_line = LongerLine(m_row, col.___last_component());
         return PlusOneColumn(new_minor, new_line);
     }
     inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
@@ -289,7 +289,7 @@ public:
     template<size_t third_size>
     inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return AddRows(M.___recursive()).AddRow(M.___last_row());
+	return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
 #ifdef ____optimized_version_of_matrices_h_____
     template<size_t index, size_t jindex>
@@ -297,7 +297,7 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=RowsCount,"dimension index is out of range");
-	if constexpr(index==RowsCount) return m_line.template component<jindex>();
+	if constexpr(index==RowsCount) return m_row.template component<jindex>();
 	if constexpr(index<RowsCount) return m_other_rows.template element<index, jindex>();
     }
     template<size_t index>
@@ -306,7 +306,7 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=ColumnsCount,"dimension index is out of range");
         const auto new_minor = m_other_rows.template RemoveColumn<index>();
-        const auto new_line = m_line.template RemoveComponent<index>();
+        const auto new_line = m_row.template RemoveComponent<index>();
         return MinusOneColumn(new_minor, new_line);
     }
     template<size_t index,size_t count>
@@ -326,8 +326,8 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=RowsCount,"dimension index is out of range");
         if constexpr(index == RowsCount)return m_other_rows;
-	if constexpr(RowsCount==2) return MinusOneRow(m_line);
-	else return MinusOneRow(m_other_rows.template RemoveRow<index>(),m_line);
+	if constexpr(RowsCount==2) return MinusOneRow(m_row);
+	else return MinusOneRow(m_other_rows.template RemoveRow<index>(),m_row);
     }
     template<size_t index,size_t count>
     inline auto RemoveRows()const
@@ -346,8 +346,8 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
 	return PlusOneColumn(
-		m_other_rows.template InsertColumn<index>(C.___recursive()),
-		m_line.template InsertComponent<index>(C.___last_component())
+		m_other_rows.template InsertColumn<index>(C.___minus_one_component()),
+		m_row.template InsertComponent<index>(C.___last_component())
 	);
     }
     template<size_t index,size_t third_size>
@@ -365,8 +365,8 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=(RowsCount+1),"dimension index is out of range");
 	if constexpr(index==(RowsCount+1)) return PlusOneRow(*this,L);
-	if constexpr(index==RowsCount) return PlusOneRow(Matrix(m_other_rows,L),m_line);
-	if constexpr(index<RowsCount) return PlusOneRow(m_other_rows.template InsertRow<index>(L),m_line);
+	if constexpr(index==RowsCount) return PlusOneRow(Matrix(m_other_rows,L),m_row);
+	if constexpr(index<RowsCount) return PlusOneRow(m_other_rows.template InsertRow<index>(L),m_row);
     }
     template<size_t index,size_t third_size>
     inline auto InsertRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&C)const
@@ -375,7 +375,7 @@ public:
 	static_assert(index<=(RowsCount+1),"dimension index is out of range");
 	if constexpr(third_size==1)return InsertRow<index>(C.___last_row());
 	if constexpr(third_size>1)return InsertRow<index>(C.___last_row())
-	    .template InsertRowss<index,third_size-1>(C.___recursive());
+	    .template InsertRowss<index,third_size-1>(C.___minus_one_component());
     }
 
     template<size_t row,size_t col>
@@ -418,19 +418,19 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
-	if(index==RowsCount) return m_line.template component<jindex>();
+	if(index==RowsCount) return m_row.template component<jindex>();
 	else return m_other_rows.template element<index, jindex>();
     }
 #endif
     inline ColumnType operator*(const RowType &v)const
     {
-        return ColumnType(m_other_rows * v, m_line * v);
+        return ColumnType(m_other_rows * v, m_row * v);
     }
     Matrix<RowsCount, Vector<1, NumberType>>
 	operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
         const auto P = m_other_rows * B;
-        const auto C = vec(m_line * B.___last_column());
+        const auto C = vec(m_row * B.___last_column());
         return Matrix<RowsCount, Vector<1, NumberType>>(P, C);
     }
     template<size_t third_size>
@@ -442,29 +442,29 @@ public:
         return P.AddColumn(C);
     }
     template<class otherlinetype>
-    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_other_rows(source.___recursive()), m_line(source.___last_row()) {}
+    inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_other_rows(source.___minus_one_component()), m_row(source.___last_row()) {}
     template<class... Args>
-    inline Matrix(const std::tuple<Args...> &v): m_other_rows(v), m_line(std::get < RowsCount - 1 > (v)) {}
-    inline Matrix(const ColumnType &A, const RowType &B): m_other_rows(A.___recursive(), B), m_line(B *A.___last_component()) {}
+    inline Matrix(const std::tuple<Args...> &v): m_other_rows(v), m_row(std::get < RowsCount - 1 > (v)) {}
+    inline Matrix(const ColumnType &A, const RowType &B): m_other_rows(A.___minus_one_component(), B), m_row(B *A.___last_component()) {}
     inline bool operator==(const Matrix &B)const
     {
-        return (m_line == B.m_line) && (m_other_rows == B.m_other_rows);
+        return (m_row == B.m_row) && (m_other_rows == B.m_other_rows);
     }
     inline Matrix operator*(const NumberType &v)const
     {
-        return Matrix(m_other_rows * v, m_line * v);
+        return Matrix(m_other_rows * v, m_row * v);
     }
     inline Matrix operator/(const NumberType &v)const
     {
-        return Matrix(m_other_rows / v, m_line / v);
+        return Matrix(m_other_rows / v, m_row / v);
     }
     inline Matrix operator+(const Matrix &B)const
     {
-        return Matrix(m_other_rows + B.m_other_rows, m_line + B.m_line);
+        return Matrix(m_other_rows + B.m_other_rows, m_row + B.m_row);
     }
     inline Matrix operator-(const Matrix &B)const
     {
-        return Matrix(m_other_rows - B.m_other_rows, m_line - B.m_line);
+        return Matrix(m_other_rows - B.m_other_rows, m_row - B.m_row);
     }
     static inline Matrix zero()
     {

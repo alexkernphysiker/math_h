@@ -6,6 +6,143 @@
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
+TEST(Vector, base1d)
+{
+    RANDOM RG;
+    RandomUniform<> X(-50., 50);
+    for (size_t i = 0; i < 100; i++) {
+        const auto x = X(RG);
+        const auto V = vec(x);
+        EXPECT_EQ(x, V.x());
+        EXPECT_EQ(x, V.component<1>());
+        const auto x2 = X(RG);
+        const auto V2 = vec(x2);
+        EXPECT_EQ(x2, V2.x());
+        EXPECT_EQ(x2, V2.component<1>());
+	EXPECT_EQ(x+x2,(V+V2).x());
+	EXPECT_EQ(x-x2,(V-V2).x());
+	EXPECT_EQ(x*x2,V*V2);
+	const auto a=X(RG);
+	EXPECT_EQ(x*a,(V*a).x());
+	if(a!=0)
+	EXPECT_EQ(x/a,(V/a).x());
+    }
+}
+TEST(Vector, base2d)
+{
+    RANDOM RG;
+    RandomUniform<> X(-50., 50);
+    for (size_t i = 0; i < 100; i++) {
+        const auto x = X(RG), y = X(RG);
+        const auto V = vec(x, y);
+        EXPECT_EQ(x, V.x());
+        EXPECT_EQ(x, V.component<1>());
+        EXPECT_EQ(y, V.y());
+        EXPECT_EQ(y, V.component<2>());
+        const auto x2 = X(RG), y2 = X(RG);
+        const auto V2 = vec(x2, y2);
+        EXPECT_EQ(x2, V2.x());
+        EXPECT_EQ(x2, V2.component<1>());
+        EXPECT_EQ(y2, V2.y());
+        EXPECT_EQ(y2, V2.component<2>());
+	EXPECT_EQ(x+x2,(V+V2).x());
+	EXPECT_EQ(x-x2,(V-V2).x());
+	EXPECT_EQ(y+y2,(V+V2).y());
+	EXPECT_EQ(y-y2,(V-V2).y());
+	EXPECT_EQ(x*x2+y*y2,V*V2);
+	const auto a=X(RG);
+	EXPECT_EQ(x*a,(V*a).x());
+	EXPECT_EQ(y*a,(V*a).y());
+	if(a!=0){
+	    EXPECT_EQ(x/a,(V/a).x());
+	    EXPECT_EQ(y/a,(V/a).y());
+	}
+    }
+}
+TEST(Vector, base3d)
+{
+    RANDOM RG;
+    RandomUniform<> X(-50., 50);
+    for (size_t i = 0; i < 100; i++) {
+        const auto x = X(RG), y = X(RG), z = X(RG);
+        const auto V = vec(x, y, z);
+        EXPECT_EQ(x, V.x());
+        EXPECT_EQ(x, V.component<1>());
+        EXPECT_EQ(y, V.y());
+        EXPECT_EQ(y, V.component<2>());
+        EXPECT_EQ(z, V.z());
+        EXPECT_EQ(z, V.component<3>());
+        const auto x2 = X(RG), y2 = X(RG), z2 = X(RG);
+        const auto V2 = vec(x2, y2, z2);
+        EXPECT_EQ(x2, V2.x());
+        EXPECT_EQ(x2, V2.component<1>());
+        EXPECT_EQ(y2, V2.y());
+        EXPECT_EQ(y2, V2.component<2>());
+        EXPECT_EQ(z2, V2.z());
+        EXPECT_EQ(z2, V2.component<3>());
+	EXPECT_EQ(x+x2,(V+V2).x());
+	EXPECT_EQ(x-x2,(V-V2).x());
+	EXPECT_EQ(y+y2,(V+V2).y());
+	EXPECT_EQ(y-y2,(V-V2).y());
+	EXPECT_EQ(z+z2,(V+V2).z());
+	EXPECT_EQ(z-z2,(V-V2).z());
+	EXPECT_EQ(x*x2+y*y2+z*z2,V*V2);
+	const auto a=X(RG);
+	EXPECT_EQ(x*a,(V*a).x());
+	EXPECT_EQ(y*a,(V*a).y());
+	EXPECT_EQ(z*a,(V*a).z());
+	if(a!=0){
+	    EXPECT_EQ(x/a,(V/a).x());
+	    EXPECT_EQ(y/a,(V/a).y());
+	    EXPECT_EQ(z/a,(V/a).z());
+	}
+    }
+}
+TEST(Vector, base4d)
+{
+    RANDOM RG;
+    RandomUniform<> X(-50., 50);
+    for (size_t i = 0; i < 100; i++) {
+        const auto x = X(RG), y = X(RG), z = X(RG), zz = X(RG);
+        const auto V = vec(x, y, z, zz);
+        EXPECT_EQ(x, V.x());
+        EXPECT_EQ(x, V.component<1>());
+        EXPECT_EQ(y, V.y());
+        EXPECT_EQ(y, V.component<2>());
+        EXPECT_EQ(z, V.z());
+        EXPECT_EQ(z, V.component<3>());
+        EXPECT_EQ(zz, V.component<4>());
+        const auto x2 = X(RG), y2 = X(RG), z2 = X(RG), zz2 = X(RG);
+        const auto V2 = vec(x2, y2, z2, zz2);
+        EXPECT_EQ(x2, V2.x());
+        EXPECT_EQ(x2, V2.component<1>());
+        EXPECT_EQ(y2, V2.y());
+        EXPECT_EQ(y2, V2.component<2>());
+        EXPECT_EQ(z2, V2.z());
+        EXPECT_EQ(z2, V2.component<3>());
+        EXPECT_EQ(zz2, V2.component<4>());
+	EXPECT_EQ(x+x2,(V+V2).x());
+	EXPECT_EQ(x-x2,(V-V2).x());
+	EXPECT_EQ(y+y2,(V+V2).y());
+	EXPECT_EQ(y-y2,(V-V2).y());
+	EXPECT_EQ(z+z2,(V+V2).z());
+	EXPECT_EQ(z-z2,(V-V2).z());
+	EXPECT_EQ(zz+zz2,(V+V2).component<4>());
+	EXPECT_EQ(zz-zz2,(V-V2).component<4>());
+	EXPECT_EQ(x*x2+y*y2+z*z2+zz*zz2,V*V2);
+	const auto a=X(RG);
+	EXPECT_EQ(x*a,(V*a).x());
+	EXPECT_EQ(y*a,(V*a).y());
+	EXPECT_EQ(z*a,(V*a).z());
+	EXPECT_EQ(zz*a,(V*a).component<4>());
+	if(a!=0){
+	    EXPECT_EQ(x/a,(V/a).x());
+	    EXPECT_EQ(y/a,(V/a).y());
+	    EXPECT_EQ(z/a,(V/a).z());
+	    EXPECT_EQ(zz/a,(V/a).component<4>());
+	}
+    }
+}
 TEST(Vector, scalar_prod2)
 {
     EXPECT_EQ(0, x()*y());
@@ -39,61 +176,7 @@ TEST(Vector, scalar_prod3)
     EXPECT_EQ(-1, Y() * (-Y()));
     EXPECT_EQ(1, (-Z()) * (-Z()));
 }
-TEST(Vector, base1d)
-{
-    RANDOM RG;
-    RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 100; i++) {
-        const auto x = X(RG);
-        const auto V = vec(x);
-        EXPECT_EQ(x, V.x());
-        EXPECT_EQ(x, V.component<1>());
-    }
-}
-TEST(Vector, base2d)
-{
-    RANDOM RG;
-    RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 100; i++) {
-        const auto x = X(RG), y = X(RG);
-        const auto V = vec(x, y);
-        EXPECT_EQ(x, V.x());
-        EXPECT_EQ(x, V.component<1>());
-        EXPECT_EQ(y, V.y());
-        EXPECT_EQ(y, V.component<2>());
-    }
-}
-TEST(Vector, base3d)
-{
-    RANDOM RG;
-    RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 100; i++) {
-        const auto x = X(RG), y = X(RG), z = X(RG);
-        const auto V = vec(x, y, z);
-        EXPECT_EQ(x, V.x());
-        EXPECT_EQ(x, V.component<1>());
-        EXPECT_EQ(y, V.y());
-        EXPECT_EQ(y, V.component<2>());
-        EXPECT_EQ(z, V.z());
-        EXPECT_EQ(z, V.component<3>());
-    }
-}
-TEST(Vector, base4d)
-{
-    RANDOM RG;
-    RandomUniform<> X(-50., 50);
-    for (size_t i = 0; i < 100; i++) {
-        const auto x = X(RG), y = X(RG), z = X(RG), zz = X(RG);
-        const auto V = vec(x, y, z, zz);
-        EXPECT_EQ(x, V.x());
-        EXPECT_EQ(x, V.component<1>());
-        EXPECT_EQ(y, V.y());
-        EXPECT_EQ(y, V.component<2>());
-        EXPECT_EQ(z, V.z());
-        EXPECT_EQ(z, V.component<3>());
-        EXPECT_EQ(zz, V.component<4>());
-    }
-}
+
 #ifdef ____optimized_version_of_vectors_h_____
 TEST(Vector, remove_component)
 {
