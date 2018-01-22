@@ -15,7 +15,7 @@ TEST(LorentzVector, LorentzTransform1d)
         const auto V0 = lorentz_byPM(randomIsotropic<1>(RG) * 1.0, metrr(RG));
 	const auto V0_copy=V0;
 	EXPECT_EQ(V0,V0_copy);
-        const auto V1 = V0.Transform(desCartes(0.));
+        const auto V1 = V0.Transform(vec(0.));
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<1>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
@@ -28,7 +28,7 @@ TEST(LorentzVector, LorentzTransform1d)
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
-        const auto V00 = lorentz_byPM(desCartes(0.), V0.M()).Transform(-V0.Beta());
+        const auto V00 = lorentz_byPM(vec(0.), V0.M()).Transform(-V0.Beta());
         EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
         EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
@@ -91,7 +91,7 @@ TEST(LorentzVector, LorentzTransform4d)
         const auto V0 = lorentz_byPM(randomIsotropic<4>(RG) * 1.0, metrr(RG));
 	const auto V0_copy=V0;
 	EXPECT_EQ(V0,V0_copy);
-        const auto V1 = V0.Transform(desCartes(0., 0., 0., 0.));
+        const auto V1 = V0.Transform(vec(0., 0., 0., 0.));
         EXPECT_TRUE(V1 == V0);
         const auto beta = randomIsotropic<4>(RG) * mr(RG);
         const auto V2 = V0.Transform(beta).Transform(-beta);
@@ -103,7 +103,7 @@ TEST(LorentzVector, LorentzTransform4d)
         EXPECT_TRUE(abs(L0 - L1) < epsilon);
         EXPECT_TRUE(abs(L2 - L1) < epsilon);
         EXPECT_TRUE(abs(L0 - L2) < epsilon);
-        const auto V00 = lorentz_byPM(desCartes(0., 0., 0., 0.), V0.M()).Transform(-V0.Beta());
+        const auto V00 = lorentz_byPM(vec(0., 0., 0., 0.), V0.M()).Transform(-V0.Beta());
         EXPECT_TRUE(abs(V00.E() - V0.E()) < epsilon);
         EXPECT_TRUE(V00.P().CloseTo(V0.P(), epsilon));
     }
@@ -117,7 +117,7 @@ TEST(LorentzVector, LorentzTransform1d_more)
 	const auto V0_copy=V0;
 	EXPECT_EQ(V0,V0_copy);
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.P().CloseTo(desCartes(0.), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(vec(0.), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }
@@ -156,7 +156,7 @@ TEST(LorentzVector, LorentzTransform4d_more)
 	const auto V0_copy=V0;
 	EXPECT_EQ(V0,V0_copy);
         const auto V1 = V0.Transform(V0.Beta());
-        EXPECT_TRUE(V1.P().CloseTo(desCartes(0., 0., 0., 0.), epsilon));
+        EXPECT_TRUE(V1.P().CloseTo(vec(0., 0., 0., 0.), epsilon));
         EXPECT_TRUE(abs(V1.M() - V0.M()) < epsilon);
     }
 }

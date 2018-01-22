@@ -10,12 +10,12 @@ using namespace MathTemplates;
 const double epsilon = 0.0000000001;
 TEST(VectorTransformation, pseudoscalar_prod)
 {
-    EXPECT_EQ(x()^y(), desCartes(1.));
-    EXPECT_EQ(y()^x(), desCartes(-1.));
-    EXPECT_EQ(x()^x(), desCartes(0.));
-    EXPECT_EQ(y()^y(), desCartes(0.));
-    EXPECT_EQ((-x())^x(), desCartes(0.));
-    EXPECT_EQ((-y())^y(), desCartes(0.));
+    EXPECT_EQ(x()^y(), vec(1.));
+    EXPECT_EQ(y()^x(), vec(-1.));
+    EXPECT_EQ(x()^x(), vec(0.));
+    EXPECT_EQ(y()^y(), vec(0.));
+    EXPECT_EQ((-x())^x(), vec(0.));
+    EXPECT_EQ((-y())^y(), vec(0.));
 }
 TEST(VectorTransformation, vector_prod3_basis)
 {
@@ -258,7 +258,7 @@ TEST(VectorTransformation, direction1d)
     RandomUniform<> V(-10.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto d = direction();
-        const auto v = desCartes(V(RG));
+        const auto v = vec(V(RG));
         EXPECT_TRUE((v - d * v.x()).M() < epsilon);
     }
 }
@@ -386,32 +386,32 @@ TEST(VectorTransformation, rotations3d_plane)
     RandomUniform<> M(-10.0, 10.0), TH(-PI<>(), PI<>());
     for (size_t i = 0; i < 50; i++) {
         const auto R = randomIsotropic<3>(RG).Rotations();
-        const auto v1 = R * desCartes(M(RG), M(RG), 0.);
-        const auto v2 = R * desCartes(M(RG), M(RG), 0.);
-        const auto v3 = R * desCartes(M(RG), M(RG), 0.);
+        const auto v1 = R * vec(M(RG), M(RG), 0.);
+        const auto v2 = R * vec(M(RG), M(RG), 0.);
+        const auto v3 = R * vec(M(RG), M(RG), 0.);
         EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
     }
     for (size_t i = 0; i < 50; i++) {
         const auto R = randomIsotropic<3>(RG).Rotations();
-        const auto v1 = R * desCartes(0., M(RG), M(RG));
-        const auto v2 = R * desCartes(0., M(RG), M(RG));
-        const auto v3 = R * desCartes(0., M(RG), M(RG));
+        const auto v1 = R * vec(0., M(RG), M(RG));
+        const auto v2 = R * vec(0., M(RG), M(RG));
+        const auto v3 = R * vec(0., M(RG), M(RG));
         EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
     }
     for (size_t i = 0; i < 10; i++) {
         const auto R = randomIsotropic<3>(RG).Rotations();
-        const auto v1 = R * desCartes(M(RG), 0., M(RG));
-        const auto v2 = R * desCartes(M(RG), 0., M(RG));
-        const auto v3 = R * desCartes(M(RG), 0., M(RG));
+        const auto v1 = R * vec(M(RG), 0., M(RG));
+        const auto v2 = R * vec(M(RG), 0., M(RG));
+        const auto v3 = R * vec(M(RG), 0., M(RG));
         EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
     }
     for (size_t i = 0; i < 50; i++) {
         const auto R1 = randomIsotropic<3>(RG).Rotations();
-        const auto v1 = desCartes(M(RG), 0., M(RG));
+        const auto v1 = vec(M(RG), 0., M(RG));
         const auto R2 = Rotation(direction(v1), TH(RG));
         const auto R = R1 * R2;
-        const auto v2 = desCartes(M(RG), 0., M(RG));
-        const auto v3 = desCartes(M(RG), 0., M(RG));
+        const auto v2 = vec(M(RG), 0., M(RG));
+        const auto v3 = vec(M(RG), 0., M(RG));
         EXPECT_TRUE(abs(((R * v1) ^ (R * v2)) * (R * v3)) < epsilon);
     }
 }

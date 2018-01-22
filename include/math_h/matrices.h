@@ -45,7 +45,7 @@ protected:
     }
     inline ColumnType ___last_column()const
     {
-        return desCartes(m_line.___last_component());
+        return vec(m_line.___last_component());
     }
     inline PlusOneColumn ___add_column(const ColumnType &col)const
     {
@@ -139,7 +139,7 @@ public:
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	const NumberType D=Determinant();
 	if(D==0)throw Exception<Matrix>("System of equations cannot be solved");
-	return desCartes(X.x()/D);
+	return vec(X.x()/D);
     }
 #else
     template<size_t index, size_t jindex>
@@ -157,7 +157,7 @@ public:
     inline Matrix<RowsCount, Vector<1, NumberType>>
             operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
-        return desCartes(m_line * B.___last_column());
+        return vec(m_line * B.___last_column());
     }
     template<size_t third_size>
     inline Matrix<RowsCount, Vector<third_size, NumberType>>
@@ -372,7 +372,7 @@ private:
 	static_assert(index <= ColumnsCount,"dimension index is out of range");
 	static_assert(index > 0,"dimension index is out of range");
 	const NumberType d=RemoveColumn<index>().template InsertColumn<index>(X).Determinant();
-	if constexpr(index==1) return desCartes(d/D);
+	if constexpr(index==1) return vec(d/D);
 	if constexpr(index>1) return Vector<index,NumberType>(___cramer<index-1>(X,D),d/D);
     }
 public:
@@ -401,7 +401,7 @@ public:
 	operator*(const Matrix<ColumnsCount, Vector<1, NumberType>> &B)const
     {
         const auto P = m_other_lines * B;
-        const auto C = desCartes(m_line * B.___last_column());
+        const auto C = vec(m_line * B.___last_column());
         return Matrix<RowsCount, Vector<1, NumberType>>(P, C);
     }
     template<size_t third_size>
@@ -464,7 +464,7 @@ inline Matrix < sizeof...(Args) + 1, linetype > lines(const linetype &x, Args...
 template<class numt, class... Args>
 inline Matrix < 1, Vector < sizeof...(Args) + 1, numt >> line(const numt &x, Args... args)
 {
-    return lines(desCartes(x, args...));
+    return lines(vec(x, args...));
 }
 template<class numt, class...Args>
 inline Matrix < 1 + sizeof...(Args), Vector<1, numt >> column(const numt &x, Args...args)

@@ -45,7 +45,7 @@ TEST(Vector, base1d)
     RandomUniform<> X(-50., 50);
     for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG);
-        const auto V = desCartes(x);
+        const auto V = vec(x);
         EXPECT_EQ(x, V.x());
         EXPECT_EQ(x, V.component<1>());
     }
@@ -56,7 +56,7 @@ TEST(Vector, base2d)
     RandomUniform<> X(-50., 50);
     for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG);
-        const auto V = desCartes(x, y);
+        const auto V = vec(x, y);
         EXPECT_EQ(x, V.x());
         EXPECT_EQ(x, V.component<1>());
         EXPECT_EQ(y, V.y());
@@ -69,7 +69,7 @@ TEST(Vector, base3d)
     RandomUniform<> X(-50., 50);
     for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG), z = X(RG);
-        const auto V = desCartes(x, y, z);
+        const auto V = vec(x, y, z);
         EXPECT_EQ(x, V.x());
         EXPECT_EQ(x, V.component<1>());
         EXPECT_EQ(y, V.y());
@@ -84,7 +84,7 @@ TEST(Vector, base4d)
     RandomUniform<> X(-50., 50);
     for (size_t i = 0; i < 100; i++) {
         const auto x = X(RG), y = X(RG), z = X(RG), zz = X(RG);
-        const auto V = desCartes(x, y, z, zz);
+        const auto V = vec(x, y, z, zz);
         EXPECT_EQ(x, V.x());
         EXPECT_EQ(x, V.component<1>());
         EXPECT_EQ(y, V.y());
@@ -97,31 +97,31 @@ TEST(Vector, base4d)
 #ifdef ____optimized_version_of_vectors_h_____
 TEST(Vector, remove_component)
 {
-    EXPECT_EQ(desCartes(1,2).RemoveComponent<1>(),desCartes(2));
-    EXPECT_EQ(desCartes(1,2).RemoveComponent<2>(),desCartes(1));
+    EXPECT_EQ(vec(1,2).RemoveComponent<1>(),vec(2));
+    EXPECT_EQ(vec(1,2).RemoveComponent<2>(),vec(1));
 
-    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<1>(),desCartes(2,3));
-    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<2>(),desCartes(1,3));
-    EXPECT_EQ(desCartes(1,2,3).RemoveComponent<3>(),desCartes(1,2));
+    EXPECT_EQ(vec(1,2,3).RemoveComponent<1>(),vec(2,3));
+    EXPECT_EQ(vec(1,2,3).RemoveComponent<2>(),vec(1,3));
+    EXPECT_EQ(vec(1,2,3).RemoveComponent<3>(),vec(1,2));
 
-    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<1>(),desCartes(2,3,4));
-    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<2>(),desCartes(1,3,4));
-    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<3>(),desCartes(1,2,4));
-    EXPECT_EQ(desCartes(1,2,3,4).RemoveComponent<4>(),desCartes(1,2,3));
+    EXPECT_EQ(vec(1,2,3,4).RemoveComponent<1>(),vec(2,3,4));
+    EXPECT_EQ(vec(1,2,3,4).RemoveComponent<2>(),vec(1,3,4));
+    EXPECT_EQ(vec(1,2,3,4).RemoveComponent<3>(),vec(1,2,4));
+    EXPECT_EQ(vec(1,2,3,4).RemoveComponent<4>(),vec(1,2,3));
 
 }
 TEST(Vector, insert_component)
 {
-    EXPECT_EQ(desCartes(1).InsertComponent<1>(0),desCartes(0,1));
-    EXPECT_EQ(desCartes(1).InsertComponent<2>(0),desCartes(1,0));
+    EXPECT_EQ(vec(1).InsertComponent<1>(0),vec(0,1));
+    EXPECT_EQ(vec(1).InsertComponent<2>(0),vec(1,0));
 
-    EXPECT_EQ(desCartes(1,2).InsertComponent<1>(0),desCartes(0,1,2));
-    EXPECT_EQ(desCartes(1,2).InsertComponent<2>(0),desCartes(1,0,2));
-    EXPECT_EQ(desCartes(1,2).InsertComponent<3>(0),desCartes(1,2,0));
+    EXPECT_EQ(vec(1,2).InsertComponent<1>(0),vec(0,1,2));
+    EXPECT_EQ(vec(1,2).InsertComponent<2>(0),vec(1,0,2));
+    EXPECT_EQ(vec(1,2).InsertComponent<3>(0),vec(1,2,0));
 
-    EXPECT_EQ(desCartes(1,2,3).InsertComponent<1>(0),desCartes(0,1,2,3));
-    EXPECT_EQ(desCartes(1,2,3).InsertComponent<2>(0),desCartes(1,0,2,3));
-    EXPECT_EQ(desCartes(1,2,3).InsertComponent<3>(0),desCartes(1,2,0,3));
-    EXPECT_EQ(desCartes(1,2,3).InsertComponent<4>(0),desCartes(1,2,3,0));
+    EXPECT_EQ(vec(1,2,3).InsertComponent<1>(0),vec(0,1,2,3));
+    EXPECT_EQ(vec(1,2,3).InsertComponent<2>(0),vec(1,0,2,3));
+    EXPECT_EQ(vec(1,2,3).InsertComponent<3>(0),vec(1,2,0,3));
+    EXPECT_EQ(vec(1,2,3).InsertComponent<4>(0),vec(1,2,3,0));
 }
 #endif

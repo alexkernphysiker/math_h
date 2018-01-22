@@ -21,7 +21,7 @@ template<size_t size = 3, class numt = double>class Vector;
 template<size_t size = 3, class linetype = Vector<3, double>>class Matrix;
 template<size_t size = 3, class numt = double>class Direction;
 template<class numt, class... Args>
-inline Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args);
+inline Vector < sizeof...(Args) + 1, numt > vec(const numt &x, Args... args);
 template<class numt>
 class Vector<1, numt>
 {
@@ -61,8 +61,8 @@ public:
     {
 	static_assert(index>0,"Range check error for insertion position");
 	static_assert(index<=(Dimensions+1),"Range check error for insertion position");
-	if constexpr(index==(Dimensions+1))return desCartes(m_x,c);
-	if constexpr(index==Dimensions) return desCartes(c,m_x);
+	if constexpr(index==(Dimensions+1))return vec(m_x,c);
+	if constexpr(index==Dimensions) return vec(c,m_x);
     }
     template<size_t index>
     inline static Vector basis_vector()
@@ -326,7 +326,7 @@ public:
     }
 };
 template<class numt, class... Args>
-inline Vector < sizeof...(Args) + 1, numt > desCartes(const numt &x, Args... args)
+inline Vector < sizeof...(Args) + 1, numt > vec(const numt &x, Args... args)
 {
     return Vector < sizeof...(Args) + 1, numt > (std::make_tuple(x, args...));
 }

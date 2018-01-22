@@ -51,8 +51,8 @@ public:
     inline Direction(const std::tuple<Args...> &args): sign(std::get<0>(args)) {}
     inline VType operator*(const numt &rho)const
     {
-        if (sign)return desCartes(rho);
-        else return desCartes(-rho);
+        if (sign)return vec(rho);
+        else return vec(-rho);
     }
     inline bool operator==(const Direction &second)const
     {
@@ -64,11 +64,11 @@ public:
     }
     inline Matrix<Dimensions, VType> Rotations()const
     {
-        return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
+        return sign ? lines(vec(numt(1))) : lines(vec(numt(-1)));
     }
     inline Matrix<Dimensions, VType> AntiRotations()const
     {
-        return sign ? lines(desCartes(numt(1))) : lines(desCartes(numt(-1)));
+        return sign ? lines(vec(numt(1))) : lines(vec(numt(-1)));
     }
 };
 
@@ -119,7 +119,7 @@ public:
     Direction(const VType &V): m_phi(atan2(V.y(), V.x())) {}
     VType operator*(const numt &rho)const
     {
-        return desCartes(cos(m_phi), sin(m_phi)) * rho;
+        return vec(cos(m_phi), sin(m_phi)) * rho;
     }
     bool operator==(const Direction &second)const
     {
@@ -363,8 +363,8 @@ inline Matrix<2, Vector<2, numt>> Rotation(const numt &theta)
 {
     const numt cost = cos(theta), sint = sin(theta);
     return lines(
-               desCartes(cost, -sint),
-               desCartes(sint, cost)
+               vec(cost, -sint),
+               vec(sint, cost)
            );
 }
 template<class numt = double>
@@ -373,9 +373,9 @@ inline Matrix<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const
     const auto n = axis * numt(1);
     const numt cost = cos(theta), sint = sin(theta), one = 1;
     return lines(
-               desCartes(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
-               desCartes((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
-               desCartes((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
+               vec(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
+               vec((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
+               vec((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
            );
 }
 
@@ -385,28 +385,28 @@ inline Matrix<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const
 template<class numt = double>
 inline Matrix<1, Vector<2, numt>> SkewM(const Vector<2, numt> &A)
 {
-    return lines(desCartes(-AC(2), AC(1)));
+    return lines(vec(-AC(2), AC(1)));
 }
 template<class numt = double>
 inline Matrix<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
 {
     return lines(
-               desCartes(ZeRo, -AC(3), AC(2)),
-               desCartes(AC(3),  ZeRo, -AC(1)),
-               desCartes(-AC(2), AC(1),  ZeRo)
+               vec(ZeRo, -AC(3), AC(2)),
+               vec(AC(3),  ZeRo, -AC(1)),
+               vec(-AC(2), AC(1),  ZeRo)
            );
 }
 template<class numt = double>
 inline Matrix<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
 {
     return lines(
-               desCartes(ZeRo, -AC(4), -AC(7), AC(2), -AC(6), AC(5), AC(3)),
-               desCartes(AC(4),  ZeRo, -AC(5), -AC(1), AC(3), -AC(7), AC(6)),
-               desCartes(AC(7), AC(5),  ZeRo, -AC(6), -AC(2), AC(4), -AC(1)),
-               desCartes(-AC(2), AC(1), AC(6),  ZeRo, -AC(7), -AC(3), AC(5)),
-               desCartes(AC(6), -AC(3), AC(2), AC(7),  ZeRo, -AC(1), -AC(4)),
-               desCartes(-AC(5), AC(7), -AC(4), AC(3), AC(1),  ZeRo, -AC(2)),
-               desCartes(-AC(3), -AC(6), AC(1), -AC(5), AC(4), AC(2), ZeRo)
+               vec(ZeRo, -AC(4), -AC(7), AC(2), -AC(6), AC(5), AC(3)),
+               vec(AC(4),  ZeRo, -AC(5), -AC(1), AC(3), -AC(7), AC(6)),
+               vec(AC(7), AC(5),  ZeRo, -AC(6), -AC(2), AC(4), -AC(1)),
+               vec(-AC(2), AC(1), AC(6),  ZeRo, -AC(7), -AC(3), AC(5)),
+               vec(AC(6), -AC(3), AC(2), AC(7),  ZeRo, -AC(1), -AC(4)),
+               vec(-AC(5), AC(7), -AC(4), AC(3), AC(1),  ZeRo, -AC(2)),
+               vec(-AC(3), -AC(6), AC(1), -AC(5), AC(4), AC(2), ZeRo)
            );
 }
 #undef ZeRo
