@@ -343,13 +343,6 @@ private:
 	if constexpr(index==RowsCount) return res;
 	if constexpr(index<RowsCount) return res-__det_until<index+1>();
     }
-public:
-    inline NumberType Determinant()const
-    {
-	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
-	return __det_until<1>();
-    }
-private:
     template<size_t index>
     inline Vector<index,NumberType> ___cramer(const RowType&X,const NumberType&D)const
     {
@@ -360,6 +353,11 @@ private:
 	if constexpr(index>1) return Vector<index,NumberType>(___cramer<index-1>(X,D),d/D);
     }
 public:
+    inline NumberType Determinant()const
+    {
+	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
+	return __det_until<1>();
+    }
     inline RowType Cramer(const RowType&X)const
     {
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
