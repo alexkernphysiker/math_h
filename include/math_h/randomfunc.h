@@ -11,11 +11,18 @@
 #include "interpolate.h"
 namespace MathTemplates
 {
-typedef std::mt19937 RANDOM;
-template<class numt = double, class RG = RANDOM>
-using RandomValueGenerator = IFunction<numt, RG &>;
-template<class numt = double, class RG = RANDOM>
-class RandomValueTableDistr: public RandomValueGenerator<numt, RG>
+template<typename Engine=std::mt19937>
+class RandomEngine{
+public:
+    static Engine&Instance(){
+	static Engine res;
+	return res;
+    }
+};
+template<class numt = double>
+using RandomValueGenerator = IFunction<numt>;
+template<class numt = double, class RG = RandomEngine<>>
+class RandomValueTableDistr: public RandomValueGenerator<numt>
 {
 private:
     const ReverseIntegratedLinearInterpolation<numt> reverse_distr_func;
@@ -37,13 +44,13 @@ public:
     RandomValueTableDistr(const std::function<numt(numt)> distribution_density, const SortedChain<numt> &chain):
         RandomValueTableDistr(LinearInterpolation<numt>(distribution_density, chain)) {}
     virtual ~RandomValueTableDistr() {}
-    virtual numt operator()(RG &generator)const override
+    virtual numt operator()()const override
     {
-        return reverse_distr_func(f_distr->operator()(generator));
+        return reverse_distr_func(f_distr->operator()(RG::Instance()));
     }
 };
-template<class numt = double, class RG = RANDOM>
-class RandomUniform: public RandomValueGenerator<numt, RG>
+template<class numt = double, class RG = RandomEngine<>>
+class RandomUniform: public RandomValueGenerator<numt>
 {
 private:
     std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
@@ -51,13 +58,13 @@ public:
     RandomUniform(const numt x1, const numt x2): f_distr(std::make_shared<std::uniform_real_distribution<numt>>(x1, x2)) {}
     RandomUniform(const RandomUniform &source): f_distr(source.f_distr) {}
     virtual ~RandomUniform() {}
-    virtual numt operator()(RG &generator)const override
+    virtual numt operator()()const override
     {
-        return f_distr->operator()(generator);
+        return f_distr->operator()(RG::Instance());
     }
 };
-template<class numt = double, class RG = RANDOM>
-class RandomGauss: public RandomValueGenerator<numt, RG>
+template<class numt = double, class RG = RandomEngine<>>
+class RandomGauss: public RandomValueGenerator<numt>
 {
 private:
     std::shared_ptr<std::normal_distribution<numt>> f_distr;
@@ -65,9 +72,9 @@ public:
     RandomGauss(const numt x1, const numt x2): f_distr(std::make_shared<std::normal_distribution<numt>>(x1, x2)) {}
     RandomGauss(const RandomGauss &source): f_distr(source.f_distr) {}
     virtual ~RandomGauss() {}
-    virtual numt operator()(RG &generator)const override
+    virtual numt operator()()const override
     {
-        return f_distr->operator()(generator);
+        return f_distr->operator()(RG::Instance());
     }
 };
 };

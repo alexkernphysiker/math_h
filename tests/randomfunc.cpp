@@ -5,17 +5,17 @@
 #include <math_h/hists.h>
 using namespace std;
 using namespace MathTemplates;
-RANDOM rnd;
+
 TEST(RandomUniform, BaseTest)
 {
     RandomUniform<> R(0, 1);
     for (int i = 0; i < 1000; i++) {
-        double r = R(rnd);
+        double r = R();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
     auto R2 = R;
     for (int i = 0; i < 1000; i++) {
-        double r = R2(rnd);
+        double r = R2();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
@@ -23,12 +23,12 @@ TEST(RandomValueTableDistr, initFromList_n_copy)
 {
     RandomValueTableDistr<> R = Points<>{{0.0, 0.25}, {0.5, 0.75}, {1.0, 0.25}};
     for (int i = 0; i < 1000; i++) {
-        double r = R(rnd);
+        double r = R();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
     auto R2 = R;
     for (int i = 0; i < 1000; i++) {
-        double r = R2(rnd);
+        double r = R2();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
@@ -38,7 +38,7 @@ TEST(RandomValueTableDistr, initfromfunc)
         return 1;
     }, ChainWithCount(10, 0.0, 1.0));
     for (int i = 0; i < 1000; i++) {
-        double r = R(rnd);
+        double r = R();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
@@ -73,7 +73,7 @@ void TestRandomDistribution(function<double(double)> F, double from, double to, 
     const int N = 10000;
     //Generate random values and fill distribution
     for (int i = 0; i < N; i++)
-	D.Fill(R(rnd));
+	D.Fill(R());
     //calculate chi-square
     double S = 0;
     for (const auto &p : D)

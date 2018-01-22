@@ -9,10 +9,9 @@ using namespace MathTemplates;
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 TEST(value, base)
 {
-    RANDOM gen;
     RandomGauss<> G(0,6);
     for (size_t i = 0; i < 10; i++) {
-        double x = G(gen);
+        double x = G();
         value<> V(x, 0.1);
         EXPECT_EQ(x, V.val());
         EXPECT_EQ(0.1, V.uncertainty());
@@ -58,10 +57,9 @@ TEST(value, compare2)
 }
 TEST(value, arithmetic_actions1)
 {
-    RANDOM G;
     RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<> A(val(G), unc(G)), B(val(G), unc(G));
+        value<> A(val(), unc()), B(val(), unc());
         auto sum = A + B;
         EXPECT_EQ(A.val() + B.val(), sum.val());
         ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
@@ -78,11 +76,10 @@ TEST(value, arithmetic_actions1)
 }
 TEST(value, arithmetic_actions2)
 {
-    RANDOM G;
     RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<> A(val(G), unc(G));
-        double B = val(G);
+        value<> A(val(), unc());
+        double B = val();
         auto sum = A + B;
         EXPECT_EQ(A.val() + B, sum.val());
         EXPECT_EQ(A.uncertainty(), sum.uncertainty());
@@ -269,10 +266,9 @@ TEST(StandardDeviation, Base2)
 TEST(StandardDeviation, WithRandomValues)
 {
     StandardDeviation<> S;
-    RANDOM generator;
-    RandomGauss<> distribution(1.0, 3.0);
+    RandomGauss<> generator(1.0, 3.0);
     for (int i = 0; i < 200000; i++)
-        S << distribution(generator);
+        S << generator();
     ALMOST_EQ2(1.0, S().val());
     ALMOST_EQ2(3.0, S().uncertainty());
 }
@@ -332,11 +328,10 @@ TEST(WeightedAverage, Zeros_plus_Ones)
 }
 TEST(CorrelationLinear, simple1)
 {
-    RANDOM gen;
     RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(gen), v2 = G(gen);
+        double v1 = G(), v2 = G();
         EXPECT_EQ(&A, &(A << make_pair(v1, v1)));
         B << make_pair(v1, -v1);
         C << make_pair(v1, v2);
@@ -347,11 +342,10 @@ TEST(CorrelationLinear, simple1)
 }
 TEST(CorrelationLinear, simple2)
 {
-    RANDOM gen;
     RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(gen), v2 = G(gen);
+        double v1 = G(), v2 = G();
         A << make_pair(v1   , v2);
         B << make_pair(v1 * 2., v2);
         C << make_pair(v1   , v2 * 2.);
@@ -362,11 +356,10 @@ TEST(CorrelationLinear, simple2)
 }
 TEST(CorrelationLinear, simple3)
 {
-    RANDOM gen;
     RandomGauss<> G(0,5);
     CorrelationLinear<> A, B;
     for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(gen), v2 = G(gen);
+        double v1 = G(), v2 = G();
         A << make_pair(v1, v2);
         B << make_pair(v2, v1);
     }
@@ -374,11 +367,10 @@ TEST(CorrelationLinear, simple3)
 }
 TEST(CorrelationLinear, simple4)
 {
-    RANDOM gen;
     RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(gen);
+        double v1 = G();
         A << make_pair(v1, v1);
         B << make_pair(v1 * 2., v1);
         C << make_pair(v1, v1 * 3.);
@@ -389,11 +381,10 @@ TEST(CorrelationLinear, simple4)
 }
 TEST(CorrelationLinear, simple5)
 {
-    RANDOM gen;
     RandomGauss<> G(0,5);
     CorrelationLinear<> A, B, C;
     for (size_t i = 0; i < 10000; i++) {
-        double v1 = G(gen);
+        double v1 = G();
         A << make_pair(v1, -v1);
         B << make_pair(-v1 * 2., v1);
         C << make_pair(v1, -v1 * 3.);

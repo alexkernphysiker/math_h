@@ -49,11 +49,10 @@ TEST(InsertSorted, BasicTest)
 }
 TEST(SortedChain, basetest)
 {
-    RANDOM engine;
     SortedChain<> chain;
     RandomUniform<> get(-10, 10);
     for (size_t i = 0; i < 100; i++)
-        chain << get(engine);
+        chain << get();
     for (size_t i = 1; i < 100; i++)
         EXPECT_TRUE(chain[i] > chain[i - 1]);
 }

@@ -10,7 +10,6 @@ using namespace GnuplotWrap;
 int main()
 {
     //creating random value generator
-    RANDOM engine;
     const RandomValueTableDistr<> generator = Points<>{
         {0.7, 0.4}, {1.0, 0.0}, {1.8, 1.0}, {2.2, 1.0},
         {3.0, 0.5}, {3.5, 0.3}, {4.0, 0.3}
@@ -18,7 +17,7 @@ int main()
     //Generate values and plot histogram
     PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.1, 5.0),"randomfunc");
     for (size_t i = 0; i < 500000; i++) {
-	const auto v=generator(engine);//That's how we generate random value
+	const auto v=generator();//That's how we generate random value
         dist.Fill(v);
     }
     return 0;

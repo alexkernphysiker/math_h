@@ -27,11 +27,6 @@ class Direction<1, numt>
     template<size_t sizef, class n>friend class Matrix;
 private:
     bool sign;
-    static numt PHI(RANDOM &r)
-    {
-        static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
-        return res(r);
-    }
 protected:
     inline const bool &___sign()const
     {
@@ -43,12 +38,18 @@ public:
     typedef numt NumberType;
     typedef Vector<1, numt> VType;
     virtual ~Direction() {}
-    inline Direction(RANDOM &RG): sign(PHI(RG) >= 0) {}
     template<class numt2>
     inline Direction(const Direction<Dimensions, numt2> &source): sign(source.___sign()) {}
     inline Direction(const VType &v): sign(v.x() >= 0) {}
     template<class... Args>
     inline Direction(const std::tuple<Args...> &args): sign(std::get<0>(args)) {}
+    template<class RG=RandomEngine<>>
+    static Direction Izotropic()
+    {
+        static const RandomUniform<numt,RG> G(-1, +1);
+        return Direction(std::make_tuple(G()>= 0));
+    }
+
     inline VType operator*(const numt &rho)const
     {
         if (sign)return vec(rho);
@@ -90,10 +91,11 @@ private:
         while (m_phi > PI<numt>())m_phi -= PI<numt>() * numt(2);
         while (m_phi < -PI<numt>())m_phi += PI<numt>() * numt(2);
     }
-    static numt PHI(RANDOM &r)
+    template<class RG=RandomEngine<>>
+    static numt PHI()
     {
-        static const RandomUniform<numt> res(-PI<numt>(), +PI<numt>());
-        return res(r);
+        static const RandomUniform<numt,RG> res(-PI<numt>(), +PI<numt>());
+        return res();
     }
     inline const numt &___last_component()const
     {
@@ -106,7 +108,6 @@ public:
     {
         ___phi_norm();
     }
-    inline Direction(RANDOM &RG): m_phi(PHI(RG)) {}
     template<class numt2>
     inline Direction(const Direction<Dimensions, numt2> &source): m_phi(source.___last_component())
     {
@@ -117,6 +118,12 @@ public:
         return m_phi;
     }
     Direction(const VType &V): m_phi(atan2(V.y(), V.x())) {}
+    template<class RG=RandomEngine<>>
+    static Direction Izotropic()
+    {
+        static const RandomUniform<numt,RG> G(-PI<numt>(), +PI<numt>());
+        return Direction(std::make_tuple(G()));
+    }
     VType operator*(const numt &rho)const
     {
         return vec(cos(m_phi), sin(m_phi)) * rho;
@@ -154,11 +161,6 @@ private:
         if (m_theta < numt(0))throw Exception<Direction>("wrong theta value <0");
         if (m_theta > PI<numt>())throw Exception<Direction>("wrong theta value >pi");
     }
-    static numt CTHETA(RANDOM &r)
-    {
-        static const RandomUniform<numt> res(numt(-1), numt(+1));
-        return res(r);
-    }
 protected:
     inline const DirectionN &___minus_one_component()const
     {
@@ -167,6 +169,10 @@ protected:
     inline const numt &___last_component()const
     {
         return m_theta;
+    }
+    inline Direction(const DirectionN&sour,const numt&ce): m_ld(sour), m_theta(ce)
+    {
+        ___theta_check();
     }
 public:
     virtual ~Direction() {}
@@ -180,7 +186,12 @@ public:
     {
         ___theta_check();
     }
-    inline Direction(RANDOM &RG): m_ld(RG), m_theta(acos(CTHETA(RG))) {}
+    template<class RG=RandomEngine<>>
+    static Direction Izotropic()
+    {
+        static const RandomUniform<numt,RG> G(-1, +1);
+        return Direction(DirectionN::template Izotropic<RG>(),acos(G()));
+    }
     inline const numt &phi()const
     {
         return m_ld.phi();
@@ -247,11 +258,6 @@ private:
         if (m_theta < numt(0))throw Exception<Direction>("wrong theta value <0");
         if (m_theta > PI<numt>())throw Exception<Direction>("wrong theta value >pi");
     }
-    static numt CTHETA(RANDOM &r)
-    {
-        static const RandomUniform<numt> res(numt(-1), numt(+1));
-        return res(r);
-    }
 protected:
     inline const DirectionN &___minus_one_component()const
     {
@@ -260,6 +266,10 @@ protected:
     inline const numt &___last_component()const
     {
         return m_theta;
+    }
+    inline Direction(const DirectionN&sour,const numt&ce): m_ld(sour), m_theta(ce)
+    {
+        ___theta_check();
     }
 public:
     virtual ~Direction() {}
@@ -273,7 +283,12 @@ public:
     {
         ___theta_check();
     }
-    inline Direction(RANDOM &RG): m_ld(RG), m_theta(acos(CTHETA(RG))) {}
+    template<class RG=RandomEngine<>>
+    static Direction Izotropic()
+    {
+        static const RandomUniform<numt,RG> G(-1, +1);
+        return Direction(DirectionN::template Izotropic<RG>(),acos(G()));
+    }
     inline const numt &phi()const
     {
         return m_ld.phi();
@@ -334,10 +349,10 @@ inline Direction< size, numt > direction(const Vector<size, numt> &V)
 {
     return Direction < size, numt > (V);
 }
-template<size_t size = 3, class numt = double, class RG = RANDOM>
-inline Direction<size, numt> randomIsotropic(RG &generator)
+template<size_t size, class numt = double, class RG = RandomEngine<>>
+inline Direction<size, numt> randomIsotropic()
 {
-    return Direction<size, numt>(generator);
+    return Direction<size, numt>::template Izotropic<RG>();
 }
 template<class VType>
 struct VectorDecomposition {

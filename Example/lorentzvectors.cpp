@@ -10,7 +10,6 @@ using namespace GnuplotWrap;
 //and equal units for energy, momentum and mass
 int main()
 {
-    RANDOM RG;
     //Particles masses
     const double M1 = 0.75, M2 = 1.0;
     //momentum distribution
@@ -22,11 +21,11 @@ int main()
     Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
     for (size_t i = 0; i < 100000; i++) {
 	//Create Lorentz vectors for input particles
-        const auto Pr0 = lorentz_byPM(Z() * P(RG), M1);
+        const auto Pr0 = lorentz_byPM(Z() * P(), M1);
         const auto Pt0 = lorentz_Rest(M2);
         const auto Total = Pr0 + Pt0;
         //Let them scatter isotropically in CM
-        const auto finalCM = binaryDecay(Total.M(), M1, M2, randomIsotropic<3>(RG));
+        const auto finalCM = binaryDecay(Total.M(), M1, M2, randomIsotropic<3>());
         //Converting to lab system.
         const auto final1 = finalCM.first.Transform(-Total.Beta());
         const auto final2 = finalCM.second.Transform(-Total.Beta());

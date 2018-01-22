@@ -245,9 +245,7 @@ protected:
     inline Matrix(const MinusOneRow &minor, const RowType &line): m_other_rows(minor), m_row(line) {}
     inline MinusOneColumn ___minus_one_column()const
     {
-        const auto new_minor = m_other_rows.___minus_one_column();
-        const auto new_line = m_row.___minus_one_component();
-        return MinusOneColumn(new_minor, new_line);
+        return MinusOneColumn(m_other_rows.___minus_one_column(),m_row.___minus_one_component());
     }
     inline ColumnType ___last_column()const
     {
@@ -265,9 +263,7 @@ public:
     virtual ~Matrix() {}
     inline PlusOneColumn AddColumn(const ColumnType &col)const
     {
-        const auto new_minor = m_other_rows.AddColumn(col.___minus_one_component());
-        const auto new_line = LongerLine(m_row, col.___last_component());
-        return PlusOneColumn(new_minor, new_line);
+        return PlusOneColumn(m_other_rows.AddColumn(col.___minus_one_component()),LongerLine(m_row, col.___last_component()));
     }
     inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
@@ -276,7 +272,7 @@ public:
     template<size_t third_size>
     inline Matrix<RowsCount,Vector<ColumnsCount+third_size,NumberType>> AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
     {
-	return (AddColumns(M.___minus_one_column())).AddColumn(M.___last_column());
+	return AddColumns(M.___minus_one_column()).AddColumn(M.___last_column());
     }
     inline PlusOneRow AddRow(const RowType &row)const
     {
@@ -305,9 +301,7 @@ public:
     {
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=ColumnsCount,"dimension index is out of range");
-        const auto new_minor = m_other_rows.template RemoveColumn<index>();
-        const auto new_line = m_row.template RemoveComponent<index>();
-        return MinusOneColumn(new_minor, new_line);
+        return MinusOneColumn(m_other_rows.template RemoveColumn<index>(),m_row.template RemoveComponent<index>());
     }
     template<size_t index,size_t count>
     inline auto RemoveColumns()const
@@ -478,11 +472,11 @@ public:
     static inline Matrix RotationInPlane(const NumberType &angle)
     {
         return Matrix(
-                   MinusOneRow::template RotationInPlane<x, y>(angle),
-                   (x == RowsCount) ? ((RowType::template basis_vector<x>() * cos(angle)) - (RowType::template basis_vector<y>() * sin(angle))) :
-                   (y == RowsCount) ? ((RowType::template basis_vector<y>() * cos(angle)) + (RowType::template basis_vector<x>() * sin(angle))) :
-                   RowType::template basis_vector<RowsCount>()
-                                                );
+	    MinusOneRow::template RotationInPlane<x, y>(angle),
+	    (x == RowsCount) ? ((RowType::template basis_vector<x>() * cos(angle)) - (RowType::template basis_vector<y>() * sin(angle))) :
+		(y == RowsCount) ? ((RowType::template basis_vector<y>() * cos(angle)) + (RowType::template basis_vector<x>() * sin(angle))) :
+		RowType::template basis_vector<RowsCount>()
+	);
     }
 };
 template<class linetype, class... Args>

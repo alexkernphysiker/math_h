@@ -142,55 +142,51 @@ TEST(Matrix, elements)
 }
 TEST(Matrix, mul1)
 {
-    RANDOM RG;
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
-        const auto v = randomIsotropic<1>(RG) * M(RG);
+        const auto v = randomIsotropic<1>() * M();
         EXPECT_TRUE(vec(0.).CloseTo(ZERO<1>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<1>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<1>() * (ONE<1>()*v), epsilon));
-        const auto R1 = randomIsotropic<1>(RG).Rotations();
-        const auto R2 = randomIsotropic<1>(RG).Rotations();
+        const auto R1 = randomIsotropic<1>().Rotations();
+        const auto R2 = randomIsotropic<1>().Rotations();
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
 TEST(Matrix, mul2)
 {
-    RANDOM RG;
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
-        const auto v = randomIsotropic<2>(RG) * M(RG);
+        const auto v = randomIsotropic<2>() * M();
         EXPECT_TRUE(zero().CloseTo(ZERO<2>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<2>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<2>() * (ONE<2>()*v), epsilon));
-        const auto R1 = randomIsotropic<2>(RG).Rotations();
-        const auto R2 = randomIsotropic<2>(RG).Rotations();
+        const auto R1 = randomIsotropic<2>().Rotations();
+        const auto R2 = randomIsotropic<2>().Rotations();
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
 TEST(Matrix, mul3)
 {
-    RANDOM RG;
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
-        const auto v = randomIsotropic<3>(RG) * M(RG);
+        const auto v = randomIsotropic<3>() * M();
         EXPECT_TRUE(Zero().CloseTo(ZERO<3>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<3>()*v, epsilon));
         EXPECT_TRUE(v.CloseTo(ONE<3>() * (ONE<3>()*v), epsilon));
-        const auto R1 = randomIsotropic<3>(RG).Rotations();
-        const auto R2 = randomIsotropic<3>(RG).Rotations();
+        const auto R1 = randomIsotropic<3>().Rotations();
+        const auto R2 = randomIsotropic<3>().Rotations();
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
 TEST(Matrix, mul32)
 {
-    RANDOM RG;
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
-        const auto a = randomIsotropic<3>(RG) * M(RG);
-        const auto b = randomIsotropic<3>(RG) * M(RG);
-        const auto c = randomIsotropic<3>(RG) * M(RG);
-        const auto d = randomIsotropic<3>(RG) * M(RG);
+        const auto a = randomIsotropic<3>() * M();
+        const auto b = randomIsotropic<3>() * M();
+        const auto c = randomIsotropic<3>() * M();
+        const auto d = randomIsotropic<3>() * M();
 	EXPECT_EQ(
 	    rows(a,b)*columns(c,d),
 	    rows(vec(a*c,a*d),vec(b*c,b*d))
