@@ -519,5 +519,12 @@ TEST(Matrix,Cramer3)
 	).Cramer(desCartes(2.,3.,5.)),
 	desCartes(5.,3.,2.)
     );
+    EXPECT_ANY_THROW(
+	lines(
+	    desCartes(2.,0.,1.),
+	    desCartes(0.,1.,0.),
+	    desCartes(0.,0.,0.)
+	).Cramer(desCartes(2.,3.,5.))
+    );
 }
 #endif
