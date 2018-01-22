@@ -214,7 +214,7 @@ public:
     {
         return
             Matrix<Dimensions, VType>(
-                m_ld.Rotations().___add_column(DirectionN::VType::zero()),
+                m_ld.Rotations().AddColumns(DirectionN::VType::zero()),
                 VType::template basis_vector<Dimensions>())
             * Matrix<Dimensions, VType>::template RotationInPlane<3, 1>(m_theta);
     }
@@ -223,7 +223,7 @@ public:
         return
             Matrix<Dimensions, VType>::template RotationInPlane<3, 1>(-m_theta) *
         Matrix<Dimensions, VType>(
-            m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
+            m_ld.AntiRotations().AddColumns(DirectionN::VType::zero()),
             VType::template basis_vector<Dimensions>());
     }
 };
@@ -306,7 +306,7 @@ public:
     {
         return
             Matrix<Dimensions, VType>(
-                m_ld.Rotations().___add_column(DirectionN::VType::zero()),
+                m_ld.Rotations().AddColumns(DirectionN::VType::zero()),
                 VType::template basis_vector<Dimensions>())
             * Matrix<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (m_theta);
     }
@@ -315,7 +315,7 @@ public:
         return
             Matrix<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (-m_theta) *
         Matrix<Dimensions, VType>(
-            m_ld.AntiRotations().___add_column(DirectionN::VType::zero()),
+            m_ld.AntiRotations().AddColumns(DirectionN::VType::zero()),
             VType::template basis_vector<Dimensions>());
     }
 };

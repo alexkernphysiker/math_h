@@ -47,55 +47,47 @@ protected:
     {
         return vec(m_line.___last_component());
     }
-    inline PlusOneColumn ___add_column(const ColumnType &col)const
-    {
-        return LongerLine(m_line, col.___last_component());
-    }
-    inline PlusOneRow ___add_row(const RowType &row)const
-    {
-        return lines(m_line,row);
-    }
     inline const RowType &___last_row()const
     {
         return m_line;
     }
-    inline const Matrix &AddColumns()const
-    {
-        return *this;
-    }
-    inline const Matrix &AddRows()const
-    {
-        return *this;
-    }
 public:
     virtual ~Matrix() {}
+    inline PlusOneColumn AddColumns(const ColumnType &col)const
+    {
+        return LongerLine(m_line, col.___last_component());
+    }
     template<class... Args>
     inline Matrix < RowsCount, Vector < ColumnsCount + 1 + sizeof...(Args), NumberType >> AddColumns(const ColumnType &col, Args...args)const
     {
-        return ___add_column(col).AddColumns(args...);
+        return AddColumns(col).AddColumns(args...);
     }
     inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
-	return ___add_column(M.___last_column());
+	return AddColumns(M.___last_column());
     }
     template<size_t third_size>
     inline Matrix<RowsCount,Vector<ColumnsCount+third_size,NumberType>> AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
     {
-	return AddColumns(M.___minus_one_column()).___add_column(M.___last_column());
+	return AddColumns(M.___minus_one_column()).AddColumns(M.___last_column());
+    }
+    inline PlusOneRow AddRows(const RowType &row)const
+    {
+        return lines(m_line,row);
     }
     template<class... Args>
     inline Matrix < RowsCount+1+sizeof...(Args), Vector < ColumnsCount, NumberType >> AddRows(const RowType &row, Args...args)const
     {
-        return ___add_row(row).AddRows(args...);
+        return AddRows(row).AddRows(args...);
     }
     inline Matrix<RowsCount+1,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return ___add_row(M.___last_row());
+	return AddRows(M.___last_row());
     }
     template<size_t third_size>
     inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return AddRows(M.___recursive()).___add_row(M.___last_row());
+	return AddRows(M.___recursive()).AddRows(M.___last_row());
     }
 #ifdef ____optimized_version_of_matrices_h_____
     template<size_t index, size_t jindex>
@@ -243,16 +235,6 @@ protected:
     {
         return ColumnType(m_other_lines.___last_column(), m_line.___last_component());
     }
-    inline PlusOneColumn ___add_column(const ColumnType &col)const
-    {
-        const auto new_minor = m_other_lines.___add_column(col.___recursive());
-        const auto new_line = LongerLine(m_line, col.___last_component());
-        return PlusOneColumn(new_minor, new_line);
-    }
-    inline PlusOneRow ___add_row(const RowType &row)const
-    {
-        return PlusOneRow(*this,row);
-    }
     inline const RowType &___last_row()const
     {
         return m_line;
@@ -261,43 +243,45 @@ protected:
     {
         return m_other_lines;
     }
-    inline const Matrix &AddColumns()const
-    {
-        return *this;
-    }
-    inline const Matrix &AddRows()const
-    {
-        return *this;
-    }
 public:
     virtual ~Matrix() {}
+    inline PlusOneColumn AddColumns(const ColumnType &col)const
+    {
+        const auto new_minor = m_other_lines.AddColumns(col.___recursive());
+        const auto new_line = LongerLine(m_line, col.___last_component());
+        return PlusOneColumn(new_minor, new_line);
+    }
     template<class... Args>
     inline Matrix < RowsCount, Vector < ColumnsCount + 1 + sizeof...(Args), NumberType >> AddColumns(const ColumnType &col, Args...args)const
     {
-        return ___add_column(col).AddColumns(args...);
+        return AddColumns(col).AddColumns(args...);
     }
     inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
-	return ___add_column(M.___last_column());
+	return AddColumns(M.___last_column());
     }
     template<size_t third_size>
     inline Matrix<RowsCount,Vector<ColumnsCount+third_size,NumberType>> AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
     {
-	return (AddColumns(M.___minus_one_column())).___add_column(M.___last_column());
+	return (AddColumns(M.___minus_one_column())).AddColumns(M.___last_column());
+    }
+    inline PlusOneRow AddRows(const RowType &row)const
+    {
+        return PlusOneRow(*this,row);
     }
     template<class... Args>
     inline Matrix < RowsCount+1+sizeof...(Args), Vector < ColumnsCount, NumberType >> AddRows(const RowType &row, Args...args)const
     {
-        return ___add_row(row).AddRows(args...);
+        return AddRows(row).AddRows(args...);
     }
     inline Matrix<RowsCount+1,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return ___add_row(M.___last_row());
+	return AddRows(M.___last_row());
     }
     template<size_t third_size>
     inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
     {
-	return AddRows(M.___recursive()).___add_row(M.___last_row());
+	return AddRows(M.___recursive()).AddRows(M.___last_row());
     }
 #ifdef ____optimized_version_of_matrices_h_____
     template<size_t index, size_t jindex>
@@ -410,7 +394,7 @@ public:
     {
         const auto P = operator*(B.___minus_one_column());
         const ColumnType C = operator*(B.___last_column());
-        return P.___add_column(C);
+        return P.AddColumns(C);
     }
     template<class otherlinetype>
     inline Matrix(const Matrix<RowsCount, otherlinetype> &source): m_other_lines(source.___recursive()), m_line(source.___last_row()) {}
