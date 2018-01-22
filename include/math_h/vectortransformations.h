@@ -64,11 +64,11 @@ public:
     }
     inline Matrix<Dimensions, VType> Rotations()const
     {
-        return sign ? lines(vec(numt(1))) : lines(vec(numt(-1)));
+        return sign ? rows(vec(numt(1))) : rows(vec(numt(-1)));
     }
     inline Matrix<Dimensions, VType> AntiRotations()const
     {
-        return sign ? lines(vec(numt(1))) : lines(vec(numt(-1)));
+        return sign ? rows(vec(numt(1))) : rows(vec(numt(-1)));
     }
 };
 
@@ -214,7 +214,7 @@ public:
     {
         return
             Matrix<Dimensions, VType>(
-                m_ld.Rotations().AddColumns(DirectionN::VType::zero()),
+                m_ld.Rotations().AddColumn(DirectionN::VType::zero()),
                 VType::template basis_vector<Dimensions>())
             * Matrix<Dimensions, VType>::template RotationInPlane<3, 1>(m_theta);
     }
@@ -223,7 +223,7 @@ public:
         return
             Matrix<Dimensions, VType>::template RotationInPlane<3, 1>(-m_theta) *
         Matrix<Dimensions, VType>(
-            m_ld.AntiRotations().AddColumns(DirectionN::VType::zero()),
+            m_ld.AntiRotations().AddColumn(DirectionN::VType::zero()),
             VType::template basis_vector<Dimensions>());
     }
 };
@@ -306,7 +306,7 @@ public:
     {
         return
             Matrix<Dimensions, VType>(
-                m_ld.Rotations().AddColumns(DirectionN::VType::zero()),
+                m_ld.Rotations().AddColumn(DirectionN::VType::zero()),
                 VType::template basis_vector<Dimensions>())
             * Matrix<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (m_theta);
     }
@@ -315,7 +315,7 @@ public:
         return
             Matrix<Dimensions, VType>::template RotationInPlane < Dimensions, Dimensions - 1 > (-m_theta) *
         Matrix<Dimensions, VType>(
-            m_ld.AntiRotations().AddColumns(DirectionN::VType::zero()),
+            m_ld.AntiRotations().AddColumn(DirectionN::VType::zero()),
             VType::template basis_vector<Dimensions>());
     }
 };
@@ -362,7 +362,7 @@ template<class numt = double>
 inline Matrix<2, Vector<2, numt>> Rotation(const numt &theta)
 {
     const numt cost = cos(theta), sint = sin(theta);
-    return lines(
+    return rows(
                vec(cost, -sint),
                vec(sint, cost)
            );
@@ -372,7 +372,7 @@ inline Matrix<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const
 {
     const auto n = axis * numt(1);
     const numt cost = cos(theta), sint = sin(theta), one = 1;
-    return lines(
+    return rows(
                vec(cost + (one - cost) * n.x() * n.x(),	(one - cost) * n.x() * n.y() - sint * n.z(),	(one - cost) * n.x() * n.z() + sint * n.y()),
                vec((one - cost) * n.y() * n.x() + sint * n.z(),	    cost + (one - cost) * n.y() * n.y(),	(one - cost) * n.y() * n.z() - sint * n.x()),
                vec((one - cost) * n.z() * n.x() - sint * n.y(),	(one - cost) * n.z() * n.y() + sint * n.x(),	    cost + (one - cost) * n.z() * n.z())
@@ -385,12 +385,12 @@ inline Matrix<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const
 template<class numt = double>
 inline Matrix<1, Vector<2, numt>> SkewM(const Vector<2, numt> &A)
 {
-    return lines(vec(-AC(2), AC(1)));
+    return rows(vec(-AC(2), AC(1)));
 }
 template<class numt = double>
 inline Matrix<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
 {
-    return lines(
+    return rows(
                vec(ZeRo, -AC(3), AC(2)),
                vec(AC(3),  ZeRo, -AC(1)),
                vec(-AC(2), AC(1),  ZeRo)
@@ -399,7 +399,7 @@ inline Matrix<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
 template<class numt = double>
 inline Matrix<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
 {
-    return lines(
+    return rows(
                vec(ZeRo, -AC(4), -AC(7), AC(2), -AC(6), AC(5), AC(3)),
                vec(AC(4),  ZeRo, -AC(5), -AC(1), AC(3), -AC(7), AC(6)),
                vec(AC(7), AC(5),  ZeRo, -AC(6), -AC(2), AC(4), -AC(1)),
