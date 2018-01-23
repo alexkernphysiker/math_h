@@ -8,11 +8,6 @@
 #include <vector>
 #include <functional>
 #include "error.h"
-#if __cplusplus>201700L
-#define ____full_version_of_tabledata_h_____
-#else
-#warning compiler does not support all features for "auto" return type in templates. c++>=17 is needed.Some of the new features will not work
-#endif
 namespace MathTemplates
 {
 template<class comparable = double>
@@ -213,7 +208,7 @@ public:
     {
         return x > b.x;
     }
-#ifdef ____full_version_of_tabledata_h_____
+#ifdef ____full_version_of_math_h_____
     template<class numtY2>
     auto operator+(const numtY2 &val)const->point<numtX,decltype(Y()+val)>
     {
@@ -551,7 +546,7 @@ public:
         return leftArrow(SortedPoints<numX,numtY2>(other));
     }
 
-#ifdef ____full_version_of_tabledata_h_____
+#ifdef ____full_version_of_math_h_____
     template<class numtY2>
     auto operator+(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other[0].Y())>
     {

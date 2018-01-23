@@ -2,17 +2,10 @@
 // LGPLv3 license
 #ifndef EMEFWAYNIGJGENCP
 #define EMEFWAYNIGJGENCP
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <math.h>
 #include <functional>
 #include <memory>
-#if __cplusplus>201700L
-#define ____full_version_of_functions_h_____
-#else
-#warning compiler does not support "if constexpr(...)". c++>=17 is needed. Non optimal versions of some templates will be used.
-#endif
+#include "error.h"
 namespace MathTemplates
 {
 template<class result, typename... Args>
@@ -96,7 +89,7 @@ numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
 {
     return 1.0 / (1.0 + exp((x - X_border) / diffuse));
 }
-#ifndef ____full_version_of_functions_h_____
+#ifndef ____full_version_of_math_h_____
 template<unsigned int P,int index_offset = 0, class numt, class indexer>
 inline numt Polynom(const numt &x, const indexer&p)
 {

@@ -2,12 +2,9 @@
 // LGPLv3 license
 #ifndef ____HISTS_H_____
 #	define ____HISTS_H_____
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
+#include "error.h"
 #include "tabledata.h"
 #include "sigma.h"
-#include "error.h"
 namespace MathTemplates
 {
 template<class numt>

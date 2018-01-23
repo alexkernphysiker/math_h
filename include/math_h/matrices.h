@@ -2,18 +2,10 @@
 // LGPLv3 license
 #ifndef ______MATRICES_H_______
 #	define ______MATRICES_H_______
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <iostream>
 #include <math.h>
 #include "error.h"
 #include "vectors.h"
-#if __cplusplus>201700L
-#define ____optimized_version_of_matrices_h_____
-#else
-#warning compiler does not support "if constexpr(...)". c++>=17 is needed. Some features of matrices.h will be absent
-#endif
 namespace MathTemplates
 {
 template<class linetype, class... Args>
@@ -79,7 +71,7 @@ public:
     {
 	return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
-#ifdef ____optimized_version_of_matrices_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {
@@ -287,7 +279,7 @@ public:
     {
 	return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
-#ifdef ____optimized_version_of_matrices_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index, size_t jindex>
     inline const NumberType &element()const
     {

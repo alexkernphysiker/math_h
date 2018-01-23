@@ -2,20 +2,12 @@
 // LGPLv3 license
 #ifndef ___________VECTORTRANSFORMATIONS_H_____
 #	define ___________VECTORTRANSFORMATIONS_H_____
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <tuple>
 #include <math.h>
 #include <type_traits>
 #include "error.h"
 #include "vectors.h"
 #include "matrices.h"
-#if __cplusplus>201700L
-#define ____optimized_version_of_vectortransformations_h_____
-#else
-#warning compiler does not support "if constexpr(...)". c++>=17 is needed. classes from vectortransformations.h will work slower
-#endif
 namespace MathTemplates
 {
 
@@ -196,7 +188,7 @@ public:
     {
         return m_ld.phi();
     }
-#ifdef ____optimized_version_of_vectortransformations_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index = 1>
     inline const numt &th()const
     {
@@ -293,7 +285,7 @@ public:
     {
         return m_ld.phi();
     }
-#ifdef ____optimized_version_of_vectortransformations_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const numt &th()const
     {

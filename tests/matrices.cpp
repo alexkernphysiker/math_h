@@ -264,7 +264,7 @@ TEST(Matrix, AddRows)
     );
 
 }
-#ifdef ____optimized_version_of_matrices_h_____
+#ifdef ____full_version_of_math_h_____
 TEST(Matrix, det1)
 {
     const auto M=row(3.0);

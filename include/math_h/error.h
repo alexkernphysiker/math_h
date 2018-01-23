@@ -5,6 +5,11 @@
 #if __cplusplus<201100L
 #error c++>=11 is needed for using math_h headers
 #endif
+#if __cplusplus>201700L
+#define ____full_version_of_math_h_____
+#else
+#warning c++17 is needed to compile full featured version of math_h
+#endif
 #include <exception>
 #include <string>
 namespace MathTemplates

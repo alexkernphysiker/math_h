@@ -2,9 +2,6 @@
 // LGPLv3 license
 #ifndef YJIOGPKSIIYJVKND
 #define YJIOGPKSIIYJVKND
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <iostream>
 #include <memory>
 #include <math.h>

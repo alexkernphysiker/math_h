@@ -1,10 +1,8 @@
 // this file is distributed under
 // LGPLv3 license
 #ifndef PPRNSANGJGXVGERD
-#define PPRNSANGJGXVGERD
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
+#	define PPRNSANGJGXVGERD
+#include "error.h"
 #include "tabledata.h"
 #include "integrate.h"
 namespace MathTemplates

@@ -2,9 +2,6 @@
 // LGPLv3 license
 #ifndef ___________LORENTZVECTOR_H_____
 #	define ___________LORENTZVECTOR_H_____
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <tuple>
 #include <math.h>
 #include <type_traits>

@@ -100,7 +100,7 @@ void test_polynom(function<double(int)> f)
         }
         EXPECT_EQ(true, pow(V - Polynom<P>(x, C), 2) < 0.0001);
     }
-#if __cplusplus>201700L
+#ifdef ____full_version_of_math_h_____
     if constexpr(P>0) test_polynom<P-1>(f);
 #endif
 }

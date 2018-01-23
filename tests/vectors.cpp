@@ -177,7 +177,7 @@ TEST(Vector, scalar_prod3)
     EXPECT_EQ(1, (-Z()) * (-Z()));
 }
 
-#ifdef ____optimized_version_of_vectors_h_____
+#ifdef ____full_version_of_math_h_____
 TEST(Vector, remove_component)
 {
     EXPECT_EQ(vec(1,2).RemoveComponent<1>(),vec(2));

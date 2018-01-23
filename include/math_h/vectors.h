@@ -2,19 +2,11 @@
 // LGPLv3 license
 #ifndef ___________VECTORS_H_____
 #	define ___________VECTORS_H_____
-#if __cplusplus<201100L
-#error c++>=11 is needed for using math_h headers
-#endif
 #include <tuple>
 #include <math.h>
 #include <type_traits>
 #include "error.h"
 #include "randomfunc.h"
-#if __cplusplus>201700L
-#define ____optimized_version_of_vectors_h_____
-#else
-#warning compiler does not support "if constexpr(...)". c++>=17 is needed. classes from vectors.h will work slower
-#endif
 namespace MathTemplates
 {
 template<size_t size = 3, class numt = double>class Vector;
@@ -55,7 +47,7 @@ public:
     {
         return Vector(std::make_tuple(numt(0)));
     }
-#ifdef ____optimized_version_of_vectors_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline PlusOneComponent InsertComponent(const NumberType&c)const
     {
@@ -198,7 +190,7 @@ public:
     {
         return Vector(MinusOneComponent::zero(), numt(0));
     }
-#ifdef ____optimized_version_of_vectors_h_____
+#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline static Vector basis_vector()
     {
