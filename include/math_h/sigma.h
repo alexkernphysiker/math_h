@@ -14,11 +14,6 @@ class value
 {
 private:
     numt m_val, m_uncertainty;
-    inline void p_check()
-    {
-        if (m_uncertainty < 0)
-            m_uncertainty = INFINITY;
-    }
 public:
     virtual ~value() {}
     inline const numt&val()const
@@ -29,30 +24,15 @@ public:
     {
         return m_uncertainty;
     }
-    value(): m_val(numt(0)), m_uncertainty(numt(0)){p_check();}
-    value(const numt&v): m_val(v), m_uncertainty(numt(0)){p_check();}
-    value(const numt&v, const numt&err): m_val(v), m_uncertainty(err){p_check();}
+    value(): m_val(0), m_uncertainty(0){}
+    value(const numt&v): m_val(v), m_uncertainty(0){}
+    value(const numt&v, const numt&err): m_val(v), m_uncertainty(err){
+        if (m_uncertainty < 0)
+            m_uncertainty = INFINITY;
+    }
     template<class numt2>
-    value(const value<numt2> &source): m_val(source.val()), m_uncertainty(source.uncertainty()){p_check();}
+    value(const value<numt2> &source): value((source.val()), m_uncertainty(source.uncertainty())){}
 
-    value(const Chain<numt> &source)
-    {
-        if (source.size() == 0)
-            throw Exception<value>("wrong initialization of value from emply list");
-        if (source.size() > 2)
-            throw Exception<value>("wrong initialization of value from list with more than two numbers");
-        m_val = source[0];
-        if (source.size() == 1)m_uncertainty = numt(0);
-        else m_uncertainty = source[1];
-        p_check();
-    }
-    value &operator=(const value &source)
-    {
-        m_val = source.m_val;
-        m_uncertainty = source.m_uncertainty;
-        p_check();
-        return *this;
-    }
     value make_wider(const numt &scale)const
     {
         return value(m_val, scale * m_uncertainty);
@@ -138,21 +118,18 @@ public:
     {
         m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_val += other.m_val;
-        p_check();
         return *this;
     }
     value &operator-=(const value &other)
     {
         m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_val -= other.m_val;
-        p_check();
         return *this;
     }
     value &operator*=(const value &other)
     {
         m_uncertainty = sqrt(pow(m_uncertainty * other.m_val, 2) + pow(other.m_uncertainty * m_val, 2));
         m_val *= other.m_val;
-        p_check();
         return *this;
     }
     value &operator/=(const value &other)
@@ -160,7 +137,6 @@ public:
         m_uncertainty = sqrt(pow(m_uncertainty / other.m_val, 2)
                      + pow(other.m_uncertainty * m_val / pow(other.m_val, 2), 2));
         m_val /= other.m_val;
-        p_check();
         return *this;
     }
     inline value operator+(const value &other)const
@@ -269,7 +245,7 @@ inline std::istream &operator>>(std::istream &str, value<numt> &P)
 {
     numt v, u;
     str >> v >> u;
-    P = {v, u};
+    P = value<numt>(v, u);
     return str;
 }
 template<typename numt>

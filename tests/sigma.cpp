@@ -221,27 +221,6 @@ TEST(value, error_handling)
     EXPECT_EQ((value<>(1, -0.1) + value<>(1, 0.1)).val(), 2);
     EXPECT_FALSE(isfinite((value<>(1, -0.1) + value<>(1, 0.1)).uncertainty()));
 }
-TEST(value, fromlist)
-{
-    Chain<> l = {};
-    value<> v;
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0, 2.0, 3.0};
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0, 2.0, 3.0, 4.0};
-    EXPECT_THROW(v = l, Exception<value<>>);
-    l = {1.0};
-    EXPECT_NO_THROW(v = l);
-    l = {1.0, 2.0};
-    EXPECT_NO_THROW(v = l);
-
-    v = {1.0};
-    EXPECT_EQ(1.0, v.val());
-    EXPECT_EQ(0.0, v.uncertainty());
-    v = {1.0, 2.0};
-    EXPECT_EQ(1.0, v.val());
-    EXPECT_EQ(2.0, v.uncertainty());
-}
 TEST(StandardDeviation, Throwing)
 {
     StandardDeviation<> S;
