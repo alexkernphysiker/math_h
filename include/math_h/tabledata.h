@@ -713,11 +713,6 @@ public:
     {
         return m_y_axis;
     }
-    BiSortedPoints(const Chain<numtX> &X, const Chain<numtY> &Y)
-        : m_x_axis(X), m_y_axis(Y)
-    {
-        init();
-    }
     BiSortedPoints(const SortedChain<numtX> &X, const SortedChain<numtY> &Y)
         : m_x_axis(X), m_y_axis(Y)
     {
