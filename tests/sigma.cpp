@@ -161,13 +161,29 @@ TEST(value, NumCompare)
         EXPECT_EQ(v, 4);
     }
 }
-TEST(value, func_val)
+TEST(value, func_val1)
 {
-    value<> V(1, 0.1),
-    V2([](double x){return 2.0 * x;},V);
-    EXPECT_EQ(2 * V.val(), V2.val());
-    ALMOST_EQ(2 * V.uncertainty(), V2.uncertainty());
+     value<> A(1, 0.1),
+     V=func_with_uncertainty([](double x){return 2.0 * x;},A);
+     EXPECT_EQ(2 * A.val(), V.val());
+     ALMOST_EQ(2 * A.uncertainty(), V.uncertainty());
 }
+#ifdef ____middle_version_of_math_h_____
+TEST(value, func_val2)
+{
+     value<> A1(1, 0.1),A2(2, 0.5),
+     V=func_with_uncertainty([](double x,double y){return x+y;},A1,A2);
+     EXPECT_EQ((A1+A2).val(), V.val());
+     ALMOST_EQ((A1+A2).uncertainty(), V.uncertainty());
+}
+TEST(value, func_val3)
+{
+     value<> A1(1, 0.1),A2(2, 0.5),A3(1.5, 0.2),
+     V=func_with_uncertainty([](double x,double y,double z){return (x+y)*z;},A1,A2,A3);
+     EXPECT_EQ(((A1+A2)*A3).val(), V.val());
+     ALMOST_EQ(((A1+A2)*A3).uncertainty(), V.uncertainty());
+}
+#endif
 TEST(value, wider)
 {
     value<> V1(1, 0.1), V2(2, 0.1), V3(1, 0.5);
@@ -207,7 +223,7 @@ TEST(value, error_handling)
 }
 TEST(value, fromlist)
 {
-    initializer_list<double> l = {};
+    Chain<> l = {};
     value<> v;
     EXPECT_THROW(v = l, Exception<value<>>);
     l = {1.0, 2.0, 3.0};

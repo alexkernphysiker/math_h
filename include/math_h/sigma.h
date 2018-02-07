@@ -13,202 +13,154 @@ template<typename numt = double>
 class value
 {
 private:
-    numt Value, Error;
-    struct cache {
-        numt epsilon, min, max;
-        cache(const numt &e, const numt &b, const numt &a)
-            : epsilon(e), min(b), max(a) {}
-    };
-    std::shared_ptr<cache> f_cache;
-    inline void invalidate()
+    numt m_val, m_uncertainty;
+    inline void p_check()
     {
-        if (Error < 0)
-            Error = INFINITY;
-        f_cache = nullptr;
-    }
-    void calc()const
-    {
-        if (!f_cache) {
-            const_cast<value &>(*this).f_cache = std::make_shared<cache>(
-                    Error / Value, Value - Error, Value + Error
-                                                 );
-        }
+        if (m_uncertainty < 0)
+            m_uncertainty = INFINITY;
     }
 public:
     virtual ~value() {}
-    inline const numt &val()const
+    inline const numt&val()const
     {
-        return Value;
+        return m_val;
     }
-    inline const numt &uncertainty()const
+    inline const numt&uncertainty()const
     {
-        return Error;
+        return m_uncertainty;
     }
-    value(): Value(numt(0)), Error(numt(0))
-    {
-        invalidate();
-    }
-    value(const numt v): Value(v), Error(numt(0))
-    {
-        invalidate();
-    }
-    value(const numt v, const numt err): Value(v), Error(err)
-    {
-        invalidate();
-    }
-    value(const std::function<numt(const numt&)>F,const value&source)
-    :Value(F(source.val())),Error(sqrt((pow(F(source.min()) - Value, 2) + pow(F(source.max()) - Value, 2)) / numt(2)))
-    {
-	invalidate();
-    }
+    value(): m_val(numt(0)), m_uncertainty(numt(0)){p_check();}
+    value(const numt&v): m_val(v), m_uncertainty(numt(0)){p_check();}
+    value(const numt&v, const numt&err): m_val(v), m_uncertainty(err){p_check();}
+    template<class numt2>
+    value(const value<numt2> &source): m_val(source.val()), m_uncertainty(source.uncertainty()){p_check();}
 
-    value(const std::initializer_list<numt> &source)
+    value(const Chain<numt> &source)
     {
         if (source.size() == 0)
             throw Exception<value>("wrong initialization of value from emply list");
         if (source.size() > 2)
             throw Exception<value>("wrong initialization of value from list with more than two numbers");
-        Chain<numt> v;
-        for (const numt &x : source)v.push_back(x);
-        Value = v[0];
-        if (v.size() == 1)Error = numt(0);
-        else Error = v[1];
-        invalidate();
-    }
-    static value std_error(const numt &v)
-    {
-        if (v < 0)throw Exception<value>("Cannot calculate std error for negative value");
-        auto res = value(v, sqrt(v));
-        if (res.Error < numt(1))res.Error = numt(1);
-        return res;
-    }
-    inline static value interval(const numt &a, const numt &b)
-    {
-        if (b < a)throw Exception<value>("Bad interval");
-        return value((b + a) / numt(2), (b - a) / numt(2));
-    }
-    template<class numt2>
-    value(const value<numt2> &source): Value(source.val()), Error(source.uncertainty())
-    {
-        invalidate();
+        m_val = source[0];
+        if (source.size() == 1)m_uncertainty = numt(0);
+        else m_uncertainty = source[1];
+        p_check();
     }
     value &operator=(const value &source)
     {
-        Value = source.Value;
-        Error = source.Error;
-        invalidate();
+        m_val = source.m_val;
+        m_uncertainty = source.m_uncertainty;
+        p_check();
         return *this;
     }
     value make_wider(const numt &scale)const
     {
-        return value(Value, scale * Error);
+        return value(m_val, scale * m_uncertainty);
     }
-    const numt &epsilon()const
+    inline numt epsilon()const
     {
-        calc();
-        return f_cache->epsilon;
+        return m_uncertainty/m_val;
     }
-    const numt &min()const
+    inline numt min()const
     {
-        calc();
-        return f_cache->min;
+        return m_val-m_uncertainty;
     }
-    const numt &max()const
+    inline numt max()const
     {
-        calc();
-        return f_cache->max;
+        return m_val+m_uncertainty;
     }
+
     //Physical comparing of magnitudes with uncertainties
-    bool Contains(const numt &x)const
+    inline bool Contains(const numt &x)const
     {
         return (x >= min()) && (x <= max());
     }
-    bool Contains(const value &x)const
+    inline bool Contains(const value &x)const
     {
         return (x.max() >= min()) && (x.min() <= max());
     }
-    bool NotEqual(const numt &x)const
+    inline bool NotEqual(const numt &x)const
     {
         return (x < min()) || (x > max());
     }
-    bool NotEqual(const value &x)const
+    inline bool NotEqual(const value &x)const
     {
         return (x.max() < min()) || (x.min() > max());
     }
-    bool Below(const numt &x)const
+    inline bool Below(const numt &x)const
     {
         return max() < x;
     }
-    bool Below(const value &x)const
+    inline bool Below(const value &x)const
     {
         return max() < x.min();
     }
-    bool Above(const numt &x)const
+    inline bool Above(const numt &x)const
     {
         return min() > x;
     }
-    bool Above(const value &x)const
+    inline bool Above(const value &x)const
     {
         return min() > x.max();
     }
     //chi-square-like numeric comparing of magnitudes
     numt NumCompare(const numt &x)const
     {
-        return pow((Value - x) / Error, 2);
+        return pow((m_val - x) / m_uncertainty, 2);
     }
     numt NumCompare(const value &x)const
     {
-        return pow((Value - x.Value) / (Error + x.Error), 2);
+        return pow((m_val - x.m_val) / (m_uncertainty + x.m_uncertainty), 2);
     }
     //Inheriting number-like comparing
     inline bool operator<(const value &other)const
     {
-        return Value < other.Value;
+        return m_val < other.m_val;
     }
     inline bool operator>(const value &other)const
     {
-        return Value > other.Value;
+        return m_val > other.m_val;
     }
     inline bool operator==(const value &other)const
     {
-        return Value == other.Value;
+        return m_val == other.m_val;
     }
     inline bool operator>=(const value &other)const
     {
-        return Value >= other.Value;
+        return m_val >= other.m_val;
     }
     inline bool operator<=(const value &other)const
     {
-        return Value <= other.Value;
+        return m_val <= other.m_val;
     }
     //arithmetic actions
     value &operator+=(const value &other)
     {
-        Error = sqrt(pow(Error, 2) + pow(other.Error, 2));
-        Value += other.Value;
-        invalidate();
+        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+        m_val += other.m_val;
+        p_check();
         return *this;
     }
     value &operator-=(const value &other)
     {
-        Error = sqrt(pow(Error, 2) + pow(other.Error, 2));
-        Value -= other.Value;
-        invalidate();
+        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+        m_val -= other.m_val;
+        p_check();
         return *this;
     }
     value &operator*=(const value &other)
     {
-        Error = sqrt(pow(Error * other.Value, 2) + pow(other.Error * Value, 2));
-        Value *= other.Value;
-        invalidate();
+        m_uncertainty = sqrt(pow(m_uncertainty * other.m_val, 2) + pow(other.m_uncertainty * m_val, 2));
+        m_val *= other.m_val;
+        p_check();
         return *this;
     }
     value &operator/=(const value &other)
     {
-        Error = sqrt(pow(Error / other.Value, 2)
-                     + pow(other.Error * Value / pow(other.Value, 2), 2));
-        Value /= other.Value;
-        invalidate();
+        m_uncertainty = sqrt(pow(m_uncertainty / other.m_val, 2)
+                     + pow(other.m_uncertainty * m_val / pow(other.m_val, 2), 2));
+        m_val /= other.m_val;
+        p_check();
         return *this;
     }
     inline value operator+(const value &other)const
@@ -228,11 +180,90 @@ public:
         return value(*this) /= other;
     }
 };
+
 template<class numt>
 inline value<numt> std_error(const numt &v)
 {
-    return value<numt>::std_error(v);
+        if (v < 0)throw Exception<value<numt>>("Cannot calculate std error for negative value");
+        if (v == 0)return value<numt>(0,1);
+        return value<numt>(v, sqrt(v));
 }
+template<class numt>
+inline value<numt> value_in_range(const numt &a,const numt &b)
+{
+        if (b < a)throw Exception<value<numt>>("Cannot use empty range for value with uncertainty");
+        return value<numt>((a+b)/numt(2),(b-a)/numt(2));
+}
+namespace details{
+    template<class numt,class Func>
+    inline numt get_val(Func F,const value<numt>&v)
+    {
+	return F(v.val());
+    }
+    template<class numt,class Func>
+    inline numt get_val_u(Func F,const value<numt>&v)
+    {
+	return F(v.max());
+    }
+    template<class numt,class Func>
+    inline numt get_val_d(Func F,const value<numt>&v)
+    {
+	return F(v.min());
+    }
+    template<class numt,class Func>
+    inline numt uncertainty_sqr(Func F,const value<numt>&v)
+    {
+	return (
+	    pow(get_val_u(F,v)-get_val(F,v),2)+
+	    pow(get_val_d(F,v)-get_val(F,v),2)
+	)/numt(2);
+    }
+#ifdef ____middle_version_of_math_h_____
+    template<class numt,class Func,typename... Args>
+    inline numt get_val(Func F,const value<numt> &v,Args... args)
+    {
+	return get_val([&v,&F](auto... a){return F(v.val(),a...);},args...);
+    }
+    template<class numt,class Func,typename... Args>
+    inline numt get_val_u(Func F,const value<numt> &v,Args... args)
+    {
+	return get_val([&v,&F](auto... a){return F(v.max(),a...);},args...);
+    }
+    template<class numt,class Func,typename... Args>
+    inline numt get_val_d(Func F,const value<numt> &v,Args... args)
+    {
+	return get_val([&v,&F](auto... a){return F(v.min(),a...);},args...);
+    }
+    template<class numt,class Func,typename... Args>
+    inline numt uncertainty_sqr(Func F,const value<numt>&v,Args... args)
+    {
+	return (
+	    pow(get_val_u(F,v,args...)-get_val(F,v,args...),2)+
+	    pow(get_val_d(F,v,args...)-get_val(F,v,args...),2)
+	)/numt(2)
+	    +uncertainty_sqr([&v,&F](auto... a){return F(v.val(),a...);},args...);
+    }
+#endif
+};
+#ifdef ____middle_version_of_math_h_____
+template<class numt,class Func,typename... Args>
+inline value<numt> func_with_uncertainty(Func F,const value<numt>&v,Args... args)
+{
+    return value<numt>(
+	details::get_val([F](auto...a){return F(a...);},v,args...),
+	sqrt(details::uncertainty_sqr([F](auto...a){return F(a...);},v,args...))
+    );
+}
+#else
+template<class numt,class Func>
+inline value<numt> func_with_uncertainty(Func F,const value<numt>&v)
+{
+    return value<numt>(
+	details::get_val([F](const numt&a){return F(a);},v),
+	sqrt(details::uncertainty_sqr([F](const numt&a){return F(a);},v))
+    );
+}
+#endif
 template<typename numt>
 inline std::istream &operator>>(std::istream &str, value<numt> &P)
 {

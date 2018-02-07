@@ -136,7 +136,7 @@ public:
             numtY v = 0;
             for (size_t ii = 0; ii < sc_x; ii++)
                 v += this->operator[](i * sc_x + ii).Y().val();
-            res.Bin(i) = value<numtY>::std_error(v);
+            res.Bin(i) = std_error(v);
         }
         return res;
     }
@@ -144,7 +144,7 @@ public:
     {
         for (int i = 0, n = this->size(); i < n; i++) {
             if (this->operator[](i).X() == second[i].X()) {
-                this->Bin(i) = value<numtY>::std_error(this->operator[](i).Y().val() + second[i].Y().val());
+                this->Bin(i) = std_error(this->operator[](i).Y().val() + second[i].Y().val());
             } else
                 throw Exception<hist>("Cannot imbibe histogram. bins differ");
         }
@@ -188,7 +188,7 @@ public:
                     for (size_t jj = 0; jj < sc_y; jj++)
                         v += this->operator[](i * sc_x + ii)[j * sc_y + jj].val();
                 }
-                res.Bin(i, j) = value<numtZ>::std_error(v);
+                res.Bin(i, j) = std_error(v);
             }
         return res;
     }
@@ -197,7 +197,7 @@ public:
         if ((this->X().size() != second.X().size()) || (this->Y().size() != second.Y().size()))
             throw Exception<hist2d>("cannot imbibe second histogram: bins differ");
         for (int i = 0, n = this->size(); i < n; i++)for (int j = 0, m = this->operator[](i).size(); j < m; j++)
-                this->Bin(i, j) = value<numtY>::std_error(this->operator[](i)[j].val() + second[i][j].val());
+                this->Bin(i, j) = std_error(this->operator[](i)[j].val() + second[i][j].val());
         return *this;
     }
 };
@@ -210,12 +210,12 @@ private:
 public:
     Distribution1D(const Chain<value<numtX>> &data): hist<numtX, numtY>(data)
     {
-        this->FillWithValues(value<numtY>::std_error(0));
+        this->FillWithValues(std_error(numtY(0)));
         counter = 0;
     }
     Distribution1D(const SortedChain<value<numtX>> &data): hist<numtX, numtY>(data)
     {
-        this->FillWithValues(value<numtY>::std_error(0));
+        this->FillWithValues(std_error(numtY(0)));
         counter = 0;
     }
     Distribution1D &Fill(const numtX &v)
@@ -223,7 +223,7 @@ public:
         counter++;
         for (size_t i = 0, n = this->size(); i < n; i++) {
             if (this->Bin(i).X().Contains(v))
-                this->Bin(i) = value<numtY>::std_error(this->Bin(i).Y().val() + numtY(1));
+                this->Bin(i) = std_error(this->Bin(i).Y().val() + numtY(1));
         }
         return *this;
     }
@@ -241,7 +241,7 @@ private:
     {
         counter = 0;
         this->FullCycleVar([](const value<numtX> &, const value<numtY> &, value<numtZ> &z) {
-            z = value<numtZ>::std_error(0);
+            z = std_error(numtZ(0));
         });
     }
 public:
@@ -260,7 +260,7 @@ public:
         counter++;
         for (size_t i = 0, I = this->X().size(); i < I; i++)if (this->X()[i].Contains(x)) {
                 for (size_t j = 0, J = this->Y().size(); j < J; j++)if (this->Y()[j].Contains(y))
-                        this->Bin(i, j) = value<numtZ>::std_error(this->operator[](i)[j].val() + numtZ(1));
+                        this->Bin(i, j) = std_error(this->operator[](i)[j].val() + numtZ(1));
             }
         return *this;
     }
