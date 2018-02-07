@@ -4,11 +4,14 @@
 #define YJIOGPKSIIYJVKND
 #include <iostream>
 #include <memory>
+#include <vector>
 #include <math.h>
 #include "error.h"
-#include "tabledata.h"
 namespace MathTemplates
 {
+template<class comparable = double>
+using Chain=std::vector<comparable>;
+
 template<typename numt = double>
 class value
 {

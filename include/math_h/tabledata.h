@@ -8,10 +8,9 @@
 #include <vector>
 #include <functional>
 #include "error.h"
+#include "sigma.h"
 namespace MathTemplates
 {
-template<class comparable = double>
-using Chain=std::vector<comparable>;
 namespace details
 {
 template<class comparable, class indexer = Chain<comparable>>
@@ -360,6 +359,7 @@ class SortedPoints: public SortedChain<point<numX, numY>>
 {
 public:
     typedef std::function<numY(const numX &)> Func;
+    typedef point<numX,numY> Point;
     SortedPoints() {}
     template<class numY2>
     SortedPoints(const Points<numX, numY2> &chain)
@@ -367,15 +367,23 @@ public:
         for (const auto &x : chain)
             SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x));
     }
-    template<class numY2>
-    SortedPoints(const SortedChain<point<numX, numY2>> &chain)
+    template<class numX2,class numY2>
+    SortedPoints(const SortedChain<point<numX2, numY2>> &chain)
     {
-        for (const auto &x : chain)
-            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x));
+        for (const auto &p : chain){
+	    numX a;numY b;
+	    a=p.X();b=p.Y();
+	    SortedChain<point<numX, numY>>::append_item_from_sorted(make_point(a,b));
+	}
     }
     SortedPoints(const Func f, const SortedChain<numX> &chain)
     {
-        for (numX x : chain)
+        for (const numX&x : chain)
+            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
+    }
+    SortedPoints(const Func f, const Chain<numX> &chain)
+    {
+        for (const numX&x : chain)
             SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
     }
     template<class numY2>
@@ -635,6 +643,50 @@ public:
     SortedPoints operator-(const Func other)const{return SortedPoints(*this) -= other;}
     SortedPoints operator*(const Func other)const{return SortedPoints(*this) *= other;}
     SortedPoints operator/(const Func other)const{return SortedPoints(*this) /= other;}
+
+    //In case of types with uncertainty
+    SortedPoints CloneEmptyBins()const
+    {
+        SortedPoints res;
+        for (const auto&P : *this)res<<make_point(P.X(),std_error(0));
+        return res;
+    }
+    numY TotalSum()const
+    {
+        numY res = 0;
+        for (const auto&P : *this)res += P.Y();
+        return res;
+    }
+    SortedPoints Scale(const size_t sc_x)const
+    {
+        SortedChain<numX> new_x, sorted_x;
+        for (const auto &item : *this)
+            sorted_x << item.X();
+        for (size_t i = sc_x - 1, n = sorted_x.size(); i < n; i += sc_x) {
+            const auto min = sorted_x[i + 1 - sc_x].min(),
+             max = sorted_x[i].max(),two=2;
+            new_x << numX((max + min)/two, (max-min)/two);
+        }
+        SortedPoints res([](const numX&){return numY(0);},new_x);
+        for (size_t i = 0; i < new_x.size(); i++) {
+            auto v = numY(0).val();
+            for (size_t ii = 0; ii < sc_x; ii++)
+                v += this->operator[](i * sc_x + ii).Y().val();
+            res.Bin(i) = std_error(v);
+        }
+        return res;
+    }
+    SortedPoints &imbibe(const SortedPoints&second)
+    {
+        for (int i = 0, n = this->size(); i < n; i++) {
+            if (this->operator[](i).X() == second[i].X()) {
+                this->Bin(i) = std_error(this->operator[](i).Y().val() + second[i].Y().val());
+            } else
+                throw Exception<SortedPoints>("Cannot imbibe histogram. bins differ");
+        }
+        return *this;
+    }
+
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class BiSortedPoints
@@ -769,6 +821,40 @@ public:
             for (size_t j = 0, J = m_y_axis.size(); j < J; j++)
                 f(m_data[i][j]);
         }
+        return *this;
+    }
+    //In case of types with uncertainty
+    BiSortedPoints Scale(const size_t sc_x, const size_t sc_y)const
+    {
+        SortedChain<numtX> new_x;
+        for (size_t i = sc_x - 1, n = this->X().size(); i < n; i += sc_x) {
+            const auto min = this->X()[i + 1 - sc_x].min(),
+		max = this->X()[i].max(),two=2;
+            new_x << (numtX((max + min) / two, (max - min) / two));
+        }
+        SortedChain<numtY> new_y;
+        for (size_t i = sc_y - 1, n = this->Y().size(); i < n; i += sc_y) {
+            const auto min = this->Y()[i + 1 - sc_y].min(),
+		max = this->Y()[i].max(),two=2;
+            new_y << (numtY((max + min) / two, (max - min) / two));
+        }
+        BiSortedPoints res(new_x, new_y);
+        for (size_t i = 0; i < new_x.size(); i++)for (size_t j = 0; j < new_y.size(); j++) {
+                auto v = numtZ(0).val();
+                for (size_t ii = 0; ii < sc_x; ii++) {
+                    for (size_t jj = 0; jj < sc_y; jj++)
+                        v += this->operator[](i * sc_x + ii)[j * sc_y + jj].val();
+                }
+                res.Bin(i, j) = std_error(v);
+            }
+        return res;
+    }
+    BiSortedPoints &imbibe(const BiSortedPoints &second)
+    {
+        if ((this->X().size() != second.X().size()) || (this->Y().size() != second.Y().size()))
+            throw Exception<BiSortedPoints>("cannot imbibe second histogram: bins differ");
+        for (int i = 0, n = this->size(); i < n; i++)for (int j = 0, m = this->operator[](i).size(); j < m; j++)
+                this->Bin(i, j) = std_error(this->operator[](i)[j].val() + second[i][j].val());
         return *this;
     }
 };
