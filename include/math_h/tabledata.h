@@ -648,7 +648,7 @@ public:
     SortedPoints CloneEmptyBins()const
     {
         SortedPoints res;
-        for (const auto&P : *this)res<<make_point(P.X(),std_error(0));
+        for (const auto&P : *this)res<<make_point(P.X(),std_error(numY(0).val()));
         return res;
     }
     numY TotalSum()const
