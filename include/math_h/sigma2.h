@@ -10,10 +10,14 @@
 namespace MathTemplates
 {
 template<size_t d,class n=double>class value_f;
+template<class n=double>class value_f_chain;
 template<typename numt = double>
 class abstract_value_with_extended_uncertainty:public abstract_value_with_uncertainty<numt>
 {
+public:
+    typedef numt NumType;
     template<size_t d,class n>friend class value_f;
+    template<class n>friend class value_f_chain;
 protected:
     virtual numt mmeasure()const=0;
 private:
@@ -54,6 +58,7 @@ private:
 protected:
     virtual numt mmeasure()const override{return m_val;}
 public:
+    value_const(const value_const&source):abstract_value_with_extended_uncertainty<numt>(),m_val(source.m_val){}
     value_const(const numt&v):abstract_value_with_extended_uncertainty<numt>(),m_val(v){}
     virtual ~value_const(){}
 };
@@ -66,6 +71,7 @@ protected:
 	return m_distr();
     }
 public:
+    value_ext(const value_ext&S):abstract_value_with_extended_uncertainty<numt>(),m_distr(S.m_distr){}
     value_ext(const DISTR&D):abstract_value_with_extended_uncertainty<numt>(),m_distr(D){}
     template<typename... Args>
     value_ext(Args... args):abstract_value_with_extended_uncertainty<numt>(),m_distr(args...){}
@@ -77,134 +83,159 @@ inline value_ext<numt,RandomGauss<numt>> ext_value(const abstract_value_with_unc
 }
 //calculated values
 template<class numt>
+class value_f_chain:public abstract_value_with_extended_uncertainty<numt>{
+private:
+    std::function<numt(const Chain<numt>&)> m_func;
+    Chain<const abstract_value_with_extended_uncertainty<numt>*> m_chain;
+protected:
+    virtual numt mmeasure()const override{
+	Chain<numt> P;
+	for(const auto A:m_chain)P.push_back(A->mmeasure());
+	return m_func(P);
+    }
+public:
+    value_f_chain(const value_f_chain&source)
+	:abstract_value_with_extended_uncertainty<numt>()
+	    ,m_func(source.m_func),m_chain(source.m_chain){}
+    template<class VType>
+    value_f_chain(std::function<numt(const Chain<numt>&)> F,const Chain<VType>&chain)
+	:abstract_value_with_extended_uncertainty<numt>(),m_func(F){
+	    for(const auto&a:chain)m_chain.push_back(&a);
+	}
+    virtual ~value_f_chain(){}
+};
+template<class numt,class VType>
+inline value_f_chain<numt> FUNC(std::function<numt(const Chain<numt>&)> F,const Chain<VType>&chain){
+    return value_f_chain<numt>(F,chain);
+}
+template<class numt>
 class value_f<0,numt>:public abstract_value_with_extended_uncertainty<numt>{
 private:
     std::function<numt()> m_func;
 protected:
     virtual numt mmeasure()const override{return m_func();}
 public:
-    value_f(const std::function<numt()> F)
+    value_f(const value_f&s)
+	:abstract_value_with_extended_uncertainty<numt>(),m_func(s.m_func){}
+    inline value_f(std::function<numt()> F)
 	:abstract_value_with_extended_uncertainty<numt>(),m_func(F){}
     virtual ~value_f(){}
 };
+
+
 template<class numt>
 class value_f<1,numt>:public value_f<0,numt>{
 public:
-    value_f(
-	const std::function<numt(const numt&)> F,
-	const abstract_value_with_extended_uncertainty<numt>&a
-    )
-	:value_f<0,numt>([&a,F](){return F(a.mmeasure());}){}
+    value_f(const value_f&s):value_f<0,numt>(s){}
+    template<class ArgType1>
+    inline value_f(std::function<numt(const numt&)> F,ArgType1 a)
+	:value_f<0,numt>([a,F](){return F(dynamic_cast<const abstract_value_with_extended_uncertainty<numt>*>(&a)->mmeasure());}){}
     virtual ~value_f(){}
 };
 template<class numt>
-class value_f<2,numt>:public value_f<0,numt>{
+class value_f<2,numt>:public value_f<1,numt>{
 public:
-    value_f(
-	const std::function<numt(const numt&,const numt&)> F,
-	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-    )
-	:value_f<0,numt>([&a,&b,F](){return F(a.mmeasure(),b.mmeasure());}){}
+    value_f(const value_f&s):value_f<1,numt>(s){}
+    template<class ArgType1,class ArgType2>
+    inline value_f(std::function<numt(const numt&,const numt&)> F,ArgType1 a,ArgType2 b)
+	:value_f<1,numt>([a,F](const numt&y){
+	    return F(dynamic_cast<const abstract_value_with_extended_uncertainty<numt>*>(&a)->mmeasure(),y);
+	},b){}
     virtual ~value_f(){}
 };
-template<class numt>
-inline value_f<1,numt> SQRT(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return sqrt(x);},a);
+
+
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> SQRT(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return sqrt(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> SQR(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return x*x;},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> SQR(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return x*x;},a);
 }
-template<class numt>
-inline value_f<1,numt> EXP(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return exp(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> EXP(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return exp(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> LOG(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return log(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> LOG(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return log(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> SIN(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return sin(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> SIN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return sin(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> COS(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return cos(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> COS(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return cos(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> TAN(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return tan(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> TAN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return tan(x);},a);
 }
-template<class numt>
-inline value_f<1,numt> ATAN(
-    	const abstract_value_with_extended_uncertainty<numt>&a
-){
-    return value_f<1,numt>([](const numt&x){return atan(x);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> ATAN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumType>([](const typename ArgType1::NumType&x){return atan(x);},a);
 }
-template<class numt>
-inline value_f<2,numt> ATAN2(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-){
-    return value_f<2,numt>([](const numt&x,const numt&y){return atan2(x,y);},a,b);
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> ATAN2(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return atan2(x,y);},a,b);
 }
-template<class numt>
-inline value_f<2,numt> POW(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> POW(ArgType1 a,ArgType2 b
 ){
-    return value_f<2,numt>([](const numt&x,const numt&y){return pow(x,y);},a,b);
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return pow(x,y);},a,b);
 }
-template<class numt>
-inline value_f<1,numt> POW(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const numt&b
-){
-    return value_f<1,numt>([&b](const numt&x){return pow(x,b);},a);
+template<class ArgType1>
+inline value_f<1,typename ArgType1::NumType> POW(ArgType1 a,const typename ArgType1::NumType&b){
+    return value_f<1,typename ArgType1::NumType>([&b](const typename ArgType1::NumType&x){return pow(x,b);},a);
 }
-template<class numt>
-inline value_f<2,numt> operator+(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-){
-    return value_f<2,numt>([](const numt&x,const numt&y){return x+y;},a,b);
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> operator+(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return x+y;},a,b);
 }
-template<class numt>
-inline value_f<2,numt> operator-(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-){
-    return value_f<2,numt>([](const numt&x,const numt&y){return x-y;},a,b);
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> operator-(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return x-y;},a,b);
 }
-template<class numt>
-inline value_f<2,numt> operator*(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-){
-    return value_f<2,numt>([](const numt&x,const numt&y){return x*y;},a,b);
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> operator*(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return x*y;},a,b);
 }
-template<class numt>
-inline value_f<2,numt> operator/(
-    	const abstract_value_with_extended_uncertainty<numt>&a,
-	const abstract_value_with_extended_uncertainty<numt>&b
-){
-    return value_f<2,numt>([](const numt&x,const numt&y){return x/y;},a,b);
+template<class ArgType1,class ArgType2>
+inline value_f<2,typename ArgType1::NumType> operator/(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumType>([](
+	const typename ArgType1::NumType&x,const typename ArgType1::NumType&y
+    ){return x/y;},a,b);
 }
 
+#ifdef ____middle_version_of_math_h_____
+template<size_t dim,class numt>
+class value_f:public value_f<dim-1,numt>{
+public:
+    value_f(const value_f&s):value_f<dim-1,numt>(s){}
+    template<class FUNC,class ArgType,typename... Args>
+    inline value_f(FUNC F,ArgType a,Args... args)
+	:value_f<dim-1,numt>([a,F](auto...z){
+	    return F(dynamic_cast<const abstract_value_with_extended_uncertainty<numt>*>(&a)->mmeasure(),z...);
+	},args...){}
+    virtual ~value_f(){}
+};
+#endif
+template<class FF, class ArgType,typename... Args>
+inline value_f<sizeof...(Args)+1,typename ArgType::NumType> FUNC(FF F,ArgType a,Args... args){
+    return value_f<sizeof...(Args)+1,typename ArgType::NumType>(F,a,args...);
 }
+
+};
 #endif
