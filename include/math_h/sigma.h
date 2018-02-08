@@ -82,6 +82,14 @@ public:
     {
         return val() > other.val();
     }
+    inline bool operator<(const numt &other)const
+    {
+        return val() < other;
+    }
+    inline bool operator>(const numt &other)const
+    {
+        return val() > other;
+    }
     inline bool operator==(const abstract_value_with_uncertainty&other)const
     {
         return val() == other.val();
@@ -93,6 +101,18 @@ public:
     inline bool operator<=(const abstract_value_with_uncertainty &other)const
     {
         return val() <= other.val();
+    }
+    inline bool operator==(const numt&other)const
+    {
+        return val() == other;
+    }
+    inline bool operator>=(const numt&other)const
+    {
+        return val() >= other;
+    }
+    inline bool operator<=(const numt &other)const
+    {
+        return val() <= other;
     }
 };
 
