@@ -21,6 +21,19 @@ TEST(value, base)
         EXPECT_EQ(x + 0.1, V.max());
     }
 }
+TEST(value, base_initlist)
+{
+    RandomGauss<> G(0,6);
+    for (size_t i = 0; i < 10; i++) {
+        double x = G();
+        value<> V{x, 0.1};
+        EXPECT_EQ(x, V.val());
+        EXPECT_EQ(0.1, V.uncertainty());
+        EXPECT_EQ(0.1 / x, V.epsilon());
+        EXPECT_EQ(x - 0.1, V.min());
+        EXPECT_EQ(x + 0.1, V.max());
+    }
+}
 TEST(value, compare1)
 {
     value<> V(0, 0.1);
