@@ -175,26 +175,14 @@ public:
     inline value &operator*=(const numt&v){return operator*=(value(v));}
     inline value &operator/=(const numt&v){return operator/=(value(v));}
 
-    template<class B>
-    inline value operator+(const B&other)const
-    {
-        return value(*this) += other;
-    }
-    template<class B>
-    inline value operator-(const B&other)const
-    {
-        return value(*this) -= other;
-    }
-    template<class B>
-    inline value operator*(const B&other)const
-    {
-        return value(*this) *= other;
-    }
-    template<class B>
-    inline value operator/(const B&other)const
-    {
-        return value(*this) /= other;
-    }
+    inline value operator+(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) += other;}
+    inline value operator-(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) -= other;}
+    inline value operator*(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) *= other;}
+    inline value operator/(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) /= other;}
+    inline value operator+(const numt&other)const{return value(*this) += other;}
+    inline value operator-(const numt&other)const{return value(*this) -= other;}
+    inline value operator*(const numt&other)const{return value(*this) *= other;}
+    inline value operator/(const numt&other)const{return value(*this) /= other;}
 };
 
 template<class numt>
@@ -358,26 +346,14 @@ public:
     {
         return VAL().uncertainty();
     }
-    template<class B>
-    inline value<numt> operator+(const B&other)const
-    {
-        return VAL() + other;
-    }
-    template<class B>
-    inline value<numt> operator-(const B&other)const
-    {
-        return VAL() - other;
-    }
-    template<class B>
-    inline value<numt> operator*(const B&other)const
-    {
-        return VAL() * other;
-    }
-    template<class B>
-    inline value<numt> operator/(const B&other)const
-    {
-        return VAL() / other;
-    }
+    inline value<numt> operator+(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) += other;}
+    inline value<numt> operator-(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) -= other;}
+    inline value<numt> operator*(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) *= other;}
+    inline value<numt> operator/(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) /= other;}
+    inline value<numt> operator+(const numt&other)const{return value<numt>(*this) += other;}
+    inline value<numt> operator-(const numt&other)const{return value<numt>(*this) -= other;}
+    inline value<numt> operator*(const numt&other)const{return value<numt>(*this) *= other;}
+    inline value<numt> operator/(const numt&other)const{return value<numt>(*this) /= other;}
 };
 template<typename numt>
 inline std::ostream &operator<<(std::ostream &str, const StandardDeviation<numt> &P)
@@ -432,26 +408,14 @@ public:
     {
         return VAL().uncertainty();
     }
-    template<class B>
-    inline value<numt> operator+(const B&other)const
-    {
-        return VAL() + other;
-    }
-    template<class B>
-    inline value<numt> operator-(const B&other)const
-    {
-        return VAL() - other;
-    }
-    template<class B>
-    inline value<numt> operator*(const B&other)const
-    {
-        return VAL() * other;
-    }
-    template<class B>
-    inline value<numt> operator/(const B&other)const
-    {
-        return VAL() / other;
-    }
+    inline value<numt> operator+(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) += other;}
+    inline value<numt> operator-(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) -= other;}
+    inline value<numt> operator*(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) *= other;}
+    inline value<numt> operator/(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) /= other;}
+    inline value<numt> operator+(const numt&other)const{return value<numt>(*this) += other;}
+    inline value<numt> operator-(const numt&other)const{return value<numt>(*this) -= other;}
+    inline value<numt> operator*(const numt&other)const{return value<numt>(*this) *= other;}
+    inline value<numt> operator/(const numt&other)const{return value<numt>(*this) /= other;}
 };
 
 template<typename numt = double>
