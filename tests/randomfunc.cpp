@@ -2,10 +2,13 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/randomfunc.h>
+#include <math_h/sigma.h>
 #include <math_h/hists.h>
 using namespace std;
 using namespace MathTemplates;
-
+#define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
+#define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
+#define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<1.0)
 TEST(RandomUniform, BaseTest)
 {
     RandomUniform<> R(0, 1);
@@ -140,4 +143,29 @@ TEST(RandomValueTableDistr, Gauss6)
     TestRandomDistribution([](double x) {
         return Gaussian(x, 3.0, 2.0);
     }, -2, 10, 50);
+}
+
+TEST(RandomGauss, BaseTest)
+{
+    RandomGauss<> R(0, 1);
+    StandardDeviation<> D,D2;
+    for (int i = 0; i < 10000; i++)D<<R();
+    ALMOST_EQ2(D.val(),0);
+    ALMOST_EQ2(D.uncertainty(),1);
+    auto R2 = R;
+    for (int i = 0; i < 10000; i++)D2<<R2();
+    ALMOST_EQ2(D2.val(),0);
+    ALMOST_EQ2(D2.uncertainty(),1);
+}
+TEST(Poisson, BaseTest)
+{
+    RandomUniform<> L(1,20);
+    for(size_t i=0;i<10;i++){
+	const auto l=L();
+	const auto R=Poisson(l);
+	StandardDeviation<> D;
+	for (int i = 0; i < 10000; i++)D<<R();
+	cout<< l<< " ; " << D;
+	ALMOST_EQ3(D.val(),l);
+    }
 }

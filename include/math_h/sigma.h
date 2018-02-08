@@ -115,6 +115,11 @@ public:
         return val() <= other;
     }
 };
+template<typename numt>
+inline std::ostream &operator<<(std::ostream &str, const abstract_value_with_uncertainty<numt> &P)
+{
+    return str << P.val() << " " << P.uncertainty();
+}
 
 template<typename numt = double>
 class value:public abstract_value_with_uncertainty<numt>
@@ -170,11 +175,11 @@ public:
         m_val /= other.val();
         return *this;
     }
+    //extending arithmetic actions
     inline value &operator+=(const numt&v){return operator+=(value(v));}
     inline value &operator-=(const numt&v){return operator-=(value(v));}
     inline value &operator*=(const numt&v){return operator*=(value(v));}
     inline value &operator/=(const numt&v){return operator/=(value(v));}
-
     inline value operator+(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) += other;}
     inline value operator-(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) -= other;}
     inline value operator*(const abstract_value_with_uncertainty<numt>&other)const{return value(*this) *= other;}
@@ -276,11 +281,6 @@ inline std::istream &operator>>(std::istream &str, value<numt> &P)
     P = value<numt>(v, u);
     return str;
 }
-template<typename numt>
-inline std::ostream &operator<<(std::ostream &str, const abstract_value_with_uncertainty<numt> &P)
-{
-    return str << P.val() << " " << P.uncertainty();
-}
 
 template<typename numt = double>
 class StandardDeviation:public abstract_value_with_uncertainty<numt>
@@ -311,7 +311,7 @@ public:
         m_cache = nullptr;
         return *this;
     }
-    StandardDeviation(const numt &x):StandardDeviation()
+    inline StandardDeviation(const numt &x):StandardDeviation()
     {
         operator<<(x);
     }
@@ -346,6 +346,7 @@ public:
     {
         return VAL().uncertainty();
     }
+    //extending arithmetic actions
     inline value<numt> operator+(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) += other;}
     inline value<numt> operator-(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) -= other;}
     inline value<numt> operator*(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) *= other;}
@@ -355,11 +356,6 @@ public:
     inline value<numt> operator*(const numt&other)const{return value<numt>(*this) *= other;}
     inline value<numt> operator/(const numt&other)const{return value<numt>(*this) /= other;}
 };
-template<typename numt>
-inline std::ostream &operator<<(std::ostream &str, const StandardDeviation<numt> &P)
-{
-    return str << P();
-}
 
 template<typename numt = double>
 class WeightedAverage:public abstract_value_with_uncertainty<numt>
@@ -385,7 +381,7 @@ public:
         m_cache = nullptr;
         return *this;
     }
-    WeightedAverage(const abstract_value_with_uncertainty<numt> &X):WeightedAverage()
+    inline WeightedAverage(const abstract_value_with_uncertainty<numt> &X):WeightedAverage()
     {
 	operator<<(X);
     }
@@ -408,6 +404,7 @@ public:
     {
         return VAL().uncertainty();
     }
+    //extending arithmetic actions
     inline value<numt> operator+(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) += other;}
     inline value<numt> operator-(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) -= other;}
     inline value<numt> operator*(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) *= other;}
@@ -434,11 +431,11 @@ public:
         _XY << P.first *P.second;
         return *this;
     }
-    numt Covariance()const
+    inline numt Covariance()const
     {
         return _XY.val() - _X.val() * _Y.val();
     }
-    numt R()const
+    inline numt R()const
     {
         return Covariance() / (_X.uncertainty() * _Y.uncertainty());
     }

@@ -8,6 +8,7 @@
 #include "error.h"
 namespace MathTemplates
 {
+//Function interface
 template<class result, typename... Args>
 class IFunction
 {
@@ -51,11 +52,20 @@ inline std::shared_ptr<StdFunctionWrap<result, Args...>>
 {
     return std::make_shared<StdFunctionWrap<result, Args...>>(f);
 }
+
+//constants
 template<class numt = double>
 inline numt PI()
 {
     return 3.1415926;
 }
+template<class numt = double>
+inline numt E()
+{
+    return 2.719281928;
+}
+
+//Peak functions
 template<class numt = double>
 numt Gaussian(const numt &x, const numt &X_max, const numt &sigma)
 {
@@ -84,6 +94,8 @@ numt Novosibirsk(const numt &x, const numt &pos, const numt &sigma, const numt &
     numt k = sigma * sqrt(2 * PI<numt>() * (pow(asym, 2) + 1.0));
     return exp(-slq4 / (pow(asym, 2) * 2) + pow(asym, 2)) / k;
 }
+
+///Polynomial
 template<class numt = double>
 numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
 {

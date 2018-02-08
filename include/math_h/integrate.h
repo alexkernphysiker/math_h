@@ -87,6 +87,5 @@ Convolution<numX, numY, func1, func2> make_convolution(
 {
     return Convolution<numX, numY, func1, func2>(a, b, ksi1, ksi2, step);
 }
-
 };
 #endif

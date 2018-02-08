@@ -7,6 +7,7 @@ using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
+#define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 TEST(value, base)
 {
     RandomGauss<> G(0,6);
@@ -267,8 +268,8 @@ TEST(StandardDeviation, WithRandomValues)
     RandomGauss<> generator(1.0, 3.0);
     for (int i = 0; i < 200000; i++)
         S << generator();
-    ALMOST_EQ2(1.0, S.val());
-    ALMOST_EQ2(3.0, S.uncertainty());
+    ALMOST_EQ3(1.0, S.val());
+    ALMOST_EQ3(3.0, S.uncertainty());
 }
 TEST(StandardDeviation, Constructor2)
 {

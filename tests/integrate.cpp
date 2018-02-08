@@ -4,9 +4,10 @@
 #include <gtest/gtest.h>
 #include <math_h/integrate.h>
 #include <math_h/functions.h>
+#include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
-#define ALMOST_EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.00001)
+#define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.001)
 TEST(Sympson, BaseTest)
 {
     auto F = [](double x) {
