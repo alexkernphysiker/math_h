@@ -176,18 +176,18 @@ TEST(SortedPoints, WeightedAvr)
     << make_point(2, WeightedAverage<>());
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_THROW(chain[i].Y()(),Exception<WeightedAverage<>>);
+        EXPECT_THROW(chain[i].Y().val(),Exception<WeightedAverage<>>);
     }
     SortedPoints<double,value<>> opr1=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};
     chain.leftArrow(opr1);
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_EQ(i, chain[i].Y()().val());
+        EXPECT_EQ(i, chain[i].Y().val());
     }
     chain.leftArrow(Points<double,value<>>{{0,{0,1}},{1,{0,1}},{2,{0,1}}});
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
 #ifdef ____full_version_of_tabledata_h_____
     const auto chain2=chain+2;
@@ -217,11 +217,11 @@ TEST(SortedPoints, WeightedAvr2)
     SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_EQ(i, chain[i].Y()().val());
+        EXPECT_EQ(i, chain[i].Y().val());
     }
     chain.leftArrow(Points<double,value<>>{{0,{0,1}},{1,{0,1}},{2,{0,1}}});
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
 }

@@ -37,22 +37,22 @@ TEST(value, compare1)
 }
 TEST(value, compare2)
 {
-    bool v = value<> {2, 1} .Above({0, 0.9});
+    bool v = value<>(2, 1).Above(value<>(0, 0.9));
     EXPECT_TRUE(v);
-    v = value<> {2, 1} .Above({0, 1.1});
+    v = value<>(2, 1).Above(value<>(0, 1.1));
     EXPECT_FALSE(v);
-    v = value<> {0, 1} .Below({2, 0.9});
+    v = value<>(0, 1).Below(value<>(2, 0.9));
     EXPECT_TRUE(v);
-    v = value<> {0, 1} .Below({2, 1.1});
+    v = value<>(0, 1).Below(value<>(2, 1.1));
     EXPECT_FALSE(v);
 
-    v = value<> {2, 1} .Above(0.9);
+    v = value<>(2, 1) .Above(0.9);
     EXPECT_TRUE(v);
-    v = value<> {2, 1} .Above(1.1);
+    v = value<>(2, 1) .Above(1.1);
     EXPECT_FALSE(v);
-    v = value<> {0, 1} .Below(1.1);
+    v = value<>(0, 1).Below(1.1);
     EXPECT_TRUE(v);
-    v = value<> {0, 1} .Below(0.9);
+    v = value<>(0, 1).Below(0.9);
     EXPECT_FALSE(v);
 }
 TEST(value, arithmetic_actions1)
@@ -129,35 +129,35 @@ TEST(value, NumCompare)
         EXPECT_EQ(v, 4);
     }
     {
-        const double v = value<>(0, 1).NumCompare({0, 1});
+        const double v = value<>(0, 1).NumCompare(value<>(0, 1));
         EXPECT_EQ(v, 0);
     }
     {
-        const double v = value<>(0, 1).NumCompare({1, 1});
+        const double v = value<>(0, 1).NumCompare(value<>(1, 1));
         EXPECT_EQ(v, 0.25);
     }
     {
-        const double v = value<>(0, 1).NumCompare({2, 1});
+        const double v = value<>(0, 1).NumCompare(value<>(2, 1));
         EXPECT_EQ(v, 1);
     }
     {
-        const double v = value<>(0, 1).NumCompare({4, 1});
+        const double v = value<>(0, 1).NumCompare(value<>(4, 1));
         EXPECT_EQ(v, 4);
     }
     {
-        const double v = value<>(2, 1).NumCompare({2, 1});
+        const double v = value<>(2, 1).NumCompare(value<>(2, 1));
         EXPECT_EQ(v, 0);
     }
     {
-        const double v = value<>(2, 1).NumCompare({1, 1});
+        const double v = value<>(2, 1).NumCompare(value<>(1, 1));
         EXPECT_EQ(v, 0.25);
     }
     {
-        const double v = value<>(2, 1).NumCompare({0, 1});
+        const double v = value<>(2, 1).NumCompare(value<>(0, 1));
         EXPECT_EQ(v, 1);
     }
     {
-        const double v = value<>(2, 1).NumCompare({ -2, 1});
+        const double v = value<>(2, 1).NumCompare(value<>(-2, 1));
         EXPECT_EQ(v, 4);
     }
 }
@@ -225,25 +225,28 @@ TEST(StandardDeviation, Throwing)
 {
     StandardDeviation<> S;
     EXPECT_EQ(0, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(2, S.count());
-    EXPECT_EQ(0, S().val());
-    EXPECT_EQ(0, S().uncertainty());
+    EXPECT_EQ(0, S.val());
+    EXPECT_EQ(0, S.uncertainty());
 }
 TEST(StandardDeviation, Base)
 {
     StandardDeviation<> S;
     S << 0.0;
     EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
+    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
     S << 1.0;
     EXPECT_EQ(2, S.count());
-    EXPECT_EQ(0.5, S().val());
-    EXPECT_EQ(sqrt(0.5), S().uncertainty());
+    EXPECT_EQ(0.5, S.val());
+    EXPECT_EQ(sqrt(0.5), S.uncertainty());
 }
 TEST(StandardDeviation, Base2)
 {
@@ -264,62 +267,65 @@ TEST(StandardDeviation, WithRandomValues)
     RandomGauss<> generator(1.0, 3.0);
     for (int i = 0; i < 200000; i++)
         S << generator();
-    ALMOST_EQ2(1.0, S().val());
-    ALMOST_EQ2(3.0, S().uncertainty());
+    ALMOST_EQ2(1.0, S.val());
+    ALMOST_EQ2(3.0, S.uncertainty());
 }
 TEST(StandardDeviation, Constructor2)
 {
     StandardDeviation<> S(2);
     S << 0;
-    ALMOST_EQ(1.0, S().val());
+    ALMOST_EQ(1.0, S.val());
 }
 
 TEST(WeightedAverage, Zeros)
 {
     WeightedAverage<> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.val(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.uncertainty(), Exception<WeightedAverage<>>);
     EXPECT_THROW(W << value<>(0, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    ALMOST_EQ(0, W().val());
-    ALMOST_EQ(1, W().uncertainty());
+    ALMOST_EQ(0, W.val());
+    ALMOST_EQ(1, W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    ALMOST_EQ(0, W().val());
-    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(0, W.val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    ALMOST_EQ(0, W().val());
-    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(0, W.val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W.uncertainty());
 }
 TEST(WeightedAverage, Ones)
 {
     WeightedAverage<> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.val(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.uncertainty(), Exception<WeightedAverage<>>);
     EXPECT_THROW(W << value<>(1, 0), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    ALMOST_EQ(1, W().val());
-    ALMOST_EQ(1, W().uncertainty());
+    ALMOST_EQ(1, W.val());
+    ALMOST_EQ(1, W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    ALMOST_EQ(1, W().val());
-    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(1, W.val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    ALMOST_EQ(1, W().val());
-    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(1, W.val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W.uncertainty());
 }
 TEST(WeightedAverage, Zeros_plus_Ones)
 {
     WeightedAverage<> W;
-    EXPECT_THROW(W(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.val(), Exception<WeightedAverage<>>);
+    EXPECT_THROW(W.uncertainty(), Exception<WeightedAverage<>>);
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    ALMOST_EQ(1, W().val());
-    ALMOST_EQ(1, W().uncertainty());
+    ALMOST_EQ(1, W.val());
+    ALMOST_EQ(1, W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    ALMOST_EQ(0.5, W().val());
-    ALMOST_EQ(1.0 / sqrt(2.0), W().uncertainty());
+    ALMOST_EQ(0.5, W.val());
+    ALMOST_EQ(1.0 / sqrt(2.0), W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(1, 1)));
-    ALMOST_EQ(2.0 / 3.0, W().val());
-    ALMOST_EQ(1.0 / sqrt(3.0), W().uncertainty());
+    ALMOST_EQ(2.0 / 3.0, W.val());
+    ALMOST_EQ(1.0 / sqrt(3.0), W.uncertainty());
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
-    ALMOST_EQ(0.5, W().val());
-    ALMOST_EQ(1.0 / sqrt(4.0), W().uncertainty());
+    ALMOST_EQ(0.5, W.val());
+    ALMOST_EQ(1.0 / sqrt(4.0), W.uncertainty());
 }
 TEST(CorrelationLinear, simple1)
 {

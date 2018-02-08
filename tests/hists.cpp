@@ -161,7 +161,7 @@ TEST(hist_avr, test1)
     );
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X().val());
-        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
 }
 TEST(hist_avr, test2)
@@ -172,7 +172,7 @@ TEST(hist_avr, test2)
     const auto chain=hist_avr(a,b);
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X().val());
-        EXPECT_EQ(double(i)/2, chain[i].Y()().val());
+        EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
 }
 TEST(hist_stdev, test1)
@@ -183,6 +183,6 @@ TEST(hist_stdev, test1)
     );
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X());
-        EXPECT_EQ(int(chain[i].Y()().val()*10),i*10);
+        EXPECT_EQ(int(chain[i].Y().val()*10),i*10);
     }
 }

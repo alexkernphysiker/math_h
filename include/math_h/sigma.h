@@ -11,19 +11,103 @@ namespace MathTemplates
 {
 template<class comparable = double>
 using Chain=std::vector<comparable>;
+template<typename numt = double>
+class abstract_value_with_uncertainty
+{
+public:
+    virtual ~abstract_value_with_uncertainty(){}
+    virtual const numt&val()const=0;
+    virtual const numt&uncertainty()const=0;
+    inline numt epsilon()const
+    {
+        return uncertainty()/val();
+    }
+    inline numt min()const
+    {
+        return val()-uncertainty();
+    }
+    inline numt max()const
+    {
+        return val()+uncertainty();
+    }
+
+    //Physical comparing of magnitudes with uncertainties
+    inline bool Contains(const numt &x)const
+    {
+        return (x >= min()) && (x <= max());
+    }
+    inline bool Contains(const abstract_value_with_uncertainty &x)const
+    {
+        return (x.max() >= min()) && (x.min() <= max());
+    }
+    inline bool NotEqual(const numt &x)const
+    {
+        return (x < min()) || (x > max());
+    }
+    inline bool NotEqual(const abstract_value_with_uncertainty &x)const
+    {
+        return (x.max() < min()) || (x.min() > max());
+    }
+    inline bool Below(const numt &x)const
+    {
+        return max() < x;
+    }
+    inline bool Below(const abstract_value_with_uncertainty &x)const
+    {
+        return max() < x.min();
+    }
+    inline bool Above(const numt &x)const
+    {
+        return min() > x;
+    }
+    inline bool Above(const abstract_value_with_uncertainty &x)const
+    {
+        return min() > x.max();
+    }
+    //chi-square-like numeric comparing of magnitudes
+    numt NumCompare(const numt &x)const
+    {
+        return pow((val() - x) / uncertainty(), 2);
+    }
+    numt NumCompare(const abstract_value_with_uncertainty &x)const
+    {
+        return pow((val() - x.val()) / (uncertainty() + x.uncertainty()), 2);
+    }
+    //Inheriting number-like comparing
+    inline bool operator<(const abstract_value_with_uncertainty &other)const
+    {
+        return val() < other.val();
+    }
+    inline bool operator>(const abstract_value_with_uncertainty &other)const
+    {
+        return val() > other.val();
+    }
+    inline bool operator==(const abstract_value_with_uncertainty&other)const
+    {
+        return val() == other.val();
+    }
+    inline bool operator>=(const abstract_value_with_uncertainty&other)const
+    {
+        return val() >= other.val();
+    }
+    inline bool operator<=(const abstract_value_with_uncertainty &other)const
+    {
+        return val() <= other.val();
+    }
+};
 
 template<typename numt = double>
-class value
+class value:public abstract_value_with_uncertainty<numt>
 {
 private:
     numt m_val, m_uncertainty;
 public:
     virtual ~value() {}
-    inline const numt&val()const
+    virtual const numt&val()const override
     {
         return m_val;
     }
-    inline const numt&uncertainty()const
+    virtual const numt&uncertainty()const override
     {
         return m_uncertainty;
     }
@@ -34,127 +118,60 @@ public:
             m_uncertainty = INFINITY;
     }
     template<class numt2>
-    value(const value<numt2> &source): value((source.val()), m_uncertainty(source.uncertainty())){}
+    value(const abstract_value_with_uncertainty<numt2> &source): value(source.val(),source.uncertainty()){}
 
     value make_wider(const numt &scale)const
     {
         return value(m_val, scale * m_uncertainty);
     }
-    inline numt epsilon()const
-    {
-        return m_uncertainty/m_val;
-    }
-    inline numt min()const
-    {
-        return m_val-m_uncertainty;
-    }
-    inline numt max()const
-    {
-        return m_val+m_uncertainty;
-    }
-
-    //Physical comparing of magnitudes with uncertainties
-    inline bool Contains(const numt &x)const
-    {
-        return (x >= min()) && (x <= max());
-    }
-    inline bool Contains(const value &x)const
-    {
-        return (x.max() >= min()) && (x.min() <= max());
-    }
-    inline bool NotEqual(const numt &x)const
-    {
-        return (x < min()) || (x > max());
-    }
-    inline bool NotEqual(const value &x)const
-    {
-        return (x.max() < min()) || (x.min() > max());
-    }
-    inline bool Below(const numt &x)const
-    {
-        return max() < x;
-    }
-    inline bool Below(const value &x)const
-    {
-        return max() < x.min();
-    }
-    inline bool Above(const numt &x)const
-    {
-        return min() > x;
-    }
-    inline bool Above(const value &x)const
-    {
-        return min() > x.max();
-    }
-    //chi-square-like numeric comparing of magnitudes
-    numt NumCompare(const numt &x)const
-    {
-        return pow((m_val - x) / m_uncertainty, 2);
-    }
-    numt NumCompare(const value &x)const
-    {
-        return pow((m_val - x.m_val) / (m_uncertainty + x.m_uncertainty), 2);
-    }
-    //Inheriting number-like comparing
-    inline bool operator<(const value &other)const
-    {
-        return m_val < other.m_val;
-    }
-    inline bool operator>(const value &other)const
-    {
-        return m_val > other.m_val;
-    }
-    inline bool operator==(const value &other)const
-    {
-        return m_val == other.m_val;
-    }
-    inline bool operator>=(const value &other)const
-    {
-        return m_val >= other.m_val;
-    }
-    inline bool operator<=(const value &other)const
-    {
-        return m_val <= other.m_val;
-    }
     //arithmetic actions
-    value &operator+=(const value &other)
+    value &operator+=(const abstract_value_with_uncertainty<numt> &other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
-        m_val += other.m_val;
+        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.uncertainty(), 2));
+        m_val += other.val();
         return *this;
     }
-    value &operator-=(const value &other)
+    value &operator-=(const abstract_value_with_uncertainty<numt> &other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
-        m_val -= other.m_val;
+        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.uncertainty(), 2));
+        m_val -= other.val();
         return *this;
     }
-    value &operator*=(const value &other)
+    value &operator*=(const abstract_value_with_uncertainty<numt> &other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty * other.m_val, 2) + pow(other.m_uncertainty * m_val, 2));
-        m_val *= other.m_val;
+        m_uncertainty = sqrt(pow(m_uncertainty * other.val(), 2) + pow(other.uncertainty() * m_val, 2));
+        m_val *= other.val();
         return *this;
     }
-    value &operator/=(const value &other)
+    value &operator/=(const abstract_value_with_uncertainty<numt>&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty / other.m_val, 2)
-                     + pow(other.m_uncertainty * m_val / pow(other.m_val, 2), 2));
-        m_val /= other.m_val;
+        m_uncertainty = sqrt(pow(m_uncertainty / other.val(), 2)
+                     + pow(other.uncertainty() * m_val / pow(other.val(), 2), 2));
+        m_val /= other.val();
         return *this;
     }
-    inline value operator+(const value &other)const
+    inline value &operator+=(const numt&v){return operator+=(value(v));}
+    inline value &operator-=(const numt&v){return operator-=(value(v));}
+    inline value &operator*=(const numt&v){return operator*=(value(v));}
+    inline value &operator/=(const numt&v){return operator/=(value(v));}
+
+    template<class B>
+    inline value operator+(const B&other)const
     {
         return value(*this) += other;
     }
-    inline value operator-(const value &other)const
+    template<class B>
+    inline value operator-(const B&other)const
     {
         return value(*this) -= other;
     }
-    inline value operator*(const value &other)const
+    template<class B>
+    inline value operator*(const B&other)const
     {
         return value(*this) *= other;
     }
-    inline value operator/(const value &other)const
+    template<class B>
+    inline value operator/(const B&other)const
     {
         return value(*this) /= other;
     }
@@ -175,22 +192,22 @@ inline value<numt> value_in_range(const numt &a,const numt &b)
 }
 namespace details{
     template<class numt,class Func>
-    inline numt get_val(Func F,const value<numt>&v)
+    inline numt get_val(Func F,const abstract_value_with_uncertainty<numt>&v)
     {
 	return F(v.val());
     }
     template<class numt,class Func>
-    inline numt get_val_u(Func F,const value<numt>&v)
+    inline numt get_val_u(Func F,const abstract_value_with_uncertainty<numt>&v)
     {
 	return F(v.max());
     }
     template<class numt,class Func>
-    inline numt get_val_d(Func F,const value<numt>&v)
+    inline numt get_val_d(Func F,const abstract_value_with_uncertainty<numt>&v)
     {
 	return F(v.min());
     }
     template<class numt,class Func>
-    inline numt uncertainty_sqr(Func F,const value<numt>&v)
+    inline numt uncertainty_sqr(Func F,const abstract_value_with_uncertainty<numt>&v)
     {
 	return (
 	    pow(get_val_u(F,v)-get_val(F,v),2)+
@@ -199,22 +216,22 @@ namespace details{
     }
 #ifdef ____middle_version_of_math_h_____
     template<class numt,class Func,typename... Args>
-    inline numt get_val(Func F,const value<numt> &v,Args... args)
+    inline numt get_val(Func F,const abstract_value_with_uncertainty<numt> &v,Args... args)
     {
 	return get_val([&v,&F](auto... a){return F(v.val(),a...);},args...);
     }
     template<class numt,class Func,typename... Args>
-    inline numt get_val_u(Func F,const value<numt> &v,Args... args)
+    inline numt get_val_u(Func F,const abstract_value_with_uncertainty<numt> &v,Args... args)
     {
 	return get_val([&v,&F](auto... a){return F(v.max(),a...);},args...);
     }
     template<class numt,class Func,typename... Args>
-    inline numt get_val_d(Func F,const value<numt> &v,Args... args)
+    inline numt get_val_d(Func F,const abstract_value_with_uncertainty<numt> &v,Args... args)
     {
 	return get_val([&v,&F](auto... a){return F(v.min(),a...);},args...);
     }
     template<class numt,class Func,typename... Args>
-    inline numt uncertainty_sqr(Func F,const value<numt>&v,Args... args)
+    inline numt uncertainty_sqr(Func F,const abstract_value_with_uncertainty<numt>&v,Args... args)
     {
 	return (
 	    pow(get_val_u(F,v,args...)-get_val(F,v,args...),2)+
@@ -226,7 +243,7 @@ namespace details{
 };
 #ifdef ____middle_version_of_math_h_____
 template<class numt,class Func,typename... Args>
-inline value<numt> func_with_uncertainty(Func F,const value<numt>&v,Args... args)
+inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v,Args... args)
 {
     return value<numt>(
 	details::get_val([F](auto...a){return F(a...);},v,args...),
@@ -235,7 +252,7 @@ inline value<numt> func_with_uncertainty(Func F,const value<numt>&v,Args... args
 }
 #else
 template<class numt,class Func>
-inline value<numt> func_with_uncertainty(Func F,const value<numt>&v)
+inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v)
 {
     return value<numt>(
 	details::get_val([F](const numt&a){return F(a);},v),
@@ -252,13 +269,13 @@ inline std::istream &operator>>(std::istream &str, value<numt> &P)
     return str;
 }
 template<typename numt>
-inline std::ostream &operator<<(std::ostream &str, const value<numt> &P)
+inline std::ostream &operator<<(std::ostream &str, const abstract_value_with_uncertainty<numt> &P)
 {
     return str << P.val() << " " << P.uncertainty();
 }
 
 template<typename numt = double>
-class StandardDeviation
+class StandardDeviation:public abstract_value_with_uncertainty<numt>
 {
 private:
     Chain<numt> m_list;
@@ -294,7 +311,8 @@ public:
     {
         return m_list.size();
     }
-    const value<numt> &operator()()const
+private:
+    const value<numt> &VAL()const
     {
         using namespace std;
         if (!m_cache) {
@@ -311,21 +329,34 @@ public:
         }
         return *m_cache;
     }
-    inline value<numt> operator+(const value<numt> &other)const
+public:
+    virtual const numt&val()const override
     {
-        return operator()() + other;
+        return VAL().val();
     }
-    inline value<numt> operator-(const value<numt> &other)const
+    virtual const numt&uncertainty()const override
     {
-        return operator()() - other;
+        return VAL().uncertainty();
     }
-    inline value<numt> operator*(const value<numt> &other)const
+    template<class B>
+    inline value<numt> operator+(const B&other)const
     {
-        return operator()() * other;
+        return VAL() + other;
     }
-    inline value<numt> operator/(const value<numt> &other)const
+    template<class B>
+    inline value<numt> operator-(const B&other)const
     {
-        return operator()() / other;
+        return VAL() - other;
+    }
+    template<class B>
+    inline value<numt> operator*(const B&other)const
+    {
+        return VAL() * other;
+    }
+    template<class B>
+    inline value<numt> operator/(const B&other)const
+    {
+        return VAL() / other;
     }
 };
 template<typename numt>
@@ -335,7 +366,7 @@ inline std::ostream &operator<<(std::ostream &str, const StandardDeviation<numt>
 }
 
 template<typename numt = double>
-class WeightedAverage
+class WeightedAverage:public abstract_value_with_uncertainty<numt>
 {
 private:
     numt Sum;
@@ -348,7 +379,7 @@ public:
         Wnorm = 0;
     }
     virtual ~WeightedAverage() {}
-    WeightedAverage &operator<<(const value<numt> &X)
+    WeightedAverage &operator<<(const abstract_value_with_uncertainty<numt> &X)
     {
         if (X.uncertainty() == 0)
             throw Exception<WeightedAverage>("Cannot add value with zero error");
@@ -358,11 +389,12 @@ public:
         m_cache = nullptr;
         return *this;
     }
-    WeightedAverage(const value<numt> &X):WeightedAverage()
+    WeightedAverage(const abstract_value_with_uncertainty<numt> &X):WeightedAverage()
     {
 	operator<<(X);
     }
-    const value<numt> &operator()()const
+private:
+    const value<numt> &VAL()const
     {
         using namespace std;
         if (!m_cache) {
@@ -371,28 +403,36 @@ public:
         }
         return *m_cache;
     }
-    inline value<numt> operator+(const value<numt> &other)const
+public:
+    virtual const numt&val()const override
     {
-        return operator()() + other;
+        return VAL().val();
     }
-    inline value<numt> operator-(const value<numt> &other)const
+    virtual const numt&uncertainty()const override
     {
-        return operator()() - other;
+        return VAL().uncertainty();
     }
-    inline value<numt> operator*(const value<numt> &other)const
+    template<class B>
+    inline value<numt> operator+(const B&other)const
     {
-        return operator()() * other;
+        return VAL() + other;
     }
-    inline value<numt> operator/(const value<numt> &other)const
+    template<class B>
+    inline value<numt> operator-(const B&other)const
     {
-        return operator()() / other;
+        return VAL() - other;
+    }
+    template<class B>
+    inline value<numt> operator*(const B&other)const
+    {
+        return VAL() * other;
+    }
+    template<class B>
+    inline value<numt> operator/(const B&other)const
+    {
+        return VAL() / other;
     }
 };
-template<typename numt>
-inline std::ostream &operator<<(std::ostream &str, const WeightedAverage<numt> &P)
-{
-    return str << P();
-}
 
 template<typename numt = double>
 class CorrelationLinear
@@ -412,11 +452,11 @@ public:
     }
     numt Covariance()const
     {
-        return _XY().val() - _X().val() * _Y().val();
+        return _XY.val() - _X.val() * _Y.val();
     }
     numt R()const
     {
-        return Covariance() / (_X().uncertainty() * _Y().uncertainty());
+        return Covariance() / (_X.uncertainty() * _Y.uncertainty());
     }
     const StandardDeviation<numt>&X()const{return _X;}
     const StandardDeviation<numt>&Y()const{return _Y;}
