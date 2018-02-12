@@ -164,6 +164,14 @@ TEST(ext_value, v_func1_e)
     EXPECT_TRUE((v*v).Contains(F));
     ALMOST_EQ2((v*v).epsilon(),F.epsilon());
 }
+TEST(ext_value, v_func1_e2)
+{
+    const value_ext<> V(12,0.1);
+    const auto F=LOG(V);
+    const value<> v=V;
+    EXPECT_TRUE(func_with_uncertainty([](double x){return log(x);},v).Contains(F));
+    ALMOST_EQ2(func_with_uncertainty([](double x){return log(x);},v).epsilon(),F.epsilon());
+}
 TEST(ext_value, v_func2_e)
 {
     const value_ext<> A(5,0.1),B(3,0.2);
@@ -173,6 +181,14 @@ TEST(ext_value, v_func2_e)
     ALMOST_EQ2((a*b).epsilon(),F.epsilon());
 }
 #ifdef ____middle_version_of_math_h_____
+TEST(ext_value, v_func2_e2)
+{
+    const value_ext<> A(5,0.1),B(3,0.2);
+    const auto F=ATAN2(A,B);
+    const value<> a=A,b=B;
+    EXPECT_TRUE(func_with_uncertainty([](double x,double y){return atan2(x,y);},a,b).Contains(F));
+    ALMOST_EQ2(func_with_uncertainty([](double x,double y){return atan2(x,y);},a,b).epsilon(),F.epsilon());
+}
 TEST(ext_value, v_func3_e)
 {
     const value_ext<> A(5,0.1),B(3,0.2),C(0,0.2);
