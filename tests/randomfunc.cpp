@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <math_h/randomfunc.h>
 #include <math_h/sigma.h>
-#include <math_h/hists.h>
+#include <math_h/tabledata.h>
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)

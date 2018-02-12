@@ -15,6 +15,7 @@ template<typename numt = double>
 class abstract_value_with_uncertainty
 {
 public:
+    typedef numt NumberType;
     virtual ~abstract_value_with_uncertainty(){}
     virtual const numt&val()const=0;
     virtual const numt&uncertainty()const=0;

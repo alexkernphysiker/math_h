@@ -1,6 +1,6 @@
 #include <math_h/functions.h>
 #include <math_h/randomfunc.h>
-#include <math_h/hists.h>
+#include <math_h/tabledata.h>
 #include <gnuplot_wrap.h>
 using namespace std;
 using namespace MathTemplates;

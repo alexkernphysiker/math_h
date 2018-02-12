@@ -11,8 +11,8 @@
 #include <sstream>
 #include <unistd.h>
 #include <math.h>
-#include "math_h/hists.h"
 #include "math_h/error.h"
+#include "math_h/tabledata.h"
 namespace GnuplotWrap
 {
 class PlotHist2d;

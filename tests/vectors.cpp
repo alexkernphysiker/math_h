@@ -2,7 +2,7 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/vectors.h>
-#include <math_h/hists.h>
+#include <math_h/tabledata.h>
 #include <math_h/sigma.h>
 using namespace std;
 using namespace MathTemplates;
