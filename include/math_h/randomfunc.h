@@ -26,6 +26,7 @@ private:
     const ReverseIntegratedLinearInterpolation<numt> reverse_distr_func;
     const std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
 public:
+    typedef numt NumType;
     RandomValueTableDistr(const RandomValueTableDistr &R):
         reverse_distr_func(R.reverse_distr_func), f_distr(R.f_distr) {}
     RandomValueTableDistr(const ReverseIntegratedLinearInterpolation<numt> &distribution_density):
@@ -53,6 +54,7 @@ class RandomUniform: public RandomValueGenerator<numt>
 private:
     std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
 public:
+    typedef numt NumType;
     RandomUniform(const numt x1, const numt x2): f_distr(std::make_shared<std::uniform_real_distribution<numt>>(x1, x2)) {}
     RandomUniform(const RandomUniform &source): f_distr(source.f_distr) {}
     virtual ~RandomUniform() {}
@@ -67,6 +69,7 @@ class RandomGauss: public RandomValueGenerator<numt>
 private:
     std::shared_ptr<std::normal_distribution<numt>> f_distr;
 public:
+    typedef numt NumType;
     RandomGauss(const numt x1, const numt x2): f_distr(std::make_shared<std::normal_distribution<numt>>(x1, x2)) {}
     RandomGauss(const RandomGauss &source): f_distr(source.f_distr) {}
     virtual ~RandomGauss() {}
