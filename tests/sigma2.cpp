@@ -99,6 +99,42 @@ TEST(ext_value, v_func1_cos)
     const auto F=COS(V);
     EXPECT_TRUE(F.Contains(cos(V.val())));
 }
+TEST(ext_value, v_func1_exp)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=EXP(V);
+    EXPECT_TRUE(F.Contains(exp(V.val())));
+}
+TEST(ext_value, v_func1_log)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=LOG(V);
+    EXPECT_TRUE(F.Contains(log(V.val())));
+}
+TEST(ext_value, v_func1_sqr)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=SQR(V);
+    EXPECT_TRUE(F.Contains(pow(V.val(),2)));
+}
+TEST(ext_value, v_func1_SQRT)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=SQRT(V);
+    EXPECT_TRUE(F.Contains(sqrt(V.val())));
+}
+TEST(ext_value, v_func1_tan)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=TAN(V);
+    EXPECT_TRUE(F.Contains(tan(V.val())));
+}
+TEST(ext_value, v_func1_atan)
+{
+    const value_numeric_distr<> V(12,0.1);
+    const auto F=ATAN(V);
+    EXPECT_TRUE(F.Contains(atan(V.val())));
+}
 TEST(ext_value, v_func1_exp_cos)
 {
     const value_numeric_distr<> V(12,0.1);
@@ -112,6 +148,18 @@ TEST(ext_value, v_func2)
     const value<> a=A,b=B;
     EXPECT_TRUE((a*b).Contains(F));
     ALMOST_EQ2((a*b).epsilon(),F.epsilon());
+}
+TEST(ext_value, v_func1_atan_2)
+{
+    const value_numeric_distr<> A(12,0.1),B(-7,0.2);
+    const auto F=ATAN2(A,B);
+    EXPECT_TRUE(F.Contains(atan2(A.val(),B.val())));
+}
+TEST(ext_value, v_func1_pow_2)
+{
+    const value_numeric_distr<> A(12,0.1),B(3.0,0.01);
+    const auto F=POW(A,B);
+    EXPECT_TRUE(F.Contains(pow(A.val(),B.val())));
 }
 TEST(ext_value, v_func2_opr1)
 {

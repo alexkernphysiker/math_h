@@ -195,10 +195,6 @@ inline value_f<2,typename ArgType1::NumberType_ForNumeric> POW(ArgType1 a,ArgTyp
 	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return pow(x,y);},a,b);
 }
-template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType_ForNumeric> POW(ArgType1 a,const typename ArgType1::NumberType_ForNumeric&b){
-    return value_f<1,typename ArgType1::NumberType_ForNumeric>([&b](const typename ArgType1::NumberType_ForNumeric&x){return pow(x,b);},a);
-}
 template<class ArgType1,class ArgType2>
 inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator+(ArgType1 a,ArgType2 b){
     return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
