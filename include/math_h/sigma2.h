@@ -16,6 +16,7 @@ class abstract_value_with_uncertainty_numeric:public abstract_value_with_uncerta
 {
 public:
     typedef numt NumberType;
+    typedef numt NumberType_ForNumeric;//this is needed to differ template operators from ones declared for value<>
     template<size_t d,class n>friend class value_f;
     template<class n>friend class value_f_chain;
 protected:
@@ -129,7 +130,10 @@ public:
     value_f(const value_f&s):value_f<0,numt>(s){}
     template<class ArgType1>
     inline value_f(std::function<numt(const numt&)> F,ArgType1 a)
-	:value_f<0,numt>([a,F](){return F(dynamic_cast<const abstract_value_with_uncertainty_numeric<numt>*>(&a)->mmeasure());}){}
+	:value_f<0,numt>([a,F](){
+	    const abstract_value_with_uncertainty_numeric<numt>*A=&a;
+	    return F(A->mmeasure());
+	}){}
     virtual ~value_f(){}
 };
 template<class numt>
@@ -139,83 +143,84 @@ public:
     template<class ArgType1,class ArgType2>
     inline value_f(std::function<numt(const numt&,const numt&)> F,ArgType1 a,ArgType2 b)
 	:value_f<1,numt>([a,F](const numt&y){
-	    return F(dynamic_cast<const abstract_value_with_uncertainty_numeric<numt>*>(&a)->mmeasure(),y);
+	    const abstract_value_with_uncertainty_numeric<numt>*A=&a;
+	    return F(A->mmeasure(),y);
 	},b){}
     virtual ~value_f(){}
 };
 
 
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> SQRT(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return sqrt(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> SQRT(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return sqrt(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> SQR(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return x*x;},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> SQR(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return x*x;},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> EXP(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return exp(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> EXP(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return exp(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> LOG(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return log(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> LOG(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return log(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> SIN(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return sin(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> SIN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return sin(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> COS(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return cos(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> COS(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return cos(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> TAN(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return tan(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> TAN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return tan(x);},a);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> ATAN(ArgType1 a){
-    return value_f<1,typename ArgType1::NumberType>([](const typename ArgType1::NumberType&x){return atan(x);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> ATAN(ArgType1 a){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([](const typename ArgType1::NumberType_ForNumeric&x){return atan(x);},a);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> ATAN2(ArgType1 a,ArgType2 b){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> ATAN2(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return atan2(x,y);},a,b);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> POW(ArgType1 a,ArgType2 b
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> POW(ArgType1 a,ArgType2 b
 ){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return pow(x,y);},a,b);
 }
 template<class ArgType1>
-inline value_f<1,typename ArgType1::NumberType> POW(ArgType1 a,const typename ArgType1::NumberType&b){
-    return value_f<1,typename ArgType1::NumberType>([&b](const typename ArgType1::NumberType&x){return pow(x,b);},a);
+inline value_f<1,typename ArgType1::NumberType_ForNumeric> POW(ArgType1 a,const typename ArgType1::NumberType_ForNumeric&b){
+    return value_f<1,typename ArgType1::NumberType_ForNumeric>([&b](const typename ArgType1::NumberType_ForNumeric&x){return pow(x,b);},a);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> operator+(ArgType1 a,ArgType2 b){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator+(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return x+y;},a,b);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> operator-(ArgType1 a,ArgType2 b){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator-(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return x-y;},a,b);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> operator*(ArgType1 a,ArgType2 b){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator*(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return x*y;},a,b);
 }
 template<class ArgType1,class ArgType2>
-inline value_f<2,typename ArgType1::NumberType> operator/(ArgType1 a,ArgType2 b){
-    return value_f<2,typename ArgType1::NumberType>([](
-	const typename ArgType1::NumberType&x,const typename ArgType1::NumberType&y
+inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator/(ArgType1 a,ArgType2 b){
+    return value_f<2,typename ArgType1::NumberType_ForNumeric>([](
+	const typename ArgType1::NumberType_ForNumeric&x,const typename ArgType1::NumberType_ForNumeric&y
     ){return x/y;},a,b);
 }
 
@@ -233,8 +238,8 @@ public:
 };
 #endif
 template<class FF, class ArgType,typename... Args>
-inline value_f<sizeof...(Args)+1,typename ArgType::NumberType> FUNC(FF F,ArgType a,Args... args){
-    return value_f<sizeof...(Args)+1,typename ArgType::NumberType>(F,a,args...);
+inline value_f<sizeof...(Args)+1,typename ArgType::NumberType_ForNumeric> FUNC(FF F,ArgType a,Args... args){
+    return value_f<sizeof...(Args)+1,typename ArgType::NumberType_ForNumeric>(F,a,args...);
 }
 
 };

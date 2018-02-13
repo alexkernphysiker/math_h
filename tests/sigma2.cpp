@@ -75,9 +75,9 @@ TEST(ext_value, v_func_chain)
     const Chain<value_numeric_distr<>> chain={V,W,X};
     const function<double(const Chain<double>&)> f=[](const Chain<double>&x){return x[0]*x[1]+x[2];};
     const auto F=FUNC(f,chain);
-    const value<> v=V,w=W,x=X;
-    EXPECT_TRUE((v*w+x).Contains(F));
-    ALMOST_EQ2((v*w+x).epsilon(),F.epsilon());
+    const value<> v=V,w=W,x=X,r=(v*w+x);
+    EXPECT_TRUE(r.Contains(F));
+    ALMOST_EQ2(r.epsilon(),F.epsilon());
 }
 TEST(ext_value, v_func1)
 {
