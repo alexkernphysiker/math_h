@@ -232,7 +232,8 @@ public:
     template<class FUNC,class ArgType,typename... Args>
     inline value_f(FUNC F,ArgType a,Args... args)
 	:value_f<dim-1,numt>([a,F](auto...z){
-	    return F(dynamic_cast<const abstract_value_with_uncertainty_numeric<numt>*>(&a)->mmeasure(),z...);
+	    const abstract_value_with_uncertainty_numeric<numt>*A=&a;
+	    return F(A->mmeasure(),z...);
 	},args...){}
     virtual ~value_f(){}
 };
