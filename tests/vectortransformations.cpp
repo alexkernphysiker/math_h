@@ -280,7 +280,6 @@ TEST(VectorTransformation, decompose4)
         EXPECT_TRUE(vector_to_decompose.CloseTo(decomposition.tau + decomposition.n, epsilon));
     }
 }
-
 TEST(VectorTransformation, direction1d)
 {
     

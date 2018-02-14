@@ -65,15 +65,6 @@ public:
     }
 };
 template<class numt>
-inline Direction<1,numt> dir_fwd(){
-    return Direction<1,numt>(std::make_tuple(true));
-}
-template<class numt>
-inline Direction<1,numt> dir_bwd(){
-    return Direction<1,numt>(std::make_tuple(false));
-}
-
-template<class numt>
 class Direction<2, numt>
 {
     template<size_t sizef, class n>friend class Vector;
