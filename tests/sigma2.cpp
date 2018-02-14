@@ -28,7 +28,7 @@ TEST(ext_value, base1)
     mock1 V(1);
     EXPECT_EQ(V.val(),1);
     EXPECT_EQ(V.uncertainty(),0);
-    EXPECT_EQ(mock1::Counter(),1000);
+    EXPECT_EQ(mock1::Counter(),10000);
 }
 class mock2:public abstract_value_with_uncertainty_numeric<>{
 private:
@@ -51,7 +51,7 @@ TEST(ext_value, base2)
     mock2 V(1,0.1);
     ALMOST_EQ2(V.val(),1);
     ALMOST_EQ2(V.uncertainty(),0.1);
-    EXPECT_EQ(mock2::Counter(),1000);
+    EXPECT_EQ(mock2::Counter(),10000);
 }
 
 TEST(ext_value, v_const)

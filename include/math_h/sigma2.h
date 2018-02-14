@@ -50,7 +50,7 @@ public:
     }
 };
 template<typename numt>
-size_t abstract_value_with_uncertainty_numeric<numt>::mm_number=1000;
+size_t abstract_value_with_uncertainty_numeric<numt>::mm_number=10000;
 //measured values
 template<class numt=double>
 class value_numeric_const:public abstract_value_with_uncertainty_numeric<numt>{
