@@ -64,6 +64,14 @@ public:
         return sign ? rows(vec(numt(1))) : rows(vec(numt(-1)));
     }
 };
+template<class numt>
+inline Direction<1,numt> dir_fwd(){
+    return Direction<1,numt>(std::make_tuple(true));
+}
+template<class numt>
+inline Direction<1,numt> dir_bwd(){
+    return Direction<1,numt>(std::make_tuple(false));
+}
 
 template<class numt>
 class Direction<2, numt>
