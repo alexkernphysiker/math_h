@@ -74,10 +74,10 @@ TEST(point, basetest2)
 {
     int x(25);
     double y(78);
-    point<int, double> p = {25, 78};
+    point<int, double> p = make_point(25, 78);
     EXPECT_EQ(x, p.X());
     EXPECT_EQ(y, p.Y());
-    point<int, double> p2 = {25., 78.};
+    point<int, double> p2 = make_point(25., 78.);
     EXPECT_EQ(x, p2.X());
     EXPECT_EQ(y, p2.Y());
 }

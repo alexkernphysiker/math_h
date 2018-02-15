@@ -194,18 +194,6 @@ public:
     point(const numtX &pos, const numtY &val): x(pos), y(val) {}
     template<class numtX2, class numtY2>
     point(const point<numtX2,numtY2> &source): x(source.X()), y(source.Y()) {}
-    template<class numt = numtY>
-    point(const std::initializer_list<numt> &source)
-    {
-        if (source.size() == 0)
-            throw Exception<point>("wrong initialization of point from emply list");
-        if (source.size() > 2)
-            throw Exception<point>("wrong initialization of value from list with more than two numbers");
-        Chain<numt> v;
-        for (const numt &x : source)v.push_back(x);
-        x = numtX(v[0]);
-        y = numtY(v[1]);
-    }
     point&operator=(const point&source)
     {
         x = source.x;
