@@ -143,16 +143,6 @@ public:
         if (m_uncertainty < 0)
             m_uncertainty = INFINITY;
     }
-    value(const std::initializer_list<numt>&lst){
-	Chain<numt>tmp;
-	for(const numt&i:lst)tmp.push_back(i);
-	if(tmp.size()==0)throw Exception<value>("wrong elements count in initializer list");
-	if(tmp.size()>2)throw Exception<value>("wrong elements count in initializer list");
-	m_val=tmp[0];
-	m_uncertainty=(tmp.size()==2)?tmp[1]:0;
-        if (m_uncertainty < 0)
-            m_uncertainty = INFINITY;
-    }
     template<class numt2>
     value(const abstract_value_with_uncertainty<numt2> &source): value(source.val(),source.uncertainty()){}
 
