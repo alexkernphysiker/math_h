@@ -191,7 +191,7 @@ TEST(VectorTransformation, Isotropic1)
         D.Fill(randomIsotropic<1>().dir());
     }
     const auto x = D.TotalSum().val() / D.size();
-    for (const auto &p : D)EXPECT_TRUE(p.Y().make_wider(3).Contains(x));
+    for (const auto &p : D)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
 }
 TEST(VectorTransformation, Isotropic2)
 {
@@ -202,7 +202,7 @@ TEST(VectorTransformation, Isotropic2)
         Phi.Fill(randomIsotropic<2>().phi());
     }
     const auto x = Phi.TotalSum().val() / Phi.size();
-    for (const auto &p : Phi)EXPECT_TRUE(p.Y().make_wider(3).Contains(x));
+    for (const auto &p : Phi)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
 }
 TEST(VectorTransformation, Isotropic3)
 {
@@ -215,9 +215,9 @@ TEST(VectorTransformation, Isotropic3)
         Z.Fill(V.z());
     }
     const auto x = (X.TotalSum().val()+Y.TotalSum().val()+Z.TotalSum().val()) / (X.size()+Y.size()+Z.size());
-    for (const auto &p : X)EXPECT_TRUE(p.Y().make_wider(3).Contains(x));
-    for (const auto &p : Y)EXPECT_TRUE(p.Y().make_wider(3).Contains(x));
-    for (const auto &p : Z)EXPECT_TRUE(p.Y().make_wider(3).Contains(x));
+    for (const auto &p : X)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
+    for (const auto &p : Y)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
+    for (const auto &p : Z)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
 }
 TEST(VectorTransformation, Rotation2)
 {
