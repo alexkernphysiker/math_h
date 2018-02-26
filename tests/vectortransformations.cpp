@@ -184,40 +184,38 @@ TEST(Direction, base5d)
 
 TEST(VectorTransformation, Isotropic1)
 {
-    
     const auto c = BinsByCount(2, -2.0, 2.0);
     Distribution1D<> D(c);
-    for (size_t i = 0; i < 1000000; i++) {
+    const size_t N=10000000;
+    for (size_t i = 0; i < N; i++) {
         D.Fill(randomIsotropic<1>().dir());
     }
-    const auto x = D.TotalSum().val() / D.size();
-    for (const auto &p : D)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
+    for (const auto &p:D)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / D.size()));
 }
 TEST(VectorTransformation, Isotropic2)
 {
-    
     const auto c = BinsByCount(10, -PI(), PI());
     Distribution1D<> Phi(c);
-    for (size_t i = 0; i < 1000000; i++) {
+    const size_t N=10000000;
+    for (size_t i = 0; i < N; i++) {
         Phi.Fill(randomIsotropic<2>().phi());
     }
-    const auto x = Phi.TotalSum().val() / Phi.size();
-    for (const auto &p : Phi)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
+    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / Phi.size()));
 }
 TEST(VectorTransformation, Isotropic3)
 {
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
     Distribution1D<> X(c), Y(c), Z(c);
-    for (size_t i = 0; i < 1000000; i++) {
+    const size_t N=10000000;
+    for (size_t i = 0; i < N; i++) {
         const auto V = randomIsotropic<3>() * 1.0;
         X.Fill(V.x());
         Y.Fill(V.y());
         Z.Fill(V.z());
     }
-    const auto x = (X.TotalSum().val()+Y.TotalSum().val()+Z.TotalSum().val()) / (X.size()+Y.size()+Z.size());
-    for (const auto &p : X)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
-    for (const auto &p : Y)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
-    for (const auto &p : Z)EXPECT_TRUE(p.Y().make_wider(4).Contains(x));
+    for (const auto &p:X)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / X.size()));
+    for (const auto &p:Y)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Y.size()));
+    for (const auto &p:Z)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Z.size()));
 }
 TEST(VectorTransformation, Rotation2)
 {
