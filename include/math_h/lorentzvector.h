@@ -139,17 +139,23 @@ inline LorentzVector<numt, Space> lorentz_byEkM(const numt &e, const numt &l4, c
 {
     return lorentz_byEM(e+l4, l4, direction(Dir));
 }
-template<size_t size, class numt>
-std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
-        binaryDecay(const numt &IM, const numt &m1, const numt &m2, const Direction<size, numt> &dir)
+template<class numt>
+std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>
+        binaryDecay(const numt &IM, const numt &m1, const numt &m2)
 {
     if (m1 < 0)throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Negative mass1 error");
     if (m2 < 0)throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Negative mass2 error");
     if (IM < (m1 + m2))throw Exception<std::pair<LorentzVector<numt, Vector<1, numt>>, LorentzVector<numt, Vector<1, numt>>>>("Invariant mass of decaying system is less then masses of products");
     const auto E1 = (IM * IM - m2 * m2 + m1 * m1) / (IM * numt(2));
     const auto p = sqrt(E1 * E1 - m1 * m1);
-    const auto P = dir * p;
-    return std::make_pair(lorentz_byPM(P, m1), lorentz_byPM(-P, m2));
+    return std::make_pair(lorentz_byPM(vec(p), m1), lorentz_byPM(-vec(p), m2));
+}
+template<size_t size, class numt>
+inline std::pair<LorentzVector<numt, Vector<size, numt>>, LorentzVector<numt, Vector<size, numt>>>
+        binaryDecay(const numt &IM, const numt &m1, const numt &m2, const Direction<size, numt> &dir)
+{
+    const auto D = binaryDecay(IM,m1,m2);
+    return std::make_pair(lorentzVector(D.first.E(),dir*D.first.P().x()),lorentzVector(D.second.E(),dir*D.second.P().x()));
 }
 
 };
