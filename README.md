@@ -50,14 +50,6 @@ Then commit your changes.
 
 This library still can be compiled with c++11 or c++14 compiler but some features will be absent.
 
-
-CMake Options
-=============
-
-Option that turns on unit tests compilation (requires GoogleTest framework)
-
-	tests
-
 Header files
 ============
 
