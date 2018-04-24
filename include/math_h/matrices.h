@@ -136,7 +136,6 @@ public:
 	if constexpr(third_size>1)return InsertRow<index>(C.___last_row())
 	    .template InsertRows<index,third_size-1>(C.___minus_one_component());
     }
-
     inline NumberType Determinant()const
     {
 	static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
@@ -148,6 +147,9 @@ public:
 	const NumberType D=Determinant();
 	if(D==0)throw Exception<Matrix>("System of equations cannot be solved");
 	return vec(X.x()/D);
+    }
+    inline Matrix<ColumnsCount,Vector<1,NumberType>> transponate()const{
+	return Matrix <ColumnsCount,Vector<1, NumberType>> (m_row.to_tuple());
     }
 #else
     template<size_t index, size_t jindex>
@@ -165,6 +167,10 @@ public:
         return m_row;
     }
 #endif
+    inline Vector<RowsCount,NumberType> diagonal()const
+    {
+	return vec(m_row.x());
+    }
     inline ColumnType operator*(const RowType &v)const
     {
         return m_row * v;
@@ -221,9 +227,6 @@ public:
 	    (y == RowsCount) ? ((RowType::template basis_vector<y>() * cos(angle)) + (RowType::template basis_vector<x>() * sin(angle))) :
 	    RowType::template basis_vector<RowsCount>()
 	);
-    }
-    inline Matrix<ColumnsCount,Vector<1,NumberType>> transponate()const{
-	return Matrix <ColumnsCount,Vector<1, NumberType>> (m_row.to_tuple());
     }
 };
 
@@ -443,6 +446,10 @@ public:
 	else return m_other_rows.template row<index>();
     }
 #endif
+    inline Vector<RowsCount,NumberType> diagonal()const
+    {
+	return Vector<RowsCount,NumberType>(m_other_rows.diagonal(),m_row.template component<RowsCount>());
+    }
     inline ColumnType operator*(const RowType &v)const
     {
         return ColumnType(m_other_rows * v, m_row * v);
