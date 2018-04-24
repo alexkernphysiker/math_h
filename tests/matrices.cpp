@@ -139,6 +139,12 @@ TEST(Matrix, elements)
     EXPECT_EQ(e32,0);
     EXPECT_EQ(e33,1);
     EXPECT_EQ(e34,2);
+    const auto&r1=M.row<1>();
+    const auto&r2=M.row<2>();
+    const auto&r3=M.row<3>();
+    EXPECT_EQ(r1,vec(1,2,3,4));
+    EXPECT_EQ(r2,vec(5,6,7,8));
+    EXPECT_EQ(r3,vec(9,0,1,2));
 }
 TEST(Matrix, mul1)
 {
@@ -671,6 +677,28 @@ TEST(Matrix,Cramer3)
 	    vec(0.,1.,0.),
 	    vec(0.,0.,0.)
 	).Cramer(vec(2.,3.,5.))
+    );
+}
+TEST(Matrix, transponate1)
+{
+    EXPECT_EQ(
+        row(1, 2,3).transponate(),
+        column(1,2,3)
+    );
+}
+TEST(Matrix, transponate2)
+{
+    EXPECT_EQ(
+        rows(
+            vec(1, 2),
+            vec(3, 4),
+            vec(5, 6)
+        ).transponate(),
+        columns(
+            vec(1, 2),
+            vec(3, 4),
+            vec(5, 6)
+        )
     );
 }
 #endif

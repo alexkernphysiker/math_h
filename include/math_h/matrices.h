@@ -78,6 +78,12 @@ public:
 	static_assert(index == 1 ,"dimension index is out of range");
         return m_row.template component<jindex>();
     }
+    template<size_t index>
+    inline const RowType &row()const
+    {
+	static_assert(index == 1 ,"dimension index is out of range");
+        return m_row;
+    }
 
     template<size_t index>
     inline MinusOneColumn RemoveColumn()const
@@ -151,6 +157,13 @@ public:
 	if(index>1)throw Exception<Matrix>("dimension index out of range");
 	return m_row.template component<jindex>();
     }
+    template<size_t index>
+    inline const RowType &row()const
+    {
+	static_assert(index>0, "dimension index is out of range");
+	if(index>1)throw Exception<Matrix>("dimension index out of range");
+        return m_row;
+    }
 #endif
     inline ColumnType operator*(const RowType &v)const
     {
@@ -208,6 +221,9 @@ public:
 	    (y == RowsCount) ? ((RowType::template basis_vector<y>() * cos(angle)) + (RowType::template basis_vector<x>() * sin(angle))) :
 	    RowType::template basis_vector<RowsCount>()
 	);
+    }
+    inline Matrix<ColumnsCount,Vector<1,NumberType>> transponate()const{
+	return Matrix <ColumnsCount,Vector<1, NumberType>> (m_row.to_tuple());
     }
 };
 
@@ -287,6 +303,14 @@ public:
 	static_assert(index<=RowsCount,"dimension index is out of range");
 	if constexpr(index==RowsCount) return m_row.template component<jindex>();
 	if constexpr(index<RowsCount) return m_other_rows.template element<index, jindex>();
+    }
+    template<size_t index>
+    inline const RowType &row()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	static_assert(index<=RowsCount,"dimension index is out of range");
+	if constexpr(index==RowsCount) return m_row;
+	if constexpr(index<RowsCount) return m_other_rows.template row<index>();
     }
     template<size_t index>
     inline MinusOneColumn RemoveColumn()const
@@ -398,6 +422,9 @@ public:
 	if(D==0)throw Exception<Matrix>("System of equations cannot be solved");
 	return ___cramer<ColumnsCount>(X,D);
     }
+    inline Matrix<ColumnsCount,Vector<RowsCount,NumberType>> transponate()const{
+	return m_other_rows.transponate().template InsertColumn<RowsCount>(m_row);
+    }
 #else
     template<size_t index, size_t jindex>
     const NumberType &element()const
@@ -406,6 +433,14 @@ public:
 	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
 	if(index==RowsCount) return m_row.template component<jindex>();
 	else return m_other_rows.template element<index, jindex>();
+    }
+    template<size_t index>
+    inline const RowType &row()const
+    {
+	static_assert(index > 0,"dimension index is out of range");
+	if(index>RowsCount)throw Exception<Matrix>("dimension index is out of range");
+	if(index==RowsCount) return m_row;
+	else return m_other_rows.template row<index>();
     }
 #endif
     inline ColumnType operator*(const RowType &v)const
