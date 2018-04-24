@@ -5,6 +5,7 @@
 #include <random>
 #include <memory>
 #include "error.h"
+#include "functions.h"
 #include "tabledata.h"
 #include "interpolate.h"
 namespace MathTemplates

@@ -238,27 +238,29 @@ TEST(value, error_handling)
 TEST(StandardDeviation, Throwing)
 {
     StandardDeviation<> S;
-    EXPECT_EQ(0, S.count());
-    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
-    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
+    EXPECT_EQ(0, S.Sample().count());
+    EXPECT_ANY_THROW(S.val());
+    EXPECT_ANY_THROW(S.uncertainty());
     EXPECT_EQ(&S, &(S << 0.0));
-    EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
-    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
+    EXPECT_EQ(1, S.Sample().count());
+    EXPECT_EQ(S.val(),0.0);
+    EXPECT_ANY_THROW(S.uncertainty());
     EXPECT_EQ(&S, &(S << 0.0));
-    EXPECT_EQ(2, S.count());
+    EXPECT_EQ(2, S.Sample().count());
     EXPECT_EQ(0, S.val());
     EXPECT_EQ(0, S.uncertainty());
 }
 TEST(StandardDeviation, Base)
 {
     StandardDeviation<> S;
+    EXPECT_ANY_THROW(S.val());
+    EXPECT_ANY_THROW(S.uncertainty());
     S << 0.0;
-    EXPECT_EQ(1, S.count());
-    EXPECT_THROW(S.val(), Exception<StandardDeviation<>>);
-    EXPECT_THROW(S.uncertainty(), Exception<StandardDeviation<>>);
+    EXPECT_EQ(1, S.Sample().count());
+    EXPECT_EQ(S.val(),0.0);
+    EXPECT_ANY_THROW(S.uncertainty());
     S << 1.0;
-    EXPECT_EQ(2, S.count());
+    EXPECT_EQ(2, S.Sample().count());
     EXPECT_EQ(0.5, S.val());
     EXPECT_EQ(sqrt(0.5), S.uncertainty());
 }
@@ -267,13 +269,13 @@ TEST(StandardDeviation, Base2)
     StandardDeviation<> S;
     S << 0.0 << 1.0;
     size_t cnt=0;
-    for(const auto&x:S)cnt++;
+    for(const auto&x:S.Sample())cnt++;
     EXPECT_EQ(2,cnt);
-    EXPECT_EQ(2,S.size());
-    EXPECT_EQ(2,S.count());
-    EXPECT_EQ(0.0,S[0]);
-    EXPECT_EQ(1.0,S[1]);
-    EXPECT_ANY_THROW(S[2]);
+    EXPECT_EQ(2,S.Sample().size());
+    EXPECT_EQ(2,S.Sample().count());
+    EXPECT_EQ(0.0,S.Sample()[0].x());
+    EXPECT_EQ(1.0,S.Sample()[1].x());
+    EXPECT_ANY_THROW(S.Sample()[2].x());
 }
 TEST(StandardDeviation, WithRandomValues)
 {
@@ -340,71 +342,4 @@ TEST(WeightedAverage, Zeros_plus_Ones)
     EXPECT_EQ(&W, &(W << value<>(0, 1)));
     ALMOST_EQ(0.5, W.val());
     ALMOST_EQ(1.0 / sqrt(4.0), W.uncertainty());
-}
-TEST(CorrelationLinear, simple1)
-{
-    RandomGauss<> G(0,5);
-    CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(), v2 = G();
-        EXPECT_EQ(&A, &(A << make_pair(v1, v1)));
-        B << make_pair(v1, -v1);
-        C << make_pair(v1, v2);
-    }
-    ALMOST_EQ2(A.R(), 1);
-    ALMOST_EQ2(B.R(), -1);
-    ALMOST_EQ2(C.R(), 0);
-}
-TEST(CorrelationLinear, simple2)
-{
-    RandomGauss<> G(0,5);
-    CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(), v2 = G();
-        A << make_pair(v1   , v2);
-        B << make_pair(v1 * 2., v2);
-        C << make_pair(v1   , v2 * 2.);
-    }
-    ALMOST_EQ2(A.R(), 0);
-    ALMOST_EQ2(B.R(), 0);
-    ALMOST_EQ2(C.R(), 0);
-}
-TEST(CorrelationLinear, simple3)
-{
-    RandomGauss<> G(0,5);
-    CorrelationLinear<> A, B;
-    for (size_t i = 0; i < 100000; i++) {
-        double v1 = G(), v2 = G();
-        A << make_pair(v1, v2);
-        B << make_pair(v2, v1);
-    }
-    EXPECT_EQ(A.R(), B.R());
-}
-TEST(CorrelationLinear, simple4)
-{
-    RandomGauss<> G(0,5);
-    CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 100000; i++) {
-        double v1 = G();
-        A << make_pair(v1, v1);
-        B << make_pair(v1 * 2., v1);
-        C << make_pair(v1, v1 * 3.);
-    }
-    ALMOST_EQ(A.R(), 1);
-    ALMOST_EQ(B.R(), 1);
-    ALMOST_EQ(C.R(), 1);
-}
-TEST(CorrelationLinear, simple5)
-{
-    RandomGauss<> G(0,5);
-    CorrelationLinear<> A, B, C;
-    for (size_t i = 0; i < 10000; i++) {
-        double v1 = G();
-        A << make_pair(v1, -v1);
-        B << make_pair(-v1 * 2., v1);
-        C << make_pair(v1, -v1 * 3.);
-    }
-    ALMOST_EQ2(A.R(), -1);
-    ALMOST_EQ2(B.R(), -1);
-    ALMOST_EQ2(C.R(), -1);
 }

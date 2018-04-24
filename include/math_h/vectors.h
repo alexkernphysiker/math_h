@@ -6,7 +6,6 @@
 #include <math.h>
 #include <type_traits>
 #include "error.h"
-#include "randomfunc.h"
 namespace MathTemplates
 {
 template<size_t size = 3, class numt = double>class Vector;

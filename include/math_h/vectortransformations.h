@@ -8,6 +8,7 @@
 #include "error.h"
 #include "vectors.h"
 #include "matrices.h"
+#include "randomfunc.h"
 namespace MathTemplates
 {
 

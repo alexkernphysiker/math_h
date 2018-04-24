@@ -7,10 +7,9 @@
 #include <vector>
 #include <math.h>
 #include "error.h"
+#include "statistics.h"
 namespace MathTemplates
 {
-template<class comparable = double>
-using Chain=std::vector<comparable>;
 template<typename numt = double>
 class abstract_value_with_uncertainty
 {
@@ -287,65 +286,31 @@ template<typename numt = double>
 class StandardDeviation:public abstract_value_with_uncertainty<numt>
 {
 private:
-    Chain<numt> m_list;
-    numt m_sum;
-    std::shared_ptr<value<numt>>m_cache;
+    Sampling<1,numt> m_sample;
+    std::pair<size_t,numt> m_cache;
 public:
-    typedef typename Chain<numt>::const_iterator const_iterator;
-    const_iterator begin()const{return m_list.begin();}
-    const_iterator end() const{return m_list.end();}
-    const numt&operator[](const size_t index){
-	if(index>=m_list.size())throw Exception<StandardDeviation>("range check error");
-	return m_list[index];
-    }
-    inline size_t size()const
-    {
-        return m_list.size();
-    }
-
-    StandardDeviation():m_sum(0){}
+    StandardDeviation():m_cache(0,0){}
     virtual ~StandardDeviation() {}
-    StandardDeviation &operator<<(const numt &x)
+    inline StandardDeviation(const numt &x):StandardDeviation(){m_sample<<vec(x);}
+    inline StandardDeviation&operator<<(const numt &x)
     {
-        m_list.push_back(x);
-        m_sum += x;
-        m_cache = nullptr;
+        m_sample<<vec(x);
         return *this;
     }
-    inline StandardDeviation(const numt &x):StandardDeviation()
-    {
-        operator<<(x);
-    }
-    inline size_t count()const
-    {
-        return m_list.size();
-    }
-private:
-    const value<numt> &VAL()const
-    {
-        using namespace std;
-        if (!m_cache) {
-            size_t sz = m_list.size();
-            if (sz <= 1)
-                throw Exception<StandardDeviation>("No data to check. for sigma needed at least two elements.");
-            numt average = m_sum / sz;
-            numt m_sigsqr = 0;
-            for (auto value : m_list)
-                m_sigsqr += pow(value - average, 2);
-            m_sigsqr /= sz - 1;
-            const_cast<StandardDeviation &>(*this).m_cache =
-                make_shared<value<numt>>(average, sqrt(m_sigsqr));
-        }
-        return *m_cache;
-    }
-public:
+    inline const Sampling<1,numt>&Sample()const{return m_sample;}
     virtual const numt&val()const override
     {
-        return VAL().val();
+        return m_sample.Average().x();
     }
     virtual const numt&uncertainty()const override
     {
-        return VAL().uncertainty();
+	const size_t sz = m_sample.count();
+	if(sz<2)throw Exception<StandardDeviation>("Cannot obtain standard deviation for sample less than 2 elements");
+        if (m_cache.first!=sz) {
+	    const_cast<StandardDeviation&>(*this).m_cache =
+                std::make_pair(sz,sqrt(m_sample.Cov().template element<1,1>()));
+	}
+        return m_cache.second;
     }
     //extending arithmetic actions
     inline value<numt> operator+(const abstract_value_with_uncertainty<numt>&other)const{return value<numt>(*this) += other;}
@@ -414,34 +379,6 @@ public:
     inline value<numt> operator-(const numt&other)const{return value<numt>(*this) -= other;}
     inline value<numt> operator*(const numt&other)const{return value<numt>(*this) *= other;}
     inline value<numt> operator/(const numt&other)const{return value<numt>(*this) /= other;}
-};
-
-template<typename numt = double>
-class CorrelationLinear
-{
-private:
-    StandardDeviation<numt> _X, _Y, _XY;
-public:
-    CorrelationLinear(const numt &scale = 1):
-        _X(scale), _Y(scale), _XY(scale) {}
-    virtual ~CorrelationLinear() {}
-    CorrelationLinear &operator<<(const std::pair<numt, numt> &P)
-    {
-        _X << P.first;
-        _Y << P.second;
-        _XY << P.first *P.second;
-        return *this;
-    }
-    inline numt Covariance()const
-    {
-        return _XY.val() - _X.val() * _Y.val();
-    }
-    inline numt R()const
-    {
-        return Covariance() / (_X.uncertainty() * _Y.uncertainty());
-    }
-    const StandardDeviation<numt>&X()const{return _X;}
-    const StandardDeviation<numt>&Y()const{return _Y;}
 };
 };
 #endif

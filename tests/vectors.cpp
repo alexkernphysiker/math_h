@@ -4,6 +4,7 @@
 #include <math_h/vectors.h>
 #include <math_h/tabledata.h>
 #include <math_h/sigma.h>
+#include <math_h/randomfunc.h>
 using namespace std;
 using namespace MathTemplates;
 TEST(Vector, base1d)
