@@ -700,5 +700,17 @@ TEST(Matrix, transponate2)
             vec(5, 6)
         )
     );
+    EXPECT_EQ(
+        rows(
+            vec(1, 2, 3),
+            vec(4, 5, 6),
+            vec(7, 8, 9)
+        ).transponate(),
+        rows(
+            vec(1, 4, 7),
+            vec(2, 5, 8),
+            vec(3, 6, 9)
+        )
+    );
 }
 #endif

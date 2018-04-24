@@ -146,7 +146,7 @@ public:
     {
         return (m_x == second.m_x);
     }
-    bool CloseTo(const Vector &second, const numt &epsilon)const
+    inline bool CloseTo(const Vector &second, const numt &epsilon)const
     {
         return operator-(second).M() < epsilon;
     }
@@ -312,7 +312,7 @@ public:
     {
         return (m_x == second.m_x) && (m_other == second.m_other);
     }
-    bool CloseTo(const Vector &second, const numt &epsilon)const
+    inline bool CloseTo(const Vector &second, const numt &epsilon)const
     {
         return operator-(second).M() < epsilon;
     }
