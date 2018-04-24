@@ -171,6 +171,10 @@ public:
     {
 	return vec(m_row.x());
     }
+    inline NumberType trace()const
+    {
+	return m_row.x();
+    }
     inline ColumnType operator*(const RowType &v)const
     {
         return m_row * v;
@@ -449,6 +453,10 @@ public:
     inline Vector<RowsCount,NumberType> diagonal()const
     {
 	return Vector<RowsCount,NumberType>(m_other_rows.diagonal(),m_row.template component<RowsCount>());
+    }
+    inline NumberType trace()const
+    {
+	return m_row.template component<RowsCount>()+m_other_rows.trace();
     }
     inline ColumnType operator*(const RowType &v)const
     {

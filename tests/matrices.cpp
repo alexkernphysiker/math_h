@@ -717,6 +717,7 @@ TEST(Matrix, transponate2)
 TEST(Matrix,diagonal)
 {
     EXPECT_EQ(row(3.5).diagonal(),vec(3.5));
+    EXPECT_EQ(row(3.5).trace(),3.5);
     EXPECT_EQ(
         rows(
             vec(1, 2, 3),
@@ -724,5 +725,13 @@ TEST(Matrix,diagonal)
             vec(7, 8, 9)
         ).diagonal(),
 	vec(1, 5, 9)
+    );
+    EXPECT_EQ(
+        rows(
+            vec(1, 2, 3),
+            vec(4, 5, 6),
+            vec(7, 8, 9)
+        ).trace(),
+	15
     );
 }

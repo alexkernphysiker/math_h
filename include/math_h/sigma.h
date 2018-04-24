@@ -291,10 +291,10 @@ private:
 public:
     StandardDeviation():m_cache(0,0){}
     virtual ~StandardDeviation() {}
-    inline StandardDeviation(const numt &x):StandardDeviation(){m_sample<<vec(x);}
+    inline StandardDeviation(const numt &x):StandardDeviation(){m_sample.Fill(x);}
     inline StandardDeviation&operator<<(const numt &x)
     {
-        m_sample<<vec(x);
+        m_sample.Fill(x);
         return *this;
     }
     inline const Sampling<1,numt>&Sample()const{return m_sample;}
