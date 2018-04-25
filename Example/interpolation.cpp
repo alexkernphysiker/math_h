@@ -14,7 +14,7 @@ int main()
     //create chain of values with lesser step
     SortedPoints<> plot_data;
     for(double x=-3.;x<=3.;x+=0.1){
-	const auto y=test(x);//that's how we interpolate
+	const double y=test(x);//that's how we interpolate
 	plot_data<<make_point(x,y);
     }
     Plot("interpolation1").Points(plot_data);

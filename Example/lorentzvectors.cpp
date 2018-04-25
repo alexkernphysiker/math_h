@@ -4,7 +4,7 @@
 using namespace std;
 using namespace MathTemplates;
 using namespace GnuplotWrap;
-//This is an example how to use vectors.h that provides
+//This is an example how to use lorentzvector.h that provides
 //a simple Monte Carlo simulation of particle scattering
 //The vectors must be given in unit system that assumes c=1
 //and equal units for energy, momentum and mass
@@ -13,12 +13,14 @@ int main()
     //Particles masses
     const double M1 = 0.75, M2 = 1.0;
     //momentum distribution
-    const RandomGauss<> P(0.3,0.01);
+    const RandomGauss<> P(0.3,0.02);
 
-    PlotDistr2D<>
+    PlotDistr2D<> //Plots that are obtained from simulations
     P_vs_P("P-P", BinsByCount(100, 0.0, 0.5), BinsByCount(100, 0.0, 0.5), "plot_PP"),
     E_vs_E("Ek-Ek", BinsByCount(100, 0.0, 0.1), BinsByCount(100, 0.0, 0.1), "plot_EE"),
     Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
+
+
     for (size_t i = 0; i < 100000; i++) {
 	//Create Lorentz vectors for input particles
         const auto Pr0 = lorentz_byPM(Z() * P(), M1);
