@@ -232,6 +232,7 @@ public:
 	    RowType::template basis_vector<RowsCount>()
 	);
     }
+    inline void output(std::ostream&str)const{str<<m_row;}
 };
 
 template<size_t sizef, class linetype>
@@ -520,6 +521,10 @@ public:
 		RowType::template basis_vector<RowsCount>()
 	);
     }
+    inline void output(std::ostream&str)const{
+	m_other_rows.output(str);
+	str<<std::endl<<m_row;
+    }
 };
 template<class linetype, class... Args>
 inline Matrix < sizeof...(Args) + 1, linetype > rows(const linetype &x, Args... args)
@@ -561,6 +566,11 @@ inline Matrix<size, RowType> TensorProduct(const Vector<size, typename RowType::
 {
     return Matrix<size, RowType>(A, B);
 }
-
+template<size_t i,class VT>
+inline std::ostream& operator<<(std::ostream&str,const Matrix<i,VT>&X)
+{
+    X.output(str);
+    return str;
+}
 };
 #endif

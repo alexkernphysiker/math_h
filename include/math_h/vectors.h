@@ -3,6 +3,7 @@
 #ifndef ___________VECTORS_H_____
 #	define ___________VECTORS_H_____
 #include <tuple>
+#include <iostream>
 #include <math.h>
 #include <type_traits>
 #include "error.h"
@@ -149,6 +150,7 @@ public:
     {
         return operator-(second).M() < epsilon;
     }
+    inline void output(std::ostream&str)const{str<<m_x;}
 };
 template<size_t size, class numt>
 class Vector
@@ -315,6 +317,10 @@ public:
     {
         return operator-(second).M() < epsilon;
     }
+    inline void output(std::ostream&str)const{
+	m_other.output(str);
+	str<<" "<<m_x;
+    }
 };
 template<class numt, class... Args>
 inline Vector < sizeof...(Args) + 1, numt > vec(const numt &x, Args... args)
@@ -361,10 +367,16 @@ inline Vector<3, numt> Zero()
 {
     return Vector<3, numt>::zero();
 }
-template<size_t i, class numt = double>
+template<size_t i, class numt>
 inline Vector<i, numt> operator-(const Vector<i, numt> &V)
 {
     return V * numt(-1);
+}
+template<size_t i,class numt>
+inline std::ostream& operator<<(std::ostream&str,const Vector<i,numt>&X)
+{
+    X.output(str);
+    return str;
 }
 };
 #endif
