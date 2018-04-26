@@ -400,8 +400,9 @@ public:
     ): MathTemplates::Distribution1D<numtX,numtY>(data), m_title(title), m_axis(axis),m_imgname(imgname) {}
     virtual ~PlotDistr1D()
     {
-        Plot(m_imgname).template Hist<numtX,numtY>(*this) << "set title '" + m_title + "'" << "set yrange [0:]"
-                                 << "set xlabel '" + m_axis + "'" << "set ylabel 'counts'";
+        Plot(m_imgname).template Hist<numtX,numtY>(*this)
+	    << "set title '" + m_title + "'" << "set yrange [0:]"
+	    << "set xlabel '" + m_axis + "'" << "set ylabel 'counts'";
     }
 };
 template<class numtX = double,class numtY = numtX,class numtZ = numtY>
