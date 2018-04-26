@@ -55,15 +55,9 @@ inline std::shared_ptr<StdFunctionWrap<result, Args...>>
 
 //constants
 template<class numt = double>
-inline numt PI()
-{
-    return 3.1415926;
-}
+inline numt PI(){return 3.1415926;}
 template<class numt = double>
-inline numt E()
-{
-    return 2.719281928;
-}
+inline numt E(){return 2.719281928;}
 
 //Peak functions
 template<class numt = double>

@@ -205,21 +205,23 @@ TEST(VectorTransformation, Isotropic2)
 TEST(VectorTransformation, Isotropic3)
 {
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
-    Distribution1D<> X(c), Y(c), Z(c);
+    Distribution1D<> X(c), Y(c), Z(c),Phi(BinsByStep(-PI(), 0.1*PI(), PI()));
     const size_t N=10000000;
     for (size_t i = 0; i < N; i++) {
-        const auto V = randomIsotropic<3>() * 1.0;
+	const auto D=randomIsotropic<3>();
+        const auto V = D*1.0;
         X.Fill(V.x());
         Y.Fill(V.y());
         Z.Fill(V.z());
+	Phi.Fill(D.phi());
     }
     for (const auto &p:X)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / X.size()));
     for (const auto &p:Y)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Y.size()));
     for (const auto &p:Z)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Z.size()));
+    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Phi.size()));
 }
 TEST(VectorTransformation, Rotation2)
 {
-    
     RandomUniform<> Phi(0, PI() * 2.0);
     for (size_t i = 0; i < 50; i++) {
         const auto I = randomIsotropic<2>() * 1.0;
@@ -231,7 +233,6 @@ TEST(VectorTransformation, Rotation2)
 
 TEST(VectorTransformation, Rotation3)
 {
-    
     RandomUniform<> M(0, 5.0), Phi(-PI(), PI());
     for (size_t i = 0; i < 50; i++) {
         const auto I = randomIsotropic<3>() * M();
@@ -244,7 +245,6 @@ TEST(VectorTransformation, Rotation3)
 
 TEST(VectorTransformation, decompose2)
 {
-    
     RandomUniform<> M(0, 5.0);
     for (size_t i = 0; i < 50; i++) {
         const auto chosen_direction = randomIsotropic<2>();
@@ -256,7 +256,6 @@ TEST(VectorTransformation, decompose2)
 }
 TEST(VectorTransformation, decompose3)
 {
-    
     RandomUniform<> M(0, 5.0);
     for (size_t i = 0; i < 50; i++) {
         const auto chosen_direction = randomIsotropic<3>();
@@ -268,7 +267,6 @@ TEST(VectorTransformation, decompose3)
 }
 TEST(VectorTransformation, decompose4)
 {
-    
     RandomUniform<> M(0, 5.0);
     for (size_t i = 0; i < 50; i++) {
         const auto chosen_direction = randomIsotropic<4>();
@@ -280,7 +278,6 @@ TEST(VectorTransformation, decompose4)
 }
 TEST(VectorTransformation, direction1d)
 {
-    
     RandomUniform<> V(-10.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto d = direction();
@@ -290,7 +287,6 @@ TEST(VectorTransformation, direction1d)
 }
 TEST(VectorTransformation, direction2d)
 {
-    
     RandomUniform<> PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = PHI();
@@ -300,7 +296,6 @@ TEST(VectorTransformation, direction2d)
 }
 TEST(VectorTransformation, direction3d)
 {
-    
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto angles = direction(PHI(), THETA());
@@ -311,7 +306,6 @@ TEST(VectorTransformation, direction3d)
 }
 TEST(VectorTransformation, direction4d)
 {
-    
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto angles = direction(PHI(), THETA(), THETA());
@@ -323,7 +317,6 @@ TEST(VectorTransformation, direction4d)
 }
 TEST(VectorTransformation, direction5d)
 {
-    
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto angles = direction(PHI(), THETA(), THETA(), THETA());
@@ -337,7 +330,6 @@ TEST(VectorTransformation, direction5d)
 
 TEST(VectorTransformation, rotations1d)
 {
-    
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto dir = randomIsotropic<1>();
@@ -351,7 +343,6 @@ TEST(VectorTransformation, rotations1d)
 }
 TEST(VectorTransformation, rotations2d)
 {
-    
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto dir = randomIsotropic<2>();
@@ -365,7 +356,6 @@ TEST(VectorTransformation, rotations2d)
 }
 TEST(VectorTransformation, rotations3d)
 {
-    
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto dir = randomIsotropic<3>();
@@ -379,7 +369,6 @@ TEST(VectorTransformation, rotations3d)
 }
 TEST(VectorTransformation, rotations4d)
 {
-    
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto dir = randomIsotropic<4>();
@@ -393,7 +382,6 @@ TEST(VectorTransformation, rotations4d)
 }
 TEST(VectorTransformation, rotations5d)
 {
-    
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
         const auto dir = randomIsotropic<5>();
@@ -408,7 +396,6 @@ TEST(VectorTransformation, rotations5d)
 
 TEST(VectorTransformation, rotations3d_plane)
 {
-    
     RandomUniform<> M(-10.0, 10.0), TH(-PI<>(), PI<>());
     for (size_t i = 0; i < 50; i++) {
         const auto R = randomIsotropic<3>().Rotations();
