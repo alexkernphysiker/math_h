@@ -10,29 +10,27 @@ What features does this library provide
 
 - Using physical magnitudes values given with uncertainties. Arithmetical operations with them (uncertainties are calculated as well)
 
-- Standard deviation and weighted average calculations
+- Standard deviation, weighted average and covariance matrices calculations
 
-- Numeric integrating of function using Sympson folmula. Convolution integral calculation.
+- Numeric integrating of function using Sympson folmula. Convolution integral calculation. Integrating function given as table data using trapeze method
 
 - Linear interpolation
 
-- Generating random values with different distributions. Even ones given by table of values.
+- Generating random values with different distributions. Even ones given by table of density function.
 
-- Vectors and matrices with arbitrary dimmensions count. Vectors transformations are represented as matrices
-
-- Determinant calculation and solving systems of linear equations using Cramer's method
-
-- Defining angles of vector's direction. Rotating vectors.
+- Vectors and matrices with arbitrary dimensions count. Vectors can be rotated and represented in polar coordinates.
 
 - Lorentz vectors and relativistic kinematics facilities.
+
+- Determinant calculation and solving systems of linear equations using Cramer's method
 
 - Histograms, arithmetic operations with them.
 
 - Plotting data with gnuplot
 
 
-How to compile
-==============
+How to add into your project
+============================
 
 If you have your own git repository with cmake project you can add this repository as a submodule:
 
@@ -42,7 +40,7 @@ If you have your own git repository with cmake project you can add this reposito
 Then add to your project's CMakeLists.txt
 
 	add_definitions(--std=c++17) #the most recommended compiler mode
-	set(GTEST ON) #for compiling unit-tests. Requires gtest
+	#set(GTEST ON) #uncomment for compiling unit-tests. Requires gtest
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
 	
@@ -57,8 +55,8 @@ Header files
 	include/*.h
 
 
-How to use
-==========
+How to use in your program
+==========================
 
 Typical patterns of using the template classes and functions from this library can be learnt from:
 
@@ -66,7 +64,7 @@ Examples
 
 	Examples/*.cpp
 
-Unit tests
+Unit tests (are instead of documentation)
 
 	tests/*.cpp
 
