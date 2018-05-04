@@ -16,7 +16,7 @@ class abstract_value_with_uncertainty_numeric:public abstract_value_with_uncerta
 {
 public:
     typedef numt NumberType;
-    typedef numt NumberType_ForNumeric;//this is needed to differ template operators from ones declared for value<>
+    typedef numt NumberType_ForNumeric;//this is needed to differ template operators declared here from ones declared for value<>
     template<size_t d,class n>friend class value_f;
     template<class n>friend class value_f_chain;
 protected:
