@@ -20,38 +20,6 @@ public:
         return [this](Args... args)->result {return this->operator()(args...);};
     }
 };
-template<class result, typename... Args>
-class StdFunctionWrap: public IFunction<result, Args...>
-{
-private:
-    std::function<result(Args...)> m_func;
-public:
-    StdFunctionWrap(const std::function<result(Args...)>f)
-    {
-        m_func = f;
-    }
-    StdFunctionWrap(const StdFunctionWrap &source)
-    {
-        m_func = source.m_func;
-    }
-    virtual ~StdFunctionWrap() {}
-    virtual result operator()(Args...args)const
-    {
-	return m_func(args...);
-    };
-};
-template<class result, typename... Args>
-inline StdFunctionWrap<result, Args...>
-Function(const std::function<result(Args...)>f)
-{
-    return StdFunctionWrap<result, Args...>(f);
-}
-template<class result, typename... Args>
-inline std::shared_ptr<StdFunctionWrap<result, Args...>>
-        PFunction(const std::function<result(Args...)>f)
-{
-    return std::make_shared<StdFunctionWrap<result, Args...>>(f);
-}
 
 //constants
 template<class numt = double>

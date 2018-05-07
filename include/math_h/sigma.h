@@ -203,7 +203,7 @@ inline value<numt> value_in_range(const numt &a,const numt &b)
         if (b < a)throw Exception<value<numt>>("Cannot use empty range for value with uncertainty");
         return value<numt>((a+b)/numt(2),(b-a)/numt(2));
 }
-namespace details{
+namespace sigma_details{
     template<class numt,class Func>
     inline numt get_val(Func F,const abstract_value_with_uncertainty<numt>&v)
     {
@@ -259,8 +259,8 @@ template<class numt,class Func,typename... Args>
 inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v,Args... args)
 {
     return value<numt>(
-	details::get_val([F](auto...a){return F(a...);},v,args...),
-	sqrt(details::uncertainty_sqr([F](auto...a){return F(a...);},v,args...))
+	sigma_details::get_val([F](auto...a){return F(a...);},v,args...),
+	sqrt(sigma_details::uncertainty_sqr([F](auto...a){return F(a...);},v,args...))
     );
 }
 #else
@@ -268,8 +268,8 @@ template<class numt,class Func>
 inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v)
 {
     return value<numt>(
-	details::get_val([F](const numt&a){return F(a);},v),
-	sqrt(details::uncertainty_sqr([F](const numt&a){return F(a);},v))
+	sigma_details::get_val([F](const numt&a){return F(a);},v),
+	sqrt(sigma_details::uncertainty_sqr([F](const numt&a){return F(a);},v))
     );
 }
 #endif

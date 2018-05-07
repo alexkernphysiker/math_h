@@ -11,7 +11,7 @@
 #include "sigma.h"
 namespace MathTemplates
 {
-namespace details
+namespace table_data_details
 {
 template<class comparable, class indexer = Chain<comparable>>
 size_t  WhereToInsert(const size_t from, const size_t to, const indexer &X, const comparable &x)
@@ -71,7 +71,7 @@ public:
     }
     SortedChain &operator<<(const comparable &p)
     {
-        details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
+        table_data_details::InsertSorted(p, data, field_size(data), field_insert(data, comparable));
         return *this;
     }
     template<class comparable2>

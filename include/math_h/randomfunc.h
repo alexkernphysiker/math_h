@@ -24,13 +24,13 @@ template<class numt = double, class RG = RandomEngine<>>
 class RandomValueTableDistr: public RandomValueGenerator<numt>
 {
 private:
-    const ReverseIntegratedLinearInterpolation<numt> reverse_distr_func;
+    const interpolation_details::ReverseIntegratedLinearInterpolation<numt> reverse_distr_func;
     const std::shared_ptr<std::uniform_real_distribution<numt>> f_distr;
 public:
     typedef numt NumberType;
     RandomValueTableDistr(const RandomValueTableDistr &R):
         reverse_distr_func(R.reverse_distr_func), f_distr(R.f_distr) {}
-    RandomValueTableDistr(const ReverseIntegratedLinearInterpolation<numt> &distribution_density):
+    RandomValueTableDistr(const interpolation_details::ReverseIntegratedLinearInterpolation<numt> &distribution_density):
         reverse_distr_func(distribution_density),
         f_distr(
             std::make_shared<std::uniform_real_distribution<numt>>(
@@ -38,7 +38,7 @@ public:
             )
         ) {}
     RandomValueTableDistr(const LinearInterpolation<numt> &source):
-        RandomValueTableDistr(ReverseIntegratedLinearInterpolation<numt>(source)) {}
+        RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt>(source)) {}
     RandomValueTableDistr(const Points<numt>&source):
         RandomValueTableDistr(LinearInterpolation<numt>(source)) {}
     RandomValueTableDistr(const std::function<numt(numt)> distribution_density, const SortedChain<numt> &chain):
