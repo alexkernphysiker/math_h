@@ -238,6 +238,23 @@ inline std::istream& operator>>(std::istream&str,Uncertainties<i,numt>&X)
     return str;
 }
 
+template<size_t sz,class numtX = double, class numtY = numtX>
+using ext_hist=SortedPoints<value<numtX>,Uncertainties<sz,numtY>>;
+
+template<size_t index,size_t sz=index,class numtX = double, class numtY = numtX>
+ext_hist<sz,numtX,numtY> extend_hist(const hist<numtX,numtY>&source){
+    static_assert(sz>=index,"uncertainty indexing error");
+    ext_hist<sz,numtX,numtY> res;
+    for(const auto&p:source)res<<make_point(p.X(),extend_value<index,sz,numtY>(p.Y()));
+    return res;
+}
+template<size_t index,size_t sz,class numtX = double, class numtY = numtX>
+hist<numtX,numtY> wrap_hist(const ext_hist<sz,numtX,numtY>&source){
+    static_assert(sz>=index,"uncertainty indexing error");
+    hist<numtX,numtY> res;
+    for(const auto&p:source)res<<make_point(p.X(),value<numtY>(p.Y().val,p.Y().template uncertainty<index>()));
+    return res;
+}
 
 };
 #endif
