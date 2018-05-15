@@ -13,6 +13,9 @@
 #include <math.h>
 #include "math_h/error.h"
 #include "math_h/tabledata.h"
+#include "math_h/sigma.h"
+#include "math_h/sigma2.h"
+#include "math_h/sigma3.h"
 namespace GnuplotWrap
 {
 class PlotHist2d;
@@ -208,6 +211,19 @@ public:
                const std::string &title = "", const std::string &name = "")
     {
         return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars", title, name);
+    }
+    template<size_t index,size_t sz,class numtX = double,class numtY = numtX>
+    inline Plot &Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::Uncertainties<sz,numtY>> &data,
+               const std::string &title = "", const std::string &name = "")
+    {
+        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars", title, name);
+    }
+    template<size_t index,size_t index2,size_t sz,class numtX = double,class numtY = numtX>
+    inline Plot &Hist_2bars(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::Uncertainties<sz,numtY>> &data,
+               const std::string &title = "", const std::string &name = "")
+    {
+        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars,"+
+		"'' using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index2)+"):($3+$"+std::to_string(3+index2)+") with xyerrorbars", title, name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &XYUncertainties(const MathTemplates::Points<MathTemplates::value<numtX>, MathTemplates::value<numtY>> &data,

@@ -50,6 +50,7 @@ public:
     }
 #endif
     inline const NumberType&val()const{return m_value;}
+    inline value<NumberType> wrap()const{return value<NumberType>(m_value,m_uncertainty);}
     //number-like comparing
     inline bool operator<(const Uncertainties &other)const{return val() < other.val();}
     inline bool operator>(const Uncertainties &other)const{return val() > other.val();}
@@ -152,6 +153,9 @@ public:
     }
 #endif
     inline const NumberType&val()const{return m_lesser.val();}
+    inline value<NumberType> wrap()const{
+	return value<NumberType>(val(),sqrt(pow(m_uncertainty,2)+pow(m_lesser.wrap().uncertainty(),2)));
+    }
     //number-like comparing
     inline bool operator<(const Uncertainties &other)const{return val() < other.val();}
     inline bool operator>(const Uncertainties &other)const{return val() > other.val();}
@@ -248,11 +252,10 @@ ext_hist<sz,numtX,numtY> extend_hist(const hist<numtX,numtY>&source){
     for(const auto&p:source)res<<make_point(p.X(),extend_value<index,sz,numtY>(p.Y()));
     return res;
 }
-template<size_t index,size_t sz,class numtX = double, class numtY = numtX>
+template<size_t sz,class numtX = double, class numtY = numtX>
 hist<numtX,numtY> wrap_hist(const ext_hist<sz,numtX,numtY>&source){
-    static_assert(sz>=index,"uncertainty indexing error");
     hist<numtX,numtY> res;
-    for(const auto&p:source)res<<make_point(p.X(),value<numtY>(p.Y().val,p.Y().template uncertainty<index>()));
+    for(const auto&p:source)res<<make_point(p.X(),p.Y().wrap());
     return res;
 }
 
