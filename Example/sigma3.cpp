@@ -21,9 +21,9 @@ int main()
     const auto theoretical_coefficient=extend_value<2,2>(value<>(3.5,0.5));//only systematical uncertainty
     //Let's save multiplied data with both uncertainties
     const auto result=data*theoretical_coefficient;
-    Plot("sigma3-example").Hist_2bars<1,2>(result,"","sigma3-output");//draws two error bars
-    Plot("sigma3-example-2").Hist<1>(result,"","sigma3-output");//draws one error bar
-    Plot("sigma3-example-3").Hist(wrap_hist(result));//calculates one uncertainty taking statistical and systematical errors into account
+    Plot("sigma3-example").Hist_2bars<1,2>(result,"stat","syst","sigma3-output")<<"set key on";//draws two error bars
+    Plot("sigma3-example-2").Hist<1>(result,"statistical uncertainty","sigma3-output")<<"set key on";//draws one error bar
+    Plot("sigma3-example-3").Hist(wrap_hist(result),"total uncertainty")<<"set key on";//calculates one uncertainty taking statistical and systematical errors into account
     return 0;
 }
 

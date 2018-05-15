@@ -220,10 +220,10 @@ public:
     }
     template<size_t index,size_t index2,size_t sz,class numtX = double,class numtY = numtX>
     inline Plot &Hist_2bars(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::Uncertainties<sz,numtY>> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title1 = "",const std::string &title2 = "", const std::string &name = "")
     {
-        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars,"+
-		"'' using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index2)+"):($3+$"+std::to_string(3+index2)+") with xyerrorbars", title, name);
+        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars title'"+title1+"',"+
+		"'' using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index2)+"):($3+$"+std::to_string(3+index2)+") with xyerrorbars", title2, name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &XYUncertainties(const MathTemplates::Points<MathTemplates::value<numtX>, MathTemplates::value<numtY>> &data,
