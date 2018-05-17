@@ -9,7 +9,7 @@ using namespace MathTemplates;
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 
-TEST(Uncertainties,base1)
+TEST(Uncertainties,test1)
 {
     RandomUniform<> A(0.1,10);
     RandomUniform<> a(0.1,1);
@@ -42,7 +42,7 @@ TEST(Uncertainties,base1)
 	EXPECT_EQ((M/N).template uncertainty<2>(),(V2/W2).uncertainty());
     }
 }
-TEST(Uncertainties,base2)
+TEST(Uncertainties,test2)
 {
     RandomUniform<> A(0.1,10);
     RandomUniform<> a(0.1,1);
@@ -74,5 +74,33 @@ TEST(Uncertainties,base2)
 	EXPECT_EQ(M33.template uncertainty<1>(),0);
 	EXPECT_EQ(M33.template uncertainty<2>(),0);
 	EXPECT_EQ(M33.template uncertainty<3>(),V.uncertainty());
+    }
+}
+TEST(Uncertainties,test3)
+{
+    RandomUniform<> A(0.1,10);
+    RandomUniform<> a(0.1,1);
+    for (size_t i = 0; i < 50; i++) {
+	const value<> V1(A(),a()),V2(A(),a());
+	{
+	    const auto s=V1+V2,S=(extend_value<1,2>(V1)+extend_value<2,2>(V2)).wrap();
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1-V2,S=(extend_value<1,2>(V1)-extend_value<2,2>(V2)).wrap();
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1*V2,S=(extend_value<1,2>(V1)*extend_value<2,2>(V2)).wrap();
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1/V2,S=(extend_value<1,2>(V1)/extend_value<2,2>(V2)).wrap();
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
     }
 }
