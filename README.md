@@ -188,7 +188,7 @@ Includes and classes provided
 
 	uncertainties(...) - creates value with several uncertainties
 
-	extend_value<i,n>(...) - converts value<> itno Uncertainties<n> using value's uncertainty as i-th one. All others are set to zero.
+	extend_value<i,n>(...) - converts value<> into Uncertainties<n> using value's uncertainty as i-th one. All others are set to zero.
 
 	ext_hist<n> - is like hist<> but y-values are Uncertainties<n>
 
