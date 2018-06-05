@@ -39,7 +39,7 @@ If you have your own git repository with cmake project you can add this reposito
 	
 Then add to your project's CMakeLists.txt
 
-	add_definitions(--std=c++17) #the most recommended compiler mode
+	add_compile_options(--std=c++17) #the most recommended compiler mode
 	#set(GTEST ON) #uncomment for compiling unit-tests. Requires gtest
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
@@ -47,6 +47,16 @@ Then add to your project's CMakeLists.txt
 Then commit your changes.
 
 This library still can be compiled with c++11 or c++14 compiler but some features will be absent.
+
+You can also install the library in your system
+===============================================
+
+	git clone https://github.com/alexkernphysiker/math_h.git
+	cd math_h
+	cmake -DINSTALL=ON .
+	make
+	sudo make install
+
 
 Header files
 ============
