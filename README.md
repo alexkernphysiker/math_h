@@ -40,7 +40,6 @@ If you have your own git repository with cmake project you can add this reposito
 Then add to your project's CMakeLists.txt
 
 	add_compile_options(--std=c++17) #the most recommended compiler mode
-	#set(GTEST ON) #uncomment for compiling unit-tests. Requires gtest
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
 	
