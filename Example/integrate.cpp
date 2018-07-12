@@ -34,5 +34,5 @@ int main()
 	const auto y = conv(x);//that's how we calculate convolution integral
 	plot_conv<<make_point(x,y);
     }
-    Plot("convolution").Points(plot_conv);
+    Plot("convolution",1).Points(plot_conv);
 }

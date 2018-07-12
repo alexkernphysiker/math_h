@@ -52,7 +52,7 @@ protected:
 	str.open((outpath + "/" + n).c_str());
         return n;
     }
-    inline std::string GetTerminal(const std::string &name = "",int imgsize=2,int fontsize=0)
+    inline std::string GetTerminal(const std::string &name,int fontsize,int imgsize)
     {
 	static const std::vector<std::string> IMGSIZE{"640,480","800,600","1000,750","1600,1200","2000,1500"};
 	
@@ -145,9 +145,9 @@ public:
         finalization.push_back(line);
         return *this;
     }
-    inline Plot(const std::string &name = "")
+    inline Plot(const std::string &name = "",int fontsize=0,int imgsize=2)
     {
-        operator<<(Plotter::Instance().GetTerminal(name));
+        operator<<(Plotter::Instance().GetTerminal(name,fontsize,imgsize));
         operator<<("unset pm3d");
         operator<<("unset title");
         operator<<("unset key");
@@ -329,9 +329,9 @@ public:
         finalization.push_back(line);
         return *this;
     }
-    inline PlotHist2d(const TypeOf3D type, const std::string &name = "")
+    inline PlotHist2d(const TypeOf3D type, const std::string &name = "",int fontsize=0,int imgsize=2)
     {
-        operator<<(Plotter::Instance().GetTerminal(name));
+        operator<<(Plotter::Instance().GetTerminal(name,fontsize,imgsize));
         operator<<("unset title");
         operator<<("unset key");
         operator<<("unset surface");
