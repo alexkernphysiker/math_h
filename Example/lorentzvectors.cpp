@@ -16,9 +16,9 @@ int main()
     const RandomGauss<> P(0.3,0.02);
 
     PlotDistr2D<> //Plots that are obtained from simulations
-    P_vs_P("P-P", BinsByCount(100, 0.0, 0.5), BinsByCount(100, 0.0, 0.5), "plot_PP"),
-    E_vs_E("Ek-Ek", BinsByCount(100, 0.0, 0.1), BinsByCount(100, 0.0, 0.1), "plot_EE"),
-    Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh");
+    P_vs_P("P-P", BinsByCount(100, 0.0, 0.5), BinsByCount(100, 0.0, 0.5), "plot_PP",3),
+    E_vs_E("Ek-Ek", BinsByCount(100, 0.0, 0.1), BinsByCount(100, 0.0, 0.1), "plot_EE",3),
+    Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh",3);
 
 
     for (size_t i = 0; i < 100000; i++) {
