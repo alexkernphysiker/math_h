@@ -57,21 +57,19 @@ TEST(SortedChain, basetest)
     for (size_t i = 1; i < 100; i++)
         EXPECT_TRUE(chain[i] > chain[i - 1]);
 }
-TEST(point, basetest)
+TEST(point, test2d){
 {
     double x(25), y(78);
     point<double> p(x, y);
     EXPECT_EQ(x, p.X());
     EXPECT_EQ(y, p.Y());
 }
-TEST(point, basetest1)
 {
     double x(25), y(78);
     point<> p = {x, y};
     EXPECT_EQ(x, p.X());
     EXPECT_EQ(y, p.Y());
 }
-TEST(point, basetest2)
 {
     int x(25);
     double y(78);
@@ -82,7 +80,8 @@ TEST(point, basetest2)
     EXPECT_EQ(x, p2.X());
     EXPECT_EQ(y, p2.Y());
 }
-TEST(point3d, basetest)
+}
+TEST(point, test3d)
 {
     double x(25), y(78), z(55);
     point3d<double> p(x, y, z);
@@ -90,7 +89,7 @@ TEST(point3d, basetest)
     EXPECT_EQ(y, p.Y());
     EXPECT_EQ(z, p.Z());
 }
-TEST(point, basetest_value)
+TEST(point,test_value)
 {
     value<double> x(25), y(78);
     point<value<double>> p(x, y);
@@ -99,7 +98,7 @@ TEST(point, basetest_value)
     EXPECT_EQ(y.val(), p.Y().val());
     EXPECT_EQ(y.uncertainty(), p.Y().uncertainty());
 }
-TEST(point3d, basetest_value)
+TEST(point, test_value_3d)
 {
     value<double> x(25), y(78), z(55);
     point3d<value<double>> p(x, y, z);
@@ -110,7 +109,7 @@ TEST(point3d, basetest_value)
     EXPECT_EQ(z.val(), p.Z().val());
     EXPECT_EQ(z.uncertainty(), p.Z().uncertainty());
 }
-TEST(SortedPoints, size1)
+TEST(SortedPoints, size){
 {
     SortedPoints<double> chain;
     EXPECT_EQ(0, chain.size());
@@ -133,19 +132,6 @@ TEST(SortedPoints, size1)
         EXPECT_EQ(i, chain[i].X());
     }
 }
-TEST(SortedPoints, range)
-{
-    SortedPoints<> chain=Points<>{{0, 1},{2, 1.1},{3, 1.2},{4, 1.3},{5, 1.4}};
-    auto xcut = chain.XRange(0.5, 4.5);
-    EXPECT_EQ(3, xcut.size());
-    EXPECT_EQ(2, xcut.left().X());
-    EXPECT_EQ(4, xcut.right().X());
-    auto ycut = chain.YRange(1.15, 1.35).TransponateAndSort();
-    EXPECT_EQ(2, ycut.size());
-    EXPECT_EQ(1.2, ycut.left().X());
-    EXPECT_EQ(1.3, ycut.right().X());
-}
-TEST(SortedPoints, size2)
 {
     SortedPoints<value<>> chain;
     EXPECT_EQ(0, chain.size());
@@ -168,7 +154,20 @@ TEST(SortedPoints, size2)
         EXPECT_EQ(i, chain[i].X().val());
     }
 }
-TEST(SortedPoints, WeightedAvr)
+}
+TEST(SortedPoints, range)
+{
+    SortedPoints<> chain=Points<>{{0, 1},{2, 1.1},{3, 1.2},{4, 1.3},{5, 1.4}};
+    auto xcut = chain.XRange(0.5, 4.5);
+    EXPECT_EQ(3, xcut.size());
+    EXPECT_EQ(2, xcut.left().X());
+    EXPECT_EQ(4, xcut.right().X());
+    auto ycut = chain.YRange(1.15, 1.35).TransponateAndSort();
+    EXPECT_EQ(2, ycut.size());
+    EXPECT_EQ(1.2, ycut.left().X());
+    EXPECT_EQ(1.3, ycut.right().X());
+}
+TEST(SortedPoints, WeightedAvr){
 {
     SortedPoints<double,WeightedAverage<>> chain;
     chain
@@ -213,7 +212,6 @@ TEST(SortedPoints, WeightedAvr)
     }
 #endif
 }
-TEST(SortedPoints, WeightedAvr2)
 {
     SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};
     for (size_t i = 0; i < chain.size(); i++) {
@@ -225,6 +223,7 @@ TEST(SortedPoints, WeightedAvr2)
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
+}
 }
 TEST(hist, scale_norm)
 {
@@ -240,7 +239,7 @@ TEST(hist, scale_norm)
         EXPECT_EQ(H2[x].Y().val(), H[x * 2].Y().val() + H[x * 2 + 1].Y().val());
     }
 }
-TEST(hist2d, scale_norm)
+TEST(hist, scale_norm_2d)
 {
     hist2d<> H(BinsByCount(10, 0.0, 1.0), BinsByCount(10, 0.0, 1.0));
     H.FullCycleVar([](const value<> &x, const value<> &y, value<> &z) {
@@ -262,7 +261,7 @@ TEST(hist2d, scale_norm)
             EXPECT_EQ(H2[x][y].val(), H[x * 2][y * 2].val() + H[x * 2 + 1][y * 2].val() + H[x * 2][y * 2 + 1].val() + H[x * 2 + 1][y * 2 + 1].val());
         }
 }
-TEST(hist2d, cut)
+TEST(hist, cut2d)
 {
     hist2d<> H(BinsByCount(10, 0.0, 1.0), BinsByCount(20, 0.0, 1.0));
     H.FullCycleVar([](const value<> &x, const value<> &y, value<> &z) {
@@ -281,7 +280,7 @@ TEST(hist2d, cut)
             EXPECT_EQ(H.Bin(x, y), X[x].Y());
     }
 }
-TEST(Distribution1D, basetest)
+TEST(hist,Distribution1D)
 {
     Distribution1D<> D=Chain<value<>>{{-1.0, 0.5},{-0.0, 0.5},{1.0, 0.5}};
     ASSERT_EQ(3, D.size());
@@ -326,7 +325,7 @@ TEST(Distribution1D, basetest)
     EXPECT_EQ(1, D[2].Y().val());
     EXPECT_EQ(1, D[2].Y().uncertainty());
 }
-TEST(Distribution2D, BaseTest)
+TEST(hist,Distribution2D)
 {
     Distribution2D<> D(
     {value<>(-1.0, 0.5), value<>(-0.0, 0.5), value<>(1.0, 0.5)},
@@ -375,9 +374,9 @@ TEST(Distribution2D, BaseTest)
     EXPECT_EQ(1, dbg[5].Y().val());
     EXPECT_EQ(2, dbg[5].Z().val());
 }
-TEST(hist_avr, test1)
+TEST(hist,hist_avr)
 {
-    const auto chain=hist_avr(
+    auto chain=hist_avr(
 	Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{1,1}},{{2,0.5},{2,1}}},
 	Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{0,1}},{{2,0.5},{0,1}}}
     );
@@ -385,19 +384,16 @@ TEST(hist_avr, test1)
         EXPECT_EQ(i, chain[i].X().val());
         EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
-}
-TEST(hist_avr, test2)
-{
     const hist<>
     a=Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{1,1}},{{2,0.5},{2,1}}},
     b=Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{0,1}},{{2,0.5},{0,1}}};
-    const auto chain=hist_avr(a,b);
+    chain=hist_avr(a,b);
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(i, chain[i].X().val());
         EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
 }
-TEST(hist_stdev, test1)
+TEST(hist,hist_stdev)
 {
     const auto chain=hist_stdev(
 	Points<>{{0,-1},{1,0},{2,1}},
