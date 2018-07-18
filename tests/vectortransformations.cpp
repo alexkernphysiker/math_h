@@ -5,6 +5,7 @@
 #include <math_h/vectortransformations.h>
 #include <math_h/tabledata.h>
 #include <math_h/sigma.h>
+//this file contains unit tests for vectortransformations.h
 using namespace std;
 using namespace MathTemplates;
 const double epsilon = 0.0000000001;
@@ -30,7 +31,7 @@ TEST(VectorTransformation, vector_prod3_basis)
 
 }
 
-TEST(VectorTransformation, pseudoscalar_prod_algebra)
+TEST(VectorTransformation, pseudoscalar_prod_properties)
 {
     
     RandomUniform<> M(-50, 50);
@@ -49,7 +50,7 @@ TEST(VectorTransformation, pseudoscalar_prod_algebra)
     }
 }
 
-TEST(VectorTransformation, vector_prod3_algebra)
+TEST(VectorTransformation, vector_prod3_properties)
 {
     
     RandomUniform<> M(-50, 50);
@@ -73,7 +74,7 @@ TEST(VectorTransformation, vector_prod3_algebra)
         EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
     }
 }
-TEST(VectorTransformation, vector_prod7_algebra)
+TEST(VectorTransformation, vector_prod7_properties)
 {
     
     RandomUniform<> M(-50, 50);
@@ -95,7 +96,7 @@ TEST(VectorTransformation, vector_prod7_algebra)
         EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
     }
 }
-TEST(Direction, base2d)
+TEST(Direction, arithmetic2d)
 {
     
     RandomUniform<> Phi(-PI(), PI());
@@ -111,7 +112,7 @@ TEST(Direction, base2d)
 	));
     }
 }
-TEST(Direction, base3d)
+TEST(Direction, arithmetic3d)
 {
     
     RandomUniform<> Phi(-PI(), PI());
@@ -132,7 +133,7 @@ TEST(Direction, base3d)
 	));
     }
 }
-TEST(Direction, base4d)
+TEST(Direction, arithmetic4d)
 {
     
     RandomUniform<> Phi(-PI(), PI());
@@ -155,7 +156,7 @@ TEST(Direction, base4d)
 	));
     }
 }
-TEST(Direction, base5d)
+TEST(Direction, arithmetic5d)
 {
     
     RandomUniform<> Phi(-PI(), PI());
@@ -182,7 +183,7 @@ TEST(Direction, base5d)
     }
 }
 
-TEST(VectorTransformation, Isotropic1)
+TEST(Direction, Isotropic1)
 {
     const auto c = BinsByCount(2, -2.0, 2.0);
     Distribution1D<> D(c);
@@ -192,7 +193,7 @@ TEST(VectorTransformation, Isotropic1)
     }
     for (const auto &p:D)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / D.size()));
 }
-TEST(VectorTransformation, Isotropic2)
+TEST(Direction, Isotropic2)
 {
     const auto c = BinsByCount(10, -PI(), PI());
     Distribution1D<> Phi(c);
@@ -202,7 +203,7 @@ TEST(VectorTransformation, Isotropic2)
     }
     for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / Phi.size()));
 }
-TEST(VectorTransformation, Isotropic3)
+TEST(Direction, Isotropic3)
 {
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
     Distribution1D<> X(c), Y(c), Z(c),Phi(BinsByStep(-PI(), 0.1*PI(), PI()));
@@ -276,7 +277,7 @@ TEST(VectorTransformation, decompose4)
         EXPECT_TRUE(vector_to_decompose.CloseTo(decomposition.tau + decomposition.n, epsilon));
     }
 }
-TEST(VectorTransformation, direction1d)
+TEST(Direction, obtain1d)
 {
     RandomUniform<> V(-10.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -285,7 +286,7 @@ TEST(VectorTransformation, direction1d)
         EXPECT_TRUE((v - d * v.x()).M() < epsilon);
     }
 }
-TEST(VectorTransformation, direction2d)
+TEST(Direction, obtain2d)
 {
     RandomUniform<> PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -294,7 +295,7 @@ TEST(VectorTransformation, direction2d)
         EXPECT_TRUE(abs(phi - phi2) < epsilon);
     }
 }
-TEST(VectorTransformation, direction3d)
+TEST(Direction, obtain3d)
 {
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -304,7 +305,7 @@ TEST(VectorTransformation, direction3d)
         EXPECT_TRUE(abs(angles.th() - angles2.th()) < epsilon);
     }
 }
-TEST(VectorTransformation, direction4d)
+TEST(Direction, obtain4d)
 {
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -315,7 +316,7 @@ TEST(VectorTransformation, direction4d)
         EXPECT_TRUE(abs(angles.th<2>() - angles2.th<2>()) < epsilon);
     }
 }
-TEST(VectorTransformation, direction5d)
+TEST(Direction,obtain5d)
 {
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {

@@ -1,12 +1,11 @@
-
 // this file is distributed under
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/lorentzvector.h>
+//this file contains unit tests for lorentzvector.h
 using namespace std;
 using namespace MathTemplates;
 const double epsilon = 0.0000000001;
-
 TEST(LorentzVector, LorentzTransform1d)
 {
     RandomUniform<> mr(0, 0.99), metrr(-5, 5);

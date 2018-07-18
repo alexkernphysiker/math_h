@@ -4,10 +4,11 @@
 #include <math_h/randomfunc.h>
 #include <math_h/statistics.h>
 #include <math_h/vectortransformations.h>
+//this file contains unit tests for statistics.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.1)
-TEST(AverageObtainer,base)
+TEST(Statistics,AverageObtainer)
 {
     AverageObtainer<double> S;
     EXPECT_EQ(S.count(),0);
@@ -35,7 +36,7 @@ public:
 	EXPECT_EQ(res,Average()*c);
     }
 };
-TEST(TestStatistics,base){
+TEST(Statistics,abstract){
     TestStatistics S;
     S.Fill(1);S.Test();
     S.Fill(5);S.Test();
@@ -46,7 +47,7 @@ TEST(TestStatistics,base){
     S.Fill(7);S.Test();
     S.Fill(3);S.Test();
 }
-TEST(Sampling,base){
+TEST(Statistics,Sampling){
     Sampling<2> S;
     RandomGauss<> X(0,1),Y(0,2);
     for(size_t i=0;i<100000;i++){
@@ -61,7 +62,8 @@ TEST(Sampling,base){
     EXPECT_EQ(s12,s21);
     ALMOST_EQ(s12,0);
 }
-TEST(SamplingXY,base){
+TEST(Statistics,SamplingXY){
+    {
     SamplingXY<2,3> S;
     RandomGauss<> M(0,2);
     for(size_t i=0;i<100000;i++){
@@ -83,8 +85,8 @@ TEST(SamplingXY,base){
     ALMOST_EQ(s21,0);
     ALMOST_EQ(s22,0);
     ALMOST_EQ(s23,0);
-}
-TEST(SamplingXY,symm){
+    }
+    {
     SamplingXY<2,2> S;
     RandomGauss<> M(0,2);
     for(size_t i=0;i<100000;i++){
@@ -101,4 +103,5 @@ TEST(SamplingXY,symm){
     ALMOST_EQ(s12,0);
     EXPECT_EQ(S.CovX(),S.CovY());
     EXPECT_EQ(S.CovX(),S.CovXY());
+    }
 }

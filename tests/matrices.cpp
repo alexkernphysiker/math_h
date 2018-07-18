@@ -3,10 +3,11 @@
 #include <gtest/gtest.h>
 #include <math_h/matrices.h>
 #include <math_h/vectortransformations.h>
+//this file contains unit tests for matrices.h
 using namespace std;
 using namespace MathTemplates;
 const double epsilon = 0.0000000001;
-TEST(Matrix, zero1)
+TEST(Matrix, zero)
 {
     EXPECT_EQ(
         ZERO<1>(), row(0.)
@@ -24,9 +25,6 @@ TEST(Matrix, zero1)
             vec(0., 0., 0.)
         )
     );
-}
-TEST(Matrix, zero2)
-{
     EXPECT_EQ(
         ZERO<1>(), column(0.)
     );
@@ -44,7 +42,7 @@ TEST(Matrix, zero2)
         )
     );
 }
-TEST(Matrix, one1)
+TEST(Matrix, one)
 {
     EXPECT_EQ(
         ONE<1>(), row(1.)
@@ -62,9 +60,6 @@ TEST(Matrix, one1)
             vec(0., 0., 1.)
         )
     );
-}
-TEST(Matrix, one2)
-{
     EXPECT_EQ(
         ONE<1>(), column(1.)
     );
@@ -146,7 +141,7 @@ TEST(Matrix, elements)
     EXPECT_EQ(r2,vec(5,6,7,8));
     EXPECT_EQ(r3,vec(9,0,1,2));
 }
-TEST(Matrix, mul1)
+TEST(Matrix, Multiplication1D)
 {
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -159,7 +154,7 @@ TEST(Matrix, mul1)
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
-TEST(Matrix, mul2)
+TEST(Matrix, Multiplication2D)
 {
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -172,7 +167,7 @@ TEST(Matrix, mul2)
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
-TEST(Matrix, mul3)
+TEST(Matrix, Multiplication3D)
 {
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -185,7 +180,7 @@ TEST(Matrix, mul3)
         EXPECT_TRUE((R1 * (R2 * v)).CloseTo((R1 * R2)*v, epsilon));
     }
 }
-TEST(Matrix, mul32)
+TEST(Matrix, Multiplication_2x3)
 {
     RandomUniform<> M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -271,12 +266,12 @@ TEST(Matrix, AddRows)
 
 }
 #ifdef ____full_version_of_math_h_____
-TEST(Matrix, det1)
+TEST(Matrix, determinant1)
 {
     const auto M=row(3.0);
     EXPECT_EQ(3,M.Determinant());
 }
-TEST(Matrix, det2)
+TEST(Matrix, determinant2)
 {
     EXPECT_EQ(rows(
 	vec(1.0,2.0),
@@ -291,7 +286,7 @@ TEST(Matrix, det2)
 	vec(0.0,1.0)
     ).Determinant(),1);
 }
-TEST(Matrix, det3)
+TEST(Matrix, determinant3)
 {
     EXPECT_EQ(rows(
 	vec(1.,2.,3.),
@@ -323,12 +318,12 @@ TEST(Matrix, minor3)
 	    vec(5.,6.)
 	)
     );
-        M=rows(
-	    vec(1.,2.,3.),
-	    vec(3.,4.,5.),
-	    vec(4.,5.,6.)
-	).GetMinor<1,2>();
 
+    M=rows(
+	vec(1.,2.,3.),
+	vec(3.,4.,5.),
+	vec(4.,5.,6.)
+    ).GetMinor<1,2>();
     EXPECT_EQ(
 	M,
 	rows(
@@ -336,12 +331,12 @@ TEST(Matrix, minor3)
 	    vec(4.,6.)
 	)
     );
-        M=rows(
-	    vec(1.,2.,3.),
-	    vec(3.,4.,5.),
-	    vec(4.,5.,6.)
-	).GetMinor<1,3>();
 
+    M=rows(
+	vec(1.,2.,3.),
+	vec(3.,4.,5.),
+	vec(4.,5.,6.)
+    ).GetMinor<1,3>();
     EXPECT_EQ(
 	M,
 	rows(
@@ -349,12 +344,12 @@ TEST(Matrix, minor3)
 	    vec(4.,5.)
 	)
     );
-        M=rows(
-	    vec(1.,2.,3.),
-	    vec(3.,4.,5.),
-	    vec(4.,5.,6.)
-	).GetMinor<2,1>();
 
+    M=rows(
+	vec(1.,2.,3.),
+	vec(3.,4.,5.),
+	vec(4.,5.,6.)
+    ).GetMinor<2,1>();
     EXPECT_EQ(
 	M,
 	rows(
@@ -362,12 +357,12 @@ TEST(Matrix, minor3)
 	    vec(5.,6.)
 	)
     );
-        M=rows(
-	    vec(1.,2.,3.),
-	    vec(3.,4.,5.),
-	    vec(4.,5.,6.)
-	).GetMinor<2,2>();
 
+    M=rows(
+	vec(1.,2.,3.),
+	vec(3.,4.,5.),
+	vec(4.,5.,6.)
+    ).GetMinor<2,2>();
     EXPECT_EQ(
 	M,
 	rows(
@@ -375,11 +370,12 @@ TEST(Matrix, minor3)
 	    vec(4.,6.)
 	)
     );
-        M=rows(
-	    vec(1.,2.,3.),
-	    vec(3.,4.,5.),
-	    vec(4.,5.,6.)
-	).GetMinor<2,3>();
+
+    M=rows(
+	vec(1.,2.,3.),
+	vec(3.,4.,5.),
+	vec(4.,5.,6.)
+    ).GetMinor<2,3>();
     EXPECT_EQ(
 	M,
 	rows(
@@ -388,6 +384,7 @@ TEST(Matrix, minor3)
 	)
     );
 }
+
 TEST(Matrix, InsertColumns)
 {
     EXPECT_EQ(
@@ -429,7 +426,7 @@ TEST(Matrix, InsertColumns)
 	).InsertColumns<2>(rows(vec(2.,3.),vec(3.,2.)))
     );
 }
-TEST(Matrix, RemoveColumn)
+TEST(Matrix, RemoveColumns)
 {
     const auto M=rows(
 	    vec(1.,2.,3.)
@@ -448,7 +445,7 @@ TEST(Matrix, RemoveColumn)
 	);
     EXPECT_EQ(M3,M4);
 }
-TEST(Matrix, RemoveRow)
+TEST(Matrix, RemoveRows)
 {
     const auto M=rows(
 	    vec(1.,2.,3.),
@@ -462,7 +459,7 @@ TEST(Matrix, RemoveRow)
 	);
     EXPECT_EQ(M,M2);
 }
-TEST(Matrix, InsertRows1)
+TEST(Matrix, InsertRows)
 {
     EXPECT_EQ(
 	rows(
@@ -502,9 +499,6 @@ TEST(Matrix, InsertRows1)
 	    vec(0.,0.)
 	)
     );
-}
-TEST(Matrix, InsertRows2)
-{
     EXPECT_EQ(
 	rows(
 	    vec(1.,2.),
@@ -538,9 +532,6 @@ TEST(Matrix, InsertRows2)
 	    vec(0.,0.)
 	)
     );
-}
-TEST(Matrix, InsertRows3)
-{
     EXPECT_EQ(
 	rows(
 	    vec(1.,2.),
@@ -594,15 +585,13 @@ TEST(Matrix, InsertRows3)
 	)
     );
 }
-TEST(Matrix,Cramer1)
+
+TEST(Matrix,Cramer)
 {
     EXPECT_EQ(row(2).Cramer(vec(6)),vec(3));
     EXPECT_EQ(row(1).Cramer(vec(1)),vec(1));
     EXPECT_EQ(row(1).Cramer(vec(0)),vec(0));
     EXPECT_ANY_THROW(row(0).Cramer(vec(1)));
-}
-TEST(Matrix,Cramer2)
-{
     EXPECT_EQ(
 	rows(
 	    vec(1.,2.),
@@ -637,9 +626,6 @@ TEST(Matrix,Cramer2)
 	    vec(0.,0.)
 	).Cramer(vec(1.,1.))
     );
-}
-TEST(Matrix,Cramer3)
-{
     EXPECT_ANY_THROW(
 	rows(
 	    vec(1.,0.,1.),
@@ -679,15 +665,13 @@ TEST(Matrix,Cramer3)
 	).Cramer(vec(2.,3.,5.))
     );
 }
-TEST(Matrix, transponate1)
+
+TEST(Matrix, transponate)
 {
     EXPECT_EQ(
         row(1, 2,3).transponate(),
         column(1,2,3)
     );
-}
-TEST(Matrix, transponate2)
-{
     EXPECT_EQ(
         rows(
             vec(1, 2),
@@ -714,6 +698,7 @@ TEST(Matrix, transponate2)
     );
 }
 #endif
+
 TEST(Matrix,diagonal)
 {
     EXPECT_EQ(row(3.5).diagonal(),vec(3.5));

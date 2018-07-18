@@ -2,6 +2,7 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/sigma2.h>
+//this file contains unit tests for sigma2.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
@@ -23,7 +24,7 @@ protected:
     }
 };
 size_t mock1::m_counter=0;
-TEST(ext_value, base1)
+TEST(ext_value, abstract_test)
 {
     mock1 V(1);
     EXPECT_EQ(V.val(),1);
@@ -46,7 +47,7 @@ protected:
     }
 };
 size_t mock2::m_counter=0;
-TEST(ext_value, base2)
+TEST(ext_value, abstract2)
 {
     mock2 V(1,0.1);
     ALMOST_EQ2(V.val(),1);

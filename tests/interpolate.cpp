@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <math_h/interpolate.h>
 #include <math_h/functions.h>
+//This file contains unit tests for interpolate.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(pow(a-b,2)<0.0001)

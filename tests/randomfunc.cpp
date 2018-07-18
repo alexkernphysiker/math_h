@@ -4,12 +4,13 @@
 #include <math_h/randomfunc.h>
 #include <math_h/sigma.h>
 #include <math_h/tabledata.h>
+//this file contains unit tests for randomfunc.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<1.0)
-TEST(RandomUniform, BaseTest)
+TEST(RandomGenerators,Uniform)
 {
     RandomUniform<> R(0, 1);
     for (int i = 0; i < 1000; i++) {
@@ -22,7 +23,7 @@ TEST(RandomUniform, BaseTest)
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
-TEST(RandomValueTableDistr, initFromList_n_copy)
+TEST(RandomGenerators,RandomValueTableDistr_init_copy)
 {
     RandomValueTableDistr<> R = Points<>{{0.0, 0.25}, {0.5, 0.75}, {1.0, 0.25}};
     for (int i = 0; i < 1000; i++) {
@@ -35,17 +36,15 @@ TEST(RandomValueTableDistr, initFromList_n_copy)
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
-TEST(RandomValueTableDistr, initfromfunc)
+TEST(RandomGenerators,RandomValueTableDistr_initfromfunc)
 {
-    RandomValueTableDistr<> R([](double)->double {
-        return 1;
-    }, ChainWithCount(10, 0.0, 1.0));
+    RandomValueTableDistr<> R([](double)->double {return 1;}, ChainWithCount(10, 0.0, 1.0));
     for (int i = 0; i < 1000; i++) {
         double r = R();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
-TEST(RandomValueTableDistr, Throwing)
+TEST(RandomGenerators,RandomValueTableDistr_Throwing)
 {
     auto f = [](double) {
         return 1;
@@ -84,68 +83,33 @@ void TestRandomDistribution(function<double(double)> F, double from, double to, 
     S /= D.size();
     EXPECT_TRUE(S < 2.5);
 }
-TEST(RandomValueTableDistr, Uniform)
+TEST(RandomGenerators,RandomValueTableDistr_Uniform)
 {
-    TestRandomDistribution([](double) {
-        return 1.0;
-    }, 0, 10, 20);
+    TestRandomDistribution([](double) {return 1.0;}, 0, 10, 20);
 }
-TEST(RandomValueTableDistr, Linear)
+TEST(RandomGenerators,RandomValueTableDistr_Linear)
 {
-    TestRandomDistribution([](double x) {
-        return x;
-    }, 0, 10, 20);
+    TestRandomDistribution([](double x) {return x;}, 0, 10, 20);
 }
-TEST(RandomValueTableDistr, Parabolic)
+TEST(RandomGenerators,RandomValueTableDistr_Parabolic)
 {
-    TestRandomDistribution([](double x) {
-        return x * x;
-    }, 0, 10, 20);
+    TestRandomDistribution([](double x) {return x * x;}, 0, 10, 20);
 }
-TEST(RandomValueTableDistr, Sin)
+TEST(RandomGenerators,RandomValueTableDistr_Sin)
 {
-    TestRandomDistribution([](double x) {
-        return sin(x);
-    }, 0, 3, 30);
+    TestRandomDistribution([](double x) {return sin(x);}, 0, 3, 30);
 }
-TEST(RandomValueTableDistr, Gauss)
+TEST(RandomGenerators,RandomValueTableDistr_Gauss)
 {
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 5.0, 1.0);
-    }, 0, 10, 50);
-}
-TEST(RandomValueTableDistr, Gauss2)
-{
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 5.0, 1.5);
-    }, 0, 10, 50);
-}
-TEST(RandomValueTableDistr, Gauss3)
-{
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 5.0, 2.0);
-    }, 0, 10, 50);
-}
-TEST(RandomValueTableDistr, Gauss4)
-{
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 3.0, 1.0);
-    }, -2, 10, 50);
-}
-TEST(RandomValueTableDistr, Gauss5)
-{
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 3.0, 1.5);
-    }, -2, 10, 50);
-}
-TEST(RandomValueTableDistr, Gauss6)
-{
-    TestRandomDistribution([](double x) {
-        return Gaussian(x, 3.0, 2.0);
-    }, -2, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 5.0, 1.0);}, 0, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 5.0, 1.5);}, 0, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 5.0, 2.0);}, 0, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 3.0, 1.0);}, -2, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 3.0, 1.5);}, -2, 10, 50);
+    TestRandomDistribution([](double x) {return Gaussian(x, 3.0, 2.0);}, -2, 10, 50);
 }
 
-TEST(RandomGauss, BaseTest)
+TEST(RandomGenerators,RandomGauss)
 {
     RandomGauss<> R(0, 1);
     StandardDeviation<> D,D2;
@@ -157,7 +121,7 @@ TEST(RandomGauss, BaseTest)
     ALMOST_EQ2(D2.val(),0);
     ALMOST_EQ2(D2.uncertainty(),1);
 }
-TEST(Poisson, BaseTest)
+TEST(RandomGenerators,Poisson)
 {
     RandomUniform<> L(1,20);
     for(size_t i=0;i<10;i++){

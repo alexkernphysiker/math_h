@@ -3,12 +3,13 @@
 #include <gtest/gtest.h>
 #include <math_h/sigma.h>
 #include <math_h/randomfunc.h>
+//this file contains unit tests for sigma.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
-TEST(value, base)
+TEST(value, properties)
 {
     RandomGauss<> G(0,6);
     for (size_t i = 0; i < 10; i++) {
@@ -21,7 +22,7 @@ TEST(value, base)
         EXPECT_EQ(x + 0.1, V.max());
     }
 }
-TEST(value, base_initlist)
+TEST(value,initlist)
 {
     RandomGauss<> G(0,6);
     for (size_t i = 0; i < 10; i++) {
@@ -34,7 +35,7 @@ TEST(value, base_initlist)
         EXPECT_EQ(x + 0.1, V.max());
     }
 }
-TEST(value, compare1)
+TEST(value,compare)
 {
     value<> V(0, 0.1);
     EXPECT_EQ(false, V.Contains(-0.2));
@@ -48,9 +49,7 @@ TEST(value, compare1)
     EXPECT_EQ(false, V.NotEqual(0));
     EXPECT_EQ(false, V.NotEqual(0.05));
     EXPECT_EQ(true, V.NotEqual(0.2));
-}
-TEST(value, compare2)
-{
+
     bool v = value<>(2, 1).Above(value<>(0, 0.9));
     EXPECT_TRUE(v);
     v = value<>(2, 1).Above(value<>(0, 1.1));
@@ -69,8 +68,9 @@ TEST(value, compare2)
     v = value<>(0, 1).Below(0.9);
     EXPECT_FALSE(v);
 }
-TEST(value, arithmetic_actions1)
+TEST(value, arithmetic_actions)
 {
+    {
     RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
         value<> A(val(), unc()), B(val(), unc());
@@ -87,9 +87,8 @@ TEST(value, arithmetic_actions1)
         EXPECT_EQ(A.val() / B.val(), ratio.val());
         ALMOST_EQ(pow(A.uncertainty() / B.val(), 2) + pow((A.val()*B.uncertainty()) / pow(B.val(), 2), 2), pow(ratio.uncertainty(), 2));
     }
-}
-TEST(value, arithmetic_actions2)
-{
+    }
+    {
     RandomUniform<> val(1, 50), unc(0.1, 10);
     for (size_t cnt = 0; cnt < 1000; cnt++) {
         value<> A(val(), unc());
@@ -106,6 +105,7 @@ TEST(value, arithmetic_actions2)
         auto ratio = A / B;
         EXPECT_EQ(A.val() / B, ratio.val());
         EXPECT_EQ(A.uncertainty() / B, ratio.uncertainty());
+    }
     }
 }
 TEST(value, NumCompare)
@@ -235,6 +235,7 @@ TEST(value, error_handling)
     EXPECT_EQ((value<>(1, -0.1) + value<>(1, 0.1)).val(), 2);
     EXPECT_FALSE(isfinite((value<>(1, -0.1) + value<>(1, 0.1)).uncertainty()));
 }
+
 TEST(StandardDeviation, Throwing)
 {
     StandardDeviation<> S;

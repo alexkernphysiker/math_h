@@ -5,9 +5,10 @@
 #include <math_h/tabledata.h>
 #include <math_h/sigma.h>
 #include <math_h/randomfunc.h>
+//this file contains unit tests for vectors.h
 using namespace std;
 using namespace MathTemplates;
-TEST(Vector, base1d)
+TEST(Vector, arithmetic1d)
 {
     
     RandomUniform<> X(-50., 50);
@@ -29,7 +30,7 @@ TEST(Vector, base1d)
 	EXPECT_EQ(x/a,(V/a).x());
     }
 }
-TEST(Vector, base2d)
+TEST(Vector, arithmetic2d)
 {
     
     RandomUniform<> X(-50., 50);
@@ -60,7 +61,7 @@ TEST(Vector, base2d)
 	}
     }
 }
-TEST(Vector, base3d)
+TEST(Vector, arithmetic3d)
 {
     
     RandomUniform<> X(-50., 50);
@@ -99,7 +100,7 @@ TEST(Vector, base3d)
 	}
     }
 }
-TEST(Vector, base4d)
+TEST(Vector, arithmetic4d)
 {
     
     RandomUniform<> X(-50., 50);

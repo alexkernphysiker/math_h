@@ -3,13 +3,14 @@
 #include <gtest/gtest.h>
 #include <math_h/sigma3.h>
 #include <math_h/randomfunc.h>
+//this file contains unit tests for sigma3.h
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 
-TEST(Uncertainties,test1)
+TEST(Uncertainties,comparing_with_value)
 {
     RandomUniform<> A(0.1,10);
     RandomUniform<> a(0.1,1);
@@ -42,7 +43,7 @@ TEST(Uncertainties,test1)
 	EXPECT_EQ((M/N).template uncertainty<2>(),(V2/W2).uncertainty());
     }
 }
-TEST(Uncertainties,test2)
+TEST(Uncertainties,extend_value)
 {
     RandomUniform<> A(0.1,10);
     RandomUniform<> a(0.1,1);
@@ -76,7 +77,7 @@ TEST(Uncertainties,test2)
 	EXPECT_EQ(M33.template uncertainty<3>(),V.uncertainty());
     }
 }
-TEST(Uncertainties,test3)
+TEST(Uncertainties,wrap)
 {
     RandomUniform<> A(0.1,10);
     RandomUniform<> a(0.1,1);

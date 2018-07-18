@@ -5,15 +5,16 @@
 #include <math_h/integrate.h>
 using namespace std;
 using namespace MathTemplates;
+//This file contains unit tests for functions.h
 template<class numt>
 void Test_Peak_Shape(const function<numt(numt)> f, const numt &from, const numt &peak, const numt &to)
 {
-    for (numt x = from; x <= to; x += 0.05) {
+    for (numt x = from; x <= to; x += 0.06) {
         EXPECT_TRUE(f(x) >= 0);
         if (x <= peak)
-            EXPECT_TRUE(f(x) >= f(x - 0.01));
+            EXPECT_TRUE(f(x) >= f(x - 0.02));
         else
-            EXPECT_TRUE(f(x) >= f(x + 0.01));
+            EXPECT_TRUE(f(x) >= f(x + 0.02));
     }
 }
 template<class numt>
@@ -23,7 +24,7 @@ void Test_Norm(const function<numt(numt)> f)
     EXPECT_TRUE(pow(S - 1., 2) < 0.0001);
 }
 
-TEST(Gaussian, Shape)
+TEST(FunctionsTest,Gaussian)
 {
     for (double sigma = 0.5; sigma < 5; sigma += 0.5)
         for (double X = -5; X <= 5; X += 1) {
@@ -35,7 +36,7 @@ TEST(Gaussian, Shape)
             });
         }
 }
-TEST(Lorentzian, Shape)
+TEST(FunctionsTest,Lorentzian)
 {
     for (double gamma = 0.5; gamma < 5; gamma += 0.5)
         for (double X = -5; X <= 5; X += 1) {
@@ -47,7 +48,7 @@ TEST(Lorentzian, Shape)
             });
         }
 }
-TEST(BreitWigner, Shape)
+TEST(FunctionsTest,BreitWigner)
 {
     for (double gamma = 0.5; gamma < 5; gamma += 0.5)
         for (double X = -5; X <= 5; X += 1) {
@@ -59,7 +60,7 @@ TEST(BreitWigner, Shape)
             });
         }
 }
-TEST(Novosibirsk, Shape)
+TEST(FunctionsTest,Novosibirsk)
 {
     for (double sigma = 0.5; sigma < 10; sigma += 0.5)
         for (double X = -5; X <= 5; X += 1)for (double asym = -1; asym <= 1; asym += 0.1)
@@ -67,6 +68,7 @@ TEST(Novosibirsk, Shape)
                 return Novosibirsk(x, X, sigma, asym);
             }, X - sigma * 2, X, X + sigma * 2);
 }
+
 template<class numt>
 void Test_stair_Shape(function<numt(numt)> f, numt from, numt middle, numt to)
 {
@@ -79,7 +81,7 @@ void Test_stair_Shape(function<numt(numt)> f, numt from, numt middle, numt to)
         EXPECT_TRUE((f(x) - f(x - 0.01)) * (a - b) <= 0);
     }
 }
-TEST(FermiFunc, Shape)
+TEST(FunctionsTest,FermiFunc)
 {
     for (double diffuse = 0.5; diffuse < 10; diffuse += 0.5)
         for (double X = -5; X <= 5; X += 1)
@@ -105,50 +107,38 @@ void test_polynom(function<double(int)> f)
 #endif
 }
 
-TEST(Polynom, Extended0)
+TEST(FunctionsTest,Polynom_zeros)
 {
     test_polynom([](int) {
         return 0;
     });
 }
-TEST(Polynom, Extended1)
+TEST(FunctionsTest,Polynom_ones)
 {
     test_polynom([](int) {
         return 1;
     });
 }
-TEST(Polynom, Extended_1)
+TEST(FunctionsTest,Polynom_minus_ones)
 {
     test_polynom([](int) {
         return -1;
     });
 }
-TEST(Polynom, ExtendedI)
+TEST(FunctionsTest,Polynom_variable_coefs)
 {
     test_polynom([](int i) {
         return i;
     });
-}
-TEST(Polynom, Extended_chs)
-{
     test_polynom([](int i) {
         return pow(-1, i);
     });
-}
-TEST(Polynom, Extended_chs_)
-{
     test_polynom([](int i) {
         return pow(-1, i + 1);
     });
-}
-TEST(Polynom, ExtendedI_chs)
-{
     test_polynom([](int i) {
         return i * pow(-1, i);
     });
-}
-TEST(Polynom, ExtendedI_chs_)
-{
     test_polynom([](int i) {
         return i * pow(-1, i + 1);
     });
