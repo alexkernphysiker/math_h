@@ -1,3 +1,4 @@
+//This is an example how to use the math_h libary
 #include <iostream>
 #include <math_h/lorentzvector.h>
 #include <gnuplot_wrap.h>
@@ -15,7 +16,7 @@ int main()
     //momentum distribution
     const RandomGauss<> P(0.3,0.02);
 
-    PlotDistr2D<> //Plots that are obtained from simulations
+    PlotDistr2D<> //distributions that will be plotted
     P_vs_P("P-P", BinsByCount(100, 0.0, 0.5), BinsByCount(100, 0.0, 0.5), "plot_PP",3),
     E_vs_E("Ek-Ek", BinsByCount(100, 0.0, 0.1), BinsByCount(100, 0.0, 0.1), "plot_EE",3),
     Th_vs_Th("Th-Th", BinsByCount(90, 0.0, 180.), BinsByCount(90, 0.0, 90.), "plot_ThTh",3);
@@ -25,8 +26,9 @@ int main()
 	//Create Lorentz vectors for input particles
         const auto Pr0 = lorentz_byPM(Z() * P(), M1);
         const auto Pt0 = lorentz_Rest(M2);
+	// calculate total 4-momentum that is conserved
         const auto Total = Pr0 + Pt0;
-        //Let them scatter isotropically in CM
+        //Let the particles scatter isotropically in CM frame
         const auto finalCM = binaryDecay(Total.M(), M1, M2, randomIsotropic<3>());
         //Converting to lab system.
         const auto final1 = finalCM.first.Transform(-Total.Beta());

@@ -1,3 +1,4 @@
+//This is an example how to use the math_h libary
 #include <iostream>
 #include <math_h/functions.h>
 #include <math_h/integrate.h>

@@ -1,3 +1,4 @@
+//This is an example how to use the math_h libary
 #include <math_h/interpolate.h>
 #include <gnuplot_wrap.h>
 using namespace std;

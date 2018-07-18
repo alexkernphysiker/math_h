@@ -1,3 +1,4 @@
+//This is an example how to use the math_h libary
 #include <math_h/randomfunc.h>
 #include <math_h/statistics.h>
 using namespace std;
