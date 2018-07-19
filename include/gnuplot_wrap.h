@@ -189,61 +189,61 @@ public:
         return *this;
     }
     template<class numtX = double,class numtY = numtX>
-    inline Plot &Line(const MathTemplates::Points<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
+    inline Plot &Line(const MathTemplates::Points<numtX,numtY> &points, const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(points,"w l",title,name);
+        return Output(points,"w l "+mod,title,name);
     }
     template<class numtX = double,class numtY = numtX>
-    inline Plot &Line(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
+    inline Plot &Line(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(points(),"w l",title,name);
+        return Output(points(),"w l "+mod,title,name);
     }
     template<class numtX = double,class numtY = numtX>
-    inline Plot &Points(const MathTemplates::Points<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
+    inline Plot &Points(const MathTemplates::Points<numtX,numtY> &points, const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output<numtX,numtY>(points,"using 1:2",title,name);
+        return Output<numtX,numtY>(points,"using 1:2 "+mod,title,name);
     }
     template<class numtX = double,class numtY = numtX>
-    inline Plot &Points(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "")
+    inline Plot &Points(const MathTemplates::SortedPoints<numtX,numtY> &points, const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output<numtX,numtY>(points(),"using 1:2",title,name);
+        return Output<numtX,numtY>(points(),"using 1:2 "+mod,title,name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::value<numtY>> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars", title, name);
+        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars "+mod, title, name);
     }
     template<size_t index,size_t sz,class numtX = double,class numtY = numtX>
     inline Plot &Hist(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::Uncertainties<sz,numtY>> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars", title, name);
+        return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars "+mod, title, name);
     }
     template<size_t index,size_t index2,size_t sz,class numtX = double,class numtY = numtX>
     inline Plot &Hist_2bars(const MathTemplates::SortedPoints<MathTemplates::value<numtX>, MathTemplates::Uncertainties<sz,numtY>> &data,
-               const std::string &title1 = "",const std::string &title2 = "", const std::string &name = "")
+               const std::string &title1 = "",const std::string &title2 = "", const std::string &name = "", const std::string &mod = "")
     {
         return Output(data(),"using 1:3:($1-$2):($1+$2):($3-$"+std::to_string(3+index)+"):($3+$"+std::to_string(3+index)+") with xyerrorbars title'"+title1+"',"+
-		"'' using 1:3:($3-$"+std::to_string(3+index2)+"):($3+$"+std::to_string(3+index2)+") with yerrorbars", title2, name);
+		"'' using 1:3:($3-$"+std::to_string(3+index2)+"):($3+$"+std::to_string(3+index2)+") with yerrorbars "+mod, title2, name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &XYUncertainties(const MathTemplates::Points<MathTemplates::value<numtX>, MathTemplates::value<numtY>> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(data,"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars", title, name);
+        return Output(data,"using 1:3:($1-$2):($1+$2):($3-$4):($3+$4) with xyerrorbars "+mod, title, name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &YUncertainties(const MathTemplates::Points<numtX, MathTemplates::value<numtY>> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(data,"using 1:2:($2-$3):($2+$3) with yerrorbars", title, name);
+        return Output(data,"using 1:2:($2-$3):($2+$3) with yerrorbars "+mod, title, name);
     }
     template<class numtX = double,class numtY = numtX>
     inline Plot &XUncertainties(const MathTemplates::Points<MathTemplates::value<numtX>,numtY> &data,
-               const std::string &title = "", const std::string &name = "")
+               const std::string &title = "", const std::string &name = "", const std::string &mod = "")
     {
-        return Output(data,"using 1:3:($1-$2):($1+$2) with xerrorbars", title, name);
+        return Output(data,"using 1:3:($1-$2):($1+$2) with xerrorbars "+mod, title, name);
     }
 
 };
