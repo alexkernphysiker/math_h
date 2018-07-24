@@ -338,6 +338,7 @@ public:
         if (sp2 == type) {
             operator<<("set view map");
             operator<<("set pm3d at b");
+	    operator<<("unset colorbox");
         } else {
             operator<<("unset view");
             operator<<("set pm3d");
