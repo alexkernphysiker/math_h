@@ -157,6 +157,8 @@ public:
         operator<<("unset yrange");
         operator<<("unset xlabel");
         operator<<("unset ylabel");
+	operator<<("unset xtics");
+	operator<<("unset ytics");
     }
     inline ~Plot()
     {
@@ -349,6 +351,9 @@ public:
         operator<<("unset xlabel");
         operator<<("unset ylabel");
         operator<<("unset zlabel");
+	operator<<("unset xtics");
+	operator<<("unset ytics");
+	operator<<("unset ztics");
     }
     inline ~PlotHist2d()
     {
