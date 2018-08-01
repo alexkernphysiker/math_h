@@ -260,6 +260,10 @@ hist<numtX,numtY> wrap_hist(const SortedPoints<value<numtX>,Uncertainties<sz,num
     for(const auto&p:source)res<<make_point(p.X(),p.Y().wrap());
     return res;
 }
+template<size_t sz,class numt>
+inline value<numt> wrap_value(const Uncertainties<sz,numt>&source){
+    return source.wrap();
+}
 
 };
 #endif

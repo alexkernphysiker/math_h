@@ -103,5 +103,25 @@ TEST(Uncertainties,wrap)
 	    EXPECT_EQ(s.val(),S.val());
 	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
 	}
+	{
+	    const auto s=V1+V2,S=wrap_value(extend_value<1,2>(V1)+extend_value<2,2>(V2));
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1-V2,S=wrap_value(extend_value<1,2>(V1)-extend_value<2,2>(V2));
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1*V2,S=wrap_value(extend_value<1,2>(V1)*extend_value<2,2>(V2));
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
+	{
+	    const auto s=V1/V2,S=wrap_value(extend_value<1,2>(V1)/extend_value<2,2>(V2));
+	    EXPECT_EQ(s.val(),S.val());
+	    ALMOST_EQ2(s.uncertainty(),S.uncertainty());
+	}
     }
 }
