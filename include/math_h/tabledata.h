@@ -1022,12 +1022,20 @@ public:
         if(m_map.find(key)==m_map.end())m_map.insert(std::make_pair(key,F()));
         return m_map[key];
     }
-    template<typename... Args>
-    inline const DATA&operator()(const KEY&key,Args... args){
-        if(m_map.find(key)==m_map.end())m_map.insert(std::make_pair(key,DATA(args...)));
-        return m_map[key];
-    }
 };
 
+template<class DATA,typename... Args>
+class CacheFunc:Cache<std::tuple<Args...>,DATA>{
+private:
+    std::function<DATA(Args...)> m_func;
+public:
+    CacheFunc(std::function<DATA(Args...)>func):m_func(func){}
+    ~CacheFunc(){}
+    inline const DATA&operator()(Args...args){
+	return Cache<std::tuple<Args...>,DATA>::operator()(std::make_tuple(args...),[this,args...](){return m_func(args...);});
+    }
+};
+template<class DATA,typename... Args>
+inline CacheFunc<DATA,Args...> make_cache(DATA func(Args...)){return CacheFunc<DATA,Args...>(func);}
 };
 #endif

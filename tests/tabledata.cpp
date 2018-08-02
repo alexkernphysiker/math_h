@@ -413,23 +413,27 @@ TEST(Cache,test_stored_value1){
 	}
     }
 }
-class CacheTest{
-private:
-    size_t m_val1;
-    string m_val2;
-public:
-    //We need a class with two parameters constructor
-    CacheTest(size_t v1,const string&v2):m_val1(v1),m_val2(v2){}
-    CacheTest(const CacheTest&other):m_val1(other.m_val1),m_val2(other.m_val2){}
-    CacheTest():m_val1(0),m_val2(""){}
-    ~CacheTest(){}
-    bool operator==(const CacheTest&other)const{return (m_val1==other.m_val1)&&(m_val2==other.m_val2);}
-};
-TEST(Cache,test_stored_value2){
-    Cache<size_t,CacheTest> C;
-    for(size_t k=0;k<10;k++){
-	for(size_t c=k;c<20;c++){
-	    EXPECT_EQ(C(k,c,"test"),CacheTest(k,"test"));
+
+
+int TestCache(int,int){
+    static int counter=0;
+    return counter++;
+}
+TEST(Cache,test_for_function){
+    auto C=make_cache(TestCache);
+    int counter=0;
+    for(size_t i=0;i<10;i++){
+	for(size_t j=0;j<10;j++){
+	    const auto cnt=counter++;
+	    EXPECT_EQ(C(i,j),cnt);
+	    for(size_t k=0;k<10;k++)EXPECT_EQ(C(i,j),cnt);
+	}
+    }
+    counter=0;
+    for(size_t i=0;i<10;i++){
+	for(size_t j=0;j<10;j++){
+	    const auto cnt=counter++;
+	    for(size_t k=0;k<30;k++)EXPECT_EQ(C(i,j),cnt);
 	}
     }
 }
