@@ -1015,12 +1015,22 @@ class Cache{
 private:
     std::map<KEY,DATA> m_map;
 public:
-    inline Cache(){}
-    inline ~Cache(){}
+    Cache(){}
+    virtual ~Cache(){}
     template<class FUNC>
     inline const DATA&operator()(const KEY&key,FUNC F){
         if(m_map.find(key)==m_map.end())m_map.insert(std::make_pair(key,F()));
         return m_map[key];
+    }
+};
+template<class KEY,class DATA>
+class CacheConstr:Cache<KEY,DATA>{
+public:
+    CacheConstr():Cache<KEY,DATA>(){}
+    virtual ~CacheConstr(){}
+    template<typename...Args>
+    inline const DATA&operator()(const KEY&key,Args...args){
+	return Cache<KEY,DATA>::operator()(key,[args...](){return DATA(args...);});
     }
 };
 
@@ -1030,7 +1040,7 @@ private:
     std::function<DATA(Args...)> m_func;
 public:
     CacheFunc(std::function<DATA(Args...)>func):m_func(func){}
-    ~CacheFunc(){}
+    virtual ~CacheFunc(){}
     inline const DATA&operator()(Args...args){
 	return Cache<std::tuple<Args...>,DATA>::operator()(std::make_tuple(args...),[this,args...](){return m_func(args...);});
     }
