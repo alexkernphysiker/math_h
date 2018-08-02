@@ -15,9 +15,11 @@ namespace MathTemplates
 namespace table_data_details
 {
 template<class comparable, class indexer = Chain<comparable>>
-size_t  WhereToInsert(const size_t from, const size_t to, const indexer &X, const comparable &x)
+inline size_t  WhereToInsert(const size_t from, const size_t to, const indexer &X, const comparable &x)
 {
     if (from > to) return from;
+    if(x<X[from]) return from;
+    if(x>X[to]) return to+1;
     size_t beg = from, end = to;
     if (x > X[end]) return end + 1;
     if (x < X[beg]) return beg;
@@ -30,7 +32,7 @@ size_t  WhereToInsert(const size_t from, const size_t to, const indexer &X, cons
     return end;
 }
 template<class comparable, class indexer, class Size, class Insert>
-void InsertSorted(const comparable &x, indexer &X, const Size size, const Insert insert)
+inline void InsertSorted(const comparable &x, indexer &X, const Size size, const Insert insert)
 {
     if (size() == 0) insert(0, x);
     else insert(WhereToInsert(0, size() - 1, X, x), x);
@@ -391,7 +393,7 @@ public:
     SortedPoints(const Func f, const Chain<numX> &chain)
     {
         for (const numX&x : chain)
-            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
+            SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x, f(x)));
     }
     template<class numY2>
     SortedPoints(const Func f,const SortedChain<point<numX, numY2>> &chain)
