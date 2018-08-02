@@ -404,3 +404,32 @@ TEST(hist,hist_stdev)
         EXPECT_EQ(int(chain[i].Y().val()*10),i*10);
     }
 }
+TEST(Cache,test_stored_value1){
+    Cache<size_t,string> C;
+    for(size_t k=0;k<10;k++){
+	for(size_t c=k;c<20;c++){
+	    const auto&val=C(k,[&c](){return to_string(c);});
+	    EXPECT_EQ(val,to_string(k));
+	}
+    }
+}
+class CacheTest{
+private:
+    size_t m_val1;
+    string m_val2;
+public:
+    //We need a class with two parameters constructor
+    CacheTest(size_t v1,const string&v2):m_val1(v1),m_val2(v2){}
+    CacheTest(const CacheTest&other):m_val1(other.m_val1),m_val2(other.m_val2){}
+    CacheTest():m_val1(0),m_val2(""){}
+    ~CacheTest(){}
+    bool operator==(const CacheTest&other)const{return (m_val1==other.m_val1)&&(m_val2==other.m_val2);}
+};
+TEST(Cache,test_stored_value2){
+    Cache<size_t,CacheTest> C;
+    for(size_t k=0;k<10;k++){
+	for(size_t c=k;c<20;c++){
+	    EXPECT_EQ(C(k,c,"test"),CacheTest(k,"test"));
+	}
+    }
+}

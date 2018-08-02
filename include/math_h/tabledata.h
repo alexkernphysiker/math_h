@@ -7,6 +7,7 @@
 #endif
 #include <vector>
 #include <functional>
+#include <map>
 #include "error.h"
 #include "sigma.h"
 namespace MathTemplates
@@ -1004,6 +1005,25 @@ public:
     unsigned long long Entries()const
     {
         return counter;
+    }
+};
+
+template<class KEY,class DATA>
+class Cache{
+private:
+    std::map<KEY,DATA> m_map;
+public:
+    inline Cache(){}
+    inline ~Cache(){}
+    template<class FUNC>
+    inline const DATA&operator()(const KEY&key,FUNC F){
+        if(m_map.find(key)==m_map.end())m_map.insert(std::make_pair(key,F()));
+        return m_map[key];
+    }
+    template<typename... Args>
+    inline const DATA&operator()(const KEY&key,Args... args){
+        if(m_map.find(key)==m_map.end())m_map.insert(std::make_pair(key,DATA(args...)));
+        return m_map[key];
     }
 };
 
