@@ -125,3 +125,21 @@ TEST(Uncertainties,wrap)
 	}
     }
 }
+TEST(Uncertainties,from_number){
+    RandomUniform<> A(-10,10);
+    for(size_t i=0;i<100;i++){
+	const double a=A();
+	const Uncertainties<1> U1=a;
+	EXPECT_EQ(U1.val(),a);
+	EXPECT_EQ(U1.uncertainty<1>(),0);
+	const Uncertainties<2> U2=a;
+	EXPECT_EQ(U2.val(),a);
+	EXPECT_EQ(U2.uncertainty<1>(),0);
+	EXPECT_EQ(U2.uncertainty<2>(),0);
+	const Uncertainties<3> U3=a;
+	EXPECT_EQ(U3.val(),a);
+	EXPECT_EQ(U3.uncertainty<1>(),0);
+	EXPECT_EQ(U3.uncertainty<2>(),0);
+	EXPECT_EQ(U3.uncertainty<3>(),0);
+    }
+}

@@ -26,6 +26,7 @@ public:
         return std::make_tuple(m_value,m_uncertainty);
     }
     inline Uncertainties():m_value(0),m_uncertainty(0){}
+    inline Uncertainties(const numt&val):m_value(val),m_uncertainty(0){}
     template<class... Args>
     inline Uncertainties(const std::tuple<Args...> &v): m_value(std::get<0>(v)),m_uncertainty(std::get<1>(v)) {}
     template<class Arg>
@@ -127,6 +128,7 @@ public:
         return std::tuple_cat(m_lesser.to_tuple(), std::make_tuple(m_uncertainty));
     }
     inline Uncertainties():m_lesser(),m_uncertainty(0){}
+    inline Uncertainties(const numt&val):m_lesser(val),m_uncertainty(0){}
     template<class... Args>
     inline Uncertainties(const std::tuple<Args...> &v): m_lesser(v),m_uncertainty(std::get<UncertaintiesCount>(v)) {}
     template<class Arg>
