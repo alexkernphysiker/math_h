@@ -52,6 +52,11 @@ public:
     }
 #endif
     inline const NumberType&val()const{return m_value;}
+    template<size_t index>
+    inline value<NumberType> take_uncertainty_component()const
+    {
+       return value<NumberType>(val(),uncertainty<index>());
+    }
     inline value<NumberType> wrap()const{return value<NumberType>(m_value,m_uncertainty);}
     //number-like comparing
     inline bool operator<(const Uncertainties &other)const{return val() < other.val();}
@@ -157,6 +162,11 @@ public:
     }
 #endif
     inline const NumberType&val()const{return m_lesser.val();}
+    template<size_t index>
+    inline value<NumberType> take_uncertainty_component()const
+    {
+       return value<NumberType>(val(),uncertainty<index>());
+    }
     inline value<NumberType> wrap()const{
 	return value<NumberType>(val(),sqrt(pow(m_uncertainty,2)+pow(m_lesser.wrap().uncertainty(),2)));
     }
@@ -265,6 +275,16 @@ hist<numtX,numtY> wrap_hist(const SortedPoints<value<numtX>,Uncertainties<sz,num
 template<size_t sz,class numt>
 inline value<numt> wrap_value(const Uncertainties<sz,numt>&source){
     return source.wrap();
+}
+template<size_t index,size_t sz,class numt>
+inline value<numt> take_uncertainty_component(const Uncertainties<sz,numt>&source){
+    return source.template take_uncertainty_component<index>();
+}
+template<size_t index,size_t sz,class numtX, class numtY>
+hist<numtX,numtY> take_uncertainty_component(const SortedPoints<value<numtX>,Uncertainties<sz,numtY>>&source){
+    hist<numtX,numtY> res;
+    for(const auto&p:source)res<<make_point(p.X(),p.Y().template take_uncertainty_component<index>());
+    return res;
 }
 
 };
