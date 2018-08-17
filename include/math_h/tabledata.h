@@ -903,7 +903,7 @@ SortedPoints<typename numX::NumberType,typename numY::NumberType> toLine(const S
     return res;
 }
 template<class numX,class numY>
-SortedPoints<typename numX::NumberType,typename numY> removeXerorbars(const SortedPoints<numX,numY>&source)
+SortedPoints<typename numX::NumberType,numY> removeXerorbars(const SortedPoints<numX,numY>&source)
 {
     SortedPoints<typename numX::NumberType,numY> res;
     for (int i = 0, n = source.size(); i < n; i++) {
@@ -913,7 +913,7 @@ SortedPoints<typename numX::NumberType,typename numY> removeXerorbars(const Sort
     return res;
 }
 template<class numX,class numY>
-SortedPoints<typename numX,typename numY::NumberType> removeYerorbars(const SortedPoints<numX,numY>&source)
+SortedPoints<numX,typename numY::NumberType> removeYerorbars(const SortedPoints<numX,numY>&source)
 {
     SortedPoints<numX,typename numY::NumberType> res;
     for (int i = 0, n = source.size(); i < n; i++) {
