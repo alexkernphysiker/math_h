@@ -1055,29 +1055,6 @@ public:
         return m_map[key];
     }
 };
-template<class KEY,class DATA>
-class CacheConstr:Cache<KEY,DATA>{
-public:
-    CacheConstr():Cache<KEY,DATA>(){}
-    virtual ~CacheConstr(){}
-    template<typename...Args>
-    inline const DATA&operator()(const KEY&key,Args...args){
-	return Cache<KEY,DATA>::operator()(key,[args...](){return DATA(args...);});
-    }
-};
 
-template<class DATA,typename... Args>
-class CacheFunc:Cache<std::tuple<Args...>,DATA>{
-private:
-    std::function<DATA(Args...)> m_func;
-public:
-    CacheFunc(std::function<DATA(Args...)>func):m_func(func){}
-    virtual ~CacheFunc(){}
-    inline const DATA&operator()(Args...args){
-	return Cache<std::tuple<Args...>,DATA>::operator()(std::make_tuple(args...),[this,args...](){return m_func(args...);});
-    }
-};
-template<class DATA,typename... Args>
-inline CacheFunc<DATA,Args...> make_cache(DATA func(Args...)){return CacheFunc<DATA,Args...>(func);}
 };
 #endif

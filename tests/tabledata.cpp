@@ -413,27 +413,3 @@ TEST(Cache,test_stored_value1){
 	}
     }
 }
-
-
-int TestCache(int,int){
-    static int counter=0;
-    return counter++;
-}
-TEST(Cache,test_for_function){
-    auto C=make_cache(TestCache);
-    int counter=0;
-    for(size_t i=0;i<10;i++){
-	for(size_t j=0;j<10;j++){
-	    const auto cnt=counter++;
-	    EXPECT_EQ(C(i,j),cnt);
-	    for(size_t k=0;k<10;k++)EXPECT_EQ(C(i,j),cnt);
-	}
-    }
-    counter=0;
-    for(size_t i=0;i<10;i++){
-	for(size_t j=0;j<10;j++){
-	    const auto cnt=counter++;
-	    for(size_t k=0;k<30;k++)EXPECT_EQ(C(i,j),cnt);
-	}
-    }
-}
