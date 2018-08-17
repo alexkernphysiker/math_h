@@ -892,6 +892,38 @@ public:
 };
 
 
+template<class numX,class numY>
+SortedPoints<typename numX::NumberType,typename numY::NumberType> toLine(const SortedPoints<numX,numY>&source)
+{
+    SortedPoints<typename numX::NumberType,typename numY::NumberType> res;
+    for (int i = 0, n = source.size(); i < n; i++) {
+	const auto&P=source[i];
+	res<<make_point(P.X().val(),P.Y().val());
+    }
+    return res;
+}
+template<class numX,class numY>
+SortedPoints<typename numX::NumberType,typename numY::NumberType> removeXerorbars(const SortedPoints<numX,numY>&source)
+{
+    SortedPoints<typename numX::NumberType,numY> res;
+    for (int i = 0, n = source.size(); i < n; i++) {
+	const auto&P=source[i];
+	res<<make_point(P.X().val(),P.Y());
+    }
+    return res;
+}
+template<class numX,class numY>
+SortedPoints<typename numX::NumberType,typename numY::NumberType> removeYerorbars(const SortedPoints<numX,numY>&source)
+{
+    SortedPoints<numX,typename numY::NumberType> res;
+    for (int i = 0, n = source.size(); i < n; i++) {
+	const auto&P=source[i];
+	res<<make_point(P.X(),P.Y().val());
+    }
+    return res;
+}
+
+
 template<class numtX, class numtY>
 class hist_avr_calculator:public SortedPoints<numtX, WeightedAverage<numtY>>
 {
