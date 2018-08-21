@@ -135,10 +135,6 @@ protected:
             throw Exception<SortedChain>("range check error");
         return data[i];
     }
-    void append_item_from_sorted(const comparable &c)
-    {
-        data.push_back(c);
-    }
 };
 template<class numX>
 Chain<numX> ChainWithStep(const numX &from, const numX &step, const numX &to)
@@ -382,13 +378,13 @@ public:
         for (const auto &p : chain){
 	    numX a;numY b;
 	    a=p.X();b=p.Y();
-	    SortedChain<point<numX, numY>>::append_item_from_sorted(make_point(a,b));
+	    SortedChain<point<numX, numY>>::operator<<(make_point(a,b));
 	}
     }
     SortedPoints(const Func f, const SortedChain<numX> &chain)
     {
         for (const numX&x : chain)
-            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(x, f(x)));
+            SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x, f(x)));
     }
     SortedPoints(const Func f, const Chain<numX> &chain)
     {
@@ -399,7 +395,7 @@ public:
     SortedPoints(const Func f,const SortedChain<point<numX, numY2>> &chain)
     {
         for (const auto&p : chain)
-            SortedChain<point<numX, numY>>::append_item_from_sorted(point<numX, numY>(p.X(), f(p.X())));
+            SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(p.X(), f(p.X())));
     }
     virtual ~SortedPoints() {}
     SortedPoints Clone()const
@@ -732,13 +728,14 @@ private:
     SortedChain<numtX> m_x_axis;
     SortedChain<numtY> m_y_axis;
     Chain<Chain<numtZ>> m_data;
-    void init()
+    template<typename...Args>
+    void init(Args...args)
     {
         m_data.clear();
         for (size_t i = 0, I = m_x_axis.size(); i < I; i++) {
             m_data.push_back(Chain<numtZ>());
             for (size_t j = 0, J = m_y_axis.size(); j < J; j++)
-                m_data[m_data.size() - 1].push_back(numtZ(0));
+                m_data[m_data.size() - 1].push_back(numtZ(args...));
         }
     }
 public:
@@ -750,10 +747,11 @@ public:
     {
         return m_y_axis;
     }
-    BiSortedPoints(const SortedChain<numtX> &X, const SortedChain<numtY> &Y)
+    template<typename...Args>
+    BiSortedPoints(const SortedChain<numtX> &X, const SortedChain<numtY> &Y,Args...args)
         : m_x_axis(X), m_y_axis(Y)
     {
-        init();
+        init(args...);
     }
     BiSortedPoints(): BiSortedPoints({}, {}) {}
     BiSortedPoints(const BiSortedPoints &source): m_x_axis(source.X()), m_y_axis(source.Y())
