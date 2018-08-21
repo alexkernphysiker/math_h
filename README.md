@@ -47,16 +47,6 @@ Then commit your changes.
 
 This library still can be compiled with c++11 or c++14 compiler but some features will be absent.
 
-You can also install the library in your system
-===============================================
-
-	git clone https://github.com/alexkernphysiker/math_h.git
-	cd math_h
-	cmake -DINSTALL=ON .
-	make
-	sudo make install
-
-
 Header files
 ============
 
