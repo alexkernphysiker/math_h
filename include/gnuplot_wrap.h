@@ -56,7 +56,8 @@ protected:
     {
 	static const std::vector<std::string> IMGSIZE{"640,480","800,600","1000,750","1600,1200","2000,1500"};
 	
-        const std::string firstline = "set terminal pngcairo size "+IMGSIZE[imgsize]+" font 'Verdana,"+std::to_string(int(14)+4*imgsize+2*fontsize)+"'\n";
+        const std::string firstline = "set terminal pngcairo size "+IMGSIZE[imgsize]+" font 'Verdana,"+std::to_string(int(14)+4*imgsize+2*fontsize)+"'\n"
+	  +"set termoption enhanced\nset encoding utf8\n";
         if (name == "") {
             terminal_counter++;
             auto cnt = std::to_string(terminal_counter);
