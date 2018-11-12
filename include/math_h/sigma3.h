@@ -269,7 +269,7 @@ ext_hist<sz,numtX,numtY> extend_hist(const hist<numtX,numtY>&source){
 template<size_t sz,class numtX, class numtY>
 ext_hist<sz+1,numtX,numtY> add_one_uncertainty(const ext_hist<sz,numtX,numtY>&source){
     ext_hist<sz+1,numtX,numtY> res;
-    for(const auto&p:source)res<<make_point(p.X(),Uncertainties<sz+1>(std::tuple_cat(p.Y().to_tuple(), std::make_tuple(numtY(0)))));
+    for(const auto&p:source)res<<make_point(p.X(),Uncertainties<sz+1>(p.Y(),numtY(0)));
     return res;
 }
 
