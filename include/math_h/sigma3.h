@@ -267,6 +267,13 @@ ext_hist<sz,numtX,numtY> extend_hist(const hist<numtX,numtY>&source){
     return res;
 }
 template<size_t sz,class numtX, class numtY>
+ext_hist<sz+1,numtX,numtY> add_one_uncertainty(const ext_hist<sz,numtX,numtY>&source){
+    ext_hist<sz+1,numtX,numtY> res;
+    for(const auto&p:source)res<<make_point(p.X(),std::tuple_cat(p.Y().to_tuple(), std::make_tuple(numtY(0))));
+    return res;
+}
+
+template<size_t sz,class numtX, class numtY>
 hist<numtX,numtY> wrap_hist(const SortedPoints<value<numtX>,Uncertainties<sz,numtY>>&source){
     hist<numtX,numtY> res;
     for(const auto&p:source)res<<make_point(p.X(),p.Y().wrap());
