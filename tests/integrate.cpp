@@ -19,6 +19,14 @@ TEST(Integrating,sympson_sign)
     ALMOST_EQ(-0.5, Sympson(F, 1.0, 0.0, 0.1));
     ALMOST_EQ(-0.5, Sympson(F, 1.0, 0.0, -0.1));
 }
+TEST(Integrating,aq_sign)
+{
+    auto F = [](double x) {
+        return x;
+    };
+    ALMOST_EQ(0.5, AdaptiveQuadrature(F, 0.0, 1.0, 0.0001));
+    ALMOST_EQ(-0.5, AdaptiveQuadrature(F, 1.0, 0.0,0.0001));
+}
 TEST(Integrating,sympson_powers)
 {
     ALMOST_EQ(0.0, Sympson([](double) {return 0.0;}, 0.0, 1.0, 0.00001));
@@ -27,9 +35,21 @@ TEST(Integrating,sympson_powers)
     ALMOST_EQ(0.333333, Sympson([](double x) {return x * x;}, 0.0, 1.0, 0.00001));
     ALMOST_EQ(0.25, Sympson([](double x) {return x * x * x;}, 0.0, 1.0, 0.00001));
 }
+TEST(Integrating,aq_powers)
+{
+    ALMOST_EQ(0.0, AdaptiveQuadrature([](double) {return 0.0;}, 0.0, 1.0, 0.0001));
+    ALMOST_EQ(1.0, AdaptiveQuadrature([](double) {return 1.0;}, 0.0, 1.0, 0.0001));
+    ALMOST_EQ(0.5, AdaptiveQuadrature([](double x) {return x;}, 0.0, 1.0, 0.0001));
+    ALMOST_EQ(0.333333, AdaptiveQuadrature([](double x) {return x * x;}, 0.0, 1.0, 0.0001));
+    ALMOST_EQ(0.25, AdaptiveQuadrature([](double x) {return x * x * x;}, 0.0, 1.0, 0.0001));
+}
 TEST(Integrating,sympson_gaus)
 {
     ALMOST_EQ(1.0, Sympson([](double x) {return Gaussian(x, 5.0, 1.0);}, 0.0, 10.0, 0.0001));
+}
+TEST(Integrating,aq_gaus)
+{
+    ALMOST_EQ(1.0, AdaptiveQuadrature([](double x) {return Gaussian(x, 5.0, 1.0);}, 0.0, 10.0, 0.0001));
 }
 TEST(Integrating,Int_Trapez_Table)
 {

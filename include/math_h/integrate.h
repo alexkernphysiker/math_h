@@ -23,6 +23,28 @@ numY Sympson(const functype y, const numX &a, const numX &b, const numX &step)
     }
     return res;
 }
+namespace AdaptiveQuadrature_details{
+template<class numX, class numY = numX, class functype = std::function<numY(numX)>>
+    numY AdaptiveQuadrature(const functype&y, const numX &a, const numX &b, const numY &epsilon,const numY&A,const numY&B,const numY&S)
+    {
+	const numX m = (a+b)/numX(2);
+	const numY M=y(m);
+	numY Sl=(A+M)*numY(m-a)/numY(2);
+	numY Sr=(M+B)*numY(b-m)/numY(2);
+	if(abs(Sl+Sr-S)>epsilon){
+	    Sl=AdaptiveQuadrature(y,a,m,epsilon,A,M,Sl);
+	    Sr=AdaptiveQuadrature(y,m,b,epsilon,M,B,Sr);
+	}
+	return Sl+Sr;
+    }
+};
+template<class numX, class numY = numX, class functype = std::function<numY(numX)>>
+numY AdaptiveQuadrature(const functype y, const numX &a, const numX &b, const numY &epsilon)
+{
+    const numY A=y(a),B=y(b),S=(A+B)*numY(b-a)/numY(2);
+    return AdaptiveQuadrature_details::AdaptiveQuadrature(y,a,b,epsilon,A,B,S);
+}
+
 template<class numX, class numY = numX>
 SortedPoints<numX, numY> Int_Trapez_Table(const SortedPoints<numX, numY> &source)
 {
@@ -53,7 +75,7 @@ SortedPoints<numX, numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<num
 }
 template<class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
-         >
+>
 class Convolution: public IFunction<numY, const numX &>
 {
 private:
