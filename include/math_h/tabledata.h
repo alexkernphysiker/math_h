@@ -656,7 +656,7 @@ public:
         for (const auto&P : *this)res<<make_point(P.X(),std_error(numY(0).val()));
         return res;
     }
-    numY TotalSum(std::function<void(const numY&)> prepare=[](const numY&){})const
+    numY TotalSum(std::function<void(numY&)> prepare=[](numY&){})const
     {
         numY res = 0;
 	prepare(res);
