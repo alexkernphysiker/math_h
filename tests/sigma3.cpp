@@ -143,3 +143,23 @@ TEST(Uncertainties,from_number){
 	EXPECT_EQ(U3.uncertainty<3>(),0);
     }
 }
+
+TEST(Uncertainties,maximum_estimation){
+    Uncertainties<1> A(0);
+    EXPECT_FALSE(A.using_maximum_estimation<1>());
+    A.use_maximum_estimation<1>();
+    EXPECT_TRUE(A.using_maximum_estimation<1>());
+    A.use_maximum_estimation<1>(false);
+    EXPECT_FALSE(A.using_maximum_estimation<1>());
+    Uncertainties<2> B(0);
+    EXPECT_FALSE(B.using_maximum_estimation<1>());
+    B.use_maximum_estimation<1>();
+    EXPECT_TRUE(B.using_maximum_estimation<1>());
+    B.use_maximum_estimation<1>(false);
+    EXPECT_FALSE(B.using_maximum_estimation<1>());
+    EXPECT_FALSE(B.using_maximum_estimation<2>());
+    B.use_maximum_estimation<2>();
+    EXPECT_TRUE(B.using_maximum_estimation<2>());
+    B.use_maximum_estimation<2>(false);
+    EXPECT_FALSE(B.using_maximum_estimation<2>());
+}

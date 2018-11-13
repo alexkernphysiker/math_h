@@ -19,28 +19,42 @@ public:
     typedef numt NumberType;
 private:
     numt m_value,m_uncertainty;
+    bool m_use_maximum_estimation;
 public:
     virtual ~Uncertainties() {}
     inline std::tuple<numt> to_tuple()const
     {
         return std::make_tuple(m_value,m_uncertainty);
     }
-    inline Uncertainties():m_value(0),m_uncertainty(0){}
-    inline Uncertainties(const numt&val):m_value(val),m_uncertainty(0){}
+    inline Uncertainties():m_value(0),m_uncertainty(0),m_use_maximum_estimation(false){}
+    inline Uncertainties(const numt&val):m_value(val),m_uncertainty(0),m_use_maximum_estimation(false){}
     template<class... Args>
-    inline Uncertainties(const std::tuple<Args...> &v): m_value(std::get<0>(v)),m_uncertainty(std::get<1>(v)) {}
+    inline Uncertainties(const std::tuple<Args...> &v): m_value(std::get<0>(v)),m_uncertainty(std::get<1>(v)),m_use_maximum_estimation(false){}
     template<class Arg>
-    inline Uncertainties(const Arg&arg):m_value(arg),m_uncertainty(0){}
+    inline Uncertainties(const Arg&arg):m_value(arg),m_uncertainty(0),m_use_maximum_estimation(false){}
     template<class Arg,class Arg2>
-    inline Uncertainties(const Arg&arg,const Arg2&arg2):m_value(arg),m_uncertainty(arg2){}
+    inline Uncertainties(const Arg&arg,const Arg2&arg2):m_value(arg),m_uncertainty(arg2),m_use_maximum_estimation(false){}
     template<class numt2>
-    inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_value(V.m_value),m_uncertainty(V.m_uncertainty){}
+    inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_value(V.m_value)
+	    ,m_uncertainty(V.m_uncertainty),m_use_maximum_estimation(V.m_use_maximum_estimation){}
 #ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const NumberType&uncertainty()const
     {
 	static_assert(index == 1,"uncertainty index is out of range");
         return m_uncertainty;
+    }
+    template<size_t index>
+    inline bool using_maximum_estimation()const
+    {
+	static_assert(index == 1,"uncertainty index is out of range");
+        return m_use_maximum_estimation;
+    }
+    template<size_t index>
+    inline void use_maximum_estimation(bool v=true)
+    {
+	static_assert(index == 1,"uncertainty index is out of range");
+        m_use_maximum_estimation=v;
     }
 #else
     template<size_t index>
@@ -49,6 +63,20 @@ public:
 	static_assert(index>0,"uncertainty index is out of range");
 	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
         return m_uncertainty;
+    }
+    template<size_t index>
+    inline bool using_maximum_estimation()const
+    {
+	static_assert(index>0,"uncertainty index is out of range");
+	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
+        return m_use_maximum_estimation;
+    }
+    template<size_t index>
+    inline void use_maximum_estimation(bool v=true)
+    {
+	static_assert(index>0,"uncertainty index is out of range");
+	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
+        m_use_maximum_estimation=v;
     }
 #endif
     inline const NumberType&val()const{return m_value;}
@@ -72,26 +100,29 @@ public:
     //arithmetic actions
     Uncertainties &operator+=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+	if(m_use_maximum_estimation)m_uncertainty += other.m_uncertainty;
+        else m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_value += other.m_value;
         return *this;
     }
     Uncertainties&operator-=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+	if(m_use_maximum_estimation)m_uncertainty += other.m_uncertainty;
+        else m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_value -= other.m_value;
         return *this;
     }
     Uncertainties&operator*=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty * other.val(), 2) + pow(other.m_uncertainty * val(), 2));
+	if(m_use_maximum_estimation)m_uncertainty = ((m_uncertainty * other.val()) + (other.m_uncertainty * val()));
+        else m_uncertainty = sqrt(pow(m_uncertainty * other.val(), 2) + pow(other.m_uncertainty * val(), 2));
         m_value *= other.m_value;
         return *this;
     }
     Uncertainties&operator/=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty / other.val(), 2)
-                     + pow(other.m_uncertainty * val() / pow(other.val(), 2), 2));
+	if(m_use_maximum_estimation)m_uncertainty = ((m_uncertainty / other.val()) + (other.m_uncertainty * val() / pow(other.val(), 2)));
+        else m_uncertainty = sqrt(pow(m_uncertainty / other.val(), 2) + pow(other.m_uncertainty * val() / pow(other.val(), 2), 2));
         m_value /= other.m_value;
         return *this;
     }
@@ -126,22 +157,24 @@ public:
 private:
     Uncertainties<UncertaintiesCount-1,NumberType> m_lesser;
     numt m_uncertainty;
+    bool m_use_maximum_estimation;
 public:
     virtual ~Uncertainties() {}
     inline auto to_tuple()const->decltype(std::tuple_cat(m_lesser.to_tuple(), std::make_tuple(m_uncertainty)))
     {
         return std::tuple_cat(m_lesser.to_tuple(), std::make_tuple(m_uncertainty));
     }
-    inline Uncertainties():m_lesser(),m_uncertainty(0){}
-    inline Uncertainties(const numt&val):m_lesser(val),m_uncertainty(0){}
+    inline Uncertainties():m_lesser(),m_uncertainty(0),m_use_maximum_estimation(false){}
+    inline Uncertainties(const numt&val):m_lesser(val),m_uncertainty(0),m_use_maximum_estimation(false){}
     template<class... Args>
-    inline Uncertainties(const std::tuple<Args...> &v): m_lesser(v),m_uncertainty(std::get<UncertaintiesCount>(v)) {}
+    inline Uncertainties(const std::tuple<Args...> &v): m_lesser(v),m_uncertainty(std::get<UncertaintiesCount>(v)),m_use_maximum_estimation(false) {}
     template<class Arg>
-    inline Uncertainties(const Arg&arg):m_lesser(arg),m_uncertainty(0){}
+    inline Uncertainties(const Arg&arg):m_lesser(arg),m_uncertainty(0),m_use_maximum_estimation(false){}
     template<class Arg,class Arg2>
-    inline Uncertainties(const Arg&arg,const Arg2&arg2):m_lesser(arg),m_uncertainty(arg2){}
+    inline Uncertainties(const Arg&arg,const Arg2&arg2):m_lesser(arg),m_uncertainty(arg2),m_use_maximum_estimation(false){}
     template<class numt2>
-    inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_lesser(V.m_lesser),m_uncertainty(V.m_uncertainty){}
+    inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_lesser(V.m_lesser),
+	    m_uncertainty(V.m_uncertainty),m_use_maximum_estimation(V.m_use_maximum_estimation){}
 #ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const NumberType&uncertainty()const
@@ -151,6 +184,22 @@ public:
         if constexpr(index == UncertaintiesCount)return m_uncertainty;
 	else return m_lesser.template uncertainty<index>();
     }
+    template<size_t index>
+    inline bool using_maximum_estimation()const
+    {
+	static_assert(index > 0,"uncertainty index is out of range");
+	static_assert(index<=UncertaintiesCount,"uncertainty index is out of range");
+        if constexpr(index == UncertaintiesCount)return m_use_maximum_estimation;
+	else return m_lesser.template using_maximum_estimation<index>();
+    }
+    template<size_t index>
+    inline void use_maximum_estimation(bool v=true)
+    {
+	static_assert(index > 0,"uncertainty index is out of range");
+	static_assert(index<=UncertaintiesCount,"uncertainty index is out of range");
+        if constexpr(index == UncertaintiesCount)m_use_maximum_estimation=v;
+	else m_lesser.template use_maximum_estimation<index>(v);
+    }
 #else
     template<size_t index>
     const NumberType&uncertainty()const
@@ -159,6 +208,22 @@ public:
 	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
         if(index == UncertaintiesCount)return m_uncertainty;
 	else return m_lesser.template uncertainty<index>();
+    }
+    template<size_t index>
+    inline bool using_maximum_estimation()const
+    {
+	static_assert(index > 0,"uncertainty index is out of range");
+	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
+        if(index == UncertaintiesCount)return m_use_maximum_estimation;
+	else return m_lesser.template using_maximum_estimation<index>();
+    }
+    template<size_t index>
+    inline void use_maximum_estimation(bool v=true)
+    {
+	static_assert(index > 0,"uncertainty index is out of range");
+	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
+        if(index == UncertaintiesCount)m_use_maximum_estimation=v;
+	else m_lesser.template use_maximum_estimation<index>(v);
     }
 #endif
     inline const NumberType&val()const{return m_lesser.val();}
@@ -184,26 +249,29 @@ public:
     //arithmetic actions
     Uncertainties &operator+=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+	if(m_use_maximum_estimation)m_uncertainty += other.m_uncertainty;
+        else m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_lesser += other.m_lesser;
         return *this;
     }
     Uncertainties&operator-=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
+	if(m_use_maximum_estimation)m_uncertainty += other.m_uncertainty;
+        else m_uncertainty = sqrt(pow(m_uncertainty, 2) + pow(other.m_uncertainty, 2));
         m_lesser -= other.m_lesser;
         return *this;
     }
     Uncertainties&operator*=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty * other.val(), 2) + pow(other.m_uncertainty * val(), 2));
+	if(m_use_maximum_estimation)m_uncertainty = ((m_uncertainty * other.val()) + (other.m_uncertainty * val()));
+        else m_uncertainty = sqrt(pow(m_uncertainty * other.val(), 2) + pow(other.m_uncertainty * val(), 2));
         m_lesser *= other.m_lesser;
         return *this;
     }
     Uncertainties&operator/=(const Uncertainties&other)
     {
-        m_uncertainty = sqrt(pow(m_uncertainty / other.val(), 2)
-                     + pow(other.m_uncertainty * val() / pow(other.val(), 2), 2));
+	if(m_use_maximum_estimation)m_uncertainty = ((m_uncertainty / other.val()) + (other.m_uncertainty * val() / pow(other.val(), 2)));
+        else m_uncertainty = sqrt(pow(m_uncertainty / other.val(), 2) + pow(other.m_uncertainty * val() / pow(other.val(), 2), 2));
         m_lesser /= other.m_lesser;
         return *this;
     }
