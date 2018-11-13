@@ -2,7 +2,6 @@
 // LGPLv3 license
 #ifndef _____EXTENDED_UNCERTAINTIES_ESTIMATION_____________
 #define _____EXTENDED_UNCERTAINTIES_ESTIMATION_____________
-#include <memory>
 #include <math.h>
 #include "error.h"
 #include "sigma.h"
@@ -22,21 +21,20 @@ public:
 protected:
     virtual numt mmeasure()const=0;
 private:
-    std::shared_ptr<StandardDeviation<numt>> m_cache;
+    mutable bool m_cache_valid;
+    mutable StandardDeviation<numt> m_cache;
     static size_t mm_number;
     const StandardDeviation<numt> &VAL()const
     {
-        using namespace std;
-        if (!m_cache) {
-	    const auto tmp=make_shared<StandardDeviation<numt>>();
-            const_cast<abstract_value_with_uncertainty_numeric&>(*this).m_cache =tmp;
-	    for (size_t i=0;i<mm_number;i++)
-		tmp->operator<<(mmeasure());
+        if (!m_cache_valid) {
+            m_cache =StandardDeviation<numt>();
+	    for (size_t i=0;i<mm_number;i++)m_cache<<(mmeasure());
+	    m_cache_valid=true;
         }
-        return *m_cache;
+        return m_cache;
     }
 public:
-    abstract_value_with_uncertainty_numeric():m_cache(nullptr){}
+    abstract_value_with_uncertainty_numeric():m_cache_valid(false){}
     static inline size_t micro_measurements_count(){return abstract_value_with_uncertainty_numeric::mm_number;}
     static inline void set_micro_measurements_count(size_t v){abstract_value_with_uncertainty_numeric::mm_number=v;}
     virtual ~abstract_value_with_uncertainty_numeric(){}

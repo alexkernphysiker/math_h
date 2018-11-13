@@ -287,7 +287,7 @@ class StandardDeviation:public abstract_value_with_uncertainty<numt>
 {
 private:
     Sampling<1,numt> m_sample;
-    std::pair<size_t,numt> m_cache;
+    mutable std::pair<size_t,numt> m_cache;
 public:
     StandardDeviation():m_cache(0,0){}
     virtual ~StandardDeviation() {}
@@ -307,8 +307,7 @@ public:
 	const size_t sz = m_sample.count();
 	if(sz<2)throw Exception<StandardDeviation>("Cannot obtain standard deviation for sample less than 2 elements");
         if (m_cache.first!=sz) {
-	    const_cast<StandardDeviation&>(*this).m_cache =
-                std::make_pair(sz,sqrt(m_sample.Cov().template element<1,1>()));
+	    m_cache =std::make_pair(sz,sqrt(m_sample.Cov().template element<1,1>()));
 	}
         return m_cache.second;
     }
@@ -329,12 +328,13 @@ class WeightedAverage:public abstract_value_with_uncertainty<numt>
 private:
     numt Sum;
     numt Wnorm;
-    std::shared_ptr<value<numt>>m_cache;
+    mutable std::pair<bool,value<numt>> m_cache;
 public:
     WeightedAverage()
     {
         Sum = 0;
         Wnorm = 0;
+	m_cache.first=false;
     }
     virtual ~WeightedAverage() {}
     WeightedAverage &operator<<(const abstract_value_with_uncertainty<numt> &X)
@@ -344,7 +344,7 @@ public:
         numt w = 1.0 / pow(X.uncertainty(), 2);
         Sum += w * X.val();
         Wnorm += w;
-        m_cache = nullptr;
+	m_cache.first=false;
         return *this;
     }
     inline WeightedAverage(const abstract_value_with_uncertainty<numt> &X):WeightedAverage()
@@ -355,11 +355,11 @@ private:
     const value<numt> &VAL()const
     {
         using namespace std;
-        if (!m_cache) {
+        if (!m_cache.first) {
             if (Wnorm <= 0)throw Exception<WeightedAverage>("Attempt to check empty data");
-            const_cast<WeightedAverage &>(*this).m_cache = make_shared<value<numt>>(Sum / Wnorm, 1.0 / sqrt(Wnorm));
+            m_cache.second = value<numt>(Sum / Wnorm, 1.0 / sqrt(Wnorm));
         }
-        return *m_cache;
+        return m_cache.second;
     }
 public:
     virtual const numt&val()const override

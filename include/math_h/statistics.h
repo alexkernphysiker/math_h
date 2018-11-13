@@ -21,7 +21,7 @@ class AverageObtainer
 {
 private:
     Chain<numt> m_list;
-    std::pair<size_t,numt> m_cache_avr;
+    mutable std::pair<size_t,numt> m_cache_avr;
 public:
     typedef typename Chain<numt>::const_iterator const_iterator;
     inline const_iterator begin()const{return m_list.begin();}
@@ -42,8 +42,7 @@ public:
         if (m_cache_avr.first!=sz) {
             numt res = m_list[0];
 	    for(size_t i=1;i<sz;i++)res=res+m_list[i];
-            const_cast<AverageObtainer&>(*this).m_cache_avr =
-                std::make_pair(sz,res/sz);
+            m_cache_avr = std::make_pair(sz,res/sz);
         }
         return m_cache_avr.second;
     }
@@ -56,7 +55,7 @@ protected:
 template<size_t N,class numt = double>
 class Sampling:public AverageObtainer<Vector<N,numt>>{
 private:
-    std::pair<size_t,Matrix<N,Vector<N,numt>>> m_cache_cov;
+    mutable std::pair<size_t,Matrix<N,Vector<N,numt>>> m_cache_cov;
 public:
     enum {Dimensions = N};
     typedef numt NumberType;
@@ -76,8 +75,7 @@ public:
 		    res=(res+(columns(d)*rows(d)));
 		}
 	    );
-            const_cast<Sampling&>(*this).m_cache_cov =
-                std::make_pair(sz,res/(sz-1));
+            m_cache_cov = std::make_pair(sz,res/(sz-1));
         }
         return m_cache_cov.second;
     }
@@ -97,9 +95,9 @@ inline DiVector<Nx,Ny,numt> operator/(const DiVector<Nx,Ny,numt>&A,const size_t 
 template<size_t Nx,size_t Ny,class numt=double>
 class SamplingXY:public AverageObtainer<DiVector<Nx,Ny,numt>>{
 private:
-    std::pair<size_t,Matrix<Nx,Vector<Nx,numt>>> m_cache_cov_x;
-    std::pair<size_t,Matrix<Ny,Vector<Ny,numt>>> m_cache_cov_y;
-    std::pair<size_t,Matrix<Nx,Vector<Ny,numt>>> m_cache_cov_xy;
+    mutable std::pair<size_t,Matrix<Nx,Vector<Nx,numt>>> m_cache_cov_x;
+    mutable std::pair<size_t,Matrix<Ny,Vector<Ny,numt>>> m_cache_cov_y;
+    mutable std::pair<size_t,Matrix<Nx,Vector<Ny,numt>>> m_cache_cov_xy;
 public:
     enum {DimensionsX = Nx};
     enum {DimensionsY = Ny};
@@ -124,8 +122,7 @@ public:
 		    res=(res+(columns(d)*rows(d)));
 		}
 	    );
-            const_cast<SamplingXY&>(*this).m_cache_cov_x =
-                std::make_pair(sz,res/(sz-1));
+            m_cache_cov_x = std::make_pair(sz,res/(sz-1));
         }
         return m_cache_cov_x.second;
     }
@@ -141,8 +138,7 @@ public:
 		    res=(res+(columns(d)*rows(d)));
 		}
 	    );
-            const_cast<SamplingXY&>(*this).m_cache_cov_y =
-                std::make_pair(sz,res/(sz-1));
+            m_cache_cov_y = std::make_pair(sz,res/(sz-1));
         }
         return m_cache_cov_y.second;
     }
@@ -159,8 +155,7 @@ public:
 		    res=(res+(columns(dx)*rows(dy)));
 		}
 	    );
-            const_cast<SamplingXY&>(*this).m_cache_cov_xy =
-                std::make_pair(sz,res/(sz-1));
+            m_cache_cov_xy = std::make_pair(sz,res/(sz-1));
         }
         return m_cache_cov_xy.second;
     }
