@@ -39,7 +39,7 @@ template<class numX, class numY = numX, class functype = std::function<numY(numX
     }
 };
 template<class numX, class numY = numX, class functype = std::function<numY(numX)>>
-numY AdaptiveQuadrature(const functype y, const numX &a, const numX &b, const numY &epsilon)
+inline numY AdaptiveQuadrature(const functype y, const numX &a, const numX &b, const numY &epsilon)
 {
     const numY A=y(a),B=y(b),S=(A+B)*numY(b-a)/numY(2);
     return AdaptiveQuadrature_details::AdaptiveQuadrature(y,a,b,epsilon,A,B,S);
@@ -83,31 +83,31 @@ private:
     func2 B;
     numX Ksi1;
     numX Ksi2;
-    numX Step;
+    numY Eps;
 public:
     Convolution(const Convolution &C)
-        : A(C.A), B(C.B), Ksi1(C.Ksi1), Ksi2(C.Ksi2), Step(C.Step) {}
-    Convolution(const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numX &step)
+        : A(C.A), B(C.B), Ksi1(C.Ksi1), Ksi2(C.Ksi2), Eps(C.Eps) {}
+    Convolution(const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numY &eps)
         : A(a), B(b)
     {
         Ksi1 = ksi1;
         Ksi2 = ksi2;
-        Step = step;
+        Eps = eps;
     }
     virtual numY operator()(const numX &x)const override
     {
-        return Sympson<numX, numY>([this,&x](const numX & ksi) {
+        return AdaptiveQuadrature<numX, numY>([this,&x](const numX & ksi) {
             return A(ksi) * B(x - ksi);
-        }, Ksi1, Ksi2, Step);
+        }, Ksi1, Ksi2, Eps);
     }
 };
 template<class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
          >
 Convolution<numX, numY, func1, func2> make_convolution(
-    const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numX &step)
+    const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numY &eps)
 {
-    return Convolution<numX, numY, func1, func2>(a, b, ksi1, ksi2, step);
+    return Convolution<numX, numY, func1, func2>(a, b, ksi1, ksi2, eps);
 }
 };
 #endif
