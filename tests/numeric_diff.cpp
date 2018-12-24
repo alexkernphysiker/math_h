@@ -9,17 +9,17 @@ using namespace MathTemplates;
 #define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 
-TEST(der1,test){
+TEST(numeric_diff,der1){
     EXPECT_EQ(0,num_der1(3.0,0.1)*[](const double&)->double{return 5.0;});
     EXPECT_EQ(2,num_der1(3.0,0.1)*[](const double&x)->double{return 2.0*x;});
     EXPECT_EQ(0,num_der1(0.0,0.1)*[](const double&x)->double{return 2.0*x*x;});
 }
-TEST(der2,test){
+TEST(numeric_diff,der2){
     EXPECT_EQ(0,num_der2(3.0,0.1)*[](const double&)->double{return 5.0;});
     EXPECT_EQ(0,num_der2(3.0,0.1)*[](const double&x)->double{return 2.0*x;});
     EXPECT_EQ(2.0,num_der2(0.0,0.1)*[](const double&x)->double{return x*x;});
 }
-TEST(Pder1,test){
+TEST(numeric_diff,Pder1){
     const auto F=[](const Vector<>&r){return r.M_sqr();};
     EXPECT_EQ(0,num_Pder1(Zero(),X()*0.1)*F);
     EXPECT_EQ(0,num_Pder1(Zero(),Y()*0.1)*F);
@@ -29,7 +29,7 @@ TEST(Pder1,test){
     EXPECT_EQ( 1,num_Pder1(Zero(),Y()*0.1)*F2);
     EXPECT_EQ(-1,num_Pder1(Zero(),Z()*0.1)*F2);
 }
-TEST(nabla,test){
+TEST(numeric_diff,nabla){
     const auto F=[](const Vector<>&r){return r.M_sqr();};
     const auto G=nabla(Zero(),0.1)*F;
     EXPECT_EQ(0,G.x());
@@ -48,4 +48,15 @@ TEST(nabla,test){
     std::function<double(const Vector<>&)> f1=F,f2=F2,f3=F3;
     const auto div=nabla(Zero(),0.1)*vec(f1,f2,f3);
     EXPECT_EQ(1,div);
+}
+TEST(numeric_diff,nabla2){
+    std::function<double(const Vector<>&)> 
+	f1=[](const Vector<>&r){return exp(-r.x()*r.x());},
+	f2=[](const Vector<>&r){return exp(-r.y()*r.y());},
+	f3=[](const Vector<>&r){return exp(-r.z()*r.z());};
+    const auto x=vec(1.,1.,0.);
+    const double d=nabla(x,0.1)*vec(f1,f2,f3),
+	d2=num_Pder1(x,X()*0.1)*f1+num_Pder1(x,Y()*0.1)*f2+num_Pder1(x,Z()*0.1)*f3;
+    EXPECT_EQ(d,d2);
+
 }

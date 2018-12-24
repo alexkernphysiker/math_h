@@ -33,7 +33,7 @@ namespace MathTemplates
     }
     namespace numeric_diff_details{
 	template<size_t size,class numt,size_t index>
-	inline Vector<index,Opr<Vector<size,numt>,numt>> ___nabla_partial(const Vector<size,numt>&X,const numt&delta){
+	Vector<index,Opr<Vector<size,numt>,numt>> ___nabla_partial(const Vector<size,numt>&X,const numt&delta){
 	    if constexpr(index==1) return vec(num_Pder1(X,Vector<size,numt>::template basis_vector<1>()*delta));
 	    else return ___nabla_partial<size,numt,index-1>(X,delta).template InsertComponent<index>(
 		num_Pder1(X,Vector<size,numt>::template basis_vector<index>()*delta)
