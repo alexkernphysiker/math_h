@@ -368,12 +368,12 @@ inline Matrix<3, Vector<3, numt>> Rotation(const Direction<3, numt> &axis, const
 
 #define AC(n) (A.template component<n>())
 #define ZeRo numt(0)
-template<class numt = double>
+template<class numt>
 inline Matrix<1, Vector<2, numt>> SkewM(const Vector<2, numt> &A)
 {
     return rows(vec(-AC(2), AC(1)));
 }
-template<class numt = double>
+template<class numt>
 inline Matrix<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
 {
     return rows(
@@ -382,7 +382,7 @@ inline Matrix<3, Vector<3, numt>> SkewM(const Vector<3, numt> &A)
                vec(-AC(2), AC(1),  ZeRo)
            );
 }
-template<class numt = double>
+template<class numt>
 inline Matrix<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
 {
     return rows(

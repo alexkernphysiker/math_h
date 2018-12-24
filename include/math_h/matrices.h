@@ -186,21 +186,20 @@ public:
     {
         return m_row == B.m_row;
     }
-    inline Matrix operator*(const NumberType &v)const
+    template<class numt2>
+    inline auto operator*(const numt2 &v)const->Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>
     {
-        return Matrix(m_row * v);
+        return Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>(m_row * v);
     }
     inline Matrix operator/(const NumberType &v)const
     {
         return Matrix(m_row / v);
     }
-    template<class numt2>
-    inline Matrix operator+(const Matrix<RowsCount,RowType<numt2>> &B)const
+    inline Matrix operator+(const Matrix&B)const
     {
         return Matrix(m_row + B.___last_row());
     }
-    template<class numt2>
-    inline Matrix operator-(const Matrix<RowsCount,RowType<numt2>> &B)const
+    inline Matrix operator-(const Matrix&B)const
     {
         return Matrix(m_row - B.___last_row());
     }
@@ -461,9 +460,10 @@ public:
     {
         return (m_row == B.m_row) && (m_other_rows == B.m_other_rows);
     }
-    inline Matrix operator*(const NumberType &v)const
+    template<class numt2>
+    inline auto operator*(const numt2 &v)const->Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>
     {
-        return Matrix(m_other_rows * v, m_row * v);
+        return Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>(m_other_rows * v, m_row * v);
     }
     inline Matrix operator/(const NumberType &v)const
     {

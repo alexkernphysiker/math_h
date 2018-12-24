@@ -19,8 +19,25 @@ TEST(der2,test){
     EXPECT_EQ(0,num_der2(3.0,0.1)*[](const double&x)->double{return 2.0*x;});
     EXPECT_EQ(2.0,num_der2(0.0,0.1)*[](const double&x)->double{return x*x;});
 }
-// TEST(nabla,test){
-//     const auto F=[](const Vector<>&x){return x.M_sqr();};
-//     const auto G=nabla<>(Zero(),0.1);
-//     EXPECT_EQ(0,(G*F).M());
-// }
+TEST(Pder1,test){
+    const auto F=[](const Vector<>&r){return r.M_sqr();};
+    EXPECT_EQ(0,num_Pder1(Zero(),X()*0.1)*F);
+    EXPECT_EQ(0,num_Pder1(Zero(),Y()*0.1)*F);
+    EXPECT_EQ(0,num_Pder1(Zero(),Z()*0.1)*F);
+    const auto F2=[](const Vector<>&r){return r.x()+r.y()-r.z();};
+    EXPECT_EQ( 1,num_Pder1(Zero(),X()*0.1)*F2);
+    EXPECT_EQ( 1,num_Pder1(Zero(),Y()*0.1)*F2);
+    EXPECT_EQ(-1,num_Pder1(Zero(),Z()*0.1)*F2);
+}
+TEST(nabla,test){
+    const auto F=[](const Vector<>&r){return r.M_sqr();};
+    const auto G=nabla(Zero(),0.1)*F;
+    EXPECT_EQ(0,G.x());
+    EXPECT_EQ(0,G.y());
+    EXPECT_EQ(0,G.z());
+    const auto F2=[](const Vector<>&r){return r.x()+r.y()-r.z();};
+    const auto G2=nabla(Zero(),0.1)*F2;
+    EXPECT_EQ( 1,G2.x());
+    EXPECT_EQ( 1,G2.y());
+    EXPECT_EQ(-1,G2.z());
+}

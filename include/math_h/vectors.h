@@ -100,7 +100,8 @@ public:
         m_x *= second;
         return *this;
     }
-    auto operator*(const numt &second)const->Vector<1,decltype(x()*second)>
+    template<class numt2>
+    auto operator*(const numt2 &second)const->Vector<1,decltype(x()*second)>
     {
         return Vector<1,decltype(x()*second)>(std::make_tuple(m_x * second));
     }
@@ -248,9 +249,10 @@ public:
         m_other *= second.m_other;
         return *this;
     }
-    auto operator*(const numt &second)const->Vector<size,decltype(x() * second)>
+    template<class numt2>
+    auto operator*(const numt2 &second)const->Vector<size,decltype(x()*second)>
     {
-        return Vector<size,decltype(x() * second)>(m_other * second, m_x * second);
+        return Vector<size,decltype(x()*second)>(m_other * second, m_x * second);
     }
     Vector &operator/=(const numt &second)
     {
