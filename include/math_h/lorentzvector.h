@@ -89,7 +89,7 @@ public:
         if (beta >= numt(1))throw Exception<LorentzVector>("Bad Lorentz transformation");
         const auto bn = Beta / beta;
         const numt gamma = numt(1) / sqrt(numt(1) - beta * beta);
-        const auto ST = ONE<Space::Dimensions>() + TensorProduct(bn, bn) * (gamma - numt(1));
+        const auto ST = ONE<Space::Dimensions,typename Space::NumberType>() + TensorProduct(bn, bn) * (gamma - numt(1));
         const auto TT = -Beta * gamma;
         return LorentzVector((E() * gamma) + (P() * TT), (ST * P()) + (TT * E()));
     }

@@ -218,7 +218,6 @@ inline value_f<2,typename ArgType1::NumberType_ForNumeric> operator/(ArgType1 a,
     ){return x/y;},a,b);
 }
 
-#ifdef ____middle_version_of_math_h_____
 template<size_t dim,class numt>
 class value_f:public value_f<dim-1,numt>{
 public:
@@ -231,7 +230,6 @@ public:
 	},args...){}
     virtual ~value_f(){}
 };
-#endif
 template<class FF, class ArgType,typename... Args>
 inline value_f<sizeof...(Args)+1,typename ArgType::NumberType_ForNumeric> FUNC(FF F,ArgType a,Args... args){
     return value_f<sizeof...(Args)+1,typename ArgType::NumberType_ForNumeric>(F,a,args...);

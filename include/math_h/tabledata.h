@@ -212,7 +212,6 @@ public:
     {
         return x > b.x;
     }
-#ifdef ____full_version_of_math_h_____
     template<class numtY2>
     auto operator+(const numtY2 &val)const->point<numtX,decltype(Y()+val)>
     {
@@ -266,52 +265,6 @@ public:
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
     }
 
-#else
-    inline point operator+(const numtY &val)const
-    {
-        return {X(), Y() + val};
-    }
-    point operator+(const point&val)const
-    {
-        if (val.X() == X())
-            return operator+(val.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    inline point operator-(const numtY &val)const
-    {
-        return {X(), Y() - val};
-    }
-    point operator-(const point&val)const
-    {
-        if (val.X() == X())
-            return operator-(val.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    inline point operator*(const numtY &val)const
-    {
-        return {X(), Y() * val};
-    }
-    point operator*(const point&val)const
-    {
-        if (val.X() == X())
-            return operator*(val.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-    inline point operator/(const numtY &val)const
-    {
-        return {X(), Y() / val};
-    }
-    point operator/(const point&val)const
-    {
-        if (val.X() == X())
-            return operator/(val.Y());
-        else
-            throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-    }
-#endif
     template<class numtY2>
     point&operator<<(const point<numtX,numtY2>&other)
     {
@@ -559,7 +512,6 @@ public:
         return leftArrow(SortedPoints<numX,numtY2>(other));
     }
 
-#ifdef ____full_version_of_math_h_____
     template<class numtY2>
     auto operator+(const SortedPoints<numX,numtY2>&other)const->SortedPoints<numX,decltype(SortedChain<point<numX, numY>>::operator[](0).Y()+other[0].Y())>
     {
@@ -634,16 +586,6 @@ public:
         }
         return res;
     }
-#else
-    inline SortedPoints operator+(const SortedPoints&other)const{return SortedPoints(*this)+=other;}
-    inline SortedPoints operator-(const SortedPoints&other)const{return SortedPoints(*this)-=other;}
-    inline SortedPoints operator*(const SortedPoints&other)const{return SortedPoints(*this)*=other;}
-    inline SortedPoints operator/(const SortedPoints&other)const{return SortedPoints(*this)/=other;}
-    inline SortedPoints operator+(const numY&other)const{return SortedPoints(*this)+=other;}
-    inline SortedPoints operator-(const numY&other)const{return SortedPoints(*this)-=other;}
-    inline SortedPoints operator*(const numY&other)const{return SortedPoints(*this)*=other;}
-    inline SortedPoints operator/(const numY&other)const{return SortedPoints(*this)/=other;}
-#endif
     SortedPoints operator+(const Func other)const{return SortedPoints(*this) += other;}
     SortedPoints operator-(const Func other)const{return SortedPoints(*this) -= other;}
     SortedPoints operator*(const Func other)const{return SortedPoints(*this) *= other;}
@@ -692,7 +634,6 @@ public:
         }
         return *this;
     }
-#ifdef ____middle_version_of_math_h_____
     auto toLine()const
     {
 	SortedPoints<typename numX::NumberType,typename numY::NumberType> res;
@@ -720,7 +661,6 @@ public:
         }
         return res;
     }
-#endif
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class BiSortedPoints

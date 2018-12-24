@@ -227,7 +227,6 @@ namespace sigma_details{
 	    pow(get_val_d(F,v)-get_val(F,v),2)
 	)/numt(2);
     }
-#ifdef ____middle_version_of_math_h_____
     template<class numt,class Func,typename... Args>
     inline numt get_val(Func F,const abstract_value_with_uncertainty<numt> &v,Args... args)
     {
@@ -252,9 +251,7 @@ namespace sigma_details{
 	)/numt(2)
 	    +uncertainty_sqr([&v,&F](auto... a){return F(v.val(),a...);},args...);
     }
-#endif
 };
-#ifdef ____middle_version_of_math_h_____
 template<class numt,class Func,typename... Args>
 inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v,Args... args)
 {
@@ -263,16 +260,6 @@ inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncert
 	sqrt(sigma_details::uncertainty_sqr([F](auto...a){return F(a...);},v,args...))
     );
 }
-#else
-template<class numt,class Func>
-inline value<numt> func_with_uncertainty(Func F,const abstract_value_with_uncertainty<numt>&v)
-{
-    return value<numt>(
-	sigma_details::get_val([F](const numt&a){return F(a);},v),
-	sqrt(sigma_details::uncertainty_sqr([F](const numt&a){return F(a);},v))
-    );
-}
-#endif
 template<typename numt>
 inline std::istream &operator>>(std::istream &str, value<numt> &P)
 {

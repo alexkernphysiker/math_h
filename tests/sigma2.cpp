@@ -228,7 +228,6 @@ TEST(ext_value, v_func2_e)
     EXPECT_TRUE((a*b).Contains(F));
     ALMOST_EQ2((a*b).epsilon(),F.epsilon());
 }
-#ifdef ____middle_version_of_math_h_____
 TEST(ext_value, v_func2_e2)
 {
     const value_numeric_distr<> A(5,0.1),B(3,0.2);
@@ -253,4 +252,3 @@ TEST(ext_value, v_func4_e)
     EXPECT_TRUE(((a*b+c)/d).Contains(F));
     ALMOST_EQ2(((a*b+c)/d).epsilon(),F.epsilon());
 }
-#endif

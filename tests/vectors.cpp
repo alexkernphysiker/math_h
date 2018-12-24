@@ -179,7 +179,6 @@ TEST(Vector, scalar_prod3)
     EXPECT_EQ(1, (-Z()) * (-Z()));
 }
 
-#ifdef ____full_version_of_math_h_____
 TEST(Vector, remove_component)
 {
     EXPECT_EQ(vec(1,2).RemoveComponent<1>(),vec(2));
@@ -209,4 +208,3 @@ TEST(Vector, insert_component)
     EXPECT_EQ(vec(1,2,3).InsertComponent<3>(0),vec(1,2,0,3));
     EXPECT_EQ(vec(1,2,3).InsertComponent<4>(0),vec(1,2,3,0));
 }
-#endif

@@ -47,7 +47,6 @@ public:
     {
         return Vector(std::make_tuple(numt(0)));
     }
-#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline PlusOneComponent InsertComponent(const NumberType&c)const
     {
@@ -68,22 +67,6 @@ public:
 	static_assert(index == 1,"dimension index is out of range");
         return m_x;
     }
-#else
-    template<size_t index>
-    static Vector basis_vector()
-    {
-	static_assert(index>0,"dimension index is out of range");
-	if(index>1)throw Exception<Vector>("dimension index is out of range");
-        return Vector(std::make_tuple(numt(1)));
-    }
-    template<size_t index>
-    const numt &component()const
-    {
-	static_assert(index>0,"dimension index is out of range");
-	if(index>1)throw Exception<Vector>("dimension index is out of range");
-        return m_x;
-    }
-#endif
     inline const numt &x()const
     {
         return m_x;
@@ -98,18 +81,18 @@ public:
         m_x += second.m_x;
         return *this;
     }
-    Vector operator+(const Vector &second)const
+    Vector operator+(const Vector&second)const
     {
-        return Vector(std::make_tuple(m_x + second.m_x));
+        return Vector(std::make_tuple(m_x + second.___last_component()));
     }
     Vector &operator-=(const Vector &second)
     {
         m_x -= second.m_x;
         return *this;
     }
-    Vector operator-(const Vector &second)const
+    Vector operator-(const Vector&second)const
     {
-        return Vector(std::make_tuple(m_x - second.m_x));
+        return Vector(std::make_tuple(m_x - second.___last_component()));
     }
 
     Vector &operator*=(const numt &second)
@@ -117,9 +100,9 @@ public:
         m_x *= second;
         return *this;
     }
-    Vector operator*(const numt &second)const
+    auto operator*(const numt &second)const->Vector<1,decltype(x()*second)>
     {
-        return Vector(std::make_tuple(m_x * second));
+        return Vector<1,decltype(x()*second)>(std::make_tuple(m_x * second));
     }
     Vector &operator/=(const numt &second)
     {
@@ -130,9 +113,10 @@ public:
     {
         return Vector(std::make_tuple(m_x / second));
     }
-    numt operator*(const Vector &second)const
+    template<class numt2>
+    auto operator*(const Vector<1,numt2> &second)const->decltype(x()+second.x())
     {
-        return m_x * second.m_x;
+        return m_x * second.___last_component();
     }
     inline numt M_sqr()const
     {
@@ -191,7 +175,6 @@ public:
     {
         return Vector(MinusOneComponent::zero(), numt(0));
     }
-#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline static Vector basis_vector()
     {
@@ -226,24 +209,6 @@ public:
 	if constexpr(index==Dimensions)return PlusOneComponent(Vector(m_other,c),m_x);
 	if constexpr(index<Dimensions)return PlusOneComponent(m_other.template InsertComponent<index>(c),m_x);
     }
-#else
-    template<size_t index>
-    static Vector basis_vector()
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
-        if(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
-	else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
-    }
-    template<size_t index>
-    const numt &component()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	if(index>Dimensions)throw Exception<Vector>("dimension index is out of range");
-        if(index == Dimensions)return m_x;
-	else return m_other.template component<index>();
-    }
-#endif
     inline const numt &x()const
     {
         return component<1>();
@@ -262,9 +227,9 @@ public:
         m_other += second.m_other;
         return *this;
     }
-    Vector operator+(const Vector &second)const
+    Vector operator+(const Vector&second)const
     {
-        return Vector(m_other + second.m_other, m_x + second.m_x);
+        return Vector(m_other + second.___minus_one_component(), m_x + second.___last_component());
     }
     Vector &operator-=(const Vector &second)
     {
@@ -272,9 +237,9 @@ public:
         m_other -= second.m_other;
         return *this;
     }
-    Vector operator-(const Vector &second)const
+    Vector operator-(const Vector&second)const
     {
-        return Vector(m_other - second.m_other, m_x - second.m_x);
+        return Vector(m_other - second.___minus_one_component(), m_x - second.___last_component());
     }
 
     Vector &operator*=(const numt &second)
@@ -283,9 +248,9 @@ public:
         m_other *= second.m_other;
         return *this;
     }
-    Vector operator*(const numt &second)const
+    auto operator*(const numt &second)const->Vector<size,decltype(x() * second)>
     {
-        return Vector(m_other * second, m_x * second);
+        return Vector<size,decltype(x() * second)>(m_other * second, m_x * second);
     }
     Vector &operator/=(const numt &second)
     {
@@ -297,9 +262,10 @@ public:
     {
         return Vector(m_other / second, m_x / second);
     }
-    numt operator*(const Vector &second)const
+    template<class numt2>
+    auto operator*(const Vector<size,numt2> &second)const->decltype(x()*second.x())
     {
-        return (m_other * second.m_other) + (m_x * second.m_x);
+        return (m_other * second.___minus_one_component()) + (m_x * second.___last_component());
     }
     inline numt M_sqr()const
     {

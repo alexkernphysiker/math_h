@@ -182,7 +182,6 @@ TEST(value, func_val1)
      EXPECT_EQ(2 * A.val(), V.val());
      ALMOST_EQ(2 * A.uncertainty(), V.uncertainty());
 }
-#ifdef ____middle_version_of_math_h_____
 TEST(value, func_val2)
 {
      value<> A1(1, 0.1),A2(2, 0.5),
@@ -197,7 +196,6 @@ TEST(value, func_val3)
      EXPECT_EQ(((A1+A2)*A3).val(), V.val());
      ALMOST_EQ(((A1+A2)*A3).uncertainty(), V.uncertainty());
 }
-#endif
 TEST(value, wider)
 {
     value<> V1(1, 0.1), V2(2, 0.1), V3(1, 0.5);

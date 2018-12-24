@@ -69,10 +69,8 @@ TEST(Statistics,SamplingXY){
     for(size_t i=0;i<100000;i++){
 	S.Fill(randomIsotropic<2>()*M(),randomIsotropic<3>()*M());
     }
-#ifdef ____full_version_of_math_h_____
     EXPECT_EQ(S.CovX(),S.CovX().transponate());
     EXPECT_EQ(S.CovY(),S.CovY().transponate());
-#endif
     const auto&s11=S.CovXY().element<1,1>();
     const auto&s12=S.CovXY().element<1,2>();
     const auto&s13=S.CovXY().element<1,3>();

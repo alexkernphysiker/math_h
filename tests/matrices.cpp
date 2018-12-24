@@ -265,7 +265,6 @@ TEST(Matrix, AddRows)
     );
 
 }
-#ifdef ____full_version_of_math_h_____
 TEST(Matrix, determinant1)
 {
     const auto M=row(3.0);
@@ -697,7 +696,6 @@ TEST(Matrix, transponate)
         )
     );
 }
-#endif
 
 TEST(Matrix,diagonal)
 {

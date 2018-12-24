@@ -188,22 +188,12 @@ public:
     {
         return m_ld.phi();
     }
-#ifdef ____full_version_of_math_h_____
     template<size_t index = 1>
     inline const numt &th()const
     {
 	static_assert(index ==1,"dimension index is out of range");
         return m_theta;
     }
-#else
-    template<size_t index = 1>
-    const numt &th()const
-    {
-	static_assert(index >0,"dimension index is out of range");
-	if(index>1)throw Exception<Direction>("dimension index is out of range");
-        return m_theta;
-    }
-#endif
     Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     VType operator*(const numt &rho)const
     {
@@ -285,7 +275,6 @@ public:
     {
         return m_ld.phi();
     }
-#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const numt &th()const
     {
@@ -294,16 +283,6 @@ public:
         if constexpr(index == Thetas) return m_theta;
 	else return m_ld.template th<index>();
     }
-#else
-    template<size_t index>
-    const numt &th()const
-    {
-	static_assert(index > 0,"dimension index is out of range");
-	if(index > Thetas)throw Exception<Direction>("dimension index is out of range");
-        if(index == Thetas) return m_theta;
-	else return m_ld.template th<index>();
-    }
-#endif
     Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
     VType operator*(const numt &rho)const
     {

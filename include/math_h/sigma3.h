@@ -37,7 +37,6 @@ public:
     template<class numt2>
     inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_value(V.m_value)
 	    ,m_uncertainty(V.m_uncertainty),m_use_maximum_estimation(V.m_use_maximum_estimation){}
-#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const NumberType&uncertainty()const
     {
@@ -56,29 +55,6 @@ public:
 	static_assert(index == 1,"uncertainty index is out of range");
         m_use_maximum_estimation=v;
     }
-#else
-    template<size_t index>
-    const NumberType&uncertainty()const
-    {
-	static_assert(index>0,"uncertainty index is out of range");
-	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
-        return m_uncertainty;
-    }
-    template<size_t index>
-    inline bool using_maximum_estimation()const
-    {
-	static_assert(index>0,"uncertainty index is out of range");
-	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
-        return m_use_maximum_estimation;
-    }
-    template<size_t index>
-    inline void use_maximum_estimation(bool v=true)
-    {
-	static_assert(index>0,"uncertainty index is out of range");
-	if(index>1)throw Exception<Uncertainties>("uncertainty index is out of range");
-        m_use_maximum_estimation=v;
-    }
-#endif
     inline const NumberType&val()const{return m_value;}
     template<size_t index>
     inline value<NumberType> take_uncertainty_component()const
@@ -175,7 +151,6 @@ public:
     template<class numt2>
     inline Uncertainties(const Uncertainties<UncertaintiesCount,numt2>&V):m_lesser(V.m_lesser),
 	    m_uncertainty(V.m_uncertainty),m_use_maximum_estimation(V.m_use_maximum_estimation){}
-#ifdef ____full_version_of_math_h_____
     template<size_t index>
     inline const NumberType&uncertainty()const
     {
@@ -200,32 +175,6 @@ public:
         if constexpr(index == UncertaintiesCount)m_use_maximum_estimation=v;
 	else m_lesser.template use_maximum_estimation<index>(v);
     }
-#else
-    template<size_t index>
-    const NumberType&uncertainty()const
-    {
-	static_assert(index > 0,"uncertainty index is out of range");
-	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
-        if(index == UncertaintiesCount)return m_uncertainty;
-	else return m_lesser.template uncertainty<index>();
-    }
-    template<size_t index>
-    inline bool using_maximum_estimation()const
-    {
-	static_assert(index > 0,"uncertainty index is out of range");
-	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
-        if(index == UncertaintiesCount)return m_use_maximum_estimation;
-	else return m_lesser.template using_maximum_estimation<index>();
-    }
-    template<size_t index>
-    inline void use_maximum_estimation(bool v=true)
-    {
-	static_assert(index > 0,"uncertainty index is out of range");
-	if(index>UncertaintiesCount)throw Exception<Uncertainties>("uncertainty index is out of range");
-        if(index == UncertaintiesCount)m_use_maximum_estimation=v;
-	else m_lesser.template use_maximum_estimation<index>(v);
-    }
-#endif
     inline const NumberType&val()const{return m_lesser.val();}
     template<size_t index>
     inline value<NumberType> take_uncertainty_component()const

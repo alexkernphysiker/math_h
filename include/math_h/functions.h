@@ -20,6 +20,32 @@ public:
         return [this](Args... args)->result {return this->operator()(args...);};
     }
 };
+template<class result, typename... Args>
+class FunctionWrap:public IFunction<result,Args...>
+{
+private:
+    std::function<result(Args...)> func;
+public:
+    template<class FUNC>
+    FunctionWrap(FUNC F){func=[F](Args... args)->result{return F(args...);};}
+    virtual ~FunctionWrap() {}
+    virtual result operator()(Args...args)const override{return func(args...);}
+};
+
+template<class numtx=double,class numty=numtx>
+class Opr{
+private:
+    FunctionWrap<numty,const IFunction<numty,const numtx&>&> m_func;
+public:
+    template<class OPR>Opr(OPR O):m_func(O){}
+    virtual ~Opr(){}
+    inline numty operator*(const IFunction<numty,const numtx&>& f)const{return m_func(f);}
+    template<class FUNC>
+    inline numty operator*(FUNC F)const{
+	FunctionWrap<numty,const numtx&> f(F);
+	return operator*(static_cast<const IFunction<numty,const numtx&>&>(f));
+    }
+};
 
 //constants
 template<class numt = double>
@@ -63,7 +89,6 @@ numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
 {
     return 1.0 / (1.0 + exp((x - X_border) / diffuse));
 }
-#ifndef ____full_version_of_math_h_____
 template<unsigned int P,int index_offset = 0, class numt, class indexer>
 inline numt Polynom(const numt &x, const indexer&p)
 {
@@ -75,14 +100,5 @@ inline numt Polynom(const numt &x, const indexer&p)
     }
     return res;
 }
-#else
-template<unsigned int P, int index_offset = 0, class numt, class indexer>
-inline numt Polynom(const numt &x, const indexer&p)
-{
-    static_assert(index_offset >= 0,"Polynom offset index is out of range");
-    if constexpr(P==0) return p[index_offset];
-    else return Polynom<P-1,index_offset+1,numt,indexer>(x, p)*x+p[index_offset];
-}
-#endif
 };
 #endif

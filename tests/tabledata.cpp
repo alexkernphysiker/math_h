@@ -189,7 +189,6 @@ TEST(SortedPoints, WeightedAvr){
         EXPECT_EQ(i, chain[i].X());
         EXPECT_EQ(double(i)/2, chain[i].Y().val());
     }
-#ifdef ____full_version_of_tabledata_h_____
     const auto chain2=chain+2;
     for (size_t i = 0; i < chain2.size(); i++) {
         EXPECT_EQ(i, chain2[i].X());
@@ -210,7 +209,6 @@ TEST(SortedPoints, WeightedAvr){
         EXPECT_EQ(i, chain5[i].X());
         EXPECT_EQ(double(i)/4, chain5[i].Y().val());
     }
-#endif
 }
 {
     SortedPoints<double,WeightedAverage<>> chain=Points<double,value<>>{{0,{0,1}},{1,{1,1}},{2,{2,1}}};

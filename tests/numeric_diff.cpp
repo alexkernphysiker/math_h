@@ -10,12 +10,17 @@ using namespace MathTemplates;
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 
 TEST(der1,test){
-    EXPECT_EQ(0,der1<>(0.1)([](const double&){return 5.0;},3.0));
-    EXPECT_EQ(2,der1<>(0.1)([](const double&x){return 2.0*x;},3.0));
-    EXPECT_EQ(0,der1<>(0.1)([](const double&x){return 2.0*x*x;},0.0));
+    EXPECT_EQ(0,num_der1(3.0,0.1)*[](const double&)->double{return 5.0;});
+    EXPECT_EQ(2,num_der1(3.0,0.1)*[](const double&x)->double{return 2.0*x;});
+    EXPECT_EQ(0,num_der1(0.0,0.1)*[](const double&x)->double{return 2.0*x*x;});
 }
 TEST(der2,test){
-    EXPECT_EQ(0,der2<>(0.1)([](const double&){return 5.0;},3.0));
-    EXPECT_EQ(0,der2<>(0.1)([](const double&x){return 2.0*x;},3.0));
-    EXPECT_EQ(2.0,der2<>(0.1)([](const double&x){return x*x;},0.0));
+    EXPECT_EQ(0,num_der2(3.0,0.1)*[](const double&)->double{return 5.0;});
+    EXPECT_EQ(0,num_der2(3.0,0.1)*[](const double&x)->double{return 2.0*x;});
+    EXPECT_EQ(2.0,num_der2(0.0,0.1)*[](const double&x)->double{return x*x;});
 }
+// TEST(nabla,test){
+//     const auto F=[](const Vector<>&x){return x.M_sqr();};
+//     const auto G=nabla<>(Zero(),0.1);
+//     EXPECT_EQ(0,(G*F).M());
+// }
