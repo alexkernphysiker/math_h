@@ -39,13 +39,12 @@ If you have your own git repository with cmake project you can add this reposito
 	
 Then add to your project's CMakeLists.txt
 
-	add_compile_options(--std=c++17) #the most recommended compiler mode
+	add_compile_options(--std=c++17)
 	add_subdirectory(math_h)
 	include_directories(${MATH_H_INC})
 	
 Then commit your changes.
 
-This library still can be compiled with c++11 or c++14 compiler but some features will be absent.
 
 Header files
 ============
