@@ -40,4 +40,12 @@ TEST(nabla,test){
     EXPECT_EQ( 1,G2.x());
     EXPECT_EQ( 1,G2.y());
     EXPECT_EQ(-1,G2.z());
+    const auto F3=[](const Vector<>&){return 0.0;};
+    const auto G3=nabla(Zero(),0.1)*F3;
+    EXPECT_EQ(0,G3.x());
+    EXPECT_EQ(0,G3.y());
+    EXPECT_EQ(0,G3.z());
+    std::function<double(const Vector<>&)> f1=F,f2=F2,f3=F3;
+    const auto div=nabla(Zero(),0.1)*vec(f1,f2,f3);
+    EXPECT_EQ(1,div);
 }

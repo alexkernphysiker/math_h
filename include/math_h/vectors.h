@@ -115,7 +115,7 @@ public:
         return Vector(std::make_tuple(m_x / second));
     }
     template<class numt2>
-    auto operator*(const Vector<1,numt2> &second)const->decltype(x()+second.x())
+    auto operator*(const Vector<1,numt2> &second)const->decltype(x()*second.x())
     {
         return m_x * second.___last_component();
     }
