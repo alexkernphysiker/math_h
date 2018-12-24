@@ -23,10 +23,5 @@ namespace MathTemplates
 	    return (y1-y2*numt(2)+y3)/(delta*delta);
 	});
     }
-//     template<size_t size=3,class numt=double>
-//     Vector<size,Opr<numt>> nabla(const Vector<size,numt>&X,const numt&delta){
-// 	if constexpr(size==1)return vec(num_der1(X.x(),delta));
-// 	else return nabla<size-1,numt>(X.template RemoveComponent<1>(),delta).template InsertComponent<1>(num_der1(X.x(),delta));
-//     }
 };
 #endif
