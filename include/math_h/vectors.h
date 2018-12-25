@@ -100,11 +100,6 @@ public:
         m_x *= second;
         return *this;
     }
-    template<class numt2>
-    auto operator*(const numt2 &second)const->Vector<1,decltype(x()*second)>
-    {
-        return Vector<1,decltype(x()*second)>(std::make_tuple(m_x * second));
-    }
     Vector &operator/=(const numt &second)
     {
         m_x /= second;
@@ -115,9 +110,18 @@ public:
         return Vector(std::make_tuple(m_x / second));
     }
     template<class numt2>
-    auto operator*(const Vector<1,numt2> &second)const->decltype(x()*second.x())
+    inline auto operator*(const Vector<1,numt2> &second)const->decltype(x()*second.x())
     {
         return m_x * second.___last_component();
+    }
+    template<class numt2>
+    inline auto operator*(const numt2&second)const->Vector<1,decltype(x()*second)>
+    {
+        return Vector<1,decltype(x()*second)>(std::make_tuple(x()*second));
+    }
+    template<typename... Args>
+    inline auto For(Args... args)const{
+	return vec(m_x(args...));
     }
     inline numt M_sqr()const
     {
@@ -249,11 +253,6 @@ public:
         m_other *= second.m_other;
         return *this;
     }
-    template<class numt2>
-    auto operator*(const numt2 &second)const->Vector<size,decltype(x()*second)>
-    {
-        return Vector<size,decltype(x()*second)>(m_other * second, m_x * second);
-    }
     Vector &operator/=(const numt &second)
     {
         m_x /= second;
@@ -265,9 +264,18 @@ public:
         return Vector(m_other / second, m_x / second);
     }
     template<class numt2>
-    auto operator*(const Vector<size,numt2> &second)const->decltype(x()*second.x())
+    inline auto operator*(const Vector<size,numt2> &second)const->decltype(x()*second.x())
     {
         return (m_other * second.___minus_one_component()) + (m_x * second.___last_component());
+    }
+    template<class numt2>
+    inline auto operator*(const numt2 &second)const->Vector<size,decltype(x()*second)>
+    {
+        return Vector<size,decltype(x()*second)>(m_other * second, m_x * second);
+    }
+    template<typename... Args>
+    inline auto For(Args... args)const{
+	return Vector<Dimensions,decltype(m_x(args...))>(m_other.For(args...),m_x(args...));
     }
     inline numt M_sqr()const
     {

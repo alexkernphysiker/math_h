@@ -26,33 +26,52 @@ class FunctionWrap:public IFunction<result,Args...>
 private:
     std::function<result(Args...)> func;
 public:
+    FunctionWrap(const FunctionWrap&source):func(source.func){}
+    FunctionWrap(std::function<result(Args...)>source):func(source){}
+    FunctionWrap(const result&v):FunctionWrap([v](Args...){return v;}){}
+    FunctionWrap(int v):FunctionWrap(result(v)){}
     template<class FUNC>
     FunctionWrap(FUNC F){func=[F](Args... args)->result{return F(args...);};}
     virtual ~FunctionWrap() {}
     virtual result operator()(Args...args)const override{return func(args...);}
+    FunctionWrap operator+(const FunctionWrap&second)const{
+	FunctionWrap first(*this);
+	return FunctionWrap([first,second](Args... args){return first(args...)+second(args...);});
+    }
+    FunctionWrap operator-(const FunctionWrap&second)const{
+	FunctionWrap first(*this);
+	return FunctionWrap([first,second](Args... args){return first(args...)-second(args...);});
+    }
 };
+template<class result, typename... Args>
+FunctionWrap<result,Args...>operator-(const FunctionWrap<result,Args...>&source){
+    return FunctionWrap<result,Args...>([source](Args...args){return -source(args...);});
+}
 
-template<class numtx=double,class numty=numtx>
+template<class numty=double,class numtx=FunctionWrap<numty,const numty&>>
 class Opr{
 private:
-    FunctionWrap<numty,const IFunction<numty,const numtx&>&> m_func;
+    FunctionWrap<numty,const numtx&> m_func;
 public:
-    Opr(const numty&v):m_func([v](const IFunction<numty,const numtx&>&){return v;}){}
+    Opr(const FunctionWrap<numty,const numtx&>&source):m_func(source){}
+    Opr(const Opr&source):m_func(source.m_func){}
+    Opr(const numty&v):m_func([v](const numtx&){return v;}){}
     Opr(int v):Opr(numty(v)){}
     template<class OPR>Opr(OPR O):m_func(O){}
     virtual ~Opr(){}
-    inline numty operator*(const IFunction<numty,const numtx&>& f)const{return m_func(f);}
-    template<class FUNC>
-    inline numty operator*(FUNC F)const{
-	FunctionWrap<numty,const numtx&> f(F);
-	return operator*(static_cast<const IFunction<numty,const numtx&>&>(f));
+    numty operator*(const numtx& f)const{return m_func(f);}
+    Opr operator+(const Opr&second)const{
+	Opr first(*this);
+	return Opr([first,second](const numtx&F){return (first*F)+(second*F);});
+    }
+    Opr operator-(const Opr&second)const{
+	Opr first(*this);
+	return Opr([first,second](const numtx&F){return (first*F)-(second*F);});
     }
 };
-template<class numtx,class numty>
-inline Opr<numtx,numty>operator-(const Opr<numtx,numty>&source){
-    return Opr<numtx,numty>([source](const IFunction<numty,const numtx&>&F){
-	return -(source*F);
-    });
+template<class numty,class numtx>
+Opr<numty,numtx>operator-(const Opr<numty,numtx>&source){
+    return Opr<numty,numtx>([source](const numtx&F){return -(source*F);});
 }
 //constants
 template<class numt = double>
