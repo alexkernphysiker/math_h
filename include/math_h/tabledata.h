@@ -10,6 +10,7 @@
 #include <map>
 #include "error.h"
 #include "sigma.h"
+#include "functions.h"
 namespace MathTemplates
 {
 namespace table_data_details
@@ -316,7 +317,7 @@ template<class numX = double, class numY = numX>
 class SortedPoints: public SortedChain<point<numX, numY>>
 {
 public:
-    typedef std::function<numY(const numX &)> Func;
+    typedef IFunction<numY,const numX &> Func;
     typedef point<numX,numY> Point;
     SortedPoints() {}
     template<class numY2>
@@ -334,22 +335,24 @@ public:
 	    SortedChain<point<numX, numY>>::operator<<(make_point(a,b));
 	}
     }
-    SortedPoints(const Func f, const SortedChain<numX> &chain)
+    SortedPoints(const Func&f, const SortedChain<numX> &chain)
     {
         for (const numX&x : chain)
             SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x, f(x)));
     }
-    SortedPoints(const Func f, const Chain<numX> &chain)
+    SortedPoints(const Func&f, const Chain<numX> &chain)
     {
         for (const numX&x : chain)
             SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(x, f(x)));
     }
     template<class numY2>
-    SortedPoints(const Func f,const SortedChain<point<numX, numY2>> &chain)
+    SortedPoints(const Func&f,const SortedChain<point<numX, numY2>> &chain)
     {
         for (const auto&p : chain)
             SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(p.X(), f(p.X())));
     }
+    template<class FUNC,class CHAIN>
+    SortedPoints(FUNC F,CHAIN c):SortedPoints(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
     virtual ~SortedPoints() {}
     SortedPoints Clone()const
     {
@@ -420,7 +423,7 @@ public:
         }
         return *this;
     }
-    SortedPoints &operator+=(const Func f)
+    SortedPoints &operator+=(const Func&f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
             Bin(i)=Bin(i)+f(Bin(i).X());
@@ -442,7 +445,7 @@ public:
         }
         return *this;
     }
-    SortedPoints &operator-=(const Func f)
+    SortedPoints &operator-=(const Func&f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
             Bin(i)=Bin(i)-f(Bin(i).X());
@@ -464,7 +467,7 @@ public:
         }
         return *this;
     }
-    SortedPoints &operator*=(const Func f)
+    SortedPoints &operator*=(const Func&f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
             Bin(i)=Bin(i)*f(Bin(i).X());
@@ -486,7 +489,7 @@ public:
         }
         return *this;
     }
-    SortedPoints &operator/=(const Func f)
+    SortedPoints &operator/=(const Func&f)
     {
         for (size_t i = 0, n = this->size(); i < n; i++)
             Bin(i)=Bin(i)/f(Bin(i).X());
@@ -586,10 +589,10 @@ public:
         }
         return res;
     }
-    SortedPoints operator+(const Func other)const{return SortedPoints(*this) += other;}
-    SortedPoints operator-(const Func other)const{return SortedPoints(*this) -= other;}
-    SortedPoints operator*(const Func other)const{return SortedPoints(*this) *= other;}
-    SortedPoints operator/(const Func other)const{return SortedPoints(*this) /= other;}
+    SortedPoints operator+(const Func&other)const{return SortedPoints(*this) += other;}
+    SortedPoints operator-(const Func&other)const{return SortedPoints(*this) -= other;}
+    SortedPoints operator*(const Func&other)const{return SortedPoints(*this) *= other;}
+    SortedPoints operator/(const Func&other)const{return SortedPoints(*this) /= other;}
 
     //In case of types with uncertainty
     SortedPoints CloneEmptyBins()const

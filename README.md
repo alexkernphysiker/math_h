@@ -77,6 +77,10 @@ Includes and classes provided
 <math_h/functions.h>
 
 	IFunction - template class providing a function-like interface with operator()
+	
+	FunctionWrap - inherits IFunction and provides template constructor for all function-like objects
+
+	Opr - template class providing mathematical operators acting on functions. Applying an operator is provided via * operator
 
 	PI,E - template functions returning pi and e numbers
 
@@ -218,3 +222,12 @@ Includes and classes provided
 
 	Poisson() - creates generator implementing Poisson distribution
 
+<math_h/numeric_diff.h>
+
+	num_der1 - template function creatincg numerically differentiating operator
+
+	num_der2 - template function creatincg numerically differentiating operator of the second order
+
+	num_Pder1 - template function for partial derivative operator
+
+	nabla - template function for vector of partial derivative operators that is suitable for calculating gradient of scalar function and divergence/rotor if you have vector field represented as Vector of functions

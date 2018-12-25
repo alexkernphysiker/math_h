@@ -8,7 +8,7 @@
 namespace MathTemplates
 {
 template<class numX = double, class numY = numX>
-class LinearInterpolation: public SortedPoints<numX, numY>, public IFunction<numY, const numX &>
+class LinearInterpolation: public IFunction<numY, const numX &>,public SortedPoints<numX, numY>
 {
 public:
     typedef point<numX, numY> Point;
@@ -20,12 +20,15 @@ public:
         : SortedPoints<numX, numY>(points) {}
     LinearInterpolation(const SortedChain<point<numX, numY>> &points)
         : SortedPoints<numX, numY>(points) {}
-    LinearInterpolation(const Func f, const SortedChain<numX> &chain)
+    LinearInterpolation(const Func&f, const SortedChain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
-    LinearInterpolation(const Func f, const Chain<numX> &chain)
+    LinearInterpolation(const Func& f, const Chain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
     LinearInterpolation(const SortedPoints<numX, numY> &source)
         : SortedPoints<numX, numY>(source) {}
+    template<class FUNC,class CHAIN>
+    LinearInterpolation(FUNC F,CHAIN c):LinearInterpolation(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
+
     virtual ~LinearInterpolation() {}
     virtual numY operator()(const numX &x)const override
     {
@@ -52,7 +55,7 @@ public:
     }
 };
 template<class numtX = double, class numtY = numtX, class numtZ = numtY>
-class BiLinearInterpolation: public BiSortedPoints<numtX, numtY, numtZ>, public IFunction<numtZ, const numtX &, const numtY &>
+class BiLinearInterpolation:public IFunction<numtZ, const numtX &, const numtY &>,public BiSortedPoints<numtX, numtY, numtZ>
 {
 public:
     BiLinearInterpolation(const Chain<numtX> &X, const Chain<numtY> &Y)
@@ -88,7 +91,7 @@ public:
 };
 namespace interpolation_details{
 template<class numX = double, class numY = numX>
-class IntegratedLinearInterpolation: public SortedPoints<numX, numY>, public IFunction<numY, const numX &>
+class IntegratedLinearInterpolation:public IFunction<numY, const numX &>, public SortedPoints<numX, numY>
 {
 public:
     typedef typename SortedPoints<numX, numY>::Func Func;
@@ -118,7 +121,7 @@ public:
     }
 };
 template<class numX = double, class numY = numX>
-class ReverseIntegratedLinearInterpolation: public SortedPoints<numY, numX>, public IFunction<numX, const numY &>
+class ReverseIntegratedLinearInterpolation:public IFunction<numX, const numY &>,public SortedPoints<numY, numX>
 {
 public:
     typedef typename SortedPoints<numX, numY>::Func Func;

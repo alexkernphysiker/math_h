@@ -38,8 +38,12 @@ public:
         RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt>(source)) {}
     RandomValueTableDistr(const Points<numt>&source):
         RandomValueTableDistr(LinearInterpolation<numt>(source)) {}
-    RandomValueTableDistr(const std::function<numt(numt)> distribution_density, const SortedChain<numt> &chain):
+    RandomValueTableDistr(const IFunction<numt,const numt&>& distribution_density, const SortedChain<numt> &chain):
         RandomValueTableDistr(LinearInterpolation<numt>(distribution_density, chain)) {}
+    template<class FUNC>
+    RandomValueTableDistr(FUNC F,const SortedChain<numt> &c):
+	RandomValueTableDistr(static_cast<const IFunction<numt,const numt&>&>(FunctionWrap<numt,const numt&>(F)),c){}
+
     virtual ~RandomValueTableDistr() {}
     virtual numt operator()()const override
     {
