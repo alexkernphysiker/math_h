@@ -2,12 +2,10 @@
 // LGPLv3 license
 #include <gtest/gtest.h>
 #include <math_h/numeric_diff.h>
+#include <math_h/vectortransformations.h>
 //this file contains unit tests for sigma.h
 using namespace std;
 using namespace MathTemplates;
-#define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
-#define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
-#define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 
 TEST(numeric_diff,der1){
     EXPECT_EQ(0,num_der1(3.0,0.1)*[](const double&)->double{return 5.0;});
@@ -58,5 +56,13 @@ TEST(numeric_diff,nabla2){
     const double d=nabla(x,0.1)*vec(f1,f2,f3),
 	d2=num_Pder1(x,X()*0.1)*f1+num_Pder1(x,Y()*0.1)*f2+num_Pder1(x,Z()*0.1)*f3;
     EXPECT_EQ(d,d2);
-
+}
+TEST(numeric_diff,nabla3){
+    std::function<double(const Vector<>&)> 
+	f1=[](const Vector<>&r){return exp(-r.x()*r.x());},
+	f2=[](const Vector<>&r){return exp(-r.y()*r.y());},
+	f3=[](const Vector<>&r){return exp(-r.z()*r.z());};
+    EXPECT_EQ(0,(nabla(vec(1.,1.,0.),0.1)^vec(f1,f2,f3)).M());
+    EXPECT_EQ(0,(nabla(vec(1.,0.,1.),0.1)^vec(f1,f2,f3)).M());
+    EXPECT_EQ(0,(nabla(vec(0.,1.,1.),0.1)^vec(f1,f2,f3)).M());
 }

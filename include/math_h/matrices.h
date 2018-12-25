@@ -27,8 +27,8 @@ public:
     typedef Matrix<RowsCount+1,linetype> PlusOneRow;
     typedef Vector<1, NumberType> DefaultColumnType;
     typedef linetype DefaultRowType;
-    template<class numt2=NumberType> using ColumnType=Vector<1, numt2>;
-    template<class numt2=NumberType> using RowType=Vector<linetype::Dimensions,numt2>;
+    template<class numt2> using ColumnType=Vector<RowsCount, numt2>;
+    template<class numt2> using RowType=Vector<ColumnsCount,numt2>;
 private:
     DefaultRowType m_row;
 protected:
@@ -161,19 +161,19 @@ public:
 	return m_row.x();
     }
     template<class numt2>
-    inline DefaultColumnType operator*(const RowType<numt2> &v)const
+    inline auto operator*(const RowType<numt2> &v)const->ColumnType<decltype(element<1,1>()*v.template component<1>())>
     {
         return m_row * v;
     }
     template<class numt2>
-    inline Matrix<RowsCount, Vector<1, NumberType>>
-            operator*(const Matrix<ColumnsCount, Vector<1, numt2>> &B)const
+    inline auto operator*(const Matrix<ColumnsCount, Vector<1, numt2>> &B)const->
+	    Matrix<RowsCount, Vector<1, decltype(element<1,1>()*B.template element<1,1>())>>
     {
-        return vec(m_row * B.___last_column());
+        return Matrix<RowsCount, Vector<1, decltype(element<1,1>()*B.template element<1,1>())>>(vec(m_row * B.___last_column()));
     }
     template<size_t third_size,class numt2>
-    inline Matrix<RowsCount, Vector<third_size, NumberType>>
-	operator*(const Matrix<ColumnsCount, Vector<third_size, numt2>> &B)const
+    inline auto	operator*(const Matrix<ColumnsCount, Vector<third_size, numt2>> &B)const->
+	Matrix<RowsCount, Vector<third_size, decltype(element<1,1>()*B.template element<1,1>())>>
     {
         return operator*(B.___minus_one_column()).___add_column(operator*(B.___last_column()));
     }
@@ -242,8 +242,8 @@ public:
     typedef typename MinusOneRow::MinusOneColumn Minor;
     typedef Vector<sizef, NumberType> DefaultColumnType;
     typedef linetype DefaultRowType;
-    template<class numt2=NumberType> using ColumnType=Vector<1, numt2>;
-    template<class numt2=NumberType> using RowType=Vector<linetype::Dimensions,numt2>;
+    template<class numt2> using ColumnType=Vector<RowsCount, numt2>;
+    template<class numt2> using RowType=Vector<ColumnsCount,numt2>;
 private:
     MinusOneRow m_other_rows;
     DefaultRowType m_row;
@@ -431,24 +431,27 @@ public:
 	return m_row.template component<RowsCount>()+m_other_rows.trace();
     }
     template<class numt2>
-    inline DefaultColumnType operator*(const RowType<numt2> &v)const
+    inline auto operator*(const RowType<numt2> &v)const->ColumnType<decltype(element<1,1>()*v.template component<1>())>
     {
-        return DefaultColumnType(typename MinusOneRow::DefaultColumnType(m_other_rows * v), NumberType(m_row * v));
+        return ColumnType<decltype(element<1,1>()*v.template component<1>())>(
+	    typename MinusOneRow::template ColumnType<decltype(element<1,1>()*v.template component<1>())>(m_other_rows * v),
+	    decltype(element<1,1>()*v.template component<1>())(m_row * v)
+	);
     }
     template<class numt2>
-    Matrix<RowsCount, Vector<1, NumberType>>
-	operator*(const Matrix<ColumnsCount, Vector<1, numt2>> &B)const
+    auto operator*(const Matrix<ColumnsCount, Vector<1, numt2>> &B)const->
+	    Matrix<RowsCount, Vector<1,decltype(element<1,1>()*B.template element<1,1>())>>
     {
         const auto P = m_other_rows * B;
         const auto C = vec(m_row * B.___last_column());
-        return Matrix<RowsCount, Vector<1, NumberType>>(P, C);
+        return Matrix<RowsCount, Vector<1,decltype(element<1,1>()*B.template element<1,1>())>>(P, C);
     }
     template<size_t third_size, class numt2>
-    Matrix<RowsCount, Vector<third_size, NumberType>>
-	operator*(const Matrix<ColumnsCount, Vector<third_size, numt2>> &B)const
+    auto operator*(const Matrix<ColumnsCount, Vector<third_size, numt2>> &B)const->
+	Matrix<RowsCount, Vector<third_size, decltype(element<1,1>()*B.template element<1,1>())>>
     {
         const auto P = operator*(B.___minus_one_column());
-        const DefaultColumnType C = operator*(B.___last_column());
+        const ColumnType<decltype(element<1,1>()*B.template element<1,1>())> C = operator*(B.___last_column());
         return P.AddColumn(C);
     }
     template<class otherlinetype>

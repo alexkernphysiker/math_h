@@ -37,6 +37,8 @@ class Opr{
 private:
     FunctionWrap<numty,const IFunction<numty,const numtx&>&> m_func;
 public:
+    Opr(const numty&v):m_func([v](const IFunction<numty,const numtx&>&){return v;}){}
+    Opr(int v):Opr(numty(v)){}
     template<class OPR>Opr(OPR O):m_func(O){}
     virtual ~Opr(){}
     inline numty operator*(const IFunction<numty,const numtx&>& f)const{return m_func(f);}
@@ -46,7 +48,12 @@ public:
 	return operator*(static_cast<const IFunction<numty,const numtx&>&>(f));
     }
 };
-
+template<class numtx,class numty>
+inline Opr<numtx,numty>operator-(const Opr<numtx,numty>&source){
+    return Opr<numtx,numty>([source](const IFunction<numty,const numtx&>&F){
+	return -(source*F);
+    });
+}
 //constants
 template<class numt = double>
 inline numt PI(){return 3.1415926;}
