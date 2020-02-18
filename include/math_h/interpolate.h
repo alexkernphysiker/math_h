@@ -127,10 +127,10 @@ public:
     typedef typename SortedPoints<numX, numY>::Func Func;
     SortedPoints<numX, numY> raw;
 public:
-    ReverseIntegratedLinearInterpolation(const LinearInterpolation<numX, numY> &source)
-        : SortedPoints<numY, numX>(Int_Trapez_Table_PositiveStrict(source).TransponateAndSort()), raw(source) {}
-    ReverseIntegratedLinearInterpolation(const ReverseIntegratedLinearInterpolation<numX, numY> &source)
-        : SortedPoints<numY, numX>(source), raw(source.raw) {}
+    ReverseIntegratedLinearInterpolation(LinearInterpolation<numX, numY> &&source)
+        : SortedPoints<numY, numX>(Int_Trapez_Table_PositiveStrict(source).TransponateAndSort()), raw(std::move(source)) {}
+    ReverseIntegratedLinearInterpolation(ReverseIntegratedLinearInterpolation<numX, numY> &&source)
+        : SortedPoints<numY, numX>(std::move(source)), raw(std::move(source.raw)) {}
     virtual ~ReverseIntegratedLinearInterpolation() {}
     virtual numX operator()(const numY &y)const override
     {

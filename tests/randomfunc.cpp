@@ -8,7 +8,7 @@
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.0001)
-#define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.01)
+#define ALMOST_EQ2(a,b) EXPECT_TRUE(abs(a-b)<0.02)
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<1.0)
 TEST(RandomGenerators,Uniform)
 {
@@ -23,16 +23,11 @@ TEST(RandomGenerators,Uniform)
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }
-TEST(RandomGenerators,RandomValueTableDistr_init_copy)
+TEST(RandomGenerators,RandomValueTableDistr_init)
 {
     RandomValueTableDistr<> R = Points<>{{0.0, 0.25}, {0.5, 0.75}, {1.0, 0.25}};
     for (int i = 0; i < 1000; i++) {
         double r = R();
-        EXPECT_TRUE((r >= 0) && (r <= 1));
-    }
-    auto R2 = R;
-    for (int i = 0; i < 1000; i++) {
-        double r = R2();
         EXPECT_TRUE((r >= 0) && (r <= 1));
     }
 }

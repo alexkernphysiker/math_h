@@ -51,6 +51,24 @@ private:
 public:
     const Chain<comparable>&operator()()const{return data;}
     SortedChain() {}
+    SortedChain(SortedChain&& points)
+    {
+        data=std::move(points.data);
+        points.data={};
+    }
+    SortedChain&operator=(SortedChain&& points)
+    {
+        data=std::move(points.data);
+        points.data={};
+        return *this;
+    }
+    SortedChain clone()const
+    {
+        SortedChain res;
+        for (const auto &p : data)
+            res.data.push_back(comparable(p));
+        return res;
+    }
     template<class comparable2>
     SortedChain(const SortedChain<comparable2> &points)
     {
@@ -320,6 +338,13 @@ public:
     typedef IFunction<numY,const numX &> Func;
     typedef point<numX,numY> Point;
     SortedPoints() {}
+    SortedPoints(SortedChain<point<numX, numY>>&& points):SortedChain<point<numX, numY>>(std::move(points)){}
+    SortedPoints(SortedPoints&& points):SortedChain<point<numX, numY>>(std::move(points)){}
+    SortedPoints&operator=(SortedChain<point<numX, numY>>&& points)
+    {
+        SortedChain<point<numX, numY>>::operator=(std::move(points));
+        return *this;
+    }
     template<class numY2>
     SortedPoints(const Points<numX, numY2> &chain)
     {
@@ -352,7 +377,7 @@ public:
             SortedChain<point<numX, numY>>::operator<<(point<numX, numY>(p.X(), f(p.X())));
     }
     template<class FUNC,class CHAIN>
-    SortedPoints(FUNC F,CHAIN c):SortedPoints(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
+    SortedPoints(FUNC F,const CHAIN&c):SortedPoints(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
     virtual ~SortedPoints() {}
     SortedPoints Clone()const
     {
@@ -692,23 +717,30 @@ public:
         return m_y_axis;
     }
     template<typename...Args>
-    BiSortedPoints(const SortedChain<numtX> &X, const SortedChain<numtY> &Y,Args...args)
-        : m_x_axis(X), m_y_axis(Y)
+    BiSortedPoints(SortedChain<numtX> &&X, SortedChain<numtY> &&Y,Args...args)
+        : m_x_axis(std::move(X)), m_y_axis(std::move(Y))
     {
         init(args...);
     }
     BiSortedPoints(): BiSortedPoints({}, {}) {}
-    BiSortedPoints(const BiSortedPoints &source): m_x_axis(source.X()), m_y_axis(source.Y())
+    BiSortedPoints(BiSortedPoints &&source)
+        : m_x_axis(std::move(source.m_x_axis)), 
+        m_y_axis(std::move(source.m_y_axis))
     {
-        for (size_t i = 0, I = source.m_data.size(); i < I; i++) {
-            m_data.push_back(Chain<numtZ>());
-            for (const auto &item : source.m_data[i])
-                m_data[i].push_back(item);
-        }
+        m_data=std::move(source.m_data);
+        source.m_data={};
     }
-    BiSortedPoints Clone()const
+    BiSortedPoints clone()const
     {
-        return BiSortedPoints(*this);
+        BiSortedPoints res();
+        res.m_x_axis=m_x_axis.clone();
+        res.m_y_axis=m_y_axis.clone();
+        for (size_t i = 0, I = m_data.size(); i < I; i++) {
+            res.m_data.push_back(Chain<numtZ>());
+            for (const auto &item : m_data[i])
+                res.m_data[i].push_back(item);
+        }
+        return res;
     }
     virtual ~BiSortedPoints() {}
     typedef typename Chain<Chain<numtZ>>::const_iterator const_iterator;
@@ -812,7 +844,7 @@ public:
 		max = this->Y()[i].max(),two=2;
             new_y << (numtY((max + min) / two, (max - min) / two));
         }
-        BiSortedPoints res(new_x, new_y);
+        BiSortedPoints res(new_x.clone(), new_y.clone());
         for (size_t i = 0; i < new_x.size(); i++)for (size_t j = 0; j < new_y.size(); j++) {
                 auto v = numtZ(0).val();
                 for (size_t ii = 0; ii < sc_x; ii++) {
@@ -873,18 +905,18 @@ public:
     inline hist_avr_calculator(const SortedPoints<numtX, value<numtY>>&source)
     :SortedPoints<numtX, WeightedAverage<numtY>>(source){}
     template<typename...Args>
-    inline hist_avr_calculator(const SortedPoints<numtX, value<numtY>>&source,Args...args)
-    :SortedPoints<numtX, WeightedAverage<numtY>>(args...){
+    inline hist_avr_calculator(const SortedPoints<numtX, value<numtY>>&source,const Args&...args)
+    :hist_avr_calculator(args...){
 	SortedPoints<numtX, WeightedAverage<numtY>>::leftArrow(source);
     }
 };
 template<class numtX, class numtY,typename...Args>
-inline hist_avr_calculator<numtX,numtY> hist_avr(const SortedPoints<numtX, value<numtY>>&source,Args...args)
+inline hist_avr_calculator<numtX,numtY> hist_avr(const SortedPoints<numtX, value<numtY>>&source,const Args&...args)
 {
     return hist_avr_calculator<numtX,numtY>(source,args...);
 }
 template<class numtX, class numtY,typename...Args>
-inline hist_avr_calculator<numtX,numtY> hist_avr(const Points<numtX, value<numtY>>&source,Args...args)
+inline hist_avr_calculator<numtX,numtY> hist_avr(const Points<numtX, value<numtY>>&source,const Args&...args)
 {
     return hist_avr_calculator<numtX,numtY>(SortedPoints<numtX, value<numtY>>(source),args...);
 }
@@ -922,12 +954,12 @@ class Distribution1D: public SortedPoints<value<numtX>, value<numtY>>
 private:
     unsigned long long counter;
 public:
-    Distribution1D(const Chain<value<numtX>> &data)
+    Distribution1D(const Chain<value<numtX>>&data)
 	:SortedPoints<value<numtX>, value<numtY>>([](const value<numtX>&){return std_error(numtY(0));},data)
     {
         counter = 0;
     }
-    Distribution1D(const SortedChain<value<numtX>> &data)
+    Distribution1D(const SortedChain<value<numtX>>&data)
 	:SortedPoints<value<numtX>, value<numtY>>([](const value<numtX>&){return std_error(numtY(0));},data)
     {
         counter = 0;
@@ -959,13 +991,13 @@ private:
         });
     }
 public:
-    Distribution2D(const Chain<value<numtX>> &X, const Chain<value<numtY>> &Y)
+    Distribution2D(const Chain<value<numtX>> &X,const Chain<value<numtY>> &Y)
         : hist2d<numtX, numtY, numtZ>(X, Y)
     {
         init();
     }
-    Distribution2D(const SortedChain<value<numtX>> &X, const SortedChain<value<numtY>> &Y)
-        : hist2d<numtX, numtY, numtZ>(X, Y)
+    Distribution2D(SortedChain<value<numtX>> &&X, SortedChain<value<numtY>> &&Y)
+        : hist2d<numtX, numtY, numtZ>(std::move(X), std::move(Y))
     {
         init();
     }

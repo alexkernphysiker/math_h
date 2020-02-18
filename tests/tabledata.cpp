@@ -385,10 +385,10 @@ TEST(hist,hist_avr)
     const hist<>
     a=Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{1,1}},{{2,0.5},{2,1}}},
     b=Points<value<>>{{{0,0.5},{0,1}},{{1,0.5},{0,1}},{{2,0.5},{0,1}}};
-    chain=hist_avr(a,b);
-    for (size_t i = 0; i < chain.size(); i++) {
-        EXPECT_EQ(i, chain[i].X().val());
-        EXPECT_EQ(double(i)/2, chain[i].Y().val());
+    auto chain2=hist_avr(a,b);
+    for (size_t i = 0; i < chain2.size(); i++) {
+        EXPECT_EQ(i, chain2[i].X().val());
+        EXPECT_EQ(double(i)/2, chain2[i].Y().val());
     }
 }
 TEST(hist,hist_stdev)

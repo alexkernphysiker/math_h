@@ -28,14 +28,14 @@ private:
     mutable std::uniform_real_distribution<numt> f_distr;
 public:
     typedef numt NumberType;
-    RandomValueTableDistr(const RandomValueTableDistr &R):
-        reverse_distr_func(R.reverse_distr_func), f_distr(R.f_distr) {}
-    RandomValueTableDistr(const interpolation_details::ReverseIntegratedLinearInterpolation<numt> &distribution_density):
-        reverse_distr_func(distribution_density),
+    RandomValueTableDistr(RandomValueTableDistr &&R):
+        reverse_distr_func(std::move(R.reverse_distr_func)), f_distr(std::move(R.f_distr)) {}
+    RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt> &&distribution_density):
+        reverse_distr_func(std::move(distribution_density)),
         f_distr(reverse_distr_func.left().X(), reverse_distr_func.right().X())
         {}
-    RandomValueTableDistr(const LinearInterpolation<numt> &source):
-        RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt>(source)) {}
+    RandomValueTableDistr(LinearInterpolation<numt> &&source):
+        RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt>(std::move(source))) {}
     RandomValueTableDistr(const Points<numt>&source):
         RandomValueTableDistr(LinearInterpolation<numt>(source)) {}
     RandomValueTableDistr(const IFunction<numt,const numt&>& distribution_density, const SortedChain<numt> &chain):

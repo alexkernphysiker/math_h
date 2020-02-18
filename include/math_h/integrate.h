@@ -71,7 +71,7 @@ SortedPoints<numX, numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<num
                 res.right().Y() + (source[i].Y() + source[i - 1].Y())*numY(source[i].X() - source[i - 1].X()) / numY(2)
             );
     }
-    return res;
+    return std::move(res);
 }
 template<class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
