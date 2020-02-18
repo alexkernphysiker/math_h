@@ -208,6 +208,10 @@ public:
     {
         return y;
     }
+    numtY &Y_var()
+    {
+        return y;
+    }
     point(const numtX &pos): x(pos), y(numtY(0)) {}
     point(const numtX &pos, const numtY &val): x(pos), y(val) {}
     template<class numtX2, class numtY2>

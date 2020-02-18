@@ -18,14 +18,14 @@ public:
     LinearInterpolation() {}
     LinearInterpolation(const Points<numX, numY> &points)
         : SortedPoints<numX, numY>(points) {}
-    LinearInterpolation(const SortedChain<point<numX, numY>> &points)
-        : SortedPoints<numX, numY>(points) {}
+    LinearInterpolation(SortedChain<point<numX, numY>> &&points)
+        : SortedPoints<numX, numY>(std::move(points)) {}
     LinearInterpolation(const Func&f, const SortedChain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
     LinearInterpolation(const Func& f, const Chain<numX> &chain)
         : SortedPoints<numX, numY>(f, chain) {}
-    LinearInterpolation(const SortedPoints<numX, numY> &source)
-        : SortedPoints<numX, numY>(source) {}
+    LinearInterpolation(SortedPoints<numX, numY>&&source)
+        : SortedPoints<numX, numY>(std::move(source)) {}
     template<class FUNC,class CHAIN>
     LinearInterpolation(FUNC F,CHAIN c):LinearInterpolation(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
 
@@ -60,12 +60,12 @@ class BiLinearInterpolation:public IFunction<numtZ, const numtX &, const numtY &
 public:
     BiLinearInterpolation(const Chain<numtX> &X, const Chain<numtY> &Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
-    BiLinearInterpolation(const SortedChain<numtX> &X, const SortedChain<numtY> &Y)
-        : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
+    BiLinearInterpolation(SortedChain<numtX> &&X, SortedChain<numtY> &&Y)
+        : BiSortedPoints<numtX, numtY, numtZ>(std::move(X), std::move(Y)) {}
     BiLinearInterpolation()
         : BiLinearInterpolation({}, {}) {}
-    BiLinearInterpolation(const BiSortedPoints<numtX, numtY, numtZ> &source)
-        : BiSortedPoints<numtX, numtY, numtZ>(source) {}
+    BiLinearInterpolation(BiSortedPoints<numtX, numtY, numtZ> &&source)
+        : BiSortedPoints<numtX, numtY, numtZ>(std::move(source)) {}
     virtual ~BiLinearInterpolation() {}
     virtual numtZ operator()(const numtX &x, const numtY &y)const override
     {
