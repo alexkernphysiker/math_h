@@ -18,22 +18,22 @@ int main()
 
     //How you can integrate table data
     SortedPoints<> table(//create the table of data points
-	[](double x){return Gaussian(x, 0.0, 1.0);}, 
-	ChainWithStep(-5.0, 0.1, 5.0)
+	    [](double x){return Gaussian(x, 0.0, 1.0);}, 
+	    ChainWithStep(-5.0, 0.1, 5.0)
     );
     const auto integrated_table=Int_Trapez_Table(table);//integrate the data points using trapeze method
     Plot("integrate").Points(table, "density").Points(integrated_table, "integrated");
 
     //How you can calculate convolution integral
     const auto conv=make_convolution(
-	[](double ksi){return Gaussian(ksi,1.5,0.5);},
-	[](double ksi){if(ksi<0)return 0.0;else return exp(-ksi/1.5);},
-	-20.,20.,0.01
+	    [](double ksi){return Gaussian(ksi,1.5,0.5);},
+	    [](double ksi){if(ksi<0)return 0.0;else return exp(-ksi/1.5);},
+	    -20.,20.,0.001
     );
     SortedPoints<> plot_conv;
     for(double x=-2.;x<=10.;x+=0.1){
-	const auto y = conv(x);//that's how we calculate convolution integral
-	plot_conv<<make_point(x,y);
+	    const auto y = conv(x);//that's how we calculate convolution integral
+	    plot_conv<<make_point(x,y);
     }
     Plot("convolution",1).Points(plot_conv);
 }

@@ -51,7 +51,30 @@ SortedPoints<numX, numY>  Int_Trapez_Table_PositiveStrict(const SortedPoints<num
     }
     return std::move(res);
 }
-template<class numX = double, class numY = numX,
+
+namespace AdaptiveQuadrature_details{
+template<size_t mindepth,class numX, class numY = numX, class functype = std::function<numY(numX)>>
+    numY AdaptiveQuadrature(const functype&y, const numX &a, const numX &b, const numY &epsilon,const numY&A,const numY&B,const numY&S, size_t depth)
+    {
+	    const numX m = (a+b)/numX(2);
+	    const numY M=y(m);
+	    numY Sl=(A+M)*numY(m-a)/numY(2);
+	    numY Sr=(M+B)*numY(b-m)/numY(2);
+	    if((depth<=mindepth)||(abs(Sl+Sr-S)>epsilon)){
+	        Sl=AdaptiveQuadrature<mindepth>(y,a,m,epsilon,A,M,Sl,depth+1);
+    	    Sr=AdaptiveQuadrature<mindepth>(y,m,b,epsilon,M,B,Sr,depth+1);
+	    }
+	    return Sl+Sr;
+    }
+};
+template<size_t mindepth=5,class numX, class numY = numX, class functype = std::function<numY(numX)>>
+inline numY AdaptiveQuadrature(const functype y, const numX &a, const numX &b, const numY &epsilon)
+{
+    const numY A=y(a),B=y(b),S=(A+B)*numY(b-a)/numY(2);
+    return AdaptiveQuadrature_details::AdaptiveQuadrature<mindepth>(y,a,b,epsilon,A,B,S,0);
+}
+
+template<size_t mindepth=5,class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
 >
 class Convolution: public IFunction<numY, const numX &>
@@ -74,18 +97,18 @@ public:
     }
     virtual numY operator()(const numX &x)const override
     {
-        return Sympson<numX, numY>([this,&x](const numX & ksi) {
+        return AdaptiveQuadrature<mindepth,numX, numY>([this,&x](const numX & ksi) {
             return A(ksi) * B(x - ksi);
         }, Ksi1, Ksi2, Eps);
     }
 };
-template<class numX = double, class numY = numX,
+template<size_t mindepth=5,class numX = double, class numY = numX,
          class func1 = std::function<numY(const numX &)>, class func2 = std::function<numY(const numX &)>
          >
-Convolution<numX, numY, func1, func2> make_convolution(
+Convolution<mindepth,numX, numY, func1, func2> make_convolution(
     const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numY &eps)
 {
-    return Convolution<numX, numY, func1, func2>(a, b, ksi1, ksi2, eps);
+    return Convolution<mindepth,numX, numY, func1, func2>(a, b, ksi1, ksi2, eps);
 }
 };
 #endif
