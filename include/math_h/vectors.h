@@ -50,15 +50,15 @@ public:
     template<size_t index>
     inline PlusOneComponent InsertComponent(const NumberType&c)const
     {
-	static_assert(index>0,"Range check error for insertion position");
-	static_assert(index<=(Dimensions+1),"Range check error for insertion position");
-	if constexpr(index==(Dimensions+1))return vec(m_x,c);
-	if constexpr(index==Dimensions) return vec(c,m_x);
+	    static_assert(index>0,"Range check error for insertion position");
+	    static_assert(index<=(Dimensions+1),"Range check error for insertion position");
+	    if constexpr(index==(Dimensions+1))return vec(m_x,c);
+	    if constexpr(index==Dimensions) return vec(c,m_x);
     }
     template<size_t index>
     inline static Vector basis_vector()
     {
-	static_assert(index ==1,"dimension index is out of range");
+	    static_assert(index ==1,"dimension index is out of range");
         return Vector(std::make_tuple(numt(1)));
     }
     template<size_t index>
@@ -121,7 +121,7 @@ public:
     }
     template<typename... Args>
     inline auto For(Args... args)const{
-	return vec(m_x(args...));
+	    return vec(m_x(args...));
     }
     inline numt M_sqr()const
     {
@@ -186,7 +186,7 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
-	else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
+	    else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
     }
     template<size_t index>
     inline const numt &component()const
@@ -194,7 +194,7 @@ public:
 	static_assert(index > 0,"dimension index is out of range");
 	static_assert(index<=Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions)return m_x;
-	else return m_other.template component<index>();
+	    else return m_other.template component<index>();
     }
     template<size_t index>
     inline MinusOneComponent RemoveComponent()const
@@ -208,11 +208,11 @@ public:
     template<size_t index>
     inline PlusOneComponent InsertComponent(const NumberType&c)const
     {
-	static_assert(index>0,"Range check error for insertion position");
-	static_assert(index<=(Dimensions+1),"Range check error for insertion position");
-	if constexpr(index==(Dimensions+1))return PlusOneComponent(*this,c);
-	if constexpr(index==Dimensions)return PlusOneComponent(Vector(m_other,c),m_x);
-	if constexpr(index<Dimensions)return PlusOneComponent(m_other.template InsertComponent<index>(c),m_x);
+    	static_assert(index>0,"Range check error for insertion position");
+	    static_assert(index<=(Dimensions+1),"Range check error for insertion position");
+	    if constexpr(index==(Dimensions+1))return PlusOneComponent(*this,c);
+	    if constexpr(index==Dimensions)return PlusOneComponent(Vector(m_other,c),m_x);
+	    if constexpr(index<Dimensions)return PlusOneComponent(m_other.template InsertComponent<index>(c),m_x);
     }
     inline const numt &x()const
     {
@@ -275,7 +275,7 @@ public:
     }
     template<typename... Args>
     inline auto For(Args... args)const{
-	return Vector<Dimensions,decltype(m_x(args...))>(m_other.For(args...),m_x(args...));
+	    return Vector<Dimensions,decltype(m_x(args...))>(m_other.For(args...),m_x(args...));
     }
     inline numt M_sqr()const
     {
@@ -294,8 +294,8 @@ public:
         return operator-(second).M() < epsilon;
     }
     inline void output(std::ostream&str)const{
-	m_other.output(str);
-	str<<" "<<m_x;
+	    m_other.output(str);
+	    str<<" "<<m_x;
     }
 };
 template<class numt, class... Args>
