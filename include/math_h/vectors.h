@@ -298,6 +298,12 @@ public:
 	    str<<" "<<m_x;
     }
 };
+template<size_t size = 3, class numt = double>
+inline Vector<size,numt> operator*(const numt&a,const Vector<size,numt>&B)
+{
+    return B*a;
+}
+
 template<class numt, class... Args>
 inline Vector < sizeof...(Args) + 1, numt > vec(const numt &x, Args... args)
 {

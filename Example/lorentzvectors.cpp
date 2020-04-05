@@ -24,7 +24,7 @@ int main()
 
     for (size_t i = 0; i < 100000; i++) {
 	//Create Lorentz vectors for input particles
-        const auto Pr0 = lorentz_byPM(Z() * P(), M1);
+        const auto Pr0 = lorentz_byPM(P()*Z(), M1);
         const auto Pt0 = lorentz_Rest(M2);
 	// calculate total 4-momentum that is conserved
         const auto Total = Pr0 + Pt0;

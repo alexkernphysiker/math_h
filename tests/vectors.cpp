@@ -21,13 +21,14 @@ TEST(Vector, arithmetic1d)
         const auto V2 = vec(x2);
         EXPECT_EQ(x2, V2.x());
         EXPECT_EQ(x2, V2.component<1>());
-	EXPECT_EQ(x+x2,(V+V2).x());
-	EXPECT_EQ(x-x2,(V-V2).x());
-	EXPECT_EQ(x*x2,V*V2);
-	const auto a=X();
-	EXPECT_EQ(x*a,(V*a).x());
-	if(a!=0)
-	EXPECT_EQ(x/a,(V/a).x());
+	    EXPECT_EQ(x+x2,(V+V2).x());
+	    EXPECT_EQ(x-x2,(V-V2).x());
+	    EXPECT_EQ(x*x2,V*V2);
+	    const auto a=X();
+	    EXPECT_EQ(x*a,(V*a).x());
+	    EXPECT_EQ(x*a,(a*V).x());
+	    if(a!=0)
+	        EXPECT_EQ(x/a,(V/a).x());
     }
 }
 TEST(Vector, arithmetic2d)
@@ -47,18 +48,20 @@ TEST(Vector, arithmetic2d)
         EXPECT_EQ(x2, V2.component<1>());
         EXPECT_EQ(y2, V2.y());
         EXPECT_EQ(y2, V2.component<2>());
-	EXPECT_EQ(x+x2,(V+V2).x());
-	EXPECT_EQ(x-x2,(V-V2).x());
-	EXPECT_EQ(y+y2,(V+V2).y());
-	EXPECT_EQ(y-y2,(V-V2).y());
-	EXPECT_EQ(x*x2+y*y2,V*V2);
-	const auto a=X();
-	EXPECT_EQ(x*a,(V*a).x());
-	EXPECT_EQ(y*a,(V*a).y());
-	if(a!=0){
-	    EXPECT_EQ(x/a,(V/a).x());
-	    EXPECT_EQ(y/a,(V/a).y());
-	}
+	    EXPECT_EQ(x+x2,(V+V2).x());
+	    EXPECT_EQ(x-x2,(V-V2).x());
+	    EXPECT_EQ(y+y2,(V+V2).y());
+	    EXPECT_EQ(y-y2,(V-V2).y());
+	    EXPECT_EQ(x*x2+y*y2,V*V2);
+	    const auto a=X();
+	    EXPECT_EQ(x*a,(V*a).x());
+	    EXPECT_EQ(y*a,(V*a).y());
+	    EXPECT_EQ(x*a,(a*V).x());
+	    EXPECT_EQ(y*a,(a*V).y());
+	    if(a!=0){
+	        EXPECT_EQ(x/a,(V/a).x());
+	        EXPECT_EQ(y/a,(V/a).y());
+	    }
     }
 }
 TEST(Vector, arithmetic3d)
@@ -82,22 +85,25 @@ TEST(Vector, arithmetic3d)
         EXPECT_EQ(y2, V2.component<2>());
         EXPECT_EQ(z2, V2.z());
         EXPECT_EQ(z2, V2.component<3>());
-	EXPECT_EQ(x+x2,(V+V2).x());
-	EXPECT_EQ(x-x2,(V-V2).x());
-	EXPECT_EQ(y+y2,(V+V2).y());
-	EXPECT_EQ(y-y2,(V-V2).y());
-	EXPECT_EQ(z+z2,(V+V2).z());
-	EXPECT_EQ(z-z2,(V-V2).z());
-	EXPECT_EQ(x*x2+y*y2+z*z2,V*V2);
-	const auto a=X();
-	EXPECT_EQ(x*a,(V*a).x());
-	EXPECT_EQ(y*a,(V*a).y());
-	EXPECT_EQ(z*a,(V*a).z());
-	if(a!=0){
-	    EXPECT_EQ(x/a,(V/a).x());
-	    EXPECT_EQ(y/a,(V/a).y());
-	    EXPECT_EQ(z/a,(V/a).z());
-	}
+    	EXPECT_EQ(x+x2,(V+V2).x());
+	    EXPECT_EQ(x-x2,(V-V2).x());
+    	EXPECT_EQ(y+y2,(V+V2).y());
+	    EXPECT_EQ(y-y2,(V-V2).y());
+    	EXPECT_EQ(z+z2,(V+V2).z());
+	    EXPECT_EQ(z-z2,(V-V2).z());
+	    EXPECT_EQ(x*x2+y*y2+z*z2,V*V2);
+	    const auto a=X();
+	    EXPECT_EQ(x*a,(V*a).x());
+	    EXPECT_EQ(y*a,(V*a).y());
+	    EXPECT_EQ(z*a,(V*a).z());
+	    EXPECT_EQ(x*a,(a*V).x());
+	    EXPECT_EQ(y*a,(a*V).y());
+	    EXPECT_EQ(z*a,(a*V).z());
+	    if(a!=0){
+	        EXPECT_EQ(x/a,(V/a).x());
+	        EXPECT_EQ(y/a,(V/a).y());
+	        EXPECT_EQ(z/a,(V/a).z());
+	    }
     }
 }
 TEST(Vector, arithmetic4d)
@@ -123,26 +129,30 @@ TEST(Vector, arithmetic4d)
         EXPECT_EQ(z2, V2.z());
         EXPECT_EQ(z2, V2.component<3>());
         EXPECT_EQ(zz2, V2.component<4>());
-	EXPECT_EQ(x+x2,(V+V2).x());
-	EXPECT_EQ(x-x2,(V-V2).x());
-	EXPECT_EQ(y+y2,(V+V2).y());
-	EXPECT_EQ(y-y2,(V-V2).y());
-	EXPECT_EQ(z+z2,(V+V2).z());
-	EXPECT_EQ(z-z2,(V-V2).z());
-	EXPECT_EQ(zz+zz2,(V+V2).component<4>());
-	EXPECT_EQ(zz-zz2,(V-V2).component<4>());
-	EXPECT_EQ(x*x2+y*y2+z*z2+zz*zz2,V*V2);
-	const auto a=X();
-	EXPECT_EQ(x*a,(V*a).x());
-	EXPECT_EQ(y*a,(V*a).y());
-	EXPECT_EQ(z*a,(V*a).z());
-	EXPECT_EQ(zz*a,(V*a).component<4>());
-	if(a!=0){
-	    EXPECT_EQ(x/a,(V/a).x());
-	    EXPECT_EQ(y/a,(V/a).y());
-	    EXPECT_EQ(z/a,(V/a).z());
-	    EXPECT_EQ(zz/a,(V/a).component<4>());
-	}
+    	EXPECT_EQ(x+x2,(V+V2).x());
+	    EXPECT_EQ(x-x2,(V-V2).x());
+	    EXPECT_EQ(y+y2,(V+V2).y());
+	    EXPECT_EQ(y-y2,(V-V2).y());
+	    EXPECT_EQ(z+z2,(V+V2).z());
+	    EXPECT_EQ(z-z2,(V-V2).z());
+	    EXPECT_EQ(zz+zz2,(V+V2).component<4>());
+	    EXPECT_EQ(zz-zz2,(V-V2).component<4>());
+	    EXPECT_EQ(x*x2+y*y2+z*z2+zz*zz2,V*V2);
+	    const auto a=X();
+	    EXPECT_EQ(x*a,(V*a).x());
+	    EXPECT_EQ(y*a,(V*a).y());
+	    EXPECT_EQ(z*a,(V*a).z());
+	    EXPECT_EQ(zz*a,(V*a).component<4>());
+	    EXPECT_EQ(x*a,(a*V).x());
+	    EXPECT_EQ(y*a,(a*V).y());
+	    EXPECT_EQ(z*a,(a*V).z());
+	    EXPECT_EQ(zz*a,(a*V).component<4>());
+    	if(a!=0){
+	        EXPECT_EQ(x/a,(V/a).x());
+	        EXPECT_EQ(y/a,(V/a).y());
+    	    EXPECT_EQ(z/a,(V/a).z());
+	        EXPECT_EQ(zz/a,(V/a).component<4>());
+	    }
     }
 }
 TEST(Vector, scalar_prod2)
