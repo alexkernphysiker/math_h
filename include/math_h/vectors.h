@@ -64,12 +64,23 @@ public:
     template<size_t index>
     inline const numt &component()const
     {
-	static_assert(index == 1,"dimension index is out of range");
+	    static_assert(index == 1,"dimension index is out of range");
         return m_x;
     }
     inline const numt &x()const
     {
         return m_x;
+    }
+    template<size_t index, typename... Args>
+    inline auto component(Args... args)const
+    {
+	    static_assert(index == 1,"dimension index is out of range");
+        return m_x(args...);
+    }
+    template<typename... Args>
+    inline auto x(Args... args)const
+    {
+        return m_x(args...);
     }
     Vector &operator=(const Vector &source)
     {
@@ -183,18 +194,26 @@ public:
     template<size_t index>
     inline static Vector basis_vector()
     {
-	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=Dimensions,"dimension index is out of range");
+	    static_assert(index > 0,"dimension index is out of range");
+	    static_assert(index<=Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
 	    else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
     }
     template<size_t index>
     inline const numt &component()const
     {
-	static_assert(index > 0,"dimension index is out of range");
-	static_assert(index<=Dimensions,"dimension index is out of range");
+	    static_assert(index > 0,"dimension index is out of range");
+	    static_assert(index<=Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions)return m_x;
 	    else return m_other.template component<index>();
+    }
+    template<size_t index, typename... Args>
+    inline auto component(Args... args)const
+    {
+	    static_assert(index > 0,"dimension index is out of range");
+	    static_assert(index<=Dimensions,"dimension index is out of range");
+        if constexpr(index == Dimensions)return m_x(args...);
+	    else return m_other.template component<index>(args...);
     }
     template<size_t index>
     inline MinusOneComponent RemoveComponent()const
@@ -225,6 +244,21 @@ public:
     inline const numt &z()const
     {
         return component<3>();
+    }
+    template<typename... Args>
+    inline auto x(Args... args)const
+    {
+        return component<1>(args...);
+    }
+    template<typename... Args>
+    inline auto y(Args... args)const
+    {
+        return component<2>(args...);
+    }
+    template<typename... Args>
+    inline auto z(Args... args)const
+    {
+        return component<3>(args...);
     }
     Vector &operator+=(const Vector &second)
     {

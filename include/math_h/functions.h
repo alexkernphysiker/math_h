@@ -31,7 +31,7 @@ public:
     FunctionWrap(const result&v):FunctionWrap([v](Args...){return v;}){}
     FunctionWrap(int v):FunctionWrap(result(v)){}
     template<class FUNC>
-    FunctionWrap(FUNC F){func=[F](Args... args)->result{return F(args...);};}
+    FunctionWrap(FUNC F):func([F](Args... args)->result{return F(args...);}){}
     virtual ~FunctionWrap() {}
     virtual result operator()(Args...args)const override{return func(args...);}
     FunctionWrap operator+(const FunctionWrap&second)const{
@@ -48,7 +48,7 @@ FunctionWrap<result,Args...>operator-(const FunctionWrap<result,Args...>&source)
     return FunctionWrap<result,Args...>([source](Args...args){return -source(args...);});
 }
 
-template<class numty=double,class numtx=FunctionWrap<numty,const numty&>>
+template<class numty=double,class numtx=numty>
 class Opr{
 private:
     FunctionWrap<numty,const numtx&> m_func;
@@ -56,22 +56,29 @@ public:
     Opr(const FunctionWrap<numty,const numtx&>&source):m_func(source){}
     Opr(const Opr&source):m_func(source.m_func){}
     Opr(const numty&v):m_func([v](const numtx&){return v;}){}
-    Opr(int v):Opr(numty(v)){}
     template<class OPR>Opr(OPR O):m_func(O){}
     virtual ~Opr(){}
     numty operator*(const numtx& f)const{return m_func(f);}
     Opr operator+(const Opr&second)const{
-	Opr first(*this);
-	return Opr([first,second](const numtx&F){return (first*F)+(second*F);});
+	    Opr first(*this);
+	    return Opr([first,second](const numtx&F){return (first*F)+(second*F);});
     }
     Opr operator-(const Opr&second)const{
-	Opr first(*this);
-	return Opr([first,second](const numtx&F){return (first*F)-(second*F);});
+	    Opr first(*this);
+	    return Opr([first,second](const numtx&F){return (first*F)-(second*F);});
     }
 };
 template<class numty,class numtx>
 Opr<numty,numtx>operator-(const Opr<numty,numtx>&source){
     return Opr<numty,numtx>([source](const numtx&F){return -(source*F);});
+}
+template<class numty,class numtx>
+Opr<numty,numtx>operator+(const Opr<numty,numtx>&source){
+    return Opr<numty,numtx>(source);
+}
+template<class numty,class numtx>
+Opr<numty,numtx>operator*(const numty&alpha, const Opr<numty,numtx>&source){
+    return Opr<numty,numtx>([alpha,source](const numtx&F){return (source*F)*alpha;});
 }
 //constants
 template<class numt = double>

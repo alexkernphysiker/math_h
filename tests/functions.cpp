@@ -36,6 +36,21 @@ TEST(FunctionsTest,Gaussian)
             });
         }
 }
+
+TEST(OperatorTest,Gaussian)
+{
+    for (double sigma = 0.5; sigma < 5; sigma += 0.5)
+        for (double X = -5; X <= 5; X += 1) {
+            Opr<> G([sigma, X](double x) {return Gaussian(x, X, sigma);});
+            for(double x=-1.0; x<=1.0; x+=0.1){
+                EXPECT_EQ(G*x,Gaussian(x, X, sigma));
+                EXPECT_EQ(+G*x,Gaussian(x, X, sigma));
+                EXPECT_EQ(-G*x,-Gaussian(x, X, sigma));
+                EXPECT_EQ(2.0*G*x,2.0*Gaussian(x, X, sigma));
+            }
+        }
+}
+
 TEST(FunctionsTest,Lorentzian)
 {
     for (double gamma = 0.5; gamma < 5; gamma += 0.5)

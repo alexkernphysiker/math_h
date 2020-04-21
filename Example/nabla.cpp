@@ -13,12 +13,15 @@ int main()
 	.Line(SortedPoints<>([Potential](const double&c){
 	    return Potential(X()*c);
 	},ChainWithStep(-10.1,0.2,10.1)));
-    Plot("nabla-example-field")
+	Plot("nabla-example-field")
 	.Line(SortedPoints<>([Potential](const double&c){
-	    return (nabla(X()*c,0.01)*Potential).x();
+		auto field=nabla<3>(X()*c,0.01)*Potential;
+	    return field.x();
 	},ChainWithStep(-10.1,0.2,10.1)));
     Plot("nabla-example-charge")
 	.Line(SortedPoints<>([Potential](const double&c){
-	    return (nabla<3>(0.01)*(nabla<3>(0.01)*Potential))(X()*c);
+		auto field = nabla<3>(0.01)*Potential;
+		auto charge_density = nabla<3>(0.01)*field;
+	    return charge_density(X()*c);
 	},ChainWithStep(-10.1,0.2,10.1)));
 }
