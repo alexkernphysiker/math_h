@@ -57,7 +57,7 @@ private:
     mutable std::uniform_real_distribution<numt> f_distr;
 public:
     typedef numt NumberType;
-    RandomUniform(const numt x1, const numt x2): f_distr(x1, x2) {}
+    RandomUniform(const numt& x1, const numt& x2): f_distr(x1, x2) {}
     RandomUniform(const RandomUniform &source): f_distr(source.f_distr) {}
     virtual ~RandomUniform() {}
     virtual numt operator()()const override
@@ -72,7 +72,7 @@ private:
     mutable std::normal_distribution<numt> f_distr;
 public:
     typedef numt NumberType;
-    RandomGauss(const numt x1, const numt x2): f_distr(x1, x2) {}
+    RandomGauss(const numt& x1, const numt& x2): f_distr(x1, x2) {}
     RandomGauss(const RandomGauss &source): f_distr(source.f_distr) {}
     virtual ~RandomGauss() {}
     virtual numt operator()()const override
