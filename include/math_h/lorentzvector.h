@@ -84,7 +84,7 @@ public:
     }
     LorentzVector Transform(const Space &Beta)const
     {
-        const numt beta = Beta.M();
+        const numt beta = Beta.length();
         if (beta == 0.0)return *this;
         if (beta >= numt(1))throw Exception<LorentzVector>("Bad Lorentz transformation");
         const auto bn = Beta / beta;
@@ -116,7 +116,7 @@ inline LorentzVector<numt, Vector<3,numt>> lorentz_Rest(const numt &l4)
 template<class numt = double, class Space = Vector<3, numt>>
 inline LorentzVector<numt, Space> lorentz_byPM(const Space &s, const numt &l4)
 {
-    return LorentzVector<numt, Space>(sqrt(s.M_sqr() + l4 * l4), s);
+    return LorentzVector<numt, Space>(sqrt(s.length_sqr() + l4 * l4), s);
 }
 template<class numt = double, class Space = Vector<3, numt>>
 inline LorentzVector<numt, Space> lorentz_byEM(const numt &t, const numt &l4, const typename Space::DType &dir)

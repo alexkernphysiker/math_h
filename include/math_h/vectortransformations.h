@@ -194,7 +194,7 @@ public:
 	static_assert(index ==1,"dimension index is out of range");
         return m_theta;
     }
-    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
+    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.length())) {}
     VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
@@ -283,7 +283,7 @@ public:
         if constexpr(index == Thetas) return m_theta;
 	else return m_ld.template th<index>();
     }
-    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.M())) {}
+    Direction(const VType &V): m_ld(V.___minus_one_component()), m_theta(acos(V.template component<Dimensions>() / V.length())) {}
     VType operator*(const numt &rho)const
     {
         return VType(m_ld * (rho * sin(m_theta)), rho * cos(m_theta));
@@ -398,7 +398,7 @@ inline Matrix<7, Vector<7, numt>> SkewM(const Vector<7, numt> &A)
 #undef ZeRo
 #undef AC
 template<class A, class B>
-inline auto operator^(const A &a, const B &b)->decltype(SkewM(a)*b)
+inline auto operator^(const A &a, const B &b)
 {
     return SkewM(a) * b;
 }

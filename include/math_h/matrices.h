@@ -82,10 +82,13 @@ public:
     template<size_t index>
     inline const DefaultRowType &row()const
     {
-	static_assert(index == 1 ,"dimension index is out of range");
+	    static_assert(index == 1 ,"dimension index is out of range");
         return m_row;
     }
-
+    inline operator linetype() const
+    {
+        return m_row;
+    }
     template<size_t index>
     inline MinusOneColumn RemoveColumn()const
     {

@@ -35,7 +35,7 @@ int main()
         const auto final2 = finalCM.second.Transform(-Total.Beta());
         //Gather kinematic statistics
         Th_vs_Th.Fill(direction(final1.P()).th() * 180. / PI(), direction(final2.P()).th() * 180. / PI());
-        P_vs_P.Fill(final1.P().M(), final2.P().M());
+        P_vs_P.Fill(final1.P().length(), final2.P().length());
         E_vs_E.Fill(final1.Ekin(), final2.Ekin());
     }
 }

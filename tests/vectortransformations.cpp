@@ -41,12 +41,12 @@ TEST(VectorTransformation, pseudoscalar_prod_properties)
         B = randomIsotropic<2>() * M(),
         C = randomIsotropic<2>() * M();
         const auto a = M();
-        EXPECT_TRUE((A ^ A).M() < epsilon);
-        EXPECT_TRUE((B ^ B).M() < epsilon);
-        EXPECT_TRUE(((A ^ B) + (B ^ A)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).M() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).M() < epsilon);
+        EXPECT_TRUE((A ^ A).length() < epsilon);
+        EXPECT_TRUE((B ^ B).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
     }
 }
 
@@ -60,17 +60,17 @@ TEST(VectorTransformation, vector_prod3_properties)
         B = randomIsotropic<3>() * M(),
         C = randomIsotropic<3>() * M();
         const auto a = M();
-        EXPECT_TRUE((A ^ A).M() < epsilon);
-        EXPECT_TRUE((B ^ B).M() < epsilon);
-        EXPECT_TRUE((C ^ C).M() < epsilon);
-        EXPECT_TRUE(((A ^ B) + (B ^ A)).M() < epsilon);
-        EXPECT_TRUE(((A ^ C) + (C ^ A)).M() < epsilon);
-        EXPECT_TRUE(((C ^ B) + (B ^ C)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).M() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).M() < epsilon);
-        EXPECT_TRUE((((A ^ B)^C) + ((C ^ A)^B) + ((B ^ C)^A)).M() < epsilon);
-        EXPECT_TRUE(((A ^ (B ^ C)) - (B * (A * C)) + (C * (A * B))).M() < epsilon);
+        EXPECT_TRUE((A ^ A).length() < epsilon);
+        EXPECT_TRUE((B ^ B).length() < epsilon);
+        EXPECT_TRUE((C ^ C).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
+        EXPECT_TRUE(((A ^ C) + (C ^ A)).length() < epsilon);
+        EXPECT_TRUE(((C ^ B) + (B ^ C)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
+        EXPECT_TRUE((((A ^ B)^C) + ((C ^ A)^B) + ((B ^ C)^A)).length() < epsilon);
+        EXPECT_TRUE(((A ^ (B ^ C)) - (B * (A * C)) + (C * (A * B))).length() < epsilon);
         EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
     }
 }
@@ -84,15 +84,15 @@ TEST(VectorTransformation, vector_prod7_properties)
         B = randomIsotropic<7>() * M(),
         C = randomIsotropic<7>() * M();
         const auto a = M();
-        EXPECT_TRUE((A ^ A).M() < epsilon);
-        EXPECT_TRUE((B ^ B).M() < epsilon);
-        EXPECT_TRUE((C ^ C).M() < epsilon);
-        EXPECT_TRUE(((A ^ B) + (B ^ A)).M() < epsilon);
-        EXPECT_TRUE(((A ^ C) + (C ^ A)).M() < epsilon);
-        EXPECT_TRUE(((C ^ B) + (B ^ C)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).M() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).M() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).M() < epsilon);
+        EXPECT_TRUE((A ^ A).length() < epsilon);
+        EXPECT_TRUE((B ^ B).length() < epsilon);
+        EXPECT_TRUE((C ^ C).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
+        EXPECT_TRUE(((A ^ C) + (C ^ A)).length() < epsilon);
+        EXPECT_TRUE(((C ^ B) + (B ^ C)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
         EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
     }
 }
@@ -228,7 +228,7 @@ TEST(VectorTransformation, Rotation2)
         const auto I = randomIsotropic<2>() * 1.0;
         const auto ang = Phi();
         const auto F = Rotation(ang) * I;
-        EXPECT_TRUE(abs(I.M() - F.M()) < epsilon);
+        EXPECT_TRUE(abs(I.length() - F.length()) < epsilon);
     }
 }
 
@@ -283,7 +283,7 @@ TEST(Direction, obtain1d)
     for (size_t i = 0; i < 50; i++) {
         const auto d = direction();
         const auto v = vec(V());
-        EXPECT_TRUE((v - d * v.x()).M() < epsilon);
+        EXPECT_TRUE((v - d * v.x()).length() < epsilon);
     }
 }
 TEST(Direction, obtain2d)

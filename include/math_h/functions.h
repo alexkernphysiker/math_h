@@ -29,23 +29,33 @@ public:
     FunctionWrap(const FunctionWrap&source):func(source.func){}
     FunctionWrap(std::function<result(Args...)>source):func(source){}
     FunctionWrap(const result&v):FunctionWrap([v](Args...){return v;}){}
-    FunctionWrap(int v):FunctionWrap(result(v)){}
-    template<class FUNC>
+    FunctionWrap(int v):FunctionWrap([v](Args...){return result(v);}){}
+    template<class FUNC> 
     FunctionWrap(FUNC F):func([F](Args... args)->result{return F(args...);}){}
     virtual ~FunctionWrap() {}
     virtual result operator()(Args...args)const override{return func(args...);}
-    FunctionWrap operator+(const FunctionWrap&second)const{
-	FunctionWrap first(*this);
-	return FunctionWrap([first,second](Args... args){return first(args...)+second(args...);});
+    template<class FUNC> 
+    FunctionWrap operator+(const FUNC& second)const{
+	    FunctionWrap first(*this);
+	    return FunctionWrap([first,second](Args... args){return first(args...)+second(args...);});
     }
-    FunctionWrap operator-(const FunctionWrap&second)const{
-	FunctionWrap first(*this);
-	return FunctionWrap([first,second](Args... args){return first(args...)-second(args...);});
+    template<class FUNC> 
+    FunctionWrap operator-(const FUNC& second)const{
+	    FunctionWrap first(*this);
+	    return FunctionWrap([first,second](Args... args){return first(args...)-second(args...);});
     }
 };
 template<class result, typename... Args>
-FunctionWrap<result,Args...>operator-(const FunctionWrap<result,Args...>&source){
+inline FunctionWrap<result,Args...> operator-(const FunctionWrap<result,Args...>&source){
     return FunctionWrap<result,Args...>([source](Args...args){return -source(args...);});
+}
+template<class result, typename... Args>
+inline const FunctionWrap<result,Args...>& operator+(const FunctionWrap<result,Args...>&source){
+    return source;
+}
+template<class numtz, class numty, typename... Args>
+inline auto operator*(const numtz&alpha, const FunctionWrap<numty,Args...>&source)->FunctionWrap<decltype(alpha*numty(0)),Args...>{
+    return FunctionWrap<decltype(alpha*numty(0)),Args...>([alpha,source](Args...args){return alpha*source(args...);});
 }
 
 template<class numty=double,class numtx=numty>
@@ -56,6 +66,7 @@ public:
     Opr(const FunctionWrap<numty,const numtx&>&source):m_func(source){}
     Opr(const Opr&source):m_func(source.m_func){}
     Opr(const numty&v):m_func([v](const numtx&){return v;}){}
+    Opr(int v):m_func([v](const numtx&){return numty(v);}){}
     template<class OPR>Opr(OPR O):m_func(O){}
     virtual ~Opr(){}
     numty operator*(const numtx& f)const{return m_func(f);}
@@ -69,22 +80,22 @@ public:
     }
 };
 template<class numty,class numtx>
-Opr<numty,numtx>operator-(const Opr<numty,numtx>&source){
+inline Opr<numty,numtx> operator-(const Opr<numty,numtx>&source){
     return Opr<numty,numtx>([source](const numtx&F){return -(source*F);});
 }
 template<class numty,class numtx>
-Opr<numty,numtx>operator+(const Opr<numty,numtx>&source){
-    return Opr<numty,numtx>(source);
+inline const Opr<numty,numtx>& operator+(const Opr<numty,numtx>&source){
+    return source;
 }
-template<class numty,class numtx>
-Opr<numty,numtx>operator*(const numty&alpha, const Opr<numty,numtx>&source){
-    return Opr<numty,numtx>([alpha,source](const numtx&F){return (source*F)*alpha;});
+template<class numtz,class numty,class numtx>
+inline auto operator*(const numtz&alpha, const Opr<numty,numtx>&source){
+    return Opr<decltype(alpha*numty(0)),numtx>([alpha,source](const numtx&F){return alpha*(source*F);});
 }
 //constants
 template<class numt = double>
-inline numt PI(){return 3.1415926;}
+inline numt PI(){return 3.14159265358;}
 template<class numt = double>
-inline numt E(){return 2.719281928;}
+inline numt E(){return 2.718281828459;}
 
 //Peak functions
 template<class numt = double>

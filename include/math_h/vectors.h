@@ -105,6 +105,14 @@ public:
     {
         return Vector(std::make_tuple(m_x - second.___last_component()));
     }
+    Vector operator-()const
+    {
+        return Vector(std::make_tuple(-m_x));
+    }
+    inline const Vector& operator+()const
+    {
+        return *this;
+    }
 
     Vector &operator*=(const numt &second)
     {
@@ -121,26 +129,35 @@ public:
         return Vector(std::make_tuple(m_x / second));
     }
     template<class numt2>
-    inline auto operator*(const Vector<1,numt2> &second)const->decltype(x()*second.x())
+    inline auto operator*(const Vector<1,numt2> &second)const
     {
         return m_x * second.___last_component();
     }
     template<class numt2>
-    inline auto operator*(const numt2&second)const->Vector<1,decltype(x()*second)>
+    inline auto operator*(const numt2&second)const
     {
         return Vector<1,decltype(x()*second)>(std::make_tuple(x()*second));
     }
+    template<class numt2>
+    inline auto mul_inv(const numt2&second)const
+    {
+        return Vector<1,decltype(second*x())>(std::make_tuple(second*x()));
+    }
     template<typename... Args>
-    inline auto For(Args... args)const{
+    inline auto operator()(Args... args)const{
 	    return vec(m_x(args...));
     }
-    inline numt M_sqr()const
+    template<typename... Args>
+    inline operator numt()const{
+	    return m_x;
+    }
+    inline numt length_sqr()const
     {
         return operator*(*this);
     }
-    inline numt M()const
+    inline numt length()const
     {
-        return sqrt(M_sqr());
+        return sqrt(length_sqr());
     }
     bool operator==(const Vector &second)const
     {
@@ -148,7 +165,7 @@ public:
     }
     inline bool CloseTo(const Vector &second, const numt &epsilon)const
     {
-        return operator-(second).M() < epsilon;
+        return operator-(second).length() < epsilon;
     }
     inline void output(std::ostream&str)const{str<<m_x;}
 };
@@ -280,17 +297,25 @@ public:
     {
         return Vector(m_other - second.___minus_one_component(), m_x - second.___last_component());
     }
+    Vector operator-()const
+    {
+        return Vector(-m_other, -m_x);
+    }
+    inline const Vector& operator+()const
+    {
+        return *this;
+    }
 
     Vector &operator*=(const numt &second)
     {
         m_x *= second;
-        m_other *= second.m_other;
+        m_other *= second;
         return *this;
     }
     Vector &operator/=(const numt &second)
     {
         m_x /= second;
-        m_other /= second.m_other;
+        m_other /= second;
         return *this;
     }
     Vector operator/(const numt &second)const
@@ -298,26 +323,31 @@ public:
         return Vector(m_other / second, m_x / second);
     }
     template<class numt2>
-    inline auto operator*(const Vector<size,numt2> &second)const->decltype(x()*second.x())
+    inline auto operator*(const Vector<size,numt2> &second)const
     {
         return (m_other * second.___minus_one_component()) + (m_x * second.___last_component());
     }
     template<class numt2>
-    inline auto operator*(const numt2 &second)const->Vector<size,decltype(x()*second)>
+    inline auto operator*(const numt2 &second)const
     {
         return Vector<size,decltype(x()*second)>(m_other * second, m_x * second);
     }
-    template<typename... Args>
-    inline auto For(Args... args)const{
-	    return Vector<Dimensions,decltype(m_x(args...))>(m_other.For(args...),m_x(args...));
+    template<class numt2>
+    inline auto mul_inv(const numt2 &second)const
+    {
+        return Vector<size,decltype(second*x())>(m_other.mul_inv(second), second*m_x);
     }
-    inline numt M_sqr()const
+    template<typename... Args>
+    inline auto operator()(Args... args)const{
+	    return Vector<Dimensions,decltype(m_x(args...))>(m_other(args...),m_x(args...));
+    }
+    inline numt length_sqr()const
     {
         return operator*(*this);
     }
-    inline numt M()const
+    inline numt length()const
     {
-        return sqrt(M_sqr());
+        return sqrt(length_sqr());
     }
     bool operator==(const Vector &second)const
     {
@@ -325,17 +355,17 @@ public:
     }
     inline bool CloseTo(const Vector &second, const numt &epsilon)const
     {
-        return operator-(second).M() < epsilon;
+        return operator-(second).length() < epsilon;
     }
     inline void output(std::ostream&str)const{
 	    m_other.output(str);
 	    str<<" "<<m_x;
     }
 };
-template<size_t size = 3, class numt = double>
-inline Vector<size,numt> operator*(const numt&a,const Vector<size,numt>&B)
+template<size_t size = 3,class numta, class numtb>
+inline auto operator*(const numta&a,const Vector<size,numtb>&B)
 {
-    return B*a;
+    return B.mul_inv(a);
 }
 
 template<class numt, class... Args>
@@ -382,11 +412,6 @@ template<class numt = double>
 inline Vector<3, numt> Zero()
 {
     return Vector<3, numt>::zero();
-}
-template<size_t i, class numt>
-inline Vector<i, numt> operator-(const Vector<i, numt> &V)
-{
-    return V * numt(-1);
 }
 template<size_t i,class numt>
 inline std::ostream& operator<<(std::ostream&str,const Vector<i,numt>&X)

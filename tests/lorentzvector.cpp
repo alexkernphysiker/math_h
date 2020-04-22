@@ -161,12 +161,12 @@ TEST(LorentzVector, decays)
         EXPECT_TRUE(abs((C2.first + C2.second).M() - im) < epsilon);
         EXPECT_TRUE(abs((C2.first).M() - m1) < epsilon);
         EXPECT_TRUE(abs((C2.second).M() - m2) < epsilon);
-        EXPECT_TRUE((C2.first.P() + C2.second.P()).M() < epsilon);
+        EXPECT_TRUE((C2.first.P() + C2.second.P()).length() < epsilon);
         const auto C3 = binaryDecay(im, m1, m2, randomIsotropic<3>());
         EXPECT_TRUE(abs((C3.first + C3.second).M() - im) < epsilon);
         EXPECT_TRUE(abs(C3.first.M() - m1) < epsilon);
         EXPECT_TRUE(abs(C3.second.M() - m2) < epsilon);
-        EXPECT_TRUE((C3.first.P() + C3.second.P()).M() < epsilon);
+        EXPECT_TRUE((C3.first.P() + C3.second.P()).length() < epsilon);
     }
 }
 TEST(LorentzVector, decays2)
@@ -178,11 +178,11 @@ TEST(LorentzVector, decays2)
         EXPECT_TRUE(abs((C2.first + C2.second).M() - im) < epsilon);
         EXPECT_TRUE(abs((C2.first).M() - m1) < epsilon);
         EXPECT_TRUE(abs((C2.second).M() - m2) < epsilon);
-        EXPECT_TRUE((C2.first.P() + C2.second.P()).M() < epsilon);
+        EXPECT_TRUE((C2.first.P() + C2.second.P()).length() < epsilon);
         const auto C3 = binaryDecay(im, m1, m2, randomIsotropic<3>());
         EXPECT_TRUE(abs((C3.first + C3.second).M() - im) < epsilon);
         EXPECT_TRUE(abs(C3.first.M() - m1) < epsilon);
         EXPECT_TRUE(abs(C3.second.M() - m2) < epsilon);
-        EXPECT_TRUE((C3.first.P() + C3.second.P()).M() < epsilon);
+        EXPECT_TRUE((C3.first.P() + C3.second.P()).length() < epsilon);
     }
 }
