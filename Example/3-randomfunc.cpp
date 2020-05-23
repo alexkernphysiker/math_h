@@ -24,6 +24,4 @@ int main()
     }
     // dist will plot the data automatically when its destructor is called
     // this will contain statistical uncertainties as well
-
-    return 0;
 }
