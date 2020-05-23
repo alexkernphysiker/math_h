@@ -17,5 +17,5 @@ int main()
         [](double x){return Gaussian(x, 2.5, 1.0);}, 
 	    ChainWithStep(0.0, 0.1, 5.0)
     );
-    Plot("test-plot").Points(table1, "table1").Points(table2, "table2") << "set key on" << "set yrange [0:2]";
+    Plot("test-plot").Points(table1, "table1").Line(table2, "table2") << "set key on" << "set yrange [0:2]";
 }
