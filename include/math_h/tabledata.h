@@ -220,12 +220,12 @@ public:
     {
         x = source.x;
         y = source.y;
-	return *this;
+	    return *this;
     }
     inline point&operator=(const numtY&source)
     {
         y = source;
-	return *this;
+	    return *this;
     }
     inline bool operator<(const point &b)const
     {
@@ -295,7 +295,7 @@ public:
             y<<other.Y();
         else
             throw Exception<point>("Cannot perform arithmetic operation with two points that have different X-coordinate");
-	return *this;
+	    return *this;
     }
 };
 template<class numtX = double, class numtY = numtX>
