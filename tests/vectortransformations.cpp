@@ -189,7 +189,7 @@ TEST(Direction, Isotropic1)
     Distribution1D<> D(c);
     const size_t N=10000000;
     for (size_t i = 0; i < N; i++) {
-        D.Fill(randomIsotropic<1>().dir());
+        D.Fill(randomIsotropic<1>());
     }
     for (const auto &p:D)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / D.size()));
 }
