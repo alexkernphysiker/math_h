@@ -39,10 +39,9 @@ protected:
         return m_x;
     }
 
+public:
     inline Vector(const numt &x)
         : m_x(x) {}
-
-public:
     virtual ~Vector() {}
 
     inline std::tuple<numt> to_tuple()const
@@ -87,6 +86,10 @@ public:
     }
 
     inline const numt &x()const
+    {
+        return m_x;
+    }
+    inline operator numt()const
     {
         return m_x;
     }

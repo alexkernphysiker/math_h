@@ -36,13 +36,14 @@ public:
     AverageObtainer(Args...args):m_cache_avr(0,numt(args...)){}
     virtual ~AverageObtainer() {}
     inline void Fill(const numt &x){m_list.push_back(x);}
+    template<class numt2 = double>
     const numt&Average()const{
-	const size_t sz = count();
-	if(sz==0)throw Exception<AverageObtainer>("Cannot obtain the average of empty sample");
+        const size_t sz = count();
+        if(sz==0)throw Exception<AverageObtainer>("Cannot obtain the average of empty sample");
         if (m_cache_avr.first!=sz) {
             numt res = m_list[0];
-	    for(size_t i=1;i<sz;i++)res=res+m_list[i];
-            m_cache_avr = std::make_pair(sz,res/sz);
+            for(size_t i=1;i<sz;i++)res=res+m_list[i];
+            m_cache_avr = std::make_pair(sz,res/(numt2)sz);
         }
         return m_cache_avr.second;
     }

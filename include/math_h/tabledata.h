@@ -644,8 +644,8 @@ public:
             sorted_x << item.X();
         for (size_t i = sc_x - 1, n = sorted_x.size(); i < n; i += sc_x) {
             const auto min = sorted_x[i + 1 - sc_x].min(),
-             max = sorted_x[i].max(),two=2;
-            new_x << numX((max + min)/two, (max-min)/two);
+             max = sorted_x[i].max();
+            new_x << numX((max + min)/2, (max-min)/2);
         }
         SortedPoints res([](const numX&){return numY(0);},new_x);
         for (size_t i = 0; i < new_x.size(); i++) {
@@ -736,7 +736,7 @@ public:
     }
     BiSortedPoints clone()const
     {
-        BiSortedPoints res();
+        BiSortedPoints res;
         res.m_x_axis=m_x_axis.clone();
         res.m_y_axis=m_y_axis.clone();
         for (size_t i = 0, I = m_data.size(); i < I; i++) {
@@ -839,14 +839,14 @@ public:
         SortedChain<numtX> new_x;
         for (size_t i = sc_x - 1, n = this->X().size(); i < n; i += sc_x) {
             const auto min = this->X()[i + 1 - sc_x].min(),
-		max = this->X()[i].max(),two=2;
-            new_x << (numtX((max + min) / two, (max - min) / two));
+        max = this->X()[i].max();
+            new_x << (numtX((max + min) / 2, (max - min) / 2));
         }
         SortedChain<numtY> new_y;
         for (size_t i = sc_y - 1, n = this->Y().size(); i < n; i += sc_y) {
             const auto min = this->Y()[i + 1 - sc_y].min(),
-		max = this->Y()[i].max(),two=2;
-            new_y << (numtY((max + min) / two, (max - min) / two));
+        max = this->Y()[i].max();
+            new_y << (numtY((max + min) / 2, (max - min) / 2));
         }
         BiSortedPoints res(new_x.clone(), new_y.clone());
         for (size_t i = 0; i < new_x.size(); i++)for (size_t j = 0; j < new_y.size(); j++) {
