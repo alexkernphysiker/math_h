@@ -27,8 +27,9 @@ TEST(Vector, arithmetic1d)
 	    const auto a=X();
 	    EXPECT_EQ(x*a,(V*a).x());
 	    EXPECT_EQ(x*a,(a*V).x());
-	    if(a!=0)
+	    if(a!=0){
 	        EXPECT_EQ(x/a,(V/a).x());
+        }
     }
 }
 TEST(Vector, arithmetic2d)
