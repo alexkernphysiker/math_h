@@ -397,8 +397,8 @@ inline Direction<size, numt> randomIsotropic()
 
 template<class VType>
 struct VectorDecomposition {
-    VType tau;
-    VType n;
+    const VType tau;
+    const VType n;
 };
 
 template<class VType>
