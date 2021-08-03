@@ -69,14 +69,12 @@ public:
     Opr(int v):m_func([v](const numtx&){return numty(v);}){}
     template<class OPR>Opr(OPR O):m_func(O){}
     virtual ~Opr(){}
-    numty operator*(const numtx& f)const{return m_func(f);}
-    Opr operator+(const Opr&second)const{
-	    Opr first(*this);
-	    return Opr([first,second](const numtx&F){return (first*F)+(second*F);});
+    inline numty operator*(const numtx& f)const{return m_func(f);}
+    inline Opr operator+(const Opr&second)const{
+	    return Opr([*this,second](const numtx&F){return (operator*(F))+(second*F);});
     }
-    Opr operator-(const Opr&second)const{
-	    Opr first(*this);
-	    return Opr([first,second](const numtx&F){return (first*F)-(second*F);});
+    inline Opr operator-(const Opr&second)const{
+	    return Opr([*this,second](const numtx&F){return (operator*(F))-(second*F);});
     }
 };
 template<class numty,class numtx>

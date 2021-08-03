@@ -6,6 +6,9 @@
 using namespace std;
 using namespace MathTemplates;
 //This file contains unit tests for functions.h
+
+#define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.001)
+
 template<class numt>
 void Test_Peak_Shape(const function<numt(numt)> f, const numt &from, const numt &peak, const numt &to)
 {
@@ -41,12 +44,29 @@ TEST(OperatorTest,Gaussian)
 {
     for (double sigma = 0.5; sigma < 5; sigma += 0.5)
         for (double X = -5; X <= 5; X += 1) {
-            Opr<> G([sigma, X](double x) {return Gaussian(x, X, sigma);});
+            const Opr<> G([sigma, X](double x) {return Gaussian(x, X, sigma);});
             for(double x=-1.0; x<=1.0; x+=0.1){
-                EXPECT_EQ(G*x,Gaussian(x, X, sigma));
-                EXPECT_EQ(+G*x,Gaussian(x, X, sigma));
-                EXPECT_EQ(-G*x,-Gaussian(x, X, sigma));
-                EXPECT_EQ(2.0*G*x,2.0*Gaussian(x, X, sigma));
+                const auto g = Gaussian(x, X, sigma);
+                EXPECT_EQ(G*x, g);
+                EXPECT_EQ(+G*x, g);
+                EXPECT_EQ(-G*x, -g);
+                EXPECT_EQ(2.0*G*x, 2.0*g);
+                {
+                    const auto E = 1.5 * (G + [](double x) {return x;});
+                    EXPECT_EQ( E*x, (1.5 * (g + x)) );
+                }
+                {
+                    const auto E = (1.5 * G) + [](double x) {return x;};
+                    EXPECT_EQ( E*x, ((1.5 * g) + x) );
+                }
+                {
+                    const auto E = 1.5 * (G - [](double x) {return x;});
+                    EXPECT_EQ( E*x, (1.5 * (g - x)) );
+                }
+                {
+                    const auto E = (1.5 * G) - [](double x) {return x;};
+                    EXPECT_EQ( E*x, ((1.5 * g) - x) );
+                }
             }
         }
 }
