@@ -63,7 +63,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneComponent InsertComponent(const NumberType&c)const
+    inline auto InsertComponent(const NumberType&c)const
     {
 	    static_assert(index>0,"Range check error for insertion position");
 	    static_assert(index<=(Dimensions+1),"Range check error for insertion position");
@@ -79,7 +79,7 @@ public:
     }
 
     template<size_t index>
-    inline const numt &component()const
+    inline const auto &component()const
     {
 	    static_assert(index == 1,"dimension index is out of range");
         return m_x;
@@ -239,12 +239,12 @@ private:
         : m_other(other), m_x(x) {}
 
 protected:
-    inline const MinusOneComponent &___minus_one_component()const
+    inline const auto &___minus_one_component()const
     {
         return m_other;
     }
 
-    inline const numt &___last_component()const
+    inline const auto &___last_component()const
     {
         return m_x;
     }
@@ -265,25 +265,25 @@ public:
     inline Vector(const std::tuple<Args...> &v)
         : m_other(v), m_x(std::get < Dimensions - 1 > (v)) {}
     
-    inline static Vector zero()
+    inline static auto zero()
     {
         return Vector(MinusOneComponent::zero(), numt(0));
     }
     
     template<size_t index>
-    inline static Vector basis_vector()
+    inline static auto basis_vector()
     {
 	    static_assert(index > 0,"dimension index is out of range");
-	    static_assert(index<=Dimensions,"dimension index is out of range");
+	    static_assert(index <= Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions) return Vector(MinusOneComponent::zero(), numt(1));
 	    else return Vector(MinusOneComponent::template basis_vector<index>(), numt(0));
     }
     
     template<size_t index>
-    inline const numt &component()const
+    inline const auto &component()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
-	    static_assert(index<=Dimensions,"dimension index is out of range");
+	    static_assert(index <= Dimensions,"dimension index is out of range");
         if constexpr(index == Dimensions)return m_x;
 	    else return m_other.template component<index>();
     }
@@ -298,7 +298,7 @@ public:
     }
     
     template<size_t index>
-    inline MinusOneComponent RemoveComponent()const
+    inline auto RemoveComponent()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=Dimensions,"dimension index is out of range");
@@ -308,7 +308,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneComponent InsertComponent(const NumberType&c)const
+    inline auto InsertComponent(const NumberType&c)const
     {
     	static_assert(index>0,"Range check error for insertion position");
 	    static_assert(index<=(Dimensions+1),"Range check error for insertion position");
@@ -317,17 +317,17 @@ public:
 	    if constexpr(index<Dimensions)return PlusOneComponent(m_other.template InsertComponent<index>(c),m_x);
     }
 
-    inline const numt &x()const
+    inline const auto &x()const
     {
         return component<1>();
     }
 
-    inline const numt &y()const
+    inline const auto &y()const
     {
         return component<2>();
     }
 
-    inline const numt &z()const
+    inline const auto &z()const
     {
         return component<3>();
     
@@ -350,55 +350,55 @@ public:
         return component<3>(args...);
     }
 
-    Vector &operator+=(const Vector &second)
+    auto &operator+=(const Vector &second)
     {
         m_x += second.m_x;
         m_other += second.m_other;
         return *this;
     }
 
-    Vector operator+(const Vector&second)const
+    auto operator+(const Vector&second)const
     {
         return Vector(m_other + second.___minus_one_component(), m_x + second.___last_component());
     }
 
-    Vector &operator-=(const Vector &second)
+    auto &operator-=(const Vector &second)
     {
         m_x -= second.m_x;
         m_other -= second.m_other;
         return *this;
     }
 
-    Vector operator-(const Vector&second)const
+    auto operator-(const Vector&second)const
     {
         return Vector(m_other - second.___minus_one_component(), m_x - second.___last_component());
     }
 
-    Vector operator-()const
+    auto operator-()const
     {
         return Vector(-m_other, -m_x);
     }
 
-    inline const Vector& operator+()const
+    inline const auto& operator+()const
     {
         return *this;
     }
 
-    Vector &operator*=(const numt &second)
+    auto &operator*=(const numt &second)
     {
         m_x *= second;
         m_other *= second;
         return *this;
     }
 
-    Vector &operator/=(const numt &second)
+    auto &operator/=(const numt &second)
     {
         m_x /= second;
         m_other /= second;
         return *this;
     }
 
-    Vector operator/(const numt &second)const
+    auto operator/(const numt &second)const
     {
         return Vector(m_other / second, m_x / second);
     }
@@ -426,12 +426,12 @@ public:
 	    return Vector<Dimensions,decltype(m_x(args...))>(m_other(args...),m_x(args...));
     }
 
-    inline numt length_sqr()const
+    inline auto length_sqr()const
     {
         return operator*(*this);
     }
 
-    inline numt length()const
+    inline auto length()const
     {
         return sqrt(length_sqr());
     }
@@ -465,55 +465,55 @@ inline Vector < sizeof...(Args) + 1, numt > vec(const numt &x, Args... args)
 }
 
 template<size_t i, size_t d, class numt = double>
-inline Vector<d, numt> axis()
+inline auto axis()
 {
     return Vector<d, numt>::template basis_vector<i>();
 }
 
 template<class numt = double>
-inline Vector<2, numt> x()
+inline auto x()
 {
     return Vector<2, numt>::template basis_vector<1>();
 }
 
 template<class numt = double>
-inline Vector<2, numt> y()
+inline auto y()
 {
     return Vector<2, numt>::template basis_vector<2>();
 }
 
 template<class numt = double>
-inline Vector<2, numt> zero()
+inline auto zero()
 {
     return Vector<2, numt>::zero();
 }
 
 template<class numt = double>
-inline Vector<3, numt> X()
+inline auto X()
 {
     return Vector<3, numt>::template basis_vector<1>();
 }
 
 template<class numt = double>
-inline Vector<3, numt> Y()
+inline auto Y()
 {
     return Vector<3, numt>::template basis_vector<2>();
 }
 
 template<class numt = double>
-inline Vector<3, numt> Z()
+inline auto Z()
 {
     return Vector<3, numt>::template basis_vector<3>();
 }
 
 template<class numt = double>
-inline Vector<3, numt> Zero()
+inline auto Zero()
 {
     return Vector<3, numt>::zero();
 }
 
 template<size_t i,class numt>
-inline std::ostream& operator<<(std::ostream&str,const Vector<i,numt>&X)
+inline auto& operator<<(std::ostream&str,const Vector<i,numt>&X)
 {
     X.output(str);
     return str;

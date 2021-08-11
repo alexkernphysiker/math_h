@@ -40,17 +40,17 @@ protected:
     inline Matrix(const DefaultRowType &line)
         : m_row(line) {}
 
-    inline MinusOneColumn ___minus_one_column()const
+    inline auto ___minus_one_column()const
     {
         return MinusOneColumn(m_row.___minus_one_component());
     }
 
-    inline DefaultColumnType ___last_column()const
+    inline auto ___last_column()const
     {
         return vec(m_row.___last_component());
     }
 
-    inline const DefaultRowType &___last_row()const
+    inline const auto &___last_row()const
     {
         return m_row;
     }
@@ -63,13 +63,13 @@ public:
         return LongerLine(m_row, col.___last_component());
     }
     
-    inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
+    inline auto AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
 	return AddColumn(M.___last_column());
     }
     
     template<size_t third_size>
-    inline Matrix<RowsCount,Vector<ColumnsCount+third_size,NumberType>> AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
+    inline auto AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
     {
 	    return AddColumns(M.___minus_one_column()).AddColumn(M.___last_column());
     }
@@ -79,26 +79,26 @@ public:
         return rows(m_row,row);
     }
 
-    inline Matrix<RowsCount+1,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
+    inline auto AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
     {
 	return AddRow(M.___last_row());
     }
 
     template<size_t third_size>
-    inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
+    inline auto AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M)const
     {
 	    return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
 
     template<size_t index, size_t jindex>
-    inline const NumberType &element()const
+    inline const auto &element()const
     {
 	    static_assert(index == 1 ,"dimension index is out of range");
         return m_row.template component<jindex>();
     }
 
     template<size_t index>
-    inline const DefaultRowType &row()const
+    inline const auto &row()const
     {
 	    static_assert(index == 1 ,"dimension index is out of range");
         return m_row;
@@ -110,7 +110,7 @@ public:
     }
 
     template<size_t index>
-    inline MinusOneColumn RemoveColumn()const
+    inline auto RemoveColumn()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=ColumnsCount,"dimension index is out of range");
@@ -129,7 +129,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneColumn InsertColumn(const DefaultColumnType&C)const
+    inline auto InsertColumn(const DefaultColumnType&C)const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
@@ -147,7 +147,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneRow InsertRow(const DefaultRowType&L)const
+    inline auto InsertRow(const DefaultRowType&L)const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=(RowsCount+1),"dimension index is out of range");
@@ -165,13 +165,13 @@ public:
 	        .template InsertRows<index,third_size-1>(C.___minus_one_component());
     }
 
-    inline NumberType Determinant()const
+    inline const auto& Determinant()const
     {
 	    static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	    return m_row.x();
     }
 
-    inline DefaultRowType Cramer(const DefaultRowType&X)const
+    inline auto Cramer(const DefaultRowType&X)const
     {
 	    static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	    const NumberType D=Determinant();
@@ -183,12 +183,12 @@ public:
 	    return Matrix <ColumnsCount,Vector<1, NumberType>> (m_row.to_tuple());
     }
 
-    inline Vector<RowsCount,NumberType> diagonal()const
+    inline auto diagonal()const
     {
 	    return vec(m_row.x());
     }
     
-    inline NumberType trace()const
+    inline const auto& trace()const
     {
 	    return m_row.x();
     }
@@ -232,38 +232,37 @@ public:
     
     template<class numt2>
     inline auto operator*(const numt2 &v) const
-        ->Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>
     {
         return Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>(m_row * v);
     }
 
-    inline Matrix operator/(const NumberType &v)const
+    inline auto operator/(const NumberType &v)const
     {
         return Matrix(m_row / v);
     }
     
-    inline Matrix operator+(const Matrix&B)const
+    inline auto operator+(const Matrix&B)const
     {
         return Matrix(m_row + B.___last_row());
     }
     
-    inline Matrix operator-(const Matrix&B)const
+    inline auto operator-(const Matrix&B)const
     {
         return Matrix(m_row - B.___last_row());
     }
     
-    static inline Matrix zero()
+    static inline auto zero()
     {
         return Matrix(DefaultRowType::zero());
     }
     
-    static inline Matrix one()
+    static inline auto one()
     {
         return Matrix(DefaultRowType::template basis_vector<RowsCount>());
     }
     
     template<size_t x, size_t y>
-    static inline Matrix RotationInPlane(const NumberType &angle)
+    static inline auto RotationInPlane(const NumberType &angle)
     {
         return Matrix(
 	        (x == RowsCount) ? ((DefaultRowType::template basis_vector<x>() * cos(angle)) - (DefaultRowType::template basis_vector<y>() * sin(angle))) :
@@ -310,22 +309,22 @@ protected:
     inline Matrix(const MinusOneRow &minor, const DefaultRowType &line)
         : m_other_rows(minor), m_row(line) {}
 
-    inline MinusOneColumn ___minus_one_column()const
+    inline auto ___minus_one_column()const
     {
         return MinusOneColumn(m_other_rows.___minus_one_column(),m_row.___minus_one_component());
     }
 
-    inline DefaultColumnType ___last_column()const
+    inline auto ___last_column()const
     {
         return DefaultColumnType(m_other_rows.___last_column(), m_row.___last_component());
     }
 
-    inline const DefaultRowType &___last_row()const
+    inline const auto &___last_row()const
     {
         return m_row;
     }
 
-    inline const MinusOneRow &___minus_one_component()const
+    inline const auto &___minus_one_component()const
     {
         return m_other_rows;
     }
@@ -333,40 +332,40 @@ protected:
 public:
     virtual ~Matrix() {}
 
-    inline PlusOneColumn AddColumn(const DefaultColumnType &col)const
+    inline auto AddColumn(const DefaultColumnType &col)const
     {
         return PlusOneColumn(m_other_rows.AddColumn(col.___minus_one_component()),LongerLine(m_row, col.___last_component()));
     }
 
-    inline Matrix<RowsCount,Vector<ColumnsCount+1,NumberType>> AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
+    inline auto AddColumns(const Matrix<RowsCount,Vector<1,NumberType>>&M)const
     {
 	    return AddColumn(M.___last_column());
     }
 
     template<size_t third_size>
-    inline Matrix<RowsCount,Vector<ColumnsCount+third_size,NumberType>> AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
+    inline auto AddColumns(const Matrix<RowsCount,Vector<third_size,NumberType>>&M)const
     {
 	    return AddColumns(M.___minus_one_column()).AddColumn(M.___last_column());
     }
 
-    inline PlusOneRow AddRow(const DefaultRowType &row)const
+    inline auto AddRow(const DefaultRowType &row)const
     {
         return PlusOneRow(*this,row);
     }
 
-    inline Matrix<RowsCount+1,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
+    inline auto AddRows(const Matrix<1,Vector<ColumnsCount,NumberType>>&M)const
     {
 	    return AddRow(M.___last_row());
     }
 
     template<size_t third_size>
-    inline Matrix<RowsCount+third_size,Vector<ColumnsCount,NumberType>> AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M) const
+    inline auto AddRows(const Matrix<third_size,Vector<ColumnsCount,NumberType>>&M) const
     {
 	    return AddRows(M.___minus_one_component()).AddRow(M.___last_row());
     }
 
     template<size_t index, size_t jindex>
-    inline const NumberType &element() const
+    inline const auto &element() const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=RowsCount,"dimension index is out of range");
@@ -375,7 +374,7 @@ public:
     }
 
     template<size_t index>
-    inline const DefaultRowType &row()const
+    inline const auto &row()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=RowsCount,"dimension index is out of range");
@@ -384,7 +383,7 @@ public:
     }
 
     template<size_t index>
-    inline MinusOneColumn RemoveColumn()const
+    inline auto RemoveColumn()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=ColumnsCount,"dimension index is out of range");
@@ -403,7 +402,7 @@ public:
     }
 
     template<size_t index>
-    inline MinusOneRow RemoveRow()const
+    inline auto RemoveRow()const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=RowsCount,"dimension index is out of range");
@@ -424,7 +423,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneColumn InsertColumn(const DefaultColumnType&C)const
+    inline auto InsertColumn(const DefaultColumnType&C)const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=(ColumnsCount+1),"dimension index is out of range");
@@ -444,7 +443,7 @@ public:
     }
 
     template<size_t index>
-    inline PlusOneRow InsertRow(const DefaultRowType&L)const
+    inline auto InsertRow(const DefaultRowType&L)const
     {
 	    static_assert(index > 0,"dimension index is out of range");
 	    static_assert(index<=(RowsCount+1),"dimension index is out of range");
@@ -464,14 +463,14 @@ public:
     }
 
     template<size_t row,size_t col>
-    inline Minor GetMinor()const
+    inline auto GetMinor()const
     {
         return RemoveColumn<col>().template RemoveRow<row>();
     }
 
 private:
     template<size_t index>
-    inline NumberType __det_until()const
+    inline auto __det_until()const
     {
 	    static_assert(index <= RowsCount,"dimension index is out of range");
 	    static_assert(index > 0,"dimension index is out of range");
@@ -481,7 +480,7 @@ private:
     }
 
     template<size_t index>
-    inline Vector<index,NumberType> ___cramer(const DefaultRowType&X,const NumberType&D)const
+    inline auto ___cramer(const DefaultRowType&X,const NumberType&D)const
     {
 	    static_assert(index <= ColumnsCount,"dimension index is out of range");
 	    static_assert(index > 0,"dimension index is out of range");
@@ -491,13 +490,13 @@ private:
     }
 
 public:
-    inline NumberType Determinant()const
+    inline auto Determinant()const
     {
 	    static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	    return __det_until<1>();
     }
 
-    inline DefaultRowType Cramer(const DefaultRowType&X)const
+    inline auto Cramer(const DefaultRowType&X)const
     {
 	    static_assert(size_t(ColumnsCount)==size_t(RowsCount),"cannot calculate a non-squared matrix determinant");
 	    const NumberType D=Determinant();
@@ -505,17 +504,17 @@ public:
 	    return ___cramer<ColumnsCount>(X,D);
     }
 
-    inline Matrix<ColumnsCount,Vector<RowsCount,NumberType>> transponate()const
+    inline auto transponate()const
     {
 	    return m_other_rows.transponate().template InsertColumn<RowsCount>(m_row);
     }
 
-    inline Vector<RowsCount,NumberType> diagonal()const
+    inline auto diagonal()const
     {
 	    return Vector<RowsCount,NumberType>(m_other_rows.diagonal(),m_row.template component<RowsCount>());
     }
 
-    inline NumberType trace()const
+    inline auto trace()const
     {
 	    return m_row.template component<RowsCount>()+m_other_rows.trace();
     }
@@ -567,35 +566,35 @@ public:
         return Matrix<RowsCount,RowType<decltype(element<1,1>()*v)>>(m_other_rows * v, m_row * v);
     }
 
-    inline Matrix operator/(const NumberType &v)const
+    inline auto operator/(const NumberType &v)const
     {
         return Matrix(m_other_rows / v, m_row / v);
     }
 
     template<class numt2>
-    inline Matrix operator+(const Matrix<RowsCount,RowType<numt2>> &B)const
+    inline auto operator+(const Matrix<RowsCount,RowType<numt2>> &B)const
     {
         return Matrix(m_other_rows + B.___minus_one_component(), m_row + B.___last_row());
     }
 
     template<class numt2>
-    inline Matrix operator-(const Matrix<RowsCount,RowType<numt2>> &B)const
+    inline auto operator-(const Matrix<RowsCount,RowType<numt2>> &B)const
     {
         return Matrix(m_other_rows - B.___minus_one_component(), m_row - B.___last_row());
     }
 
-    static inline Matrix zero()
+    static inline auto zero()
     {
         return Matrix(MinusOneRow::zero(), DefaultRowType::zero());
     }
 
-    static inline Matrix one()
+    static inline auto one()
     {
         return Matrix(MinusOneRow::one(), DefaultRowType::template basis_vector<RowsCount>());
     }
 
     template<size_t x, size_t y>
-    static inline Matrix RotationInPlane(const NumberType &angle)
+    static inline auto RotationInPlane(const NumberType &angle)
     {
         return Matrix(
 	        MinusOneRow::template RotationInPlane<x, y>(angle),
@@ -641,19 +640,19 @@ inline Matrix < VecT::Dimensions, Vector < 1 + sizeof...(Args), typename VecT::N
 }
 
 template<size_t s, class numt = double>
-inline Matrix<s, Vector<s, numt>> ZERO()
+inline auto ZERO()
 {
     return Matrix<s, Vector<s, numt>>::zero();
 }
 
 template<size_t s, class numt = double>
-inline Matrix<s, Vector<s, numt>> ONE()
+inline auto ONE()
 {
     return Matrix<s, Vector<s, numt>>::one();
 }
 
 template<size_t size, class RowType>
-inline Matrix<size, RowType> TensorProduct(const Vector<size, typename RowType::NumberType> &A, const RowType &B)
+inline auto TensorProduct(const Vector<size, typename RowType::NumberType> &A, const RowType &B)
 {
     return Matrix<size, RowType>(A, B);
 }
