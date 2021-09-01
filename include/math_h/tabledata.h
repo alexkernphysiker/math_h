@@ -51,17 +51,10 @@ private:
 public:
     const Chain<comparable>&operator()()const{return data;}
     SortedChain() {}
-    SortedChain(SortedChain&& points)
-    {
-        data=std::move(points.data);
-        points.data={};
-    }
-    SortedChain&operator=(SortedChain&& points)
-    {
-        data=std::move(points.data);
-        points.data={};
-        return *this;
-    }
+    SortedChain(const SortedChain& points) = delete;
+    SortedChain& operator=(const SortedChain& points) = delete;
+    SortedChain(SortedChain&& points) = default;
+    SortedChain& operator=(SortedChain&& points) = default;
     SortedChain clone()const
     {
         SortedChain res;
@@ -216,13 +209,8 @@ public:
     point(const numtX &pos, const numtY &val): x(pos), y(val) {}
     template<class numtX2, class numtY2>
     point(const point<numtX2,numtY2> &source): x(source.X()), y(source.Y()) {}
-    point&operator=(const point&source)
-    {
-        x = source.x;
-        y = source.y;
-	    return *this;
-    }
-    inline point&operator=(const numtY&source)
+    point& operator=(const point&source) = default;
+    inline point& operator=(const numtY&source)
     {
         y = source;
 	    return *this;
@@ -342,9 +330,11 @@ public:
     typedef IFunction<numY,const numX &> Func;
     typedef point<numX,numY> Point;
     SortedPoints() {}
+    SortedPoints(const SortedPoints&) = delete;
+    SortedPoints& operator=(const SortedPoints&) = delete;
     SortedPoints(SortedChain<point<numX, numY>>&& points):SortedChain<point<numX, numY>>(std::move(points)){}
     SortedPoints(SortedPoints&& points):SortedChain<point<numX, numY>>(std::move(points)){}
-    SortedPoints&operator=(SortedChain<point<numX, numY>>&& points)
+    SortedPoints& operator=(SortedChain<point<numX, numY>>&& points)
     {
         SortedChain<point<numX, numY>>::operator=(std::move(points));
         return *this;
@@ -727,13 +717,10 @@ public:
         init(args...);
     }
     BiSortedPoints(): BiSortedPoints({}, {}) {}
-    BiSortedPoints(BiSortedPoints &&source)
-        : m_x_axis(std::move(source.m_x_axis)), 
-        m_y_axis(std::move(source.m_y_axis))
-    {
-        m_data=std::move(source.m_data);
-        source.m_data={};
-    }
+    BiSortedPoints(const BiSortedPoints&) = delete;
+    BiSortedPoints& operator=(const BiSortedPoints&) = delete;
+    BiSortedPoints(BiSortedPoints &&) = default;
+    BiSortedPoints& operator=(BiSortedPoints &&) = default;
     BiSortedPoints clone()const
     {
         BiSortedPoints res;
