@@ -179,6 +179,12 @@ TEST(SortedPoints, range)
     EXPECT_EQ(2, ycut.size());
     EXPECT_EQ(1.2, ycut.left().X());
     EXPECT_EQ(1.3, ycut.right().X());
+
+    const auto copy = chain.Clone();
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(chain[i].X(), copy[i].X());
+        EXPECT_EQ(chain[i].Y(), copy[i].Y());
+    }
 }
 TEST(SortedPoints, WeightedAvr){
 {
