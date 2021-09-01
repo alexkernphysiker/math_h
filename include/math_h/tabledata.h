@@ -58,8 +58,7 @@ public:
     SortedChain clone()const
     {
         SortedChain res;
-        for (const auto &p : data)
-            res.data.push_back(comparable(p));
+        res.data = data;
         return res;
     }
     template<class comparable2>
@@ -373,9 +372,9 @@ public:
     template<class FUNC,class CHAIN>
     SortedPoints(FUNC F,const CHAIN&c):SortedPoints(static_cast<const Func&>(FunctionWrap<numY,const numX&>(F)),c){}
     virtual ~SortedPoints() {}
-    SortedPoints Clone()const
+    inline SortedPoints Clone()const
     {
-        return SortedPoints(*this);
+        return SortedPoints(SortedChain<point<numX, numY>>::clone());
     }
 protected:
     point<numX, numY> &Bin(const size_t i)

@@ -56,6 +56,11 @@ TEST(SortedChain, basetest)
         chain << get();
     for (size_t i = 1; i < 100; i++)
         EXPECT_TRUE(chain[i] > chain[i - 1]);
+
+    const auto copy = chain.clone();
+    for (size_t i = 0; i < 100; i++)
+        EXPECT_EQ(chain[i], copy[i]);
+
 }
 TEST(point, test2d){
 {
@@ -152,6 +157,14 @@ TEST(SortedPoints, size){
     for (size_t i = 0; i < chain.size(); i++) {
         EXPECT_EQ(1, chain[i].Y().val());
         EXPECT_EQ(i, chain[i].X().val());
+    }
+
+    const auto copy = chain.Clone();
+    for (size_t i = 0; i < chain.size(); i++) {
+        EXPECT_EQ(chain[i].X().val(), copy[i].X().val());
+        EXPECT_EQ(chain[i].X().uncertainty(), copy[i].X().uncertainty());
+        EXPECT_EQ(chain[i].Y().val(), copy[i].Y().val());
+        EXPECT_EQ(chain[i].Y().uncertainty(), copy[i].Y().uncertainty());
     }
 }
 }
