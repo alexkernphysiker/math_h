@@ -720,15 +720,13 @@ public:
     BiSortedPoints& operator=(const BiSortedPoints&) = delete;
     BiSortedPoints(BiSortedPoints &&) = default;
     BiSortedPoints& operator=(BiSortedPoints &&) = default;
-    BiSortedPoints clone()const
+    BiSortedPoints clone() const
     {
         BiSortedPoints res;
         res.m_x_axis=m_x_axis.clone();
         res.m_y_axis=m_y_axis.clone();
         for (size_t i = 0, I = m_data.size(); i < I; i++) {
-            res.m_data.push_back(Chain<numtZ>());
-            for (const auto &item : m_data[i])
-                res.m_data[i].push_back(item);
+            res.m_data.push_back(m_data[i]);
         }
         return res;
     }
