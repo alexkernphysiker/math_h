@@ -53,5 +53,10 @@ namespace MathTemplates
 		static_assert(size>0,"invalid space dimmensions count");
 		return numeric_diff_details::___nabla_partial<size,numt,size>(delta);
     }
+    template<size_t size,class numt>
+    inline auto laplace(const numt&delta){
+		static_assert(size>0,"invalid space dimmensions count");
+		return nabla<size, numt>(delta) * nabla<size, numt>(delta);
+	}
 };
 #endif

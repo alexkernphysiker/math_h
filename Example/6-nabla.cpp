@@ -12,8 +12,7 @@ int main()
     const double delta = 0.00001;
     const auto Potential = [](const Vector<3>&r){ return 1.0 / r.length(); };
 	const auto field = -nabla<3>(delta) * Potential;
-    const auto laplace = nabla<3>(delta)*nabla<3>(delta);
-	const auto charge_density = laplace * Potential;
+	const auto charge_density = laplace<3>(delta) * Potential;
 
     Plot("nabla-example-potential").Line(
         SortedPoints<>(
