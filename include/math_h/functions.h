@@ -95,6 +95,13 @@ inline numt PI(){return 3.14159265358;}
 template<class numt = double>
 inline numt E(){return 2.718281828459;}
 
+
+template<class numt = double>
+numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
+{
+    return 1.0 / (1.0 + exp((x - X_border) / diffuse));
+}
+
 //Peak functions
 template<class numt = double>
 numt Gaussian(const numt &x, const numt &X_max, const numt &sigma)
@@ -126,19 +133,14 @@ numt Novosibirsk(const numt &x, const numt &pos, const numt &sigma, const numt &
 }
 
 ///Polynomial
-template<class numt = double>
-numt FermiFunc(const numt &x, const numt &X_border, const numt &diffuse)
-{
-    return 1.0 / (1.0 + exp((x - X_border) / diffuse));
-}
-template<unsigned int P,int index_offset = 0, class numt, class indexer>
-inline numt Polynom(const numt &x, const indexer&p)
+template<unsigned int Power,int index_offset = 0, class numt, class indexer>
+inline numt Polynom(const numt &x, const indexer&coefficients)
 {
     static_assert(index_offset >= 0,"Polynom offset index is out of range");
     numt res=0;
-    for(int i=P;i>=0;i--){
-	res*=x;
-	res+=p[index_offset+i];
+    for(int i=Power;i>=0;i--){
+        res*=x;
+        res+=coefficients[index_offset+i];
     }
     return res;
 }
