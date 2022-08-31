@@ -26,7 +26,7 @@ class FunctionWrap:public IFunction<result,Args...>
 private:
     std::function<result(Args...)> func;
 public:
-    FunctionWrap(const FunctionWrap&source):func(source.func){}
+    FunctionWrap(const FunctionWrap&source) = default;
     FunctionWrap(std::function<result(Args...)>source):func(source){}
     FunctionWrap(const result&v):FunctionWrap([v](Args...){return v;}){}
     FunctionWrap(int v):FunctionWrap([v](Args...){return result(v);}){}
@@ -64,7 +64,7 @@ private:
     FunctionWrap<numty,const numtx&> m_func;
 public:
     Opr(const FunctionWrap<numty,const numtx&>&source):m_func(source){}
-    Opr(const Opr&source):m_func(source.m_func){}
+    Opr(const Opr&source) = default;
     Opr(const numty&v):m_func([v](const numtx&){return v;}){}
     Opr(int v):m_func([v](const numtx&){return numty(v);}){}
     template<class OPR>Opr(OPR O):m_func(O){}

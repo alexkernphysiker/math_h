@@ -107,11 +107,7 @@ public:
         return m_x(args...);
     }
     
-    Vector &operator=(const Vector &source)
-    {
-        m_x = source.m_x;
-        return *this;
-    }
+    Vector &operator=(const Vector &source) = default;
     
     Vector &operator+=(const Vector &second)
     {
@@ -349,6 +345,8 @@ public:
     {
         return component<3>(args...);
     }
+
+    Vector &operator=(const Vector &source) = default;
 
     auto &operator+=(const Vector &second)
     {

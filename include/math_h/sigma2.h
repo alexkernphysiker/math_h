@@ -57,7 +57,7 @@ private:
 protected:
     virtual numt mmeasure()const override{return m_val;}
 public:
-    value_numeric_const(const value_numeric_const&source):abstract_value_with_uncertainty_numeric<numt>(),m_val(source.m_val){}
+    value_numeric_const(const value_numeric_const&source) = default;
     value_numeric_const(const numt&v):abstract_value_with_uncertainty_numeric<numt>(),m_val(v){}
     virtual ~value_numeric_const(){}
 };
@@ -93,9 +93,7 @@ protected:
 	return m_func(P);
     }
 public:
-    value_f_chain(const value_f_chain&source)
-	:abstract_value_with_uncertainty_numeric<numt>()
-	    ,m_func(source.m_func),m_chain(source.m_chain){}
+    value_f_chain(const value_f_chain&source) = default;
     template<class VType>
     value_f_chain(std::function<numt(const Chain<numt>&)> F,const Chain<VType>&chain)
 	:abstract_value_with_uncertainty_numeric<numt>(),m_func(F){
@@ -114,8 +112,7 @@ private:
 protected:
     virtual numt mmeasure()const override{return m_func();}
 public:
-    value_f(const value_f&s)
-	:abstract_value_with_uncertainty_numeric<numt>(),m_func(s.m_func){}
+    value_f(const value_f&s) = default;
     inline value_f(std::function<numt()> F)
 	:abstract_value_with_uncertainty_numeric<numt>(),m_func(F){}
     virtual ~value_f(){}
@@ -125,7 +122,7 @@ public:
 template<class numt>
 class value_f<1,numt>:public value_f<0,numt>{
 public:
-    value_f(const value_f&s):value_f<0,numt>(s){}
+    value_f(const value_f&s) = default;
     template<class ArgType1>
     inline value_f(std::function<numt(const numt&)> F,ArgType1 a)
 	:value_f<0,numt>([a,F](){
@@ -137,7 +134,7 @@ public:
 template<class numt>
 class value_f<2,numt>:public value_f<1,numt>{
 public:
-    value_f(const value_f&s):value_f<1,numt>(s){}
+    value_f(const value_f&s) = default;
     template<class ArgType1,class ArgType2>
     inline value_f(std::function<numt(const numt&,const numt&)> F,ArgType1 a,ArgType2 b)
 	:value_f<1,numt>([a,F](const numt&y){

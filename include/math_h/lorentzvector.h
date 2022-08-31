@@ -42,12 +42,7 @@ public:
     inline LorentzVector(const LorentzVector<Time2, Space2> &source)
         : m_time(source.E()), m_space(source.P()) {}
 
-    LorentzVector &operator=(const LorentzVector &source)
-    {
-        m_space = source.m_space;
-        m_time = source.m_time;
-        return *this;
-    }
+    LorentzVector &operator=(const LorentzVector &source) = default;
 
     bool operator==(const LorentzVector &second)const
     {
@@ -80,6 +75,11 @@ public:
     LorentzVector operator-(const LorentzVector &second)const
     {
         return LorentzVector(m_time - second.m_time, m_space - second.m_space);
+    }
+
+    LorentzVector operator-()const
+    {
+        return LorentzVector(-m_time, -m_space);
     }
 
     auto operator*(const LorentzVector &second)const

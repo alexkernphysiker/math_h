@@ -15,6 +15,8 @@ public:
     typedef typename SortedPoints<numX, numY>::Func Func;
 
 public:
+    LinearInterpolation(const LinearInterpolation&) = delete;
+    LinearInterpolation(LinearInterpolation&&) = default;
     LinearInterpolation() {}
     LinearInterpolation(const Points<numX, numY> &points)
         : SortedPoints<numX, numY>(points) {}
@@ -58,6 +60,8 @@ template<class numtX = double, class numtY = numtX, class numtZ = numtY>
 class BiLinearInterpolation:public IFunction<numtZ, const numtX &, const numtY &>,public BiSortedPoints<numtX, numtY, numtZ>
 {
 public:
+    BiLinearInterpolation(const BiLinearInterpolation&) = delete;
+    BiLinearInterpolation(BiLinearInterpolation&&) = default;
     BiLinearInterpolation(const Chain<numtX> &X, const Chain<numtY> &Y)
         : BiSortedPoints<numtX, numtY, numtZ>(X, Y) {}
     BiLinearInterpolation(SortedChain<numtX> &&X, SortedChain<numtY> &&Y)

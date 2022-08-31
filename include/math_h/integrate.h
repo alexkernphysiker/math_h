@@ -86,8 +86,7 @@ private:
     numX Ksi2;
     numY Eps;
 public:
-    Convolution(const Convolution &C)
-        : A(C.A), B(C.B), Ksi1(C.Ksi1), Ksi2(C.Ksi2), Eps(C.Eps) {}
+    Convolution(const Convolution &C) = default;
     Convolution(const func1 a, const func2 b, const numX &ksi1, const numX &ksi2, const numY &eps)
         : A(a), B(b)
     {

@@ -332,7 +332,7 @@ public:
     SortedPoints(const SortedPoints&) = delete;
     SortedPoints& operator=(const SortedPoints&) = delete;
     SortedPoints(SortedChain<point<numX, numY>>&& points):SortedChain<point<numX, numY>>(std::move(points)){}
-    SortedPoints(SortedPoints&& points):SortedChain<point<numX, numY>>(std::move(points)){}
+    SortedPoints(SortedPoints&& points) = default;
     SortedPoints& operator=(SortedChain<point<numX, numY>>&& points)
     {
         SortedChain<point<numX, numY>>::operator=(std::move(points));

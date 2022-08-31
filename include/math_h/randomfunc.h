@@ -28,8 +28,9 @@ private:
     mutable std::uniform_real_distribution<numt> f_distr;
 public:
     typedef numt NumberType;
-    RandomValueTableDistr(RandomValueTableDistr &&R):
-        reverse_distr_func(std::move(R.reverse_distr_func)), f_distr(std::move(R.f_distr)) {}
+    RandomValueTableDistr(const RandomValueTableDistr &R) = delete;
+    RandomValueTableDistr& operator=(const RandomValueTableDistr &R) = delete;
+    RandomValueTableDistr(RandomValueTableDistr &&R) = default;
     RandomValueTableDistr(interpolation_details::ReverseIntegratedLinearInterpolation<numt> &&distribution_density):
         reverse_distr_func(std::move(distribution_density)),
         f_distr(reverse_distr_func.left().X(), reverse_distr_func.right().X())
@@ -58,7 +59,7 @@ private:
 public:
     typedef numt NumberType;
     RandomUniform(const numt& x1, const numt& x2): f_distr(x1, x2) {}
-    RandomUniform(const RandomUniform &source): f_distr(source.f_distr) {}
+    RandomUniform(const RandomUniform &source) = default;
     virtual ~RandomUniform() {}
     virtual numt operator()()const override
     {
@@ -73,7 +74,7 @@ private:
 public:
     typedef numt NumberType;
     RandomGauss(const numt& x1, const numt& x2): f_distr(x1, x2) {}
-    RandomGauss(const RandomGauss &source): f_distr(source.f_distr) {}
+    RandomGauss(const RandomGauss &source) = default;
     virtual ~RandomGauss() {}
     virtual numt operator()()const override
     {
@@ -81,12 +82,14 @@ public:
     }
 };
 template<class numt = double, class RG = RandomEngine<>>
-RandomValueTableDistr<numt,RG> Poisson(const numt&avr){
+auto Poisson(const numt&avr){
     const auto chain=ChainWithCount(size_t(avr*3+1),numt(0),avr*3);
     return RandomValueTableDistr<numt,RG>([&avr](const numt&k){
-	numt kf=1;
-	for(numt i=2;i<=k;i+=1)kf*=i;
-	return pow(avr,k)/kf;
+	    numt kf=1;
+	    for(numt i=2;i<=k;i+=1) {
+            kf *= i;
+        }
+	    return pow(avr,k) / kf;
     },chain);
 }
 };
