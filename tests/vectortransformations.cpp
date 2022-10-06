@@ -207,19 +207,19 @@ TEST(Direction, Isotropic3)
 {
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
     Distribution1D<> X(c), Y(c), Z(c),Phi(BinsByStep(-PI(), 0.1*PI(), PI()));
-    const size_t N=10000000;
+    const size_t N=1000000;
     for (size_t i = 0; i < N; i++) {
 	const auto D=randomIsotropic<3>();
         const auto V = D*1.0;
         X.Fill(V.x());
         Y.Fill(V.y());
         Z.Fill(V.z());
-	Phi.Fill(D.phi());
+        Phi.Fill(D.phi());
     }
-    for (const auto &p:X)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / X.size()));
-    for (const auto &p:Y)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Y.size()));
-    for (const auto &p:Z)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Z.size()));
-    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(3).Contains(double(N) / Phi.size()));
+    for (const auto &p:X)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / X.size()));
+    for (const auto &p:Y)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Y.size()));
+    for (const auto &p:Z)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Z.size()));
+    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Phi.size()));
 }
 TEST(VectorTransformation, Rotation2)
 {
