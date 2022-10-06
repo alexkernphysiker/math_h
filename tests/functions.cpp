@@ -12,19 +12,20 @@ using namespace MathTemplates;
 template<class numt>
 void Test_Peak_Shape(const function<numt(numt)> f, const numt &from, const numt &peak, const numt &to)
 {
-    for (numt x = from; x <= to; x += 0.06) {
+    const auto delta = (to - from) / 20.;
+    for (numt x = from; x <= to; x += delta) {
         EXPECT_TRUE(f(x) >= 0);
         if (x <= peak)
-            EXPECT_TRUE(f(x) >= f(x - 0.02));
+            EXPECT_TRUE(f(x) >= f(x - delta));
         else
-            EXPECT_TRUE(f(x) >= f(x + 0.02));
+            EXPECT_TRUE(f(x) >= f(x + delta));
     }
 }
 template<class numt>
 void Test_Norm(const function<numt(numt)> f)
 {
-    const auto S = Sympson(f, -300., +300., 0.001);
-    EXPECT_TRUE(pow(S - 1., 2) < 0.0001);
+    const auto S = Sympson(f, -100., +100., 0.01);
+    EXPECT_TRUE(pow(S - 1., 2) < 0.001);
 }
 
 TEST(FunctionsTest,Gaussian)
