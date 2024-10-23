@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(math_h)
 if(NOT DEFINED MATH_H_INC)
     option(INSTALL OFF)
