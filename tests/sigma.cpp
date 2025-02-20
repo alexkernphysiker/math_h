@@ -11,7 +11,7 @@ using namespace MathTemplates;
 #define ALMOST_EQ3(a,b) EXPECT_TRUE(abs(a-b)<0.1)
 TEST(value, properties)
 {
-    RandomGauss<> G(0,6);
+    RandomGauss<> G(0, 6);
     for (size_t i = 0; i < 10; i++) {
         double x = G();
         value<> V(x, 0.1);
@@ -22,12 +22,12 @@ TEST(value, properties)
         EXPECT_EQ(x + 0.1, V.max());
     }
 }
-TEST(value,initlist)
+TEST(value, initlist)
 {
-    RandomGauss<> G(0,6);
+    RandomGauss<> G(0, 6);
     for (size_t i = 0; i < 10; i++) {
         double x = G();
-        value<> V{x, 0.1};
+        value<> V{ x, 0.1 };
         EXPECT_EQ(x, V.val());
         EXPECT_EQ(0.1, V.uncertainty());
         EXPECT_EQ(0.1 / x, V.epsilon());
@@ -35,7 +35,7 @@ TEST(value,initlist)
         EXPECT_EQ(x + 0.1, V.max());
     }
 }
-TEST(value,compare)
+TEST(value, compare)
 {
     value<> V(0, 0.1);
     EXPECT_EQ(false, V.Contains(-0.2));
@@ -59,9 +59,9 @@ TEST(value,compare)
     v = value<>(0, 1).Below(value<>(2, 1.1));
     EXPECT_FALSE(v);
 
-    v = value<>(2, 1) .Above(0.9);
+    v = value<>(2, 1).Above(0.9);
     EXPECT_TRUE(v);
-    v = value<>(2, 1) .Above(1.1);
+    v = value<>(2, 1).Above(1.1);
     EXPECT_FALSE(v);
     v = value<>(0, 1).Below(1.1);
     EXPECT_TRUE(v);
@@ -71,41 +71,41 @@ TEST(value,compare)
 TEST(value, arithmetic_actions)
 {
     {
-    RandomUniform<> val(1, 50), unc(0.1, 10);
-    for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<> A(val(), unc()), B(val(), unc());
-        auto sum = A + B;
-        EXPECT_EQ(A.val() + B.val(), sum.val());
-        ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
-        auto sub = A - B;
-        EXPECT_EQ(A.val() - B.val(), sub.val());
-        ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sub.uncertainty(), 2));
-        auto prod = A * B;
-        EXPECT_EQ(A.val()*B.val(), prod.val());
-        ALMOST_EQ(pow(A.uncertainty()*B.val(), 2) + pow(A.val()*B.uncertainty(), 2), pow(prod.uncertainty(), 2));
-        auto ratio = A / B;
-        EXPECT_EQ(A.val() / B.val(), ratio.val());
-        ALMOST_EQ(pow(A.uncertainty() / B.val(), 2) + pow((A.val()*B.uncertainty()) / pow(B.val(), 2), 2), pow(ratio.uncertainty(), 2));
-    }
+        RandomUniform<> val(1, 50), unc(0.1, 10);
+        for (size_t cnt = 0; cnt < 1000; cnt++) {
+            value<> A(val(), unc()), B(val(), unc());
+            auto sum = A + B;
+            EXPECT_EQ(A.val() + B.val(), sum.val());
+            ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sum.uncertainty(), 2));
+            auto sub = A - B;
+            EXPECT_EQ(A.val() - B.val(), sub.val());
+            ALMOST_EQ(pow(A.uncertainty(), 2) + pow(B.uncertainty(), 2), pow(sub.uncertainty(), 2));
+            auto prod = A * B;
+            EXPECT_EQ(A.val() * B.val(), prod.val());
+            ALMOST_EQ(pow(A.uncertainty() * B.val(), 2) + pow(A.val() * B.uncertainty(), 2), pow(prod.uncertainty(), 2));
+            auto ratio = A / B;
+            EXPECT_EQ(A.val() / B.val(), ratio.val());
+            ALMOST_EQ(pow(A.uncertainty() / B.val(), 2) + pow((A.val() * B.uncertainty()) / pow(B.val(), 2), 2), pow(ratio.uncertainty(), 2));
+        }
     }
     {
-    RandomUniform<> val(1, 50), unc(0.1, 10);
-    for (size_t cnt = 0; cnt < 1000; cnt++) {
-        value<> A(val(), unc());
-        double B = val();
-        auto sum = A + B;
-        EXPECT_EQ(A.val() + B, sum.val());
-        EXPECT_EQ(A.uncertainty(), sum.uncertainty());
-        auto sub = A - B;
-        EXPECT_EQ(A.val() - B, sub.val());
-        EXPECT_EQ(A.uncertainty(), sub.uncertainty());
-        auto prod = A * B;
-        EXPECT_EQ(A.val()*B, prod.val());
-        EXPECT_EQ(A.uncertainty()*B, prod.uncertainty());
-        auto ratio = A / B;
-        EXPECT_EQ(A.val() / B, ratio.val());
-        EXPECT_EQ(A.uncertainty() / B, ratio.uncertainty());
-    }
+        RandomUniform<> val(1, 50), unc(0.1, 10);
+        for (size_t cnt = 0; cnt < 1000; cnt++) {
+            value<> A(val(), unc());
+            double B = val();
+            auto sum = A + B;
+            EXPECT_EQ(A.val() + B, sum.val());
+            EXPECT_EQ(A.uncertainty(), sum.uncertainty());
+            auto sub = A - B;
+            EXPECT_EQ(A.val() - B, sub.val());
+            EXPECT_EQ(A.uncertainty(), sub.uncertainty());
+            auto prod = A * B;
+            EXPECT_EQ(A.val() * B, prod.val());
+            EXPECT_EQ(A.uncertainty() * B, prod.uncertainty());
+            auto ratio = A / B;
+            EXPECT_EQ(A.val() / B, ratio.val());
+            EXPECT_EQ(A.uncertainty() / B, ratio.uncertainty());
+        }
     }
 }
 TEST(value, NumCompare)
@@ -177,24 +177,24 @@ TEST(value, NumCompare)
 }
 TEST(value, func_val1)
 {
-     value<> A(1, 0.1),
-     V=func_with_uncertainty([](double x){return 2.0 * x;},A);
-     EXPECT_EQ(2 * A.val(), V.val());
-     ALMOST_EQ(2 * A.uncertainty(), V.uncertainty());
+    value<> A(1, 0.1),
+        V = func_with_uncertainty([](double x) {return 2.0 * x;}, A);
+    EXPECT_EQ(2 * A.val(), V.val());
+    ALMOST_EQ(2 * A.uncertainty(), V.uncertainty());
 }
 TEST(value, func_val2)
 {
-     value<> A1(1, 0.1),A2(2, 0.5),
-     V=func_with_uncertainty([](double x,double y){return x+y;},A1,A2);
-     EXPECT_EQ((A1+A2).val(), V.val());
-     ALMOST_EQ((A1+A2).uncertainty(), V.uncertainty());
+    value<> A1(1, 0.1), A2(2, 0.5),
+        V = func_with_uncertainty([](double x, double y) {return x + y;}, A1, A2);
+    EXPECT_EQ((A1 + A2).val(), V.val());
+    ALMOST_EQ((A1 + A2).uncertainty(), V.uncertainty());
 }
 TEST(value, func_val3)
 {
-     value<> A1(1, 0.1),A2(2, 0.5),A3(1.5, 0.2),
-     V=func_with_uncertainty([](double x,double y,double z){return (x+y)*z;},A1,A2,A3);
-     EXPECT_EQ(((A1+A2)*A3).val(), V.val());
-     ALMOST_EQ(((A1+A2)*A3).uncertainty(), V.uncertainty());
+    value<> A1(1, 0.1), A2(2, 0.5), A3(1.5, 0.2),
+        V = func_with_uncertainty([](double x, double y, double z) {return (x + y) * z;}, A1, A2, A3);
+    EXPECT_EQ(((A1 + A2) * A3).val(), V.val());
+    ALMOST_EQ(((A1 + A2) * A3).uncertainty(), V.uncertainty());
 }
 TEST(value, wider)
 {
@@ -242,7 +242,7 @@ TEST(StandardDeviation, Throwing)
     EXPECT_ANY_THROW(S.uncertainty());
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(1, S.Sample().count());
-    EXPECT_EQ(S.val(),0.0);
+    EXPECT_EQ(S.val(), 0.0);
     EXPECT_ANY_THROW(S.uncertainty());
     EXPECT_EQ(&S, &(S << 0.0));
     EXPECT_EQ(2, S.Sample().count());
@@ -256,7 +256,7 @@ TEST(StandardDeviation, Base)
     EXPECT_ANY_THROW(S.uncertainty());
     S << 0.0;
     EXPECT_EQ(1, S.Sample().count());
-    EXPECT_EQ(S.val(),0.0);
+    EXPECT_EQ(S.val(), 0.0);
     EXPECT_ANY_THROW(S.uncertainty());
     S << 1.0;
     EXPECT_EQ(2, S.Sample().count());
@@ -267,13 +267,13 @@ TEST(StandardDeviation, Base2)
 {
     StandardDeviation<> S;
     S << 0.0 << 1.0;
-    size_t cnt=0;
-    for(const auto&x:S.Sample())cnt++;
-    EXPECT_EQ(2,cnt);
-    EXPECT_EQ(2,S.Sample().size());
-    EXPECT_EQ(2,S.Sample().count());
-    EXPECT_EQ(0.0,S.Sample()[0].x());
-    EXPECT_EQ(1.0,S.Sample()[1].x());
+    size_t cnt = 0;
+    for (const auto& x : S.Sample())cnt++;
+    EXPECT_EQ(2, cnt);
+    EXPECT_EQ(2, S.Sample().size());
+    EXPECT_EQ(2, S.Sample().count());
+    EXPECT_EQ(0.0, S.Sample()[0].x());
+    EXPECT_EQ(1.0, S.Sample()[1].x());
     EXPECT_ANY_THROW(S.Sample()[2].x());
 }
 TEST(StandardDeviation, WithRandomValues)

@@ -9,17 +9,17 @@
 using namespace std;
 using namespace MathTemplates;
 #define ALMOST_EQ(a,b) EXPECT_TRUE(abs(a-b)<0.001)
-TEST(Integrating,sympson_sign)
+TEST(Integrating, sympson_sign)
 {
     auto F = [](double x) {
         return x;
-    };
+        };
     ALMOST_EQ(0.5, Sympson(F, 0.0, 1.0, 0.1));
     ALMOST_EQ(0.5, Sympson(F, 0.0, 1.0, -0.1));
     ALMOST_EQ(-0.5, Sympson(F, 1.0, 0.0, 0.1));
     ALMOST_EQ(-0.5, Sympson(F, 1.0, 0.0, -0.1));
 }
-TEST(Integrating,sympson_powers)
+TEST(Integrating, sympson_powers)
 {
     ALMOST_EQ(0.0, Sympson([](double) {return 0.0;}, 0.0, 1.0, 0.00001));
     ALMOST_EQ(1.0, Sympson([](double) {return 1.0;}, 0.0, 1.0, 0.00001));
@@ -27,11 +27,11 @@ TEST(Integrating,sympson_powers)
     ALMOST_EQ(0.333333, Sympson([](double x) {return x * x;}, 0.0, 1.0, 0.00001));
     ALMOST_EQ(0.25, Sympson([](double x) {return x * x * x;}, 0.0, 1.0, 0.00001));
 }
-TEST(Integrating,sympson_gaus)
+TEST(Integrating, sympson_gaus)
 {
     ALMOST_EQ(1.0, Sympson([](double x) {return Gaussian(x, 5.0, 1.0);}, 0.0, 10.0, 0.0001));
 }
-TEST(Integrating,Int_Trapez_Table)
+TEST(Integrating, Int_Trapez_Table)
 {
     SortedPoints<double> func;
     for (double x = 0; x <= 1; x += 0.0001)
@@ -43,7 +43,7 @@ TEST(Integrating,Int_Trapez_Table)
     ALMOST_EQ(0.33333333, res.right().Y());
     cout << res.right().Y() << endl;
 }
-TEST(Integrating,Int_Trapez_Table_PositiveStrict)
+TEST(Integrating, Int_Trapez_Table_PositiveStrict)
 {
     SortedPoints<double> func;
     for (double x = 0; x <= 1; x += 0.0001)
@@ -55,19 +55,19 @@ TEST(Integrating,Int_Trapez_Table_PositiveStrict)
     ALMOST_EQ(0.333333, res.right().Y());
     cout << res.right().Y() << endl;
 }
-TEST(Integrating,Convolution1)
+TEST(Integrating, Convolution1)
 {
     auto F1 = [](double x) {return x;};
     auto F2 = [](double x) {return x * x;};
-    Convolution<5,double> C(F1, F2, 0, 1, 0.01);
+    Convolution<5, double> C(F1, F2, 0, 1, 0.01);
     double x = 0.1;
     double test_value = AdaptiveQuadrature([x, F1, F2](double k) {return F1(k) * F2(x - k);}, 0.0, 1.0, 0.01);
     EXPECT_EQ(test_value, C(x));
 }
-TEST(Integrating,Convolution2)
+TEST(Integrating, Convolution2)
 {
-    auto F1 = [](const double & x) {return x;};
-    auto F2 = [](const double & x) {return x * x;};
+    auto F1 = [](const double& x) {return x;};
+    auto F2 = [](const double& x) {return x * x;};
     auto C = make_convolution(F1, F2, 0., 1., 0.01);
     double x = 0.1;
     double test_value = AdaptiveQuadrature([x, F1, F2](double k) {return F1(k) * F2(x - k);}, 0.0, 1.0, 0.01);

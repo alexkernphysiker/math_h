@@ -17,9 +17,9 @@ int main()
     };
 
     //Generate values and plot histogram
-    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.1, 5.0),"randomfunc");
+    PlotDistr1D<> dist("Test", "random value", BinsByStep(0.0, 0.1, 5.0), "randomfunc");
     for (size_t i = 0; i < 1000000; i++) {
-	    const double v=generator();
+        const double v = generator();
         dist.Fill(v);
     }
     // dist will plot the data automatically when its destructor is called

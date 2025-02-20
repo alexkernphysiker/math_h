@@ -11,54 +11,54 @@ using namespace MathTemplates;
 const double epsilon = 0.0000000001;
 TEST(VectorTransformation, pseudoscalar_prod)
 {
-    EXPECT_EQ(x()^y(), vec(1.));
-    EXPECT_EQ(y()^x(), vec(-1.));
-    EXPECT_EQ(x()^x(), vec(0.));
-    EXPECT_EQ(y()^y(), vec(0.));
-    EXPECT_EQ((-x())^x(), vec(0.));
-    EXPECT_EQ((-y())^y(), vec(0.));
+    EXPECT_EQ(x() ^ y(), vec(1.));
+    EXPECT_EQ(y() ^ x(), vec(-1.));
+    EXPECT_EQ(x() ^ x(), vec(0.));
+    EXPECT_EQ(y() ^ y(), vec(0.));
+    EXPECT_EQ((-x()) ^ x(), vec(0.));
+    EXPECT_EQ((-y()) ^ y(), vec(0.));
 }
 TEST(VectorTransformation, vector_prod3_basis)
 {
-    EXPECT_EQ(X()^Y(), Z());
-    EXPECT_EQ(X()^X(), Zero());
-    EXPECT_EQ(Y()^X(), -Z());
+    EXPECT_EQ(X() ^ Y(), Z());
+    EXPECT_EQ(X() ^ X(), Zero());
+    EXPECT_EQ(Y() ^ X(), -Z());
     EXPECT_EQ(X() ^ (-X()), Zero());
 
-    EXPECT_EQ(1, (X()^Y())*Z());
-    EXPECT_EQ(1, (Y()^Z())*X());
-    EXPECT_EQ(1, (Z()^X())*Y());
+    EXPECT_EQ(1, (X() ^ Y()) * Z());
+    EXPECT_EQ(1, (Y() ^ Z()) * X());
+    EXPECT_EQ(1, (Z() ^ X()) * Y());
 
 }
 
 TEST(VectorTransformation, pseudoscalar_prod_properties)
 {
-    
+
     RandomUniform<> M(-50, 50);
     for (size_t i = 0; i < 50; i++) {
         const auto
-        A = randomIsotropic<2>() * M(),
-        B = randomIsotropic<2>() * M(),
-        C = randomIsotropic<2>() * M();
+            A = randomIsotropic<2>() * M(),
+            B = randomIsotropic<2>() * M(),
+            C = randomIsotropic<2>() * M();
         const auto a = M();
         EXPECT_TRUE((A ^ A).length() < epsilon);
         EXPECT_TRUE((B ^ B).length() < epsilon);
         EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - ((A * a) ^ B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B) ^ C) - ((A ^ C) + (B ^ C))).length() < epsilon);
     }
 }
 
 TEST(VectorTransformation, vector_prod3_properties)
 {
-    
+
     RandomUniform<> M(-50, 50);
     for (size_t i = 0; i < 50; i++) {
         const auto
-        A = randomIsotropic<3>() * M(),
-        B = randomIsotropic<3>() * M(),
-        C = randomIsotropic<3>() * M();
+            A = randomIsotropic<3>() * M(),
+            B = randomIsotropic<3>() * M(),
+            C = randomIsotropic<3>() * M();
         const auto a = M();
         EXPECT_TRUE((A ^ A).length() < epsilon);
         EXPECT_TRUE((B ^ B).length() < epsilon);
@@ -66,23 +66,23 @@ TEST(VectorTransformation, vector_prod3_properties)
         EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
         EXPECT_TRUE(((A ^ C) + (C ^ A)).length() < epsilon);
         EXPECT_TRUE(((C ^ B) + (B ^ C)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
-        EXPECT_TRUE((((A ^ B)^C) + ((C ^ A)^B) + ((B ^ C)^A)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - ((A * a) ^ B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B) ^ C) - ((A ^ C) + (B ^ C))).length() < epsilon);
+        EXPECT_TRUE((((A ^ B) ^ C) + ((C ^ A) ^ B) + ((B ^ C) ^ A)).length() < epsilon);
         EXPECT_TRUE(((A ^ (B ^ C)) - (B * (A * C)) + (C * (A * B))).length() < epsilon);
-        EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
+        EXPECT_TRUE(abs(((A ^ B) * C) - (A * (B ^ C))) < epsilon);
     }
 }
 TEST(VectorTransformation, vector_prod7_properties)
 {
-    
+
     RandomUniform<> M(-50, 50);
     for (size_t i = 0; i < 50; i++) {
         const auto
-        A = randomIsotropic<7>() * M(),
-        B = randomIsotropic<7>() * M(),
-        C = randomIsotropic<7>() * M();
+            A = randomIsotropic<7>() * M(),
+            B = randomIsotropic<7>() * M(),
+            C = randomIsotropic<7>() * M();
         const auto a = M();
         EXPECT_TRUE((A ^ A).length() < epsilon);
         EXPECT_TRUE((B ^ B).length() < epsilon);
@@ -90,34 +90,34 @@ TEST(VectorTransformation, vector_prod7_properties)
         EXPECT_TRUE(((A ^ B) + (B ^ A)).length() < epsilon);
         EXPECT_TRUE(((A ^ C) + (C ^ A)).length() < epsilon);
         EXPECT_TRUE(((C ^ B) + (B ^ C)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - ((A * a)^B)).length() < epsilon);
-        EXPECT_TRUE(((A ^ B)*a - (A ^ (B * a))).length() < epsilon);
-        EXPECT_TRUE((((A + B)^C) - ((A ^ C) + (B ^ C))).length() < epsilon);
-        EXPECT_TRUE(abs(((A ^ B)*C) - (A * (B ^ C))) < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - ((A * a) ^ B)).length() < epsilon);
+        EXPECT_TRUE(((A ^ B) * a - (A ^ (B * a))).length() < epsilon);
+        EXPECT_TRUE((((A + B) ^ C) - ((A ^ C) + (B ^ C))).length() < epsilon);
+        EXPECT_TRUE(abs(((A ^ B) * C) - (A * (B ^ C))) < epsilon);
     }
 }
 TEST(Direction, arithmetic2d)
 {
-    
+
     RandomUniform<> Phi(-PI(), PI());
-    RandomUniform<> A(0,10);
+    RandomUniform<> A(0, 10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi();
         const auto D = direction(phi);
         EXPECT_EQ(D.phi(), phi);
-	const auto a=A();
-	EXPECT_EQ(D*a,vec(
-	    a*cos(phi),
-	    a*sin(phi)
-	));
+        const auto a = A();
+        EXPECT_EQ(D * a, vec(
+            a * cos(phi),
+            a * sin(phi)
+        ));
     }
 }
 TEST(Direction, arithmetic3d)
 {
-    
+
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI());
-    RandomUniform<> A(0,10);
+    RandomUniform<> A(0, 10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi();
         const auto theta = Theta();
@@ -125,20 +125,20 @@ TEST(Direction, arithmetic3d)
         EXPECT_EQ(D.phi(), phi);
         EXPECT_EQ(D.th(), theta);
         EXPECT_EQ(D.th<1>(), theta);
-	const auto a=A();
-	EXPECT_EQ(D*a,vec(
-	    a*sin(theta)*cos(phi),
-	    a*sin(theta)*sin(phi),
-	    a*cos(theta)
-	));
+        const auto a = A();
+        EXPECT_EQ(D * a, vec(
+            a * sin(theta) * cos(phi),
+            a * sin(theta) * sin(phi),
+            a * cos(theta)
+        ));
     }
 }
 TEST(Direction, arithmetic4d)
 {
-    
+
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI<>());
-    RandomUniform<> A(0,10);
+    RandomUniform<> A(0, 10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi();
         const auto theta1 = Theta();
@@ -147,21 +147,21 @@ TEST(Direction, arithmetic4d)
         EXPECT_EQ(D.phi(), phi);
         EXPECT_EQ(D.th<1>(), theta1);
         EXPECT_EQ(D.th<2>(), theta2);
-	const auto a=A();
-	EXPECT_EQ(D*a,vec(
-	    a*sin(theta2)*sin(theta1)*cos(phi),
-	    a*sin(theta2)*sin(theta1)*sin(phi),
-	    a*sin(theta2)*cos(theta1),
-	    a*cos(theta2)
-	));
+        const auto a = A();
+        EXPECT_EQ(D * a, vec(
+            a * sin(theta2) * sin(theta1) * cos(phi),
+            a * sin(theta2) * sin(theta1) * sin(phi),
+            a * sin(theta2) * cos(theta1),
+            a * cos(theta2)
+        ));
     }
 }
 TEST(Direction, arithmetic5d)
 {
-    
+
     RandomUniform<> Phi(-PI(), PI());
     RandomUniform<> Theta(0, PI());
-    RandomUniform<> A(0,10);
+    RandomUniform<> A(0, 10);
     for (size_t i = 0; i < 50; i++) {
         const auto phi = Phi();
         const auto theta1 = Theta();
@@ -172,14 +172,14 @@ TEST(Direction, arithmetic5d)
         EXPECT_EQ(D.th<1>(), theta1);
         EXPECT_EQ(D.th<2>(), theta2);
         EXPECT_EQ(D.th<3>(), theta3);
-	const auto a=A();
-	EXPECT_EQ(D*a,vec(
-	    a*sin(theta3)*sin(theta2)*sin(theta1)*cos(phi),
-	    a*sin(theta3)*sin(theta2)*sin(theta1)*sin(phi),
-	    a*sin(theta3)*sin(theta2)*cos(theta1),
-	    a*sin(theta3)*cos(theta2),
-	    a*cos(theta3)
-	));
+        const auto a = A();
+        EXPECT_EQ(D * a, vec(
+            a * sin(theta3) * sin(theta2) * sin(theta1) * cos(phi),
+            a * sin(theta3) * sin(theta2) * sin(theta1) * sin(phi),
+            a * sin(theta3) * sin(theta2) * cos(theta1),
+            a * sin(theta3) * cos(theta2),
+            a * cos(theta3)
+        ));
     }
 }
 
@@ -187,39 +187,39 @@ TEST(Direction, Isotropic1)
 {
     const auto c = BinsByCount(2, -2.0, 2.0);
     Distribution1D<> D(c);
-    const size_t N=10000000;
+    const size_t N = 10000000;
     for (size_t i = 0; i < N; i++) {
         D.Fill(randomIsotropic<1>());
     }
-    for (const auto &p:D)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / D.size()));
+    for (const auto& p : D)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / D.size()));
 }
 TEST(Direction, Isotropic2)
 {
     const auto c = BinsByCount(10, -PI(), PI());
     Distribution1D<> Phi(c);
-    const size_t N=10000000;
+    const size_t N = 10000000;
     for (size_t i = 0; i < N; i++) {
         Phi.Fill(randomIsotropic<2>().phi());
     }
-    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / Phi.size()));
+    for (const auto& p : Phi)EXPECT_TRUE(p.Y().make_wider(2).Contains(double(N) / Phi.size()));
 }
 TEST(Direction, Isotropic3)
 {
     const auto c = BinsByStep(-1.0, 0.1, 1.0);
-    Distribution1D<> X(c), Y(c), Z(c),Phi(BinsByStep(-PI(), 0.1*PI(), PI()));
-    const size_t N=1000000;
+    Distribution1D<> X(c), Y(c), Z(c), Phi(BinsByStep(-PI(), 0.1 * PI(), PI()));
+    const size_t N = 1000000;
     for (size_t i = 0; i < N; i++) {
-	const auto D=randomIsotropic<3>();
-        const auto V = D*1.0;
+        const auto D = randomIsotropic<3>();
+        const auto V = D * 1.0;
         X.Fill(V.x());
         Y.Fill(V.y());
         Z.Fill(V.z());
         Phi.Fill(D.phi());
     }
-    for (const auto &p:X)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / X.size()));
-    for (const auto &p:Y)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Y.size()));
-    for (const auto &p:Z)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Z.size()));
-    for (const auto &p:Phi)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Phi.size()));
+    for (const auto& p : X)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / X.size()));
+    for (const auto& p : Y)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Y.size()));
+    for (const auto& p : Z)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Z.size()));
+    for (const auto& p : Phi)EXPECT_TRUE(p.Y().make_wider(4).Contains(double(N) / Phi.size()));
 }
 TEST(VectorTransformation, Rotation2)
 {
@@ -316,7 +316,7 @@ TEST(Direction, obtain4d)
         EXPECT_TRUE(abs(angles.th<2>() - angles2.th<2>()) < epsilon);
     }
 }
-TEST(Direction,obtain5d)
+TEST(Direction, obtain5d)
 {
     RandomUniform<> THETA(0.0, PI()), PHI(-PI(), PI()), M(0.0, 10.0);
     for (size_t i = 0; i < 50; i++) {
@@ -339,7 +339,7 @@ TEST(VectorTransformation, rotations1d)
         const auto V2 = dir.Rotations() * (axis<1, 1>() * m);
         EXPECT_TRUE(V1.CloseTo(V2, epsilon));
         const auto V3 = dir.AntiRotations() * V2;
-        EXPECT_TRUE(V3.CloseTo(axis<1, 1>()*m, epsilon));
+        EXPECT_TRUE(V3.CloseTo(axis<1, 1>() * m, epsilon));
     }
 }
 TEST(VectorTransformation, rotations2d)
@@ -352,7 +352,7 @@ TEST(VectorTransformation, rotations2d)
         const auto V2 = dir.Rotations() * (x() * m);
         EXPECT_TRUE(V1.CloseTo(V2, epsilon));
         const auto V3 = dir.AntiRotations() * V2;
-        EXPECT_TRUE(V3.CloseTo(x()*m, epsilon));
+        EXPECT_TRUE(V3.CloseTo(x() * m, epsilon));
     }
 }
 TEST(VectorTransformation, rotations3d)
@@ -365,7 +365,7 @@ TEST(VectorTransformation, rotations3d)
         const auto V2 = dir.Rotations() * (Z() * m);
         EXPECT_TRUE(V1.CloseTo(V2, epsilon));
         const auto V3 = dir.AntiRotations() * V2;
-        EXPECT_TRUE(V3.CloseTo(Z()*m, epsilon));
+        EXPECT_TRUE(V3.CloseTo(Z() * m, epsilon));
     }
 }
 TEST(VectorTransformation, rotations4d)
@@ -378,7 +378,7 @@ TEST(VectorTransformation, rotations4d)
         const auto V2 = dir.Rotations() * (axis<4, 4>() * m);
         EXPECT_TRUE(V1.CloseTo(V2, epsilon));
         const auto V3 = dir.AntiRotations() * V2;
-        EXPECT_TRUE(V3.CloseTo(axis<4, 4>()*m, epsilon));
+        EXPECT_TRUE(V3.CloseTo(axis<4, 4>() * m, epsilon));
     }
 }
 TEST(VectorTransformation, rotations5d)
@@ -391,7 +391,7 @@ TEST(VectorTransformation, rotations5d)
         const auto V2 = dir.Rotations() * (axis<5, 5>() * m);
         EXPECT_TRUE(V1.CloseTo(V2, epsilon));
         const auto V3 = dir.AntiRotations() * V2;
-        EXPECT_TRUE(V3.CloseTo(axis<5, 5>()*m, epsilon));
+        EXPECT_TRUE(V3.CloseTo(axis<5, 5>() * m, epsilon));
     }
 }
 
@@ -403,21 +403,21 @@ TEST(VectorTransformation, rotations3d_plane)
         const auto v1 = R * vec(M(), M(), 0.);
         const auto v2 = R * vec(M(), M(), 0.);
         const auto v3 = R * vec(M(), M(), 0.);
-        EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
+        EXPECT_TRUE(abs((v1 ^ v2) * v3) < epsilon);
     }
     for (size_t i = 0; i < 50; i++) {
         const auto R = randomIsotropic<3>().Rotations();
         const auto v1 = R * vec(0., M(), M());
         const auto v2 = R * vec(0., M(), M());
         const auto v3 = R * vec(0., M(), M());
-        EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
+        EXPECT_TRUE(abs((v1 ^ v2) * v3) < epsilon);
     }
     for (size_t i = 0; i < 10; i++) {
         const auto R = randomIsotropic<3>().Rotations();
         const auto v1 = R * vec(M(), 0., M());
         const auto v2 = R * vec(M(), 0., M());
         const auto v3 = R * vec(M(), 0., M());
-        EXPECT_TRUE(abs((v1 ^ v2)*v3) < epsilon);
+        EXPECT_TRUE(abs((v1 ^ v2) * v3) < epsilon);
     }
     for (size_t i = 0; i < 50; i++) {
         const auto R1 = randomIsotropic<3>().Rotations();

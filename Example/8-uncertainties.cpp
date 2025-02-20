@@ -27,16 +27,16 @@ int main()
     // 1 - statistical; 2 - systematical
     // the first one is filled from original histogram
     // the second one is not filled (is zero)
-    const auto data=extend_hist<1,2>(measurements);
+    const auto data = extend_hist<1, 2>(measurements);
 
     //This is the theoretical coefficient known with uncertainty
-    const value<> theoretical_coefficient(3.5,0.5);
+    const value<> theoretical_coefficient(3.5, 0.5);
 
     //Multiply out histogram by the coefficient filling its uncertainty to the second "slot"
-    const auto result=data * extend_value<2,2>(theoretical_coefficient);
+    const auto result = data * extend_value<2, 2>(theoretical_coefficient);
 
     //Plot the result with two error bars for each point
-    Plot("sigma3-example").Hist_2bars<1,2>(result, "stat", "syst", "sigma3-output") << "set key on";
+    Plot("sigma3-example").Hist_2bars<1, 2>(result, "stat", "syst", "sigma3-output") << "set key on";
 
     //Plot result with only the first error bars
     Plot("sigma3-example-2").Hist<1>(result, "statistical uncertainty", "sigma3-output") << "set key on";
@@ -45,7 +45,7 @@ int main()
     //comparing with the calculation that uses one uncertainty
     Plot("sigma3-example-3")
         .Hist(wrap_hist(result), "total uncertainty")
-	    .Hist(measurements * theoretical_coefficient, "compare")
+        .Hist(measurements * theoretical_coefficient, "compare")
         << "set key on";
     return 0;
 }

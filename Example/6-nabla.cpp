@@ -10,26 +10,26 @@ using namespace GnuplotWrap;
 int main()
 {
     const double delta = 0.00001;
-    const auto Potential = [](const Vector<3>&r){ return 1.0 / r.length(); };
-	const auto field = -nabla<3>(delta) * Potential;
-	const auto charge_density = laplace<3>(delta) * Potential;
+    const auto Potential = [](const Vector<3>& r) { return 1.0 / r.length(); };
+    const auto field = -nabla<3>(delta) * Potential;
+    const auto charge_density = laplace<3>(delta) * Potential;
 
     Plot("nabla-example-potential").Line(
         SortedPoints<>(
-            [&Potential](const double&c){return Potential(c*X()+0.5*Y());},
-            ChainWithStep(-2.1,0.02,2.1)
+            [&Potential](const double& c) {return Potential(c * X() + 0.5 * Y());},
+            ChainWithStep(-2.1, 0.02, 2.1)
         )
     );
-	Plot("nabla-example-field").Line(
+    Plot("nabla-example-field").Line(
         SortedPoints<>(
-            [&field](const double&c){return field(c*X()+0.5*Y()).length();},
-            ChainWithStep(-2.1,0.02,2.1)
+            [&field](const double& c) {return field(c * X() + 0.5 * Y()).length();},
+            ChainWithStep(-2.1, 0.02, 2.1)
         )
     );
     Plot("nabla-example-charge").Line(
         SortedPoints<>(
-            [&charge_density](const double&c){return charge_density(c*X()+0.5*Y());},
-            ChainWithStep(-2.1,0.02,2.1)
+            [&charge_density](const double& c) {return charge_density(c * X() + 0.5 * Y());},
+            ChainWithStep(-2.1, 0.02, 2.1)
         )
     );
 }

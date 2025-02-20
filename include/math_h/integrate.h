@@ -11,7 +11,7 @@ template<class numX, class numY = numX, class functype = std::function<numY(numX
 numY Sympson(const functype y, const numX &a, const numX &b, const numX &step)
 {
     numX stp = step;
-    if ((stp * (b - a)) <= 0) stp = -stp;
+    if ((stp * (b - a)) < 0) stp = -stp;
     numX halfstep = stp / 2;
     numY lastfunc = y(a);
     numY res = 0;
